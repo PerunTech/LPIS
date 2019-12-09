@@ -517,6 +517,246 @@ public class DbInitCustom implements IDbInit {
 		return dbe;
 	}
 
+	// AGRI_PARCEL
+	public static DbDataTable createLpisParcel() {
+		DbDataTable dbe = new DbDataTable();
+		dbe.setDbTableName("LPIS_PARCEL");
+		dbe.setDbRepoName(CONST_MASTER_REPO);
+		dbe.setDbSchema(CONST_DEFAULT_SCHEMA);
+		dbe.setIsSystemTable(false);
+		dbe.setIsRepoTable(false);
+		dbe.setLabel_code("lpis_parcel.general");
+		dbe.setUse_cache(false);
+
+		// Column 1N
+		DbDataField dbe1 = new DbDataField();
+		dbe1.setDbFieldName("PKID");
+		dbe1.setIsPrimaryKey(true);
+		dbe1.setDbFieldType(DbFieldType.NUMERIC);
+		dbe1.setDbFieldSize(18);
+		dbe1.setDbFieldScale(0);
+		dbe1.setIsNull(false);
+		dbe1.setLabel_code("lpis_parcel.pkid");
+
+		// Column 2
+		DbDataField dbe2 = new DbDataField();
+		dbe2.setDbFieldName("PARCEL_ID");
+		dbe2.setDbFieldType(DbFieldType.NUMERIC);
+		dbe2.setDbFieldSize(18);
+		dbe2.setDbFieldScale(0);
+		dbe2.setIndexName("LPIS_ID_IDX");
+		dbe2.setLabel_code("lpis_parcel.parcel_id");
+
+		// Column 3
+		DbDataField dbe3 = new DbDataField();
+		dbe3.setDbFieldName("OLD_FARMER_PKID");
+		dbe3.setDbFieldType(DbFieldType.NUMERIC);
+		dbe3.setDbFieldSize(18);
+		dbe3.setDbFieldScale(0);
+		dbe3.setLabel_code("lpis_parcel.old_farmer_pkid");
+
+		// Column 4
+		DbDataField dbe4 = new DbDataField();
+		dbe4.setDbFieldName("LAND_USE_ID_1");
+		dbe4.setDbFieldType(DbFieldType.NUMERIC);
+		dbe4.setDbFieldSize(18);
+		dbe4.setDbFieldScale(0);
+		dbe4.setCode_list_user_code("LAND_USES");
+		dbe4.setLabel_code("lpis_parcel.land_use_id_1");
+
+		// Column 5
+		DbDataField dbe5 = new DbDataField();
+		dbe5.setDbFieldName("LAND_USE_ID_2");
+		dbe5.setDbFieldType(DbFieldType.NUMERIC);
+		dbe5.setDbFieldSize(18);
+		dbe5.setDbFieldScale(0);
+		dbe5.setCode_list_user_code("LAND_USES");
+		dbe5.setLabel_code("lpis_parcel.land_use_id_2");
+
+		// Column 6
+		DbDataField dbe6 = new DbDataField();
+		dbe6.setDbFieldName("COUNTRY");
+		dbe6.setDbFieldType(DbFieldType.NVARCHAR);
+		dbe6.setDbFieldScale(0);
+		dbe6.setDbFieldSize(1);
+		dbe6.setLabel_code("lpis_parcel.country");
+
+		// Column 7
+		DbDataField dbe7 = new DbDataField();
+		dbe7.setDbFieldName("AREA");
+		dbe7.setDbFieldType(DbFieldType.NUMERIC);
+		dbe7.setDbFieldSize(18);
+		dbe7.setDbFieldScale(0);
+		dbe7.setLabel_code("lpis_parcel.area");
+
+		// Column 8
+		DbDataField dbe8 = new DbDataField();
+		dbe8.setDbFieldName("ALLOWED_AREA");
+		dbe8.setDbFieldType(DbFieldType.NUMERIC);
+		dbe8.setDbFieldSize(18);
+		dbe8.setDbFieldScale(0);
+		dbe8.setLabel_code("lpis_parcel.allowed_area");
+
+		// Column 9
+		DbDataField dbe9 = new DbDataField();
+		dbe9.setDbFieldName("COMMON_USE");
+		dbe9.setDbFieldType(DbFieldType.NUMERIC);
+		dbe9.setDbFieldSize(18);
+		dbe9.setDbFieldScale(0);
+		dbe9.setLabel_code("lpis_parcel.common_use");
+
+		// Column 10
+		DbDataField dbe10 = new DbDataField();
+		dbe10.setDbFieldName("CERTIFICATE_OF_USE");
+		dbe10.setDbFieldType(DbFieldType.NUMERIC);
+		dbe10.setDbFieldSize(1);
+		dbe10.setDbFieldScale(0);
+		dbe10.setLabel_code("lpis_parcel.certificate_of_use");
+
+		// Column 11
+		DbDataField dbe11 = new DbDataField();
+		dbe11.setDbFieldName("PERIMETER");
+		dbe11.setDbFieldType(DbFieldType.NUMERIC);
+		dbe11.setDbFieldSize(9);
+		dbe11.setDbFieldScale(0);
+		dbe11.setLabel_code("lpis_parcel.perimeter");
+
+		// Column 12
+		DbDataField dbe12 = new DbDataField();
+		dbe12.setDbFieldName("CENTROID");
+		dbe12.setDbFieldType(DbFieldType.GEOMETRY);
+		dbe12.setGeometryType("POINT");
+		dbe12.setGeometrySrid(SvConf.getParam("sys.gis.default_srid"));
+		dbe12.setIndexName("cent_idx");
+		dbe12.setLabel_code("agri_parcel.centroid");
+
+		// Column 13
+		DbDataField dbe13 = new DbDataField();
+		dbe13.setDbFieldName("GEOM");
+		dbe13.setDbFieldType(DbFieldType.GEOMETRY);
+		dbe13.setGeometryType("POINT");
+		dbe13.setGeometrySrid(SvConf.getParam("sys.gis.default_srid"));
+		dbe13.setIndexName("geom_idx");
+		dbe13.setLabel_code("lpis_parcel.geom");
+
+		// Column 14
+		DbDataField dbe14 = new DbDataField();
+		dbe14.setDbFieldName("CAD_MUNIC_ID");
+		dbe14.setDbFieldType(DbFieldType.NUMERIC);
+		dbe14.setDbFieldSize(18);
+		dbe14.setDbFieldScale(0);
+		dbe14.setLabel_code("lpis_parcel.cad_munic_id");
+
+		// Column 15
+		DbDataField dbe15 = new DbDataField();
+		dbe15.setDbFieldName("PHYSICAL_BLOCK_ID");
+		dbe15.setDbFieldType(DbFieldType.NUMERIC);
+		dbe15.setDbFieldSize(18);
+		dbe15.setDbFieldScale(0);
+		dbe15.setLabel_code("lpis_parcel.physical_block_id");
+
+		// Column 16
+		DbDataField dbe16 = new DbDataField();
+		dbe16.setDbFieldName("TERASE");
+		dbe16.setDbFieldType(DbFieldType.NUMERIC);
+		dbe16.setDbFieldSize(18);
+		dbe16.setDbFieldScale(0);
+		dbe16.setLabel_code("lpis_parcel.terase");
+
+		// Column 17
+		DbDataField dbe17 = new DbDataField();
+		dbe17.setDbFieldName("INV_BORDER");
+		dbe17.setDbFieldType(DbFieldType.NUMERIC);
+		dbe17.setDbFieldSize(18);
+		dbe17.setDbFieldScale(0);
+		dbe17.setLabel_code("lpis_parcel.inv_border");
+
+		// Column 18
+		DbDataField dbe18 = new DbDataField();
+		dbe18.setDbFieldName("CHANGE_BORDER");
+		dbe18.setDbFieldType(DbFieldType.NUMERIC);
+		dbe18.setDbFieldSize(18);
+		dbe18.setDbFieldScale(0);
+		dbe18.setLabel_code("lpis_parcel.change_border");
+
+		// Column 19
+		DbDataField dbe19 = new DbDataField();
+		dbe19.setDbFieldName("IRRIGATION");
+		dbe19.setDbFieldType(DbFieldType.NUMERIC);
+		dbe19.setDbFieldSize(18);
+		dbe19.setDbFieldScale(0);
+		dbe19.setLabel_code("lpis_parcel.irrigation");
+
+		// Column 20
+		DbDataField dbe20 = new DbDataField();
+		dbe20.setDbFieldName("IRRIGATION");
+		dbe20.setDbFieldType(DbFieldType.NUMERIC);
+		dbe20.setDbFieldSize(18);
+		dbe20.setDbFieldScale(0);
+		dbe20.setLabel_code("lpis_parcel.irrigation");
+
+		// Column 21
+		DbDataField dbe21 = new DbDataField();
+		dbe21.setDbFieldName("SLOPE_AVG");
+		dbe21.setDbFieldType(DbFieldType.NUMERIC);
+		dbe21.setDbFieldSize(18);
+		dbe21.setDbFieldScale(0);
+		dbe21.setLabel_code("lpis_parcel.slope_avg");
+
+		// Column 22
+		DbDataField dbe22 = new DbDataField();
+		dbe22.setDbFieldName("EXP_AVG");
+		dbe22.setDbFieldType(DbFieldType.NUMERIC);
+		dbe22.setDbFieldSize(18);
+		dbe22.setDbFieldScale(0);
+		dbe22.setLabel_code("lpis_parcel.exp_avg");
+
+		// Column 23
+		DbDataField dbe23 = new DbDataField();
+		dbe23.setDbFieldName("LANDSCAPE");
+		dbe23.setDbFieldType(DbFieldType.NUMERIC);
+		dbe23.setDbFieldSize(18);
+		dbe23.setDbFieldScale(0);
+		dbe23.setLabel_code("lpis_parcel.landscape");
+
+		// Column 24
+		DbDataField dbe24 = new DbDataField();
+		dbe24.setDbFieldName("ELIGIBILITY");
+		dbe24.setDbFieldType(DbFieldType.NUMERIC);
+		dbe24.setDbFieldSize(18);
+		dbe24.setDbFieldScale(0);
+		dbe24.setLabel_code("lpis_parcel.eligibilty");
+
+		DbDataField[] dbTableFields = new DbDataField[24];
+		dbTableFields[0] = dbe1;
+		dbTableFields[1] = dbe2;
+		dbTableFields[2] = dbe3;
+		dbTableFields[3] = dbe4;
+		dbTableFields[4] = dbe5;
+		dbTableFields[5] = dbe6;
+		dbTableFields[6] = dbe7;
+		dbTableFields[7] = dbe8;
+		dbTableFields[8] = dbe9;
+		dbTableFields[9] = dbe10;
+		dbTableFields[10] = dbe11;
+		dbTableFields[11] = dbe12;
+		dbTableFields[12] = dbe13;
+		dbTableFields[13] = dbe14;
+		dbTableFields[14] = dbe15;
+		dbTableFields[15] = dbe16;
+		dbTableFields[16] = dbe17;
+		dbTableFields[17] = dbe18;
+		dbTableFields[18] = dbe19;
+		dbTableFields[19] = dbe20;
+		dbTableFields[20] = dbe21;
+		dbTableFields[21] = dbe22;
+		dbTableFields[22] = dbe23;
+		dbTableFields[23] = dbe24;
+
+		dbe.setDbTableFields(dbTableFields);
+		return dbe;
+	}
+
 	// LAND_USE_PLAN
 	public static DbDataTable createLandUsePlan() {
 		DbDataTable dbe = new DbDataTable();
@@ -644,6 +884,8 @@ public class DbInitCustom implements IDbInit {
 		dbtt = DbInitCustom.createCadParcel();
 		dbtList.add(addSortOrder(dbtt));
 		dbtt = DbInitCustom.createAgriParcel();
+		dbtList.add(addSortOrder(dbtt));
+		dbtt = DbInitCustom.createLpisParcel();
 		dbtList.add(addSortOrder(dbtt));
 		dbtt = DbInitCustom.createLandUsePlan();
 		dbtList.add(addSortOrder(dbtt));
