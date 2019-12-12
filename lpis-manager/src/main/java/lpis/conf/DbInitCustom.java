@@ -719,7 +719,15 @@ public class DbInitCustom implements IDbInit {
 		dbe23.setDbFieldScale(0);
 		dbe23.setLabel_code("lpis_parcel.z_avg");
 
-		DbDataField[] dbTableFields = new DbDataField[23];
+		// Column 24
+		DbDataField dbe24 = new DbDataField();
+		dbe24.setDbFieldName("SLOPE_AVG");
+		dbe24.setDbFieldType(DbFieldType.NUMERIC);
+		dbe24.setDbFieldSize(18);
+		dbe24.setDbFieldScale(0);
+		dbe24.setLabel_code("lpis_parcel.slope_avg");
+
+		DbDataField[] dbTableFields = new DbDataField[24];
 		dbTableFields[0] = dbe1;
 		dbTableFields[1] = dbe2;
 		dbTableFields[2] = dbe3;
@@ -743,6 +751,7 @@ public class DbInitCustom implements IDbInit {
 		dbTableFields[20] = dbe21;
 		dbTableFields[21] = dbe22;
 		dbTableFields[22] = dbe23;
+		dbTableFields[23] = dbe24;
 
 		dbe.setDbTableFields(dbTableFields);
 		return dbe;
