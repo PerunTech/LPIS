@@ -478,7 +478,7 @@ public class DbInitCustom implements IDbInit {
 		DbDataField dbe17 = new DbDataField();
 		dbe17.setDbFieldName("GEOM");
 		dbe17.setDbFieldType(DbFieldType.GEOMETRY);
-		dbe17.setGeometryType("POINT");
+		dbe17.setGeometryType("POLYGON");
 		dbe17.setGeometrySrid(SvConf.getParam("sys.gis.default_srid"));
 		dbe17.setIndexName("geom_idx");
 		dbe17.setLabel_code("agri_parcel.geom");
