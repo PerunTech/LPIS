@@ -155,6 +155,12 @@
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>svarog-jts-io</groupId>
+			<artifactId>svarog-jts-io</artifactId>
+			<version>1.14.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
   
   

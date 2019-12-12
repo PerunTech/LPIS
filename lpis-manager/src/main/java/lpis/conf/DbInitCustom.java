@@ -689,45 +689,37 @@ public class DbInitCustom implements IDbInit {
 
 		// Column 20
 		DbDataField dbe20 = new DbDataField();
-		dbe20.setDbFieldName("IRRIGATION");
+		dbe20.setDbFieldName("EXP_AVG");
 		dbe20.setDbFieldType(DbFieldType.NUMERIC);
 		dbe20.setDbFieldSize(18);
 		dbe20.setDbFieldScale(0);
-		dbe20.setLabel_code("lpis_parcel.irrigation");
+		dbe20.setLabel_code("lpis_parcel.exp_avg");
 
 		// Column 21
 		DbDataField dbe21 = new DbDataField();
-		dbe21.setDbFieldName("SLOPE_AVG");
+		dbe21.setDbFieldName("LANDSCAPE");
 		dbe21.setDbFieldType(DbFieldType.NUMERIC);
 		dbe21.setDbFieldSize(18);
 		dbe21.setDbFieldScale(0);
-		dbe21.setLabel_code("lpis_parcel.slope_avg");
+		dbe21.setLabel_code("lpis_parcel.landscape");
 
 		// Column 22
 		DbDataField dbe22 = new DbDataField();
-		dbe22.setDbFieldName("EXP_AVG");
+		dbe22.setDbFieldName("ELIGIBILITY");
 		dbe22.setDbFieldType(DbFieldType.NUMERIC);
 		dbe22.setDbFieldSize(18);
 		dbe22.setDbFieldScale(0);
-		dbe22.setLabel_code("lpis_parcel.exp_avg");
+		dbe22.setLabel_code("lpis_parcel.eligibilty");
 
 		// Column 23
 		DbDataField dbe23 = new DbDataField();
-		dbe23.setDbFieldName("LANDSCAPE");
+		dbe23.setDbFieldName("Z_AVG");
 		dbe23.setDbFieldType(DbFieldType.NUMERIC);
 		dbe23.setDbFieldSize(18);
 		dbe23.setDbFieldScale(0);
-		dbe23.setLabel_code("lpis_parcel.landscape");
+		dbe23.setLabel_code("lpis_parcel.z_avg");
 
-		// Column 24
-		DbDataField dbe24 = new DbDataField();
-		dbe24.setDbFieldName("ELIGIBILITY");
-		dbe24.setDbFieldType(DbFieldType.NUMERIC);
-		dbe24.setDbFieldSize(18);
-		dbe24.setDbFieldScale(0);
-		dbe24.setLabel_code("lpis_parcel.eligibilty");
-
-		DbDataField[] dbTableFields = new DbDataField[24];
+		DbDataField[] dbTableFields = new DbDataField[22];
 		dbTableFields[0] = dbe1;
 		dbTableFields[1] = dbe2;
 		dbTableFields[2] = dbe3;
@@ -750,8 +742,6 @@ public class DbInitCustom implements IDbInit {
 		dbTableFields[19] = dbe20;
 		dbTableFields[20] = dbe21;
 		dbTableFields[21] = dbe22;
-		dbTableFields[22] = dbe23;
-		dbTableFields[23] = dbe24;
 
 		dbe.setDbTableFields(dbTableFields);
 		return dbe;
