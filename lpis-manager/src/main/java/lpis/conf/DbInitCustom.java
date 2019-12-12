@@ -628,7 +628,7 @@ public class DbInitCustom implements IDbInit {
 		dbe12.setGeometryType("POINT");
 		dbe12.setGeometrySrid(SvConf.getParam("sys.gis.default_srid"));
 		dbe12.setIndexName("cent_idx");
-		dbe12.setLabel_code("agri_parcel.centroid");
+		dbe12.setLabel_code("lpis_parcel.centroid");
 
 		// Column 13
 		DbDataField dbe13 = new DbDataField();
