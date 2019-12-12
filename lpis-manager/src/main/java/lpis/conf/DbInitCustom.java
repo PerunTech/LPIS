@@ -422,7 +422,7 @@ public class DbInitCustom implements IDbInit {
 		dbe10.setDbFieldName("COUNTRY");
 		dbe10.setDbFieldType(DbFieldType.NVARCHAR);
 		dbe10.setDbFieldScale(0);
-		dbe10.setDbFieldSize(1);
+		dbe10.setDbFieldSize(3);
 		dbe10.setLabel_code("agri_parcel.country");
 
 		// Column 11
@@ -634,7 +634,7 @@ public class DbInitCustom implements IDbInit {
 		DbDataField dbe13 = new DbDataField();
 		dbe13.setDbFieldName("GEOM");
 		dbe13.setDbFieldType(DbFieldType.GEOMETRY);
-		dbe13.setGeometryType("POINT");
+		dbe13.setGeometryType("POLYGON");
 		dbe13.setGeometrySrid(SvConf.getParam("sys.gis.default_srid"));
 		dbe13.setIndexName("geom_idx");
 		dbe13.setLabel_code("lpis_parcel.geom");
@@ -657,19 +657,19 @@ public class DbInitCustom implements IDbInit {
 
 		// Column 16
 		DbDataField dbe16 = new DbDataField();
-		dbe16.setDbFieldName("TERASE");
+		dbe16.setDbFieldName("TERRACE");
 		dbe16.setDbFieldType(DbFieldType.NUMERIC);
 		dbe16.setDbFieldSize(18);
 		dbe16.setDbFieldScale(0);
-		dbe16.setLabel_code("lpis_parcel.terase");
+		dbe16.setLabel_code("lpis_parcel.terrace");
 
 		// Column 17
 		DbDataField dbe17 = new DbDataField();
-		dbe17.setDbFieldName("INV_BORDER");
+		dbe17.setDbFieldName("INVISIBLE_BORDER");
 		dbe17.setDbFieldType(DbFieldType.NUMERIC);
 		dbe17.setDbFieldSize(18);
 		dbe17.setDbFieldScale(0);
-		dbe17.setLabel_code("lpis_parcel.inv_border");
+		dbe17.setLabel_code("lpis_parcel.invisible_border");
 
 		// Column 18
 		DbDataField dbe18 = new DbDataField();
@@ -697,11 +697,11 @@ public class DbInitCustom implements IDbInit {
 
 		// Column 21
 		DbDataField dbe21 = new DbDataField();
-		dbe21.setDbFieldName("LANDSCAPE");
+		dbe21.setDbFieldName("LANDSCAPE_FEATURES");
 		dbe21.setDbFieldType(DbFieldType.NUMERIC);
 		dbe21.setDbFieldSize(18);
 		dbe21.setDbFieldScale(0);
-		dbe21.setLabel_code("lpis_parcel.landscape");
+		dbe21.setLabel_code("lpis_parcel.landscape_features");
 
 		// Column 22
 		DbDataField dbe22 = new DbDataField();
@@ -713,11 +713,11 @@ public class DbInitCustom implements IDbInit {
 
 		// Column 23
 		DbDataField dbe23 = new DbDataField();
-		dbe23.setDbFieldName("Z_AVG");
+		dbe23.setDbFieldName("ALTITUDE_AVG");
 		dbe23.setDbFieldType(DbFieldType.NUMERIC);
 		dbe23.setDbFieldSize(18);
 		dbe23.setDbFieldScale(0);
-		dbe23.setLabel_code("lpis_parcel.z_avg");
+		dbe23.setLabel_code("lpis_parcel.altitude_avg");
 
 		// Column 24
 		DbDataField dbe24 = new DbDataField();
