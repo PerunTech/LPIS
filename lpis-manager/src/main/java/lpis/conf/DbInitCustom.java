@@ -299,7 +299,7 @@ public class DbInitCustom implements IDbInit {
 		DbDataField dbe4 = new DbDataField();
 		dbe4.setDbFieldName("GEOM");
 		dbe4.setDbFieldType(DbFieldType.GEOMETRY);
-		dbe4.setGeometryType("POINT");
+		dbe4.setGeometryType("POLYGON");
 		dbe4.setGeometrySrid(SvConf.getParam("sys.gis.default_srid"));
 		dbe4.setIndexName("geom_idx");
 		dbe4.setLabel_code("physical_block.geometry");
@@ -320,13 +320,45 @@ public class DbInitCustom implements IDbInit {
 
 		// Column 7
 		DbDataField dbe7 = new DbDataField();
-		dbe7.setDbFieldName("LAND_COVER");
+		dbe7.setDbFieldName("LAND_COVER_1");
 		dbe7.setDbFieldType(DbFieldType.NVARCHAR);
 		dbe7.setDbFieldSize(10);
 		dbe7.setCode_list_user_code("LAND_USES");
-		dbe7.setLabel_code("physical_block.land_uses");
+		dbe7.setLabel_code("physical_block.land_cover_1");
 
-		DbDataField[] dbTableFields = new DbDataField[7];
+		// Column 8
+		DbDataField dbe8 = new DbDataField();
+		dbe8.setDbFieldName("LAND_COVER_2");
+		dbe8.setDbFieldType(DbFieldType.NVARCHAR);
+		dbe8.setDbFieldSize(10);
+		dbe8.setCode_list_user_code("LAND_USES");
+		dbe8.setLabel_code("physical_block.land_cover_2");
+
+		// Column 9
+		DbDataField dbe9 = new DbDataField();
+		dbe9.setDbFieldName("OLD_INT_ID");
+		dbe9.setDbFieldType(DbFieldType.NUMERIC);
+		dbe9.setDbFieldSize(18);
+		dbe9.setDbFieldScale(0);
+		dbe9.setLabel_code("physical_block.old_int_id");
+
+		// Column 10
+		DbDataField dbe10 = new DbDataField();
+		dbe10.setDbFieldName("OLD_ILPIS_ID");
+		dbe10.setDbFieldType(DbFieldType.NUMERIC);
+		dbe10.setDbFieldSize(18);
+		dbe10.setDbFieldScale(0);
+		dbe10.setLabel_code("physical_block.old_ilpis_id");
+
+		// Column 11
+		DbDataField dbe11 = new DbDataField();
+		dbe11.setDbFieldName("NOTE");
+		dbe11.setDbFieldType(DbFieldType.NVARCHAR);
+		dbe11.setDbFieldScale(0);
+		dbe11.setDbFieldSize(2000);
+		dbe11.setLabel_code("physical_block.note");
+
+		DbDataField[] dbTableFields = new DbDataField[11];
 		dbTableFields[0] = dbe1;
 		dbTableFields[1] = dbe2;
 		dbTableFields[2] = dbe3;
@@ -334,6 +366,10 @@ public class DbInitCustom implements IDbInit {
 		dbTableFields[4] = dbe5;
 		dbTableFields[5] = dbe6;
 		dbTableFields[6] = dbe7;
+		dbTableFields[7] = dbe8;
+		dbTableFields[8] = dbe9;
+		dbTableFields[9] = dbe10;
+		dbTableFields[10] = dbe11;
 		dbe.setDbTableFields(dbTableFields);
 		return dbe;
 	}
@@ -586,7 +622,7 @@ public class DbInitCustom implements IDbInit {
 		dbe7.setDbFieldName("AREA");
 		dbe7.setDbFieldType(DbFieldType.NUMERIC);
 		dbe7.setDbFieldSize(18);
-		dbe7.setDbFieldScale(0);
+		dbe7.setDbFieldScale(5);
 		dbe7.setLabel_code("lpis_parcel.area");
 
 		// Column 8
@@ -594,7 +630,7 @@ public class DbInitCustom implements IDbInit {
 		dbe8.setDbFieldName("ALLOWED_AREA");
 		dbe8.setDbFieldType(DbFieldType.NUMERIC);
 		dbe8.setDbFieldSize(18);
-		dbe8.setDbFieldScale(0);
+		dbe8.setDbFieldScale(5);
 		dbe8.setLabel_code("lpis_parcel.allowed_area");
 
 		// Column 9
@@ -618,7 +654,7 @@ public class DbInitCustom implements IDbInit {
 		dbe11.setDbFieldName("PERIMETER");
 		dbe11.setDbFieldType(DbFieldType.NUMERIC);
 		dbe11.setDbFieldSize(9);
-		dbe11.setDbFieldScale(0);
+		dbe11.setDbFieldScale(5);
 		dbe11.setLabel_code("lpis_parcel.perimeter");
 
 		// Column 12
@@ -660,7 +696,7 @@ public class DbInitCustom implements IDbInit {
 		dbe16.setDbFieldName("TERRACE");
 		dbe16.setDbFieldType(DbFieldType.NUMERIC);
 		dbe16.setDbFieldSize(18);
-		dbe16.setDbFieldScale(0);
+		dbe16.setDbFieldScale(5);
 		dbe16.setLabel_code("lpis_parcel.terrace");
 
 		// Column 17
@@ -668,7 +704,7 @@ public class DbInitCustom implements IDbInit {
 		dbe17.setDbFieldName("INVISIBLE_BORDER");
 		dbe17.setDbFieldType(DbFieldType.NUMERIC);
 		dbe17.setDbFieldSize(18);
-		dbe17.setDbFieldScale(0);
+		dbe17.setDbFieldScale(5);
 		dbe17.setLabel_code("lpis_parcel.invisible_border");
 
 		// Column 18
@@ -676,7 +712,7 @@ public class DbInitCustom implements IDbInit {
 		dbe18.setDbFieldName("CHANGE_BORDER");
 		dbe18.setDbFieldType(DbFieldType.NUMERIC);
 		dbe18.setDbFieldSize(18);
-		dbe18.setDbFieldScale(0);
+		dbe18.setDbFieldScale(5);
 		dbe18.setLabel_code("lpis_parcel.change_border");
 
 		// Column 19
@@ -692,7 +728,7 @@ public class DbInitCustom implements IDbInit {
 		dbe20.setDbFieldName("EXP_AVG");
 		dbe20.setDbFieldType(DbFieldType.NUMERIC);
 		dbe20.setDbFieldSize(18);
-		dbe20.setDbFieldScale(0);
+		dbe20.setDbFieldScale(5);
 		dbe20.setLabel_code("lpis_parcel.exp_avg");
 
 		// Column 21
@@ -700,7 +736,7 @@ public class DbInitCustom implements IDbInit {
 		dbe21.setDbFieldName("LANDSCAPE_FEATURES");
 		dbe21.setDbFieldType(DbFieldType.NUMERIC);
 		dbe21.setDbFieldSize(18);
-		dbe21.setDbFieldScale(0);
+		dbe21.setDbFieldScale(5);
 		dbe21.setLabel_code("lpis_parcel.landscape_features");
 
 		// Column 22
@@ -716,7 +752,7 @@ public class DbInitCustom implements IDbInit {
 		dbe23.setDbFieldName("ALTITUDE_AVG");
 		dbe23.setDbFieldType(DbFieldType.NUMERIC);
 		dbe23.setDbFieldSize(18);
-		dbe23.setDbFieldScale(0);
+		dbe23.setDbFieldScale(5);
 		dbe23.setLabel_code("lpis_parcel.altitude_avg");
 
 		// Column 24
@@ -724,7 +760,7 @@ public class DbInitCustom implements IDbInit {
 		dbe24.setDbFieldName("SLOPE_AVG");
 		dbe24.setDbFieldType(DbFieldType.NUMERIC);
 		dbe24.setDbFieldSize(18);
-		dbe24.setDbFieldScale(0);
+		dbe24.setDbFieldScale(5);
 		dbe24.setLabel_code("lpis_parcel.slope_avg");
 
 		DbDataField[] dbTableFields = new DbDataField[24];
@@ -866,17 +902,6 @@ public class DbInitCustom implements IDbInit {
 		return dbe;
 	}
 
-	// LINK LAND_USE AND CAD
-	public static DbDataObject createLandUsePlanLink() {
-		DbDataObject dbLink = new DbDataObject();
-		dbLink.setObject_type(svCONST.OBJECT_TYPE_LINK_TYPE);
-		dbLink.setVal("LINK_TYPE", "LINK_LANDUSE_CAD");
-		dbLink.setVal("LINK_TYPE_DESCRIPTION", "link between CAD_PARCEL and LAND_USE_PLAN");
-		dbLink.setVal("LINK_OBJ_TYPE_1", ("LAND_USE_PLAN"));
-		dbLink.setVal("LINK_OBJ_TYPE_2", ("CAD_PARCEL"));
-		return dbLink;
-	}
-
 	@Override
 	public ArrayList<DbDataTable> getCustomObjectTypes() {
 		DbDataTable dbtt = null;
@@ -889,6 +914,8 @@ public class DbInitCustom implements IDbInit {
 		dbtList.add(addSortOrder(dbtt));
 		dbtt = DbInitCustom.createLandUsePlan();
 		dbtList.add(addSortOrder(dbtt));
+		dbtt = DbInitCustom.createPhysicalBlock();
+		dbtList.add(addSortOrder(dbtt));
 
 		return dbtList;
 	}
@@ -897,8 +924,9 @@ public class DbInitCustom implements IDbInit {
 	public ArrayList<DbDataObject> getCustomObjectInstances() {
 		DbDataObject dbtt = null;
 		ArrayList<DbDataObject> dbtList = new ArrayList<DbDataObject>();
-		dbtt = DbInitCustom.createLandUsePlanLink();
-		dbtList.add((dbtt));
+		/*
+		 * dbtt = DbInitCustom.createLandUsePlanLink(); dbtList.add((dbtt));
+		 */
 		return dbtList;
 	}
 
