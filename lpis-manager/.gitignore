@@ -1,8 +1,0 @@
-*.retry
-# ignore build folder
-/build/*
-/.classpath
-/.settings
-/.directory
-/.project
-/target/
