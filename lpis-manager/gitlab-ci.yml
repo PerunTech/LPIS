@@ -1,0 +1,32 @@
+stages:
+  - build
+  - code_analysis
+  - mvn_install
+
+before_script:
+  - git reset --hard $CI_COMMIT_SHA
+  - git clean -df
+  - git stash
+  - git pull origin $CI_COMMIT_SHA
+  
+build:
+  stage: build
+  script:  
+    - pwd
+    - mvn clean compile
+
+sonarqube:
+  stage: code_analysis
+  script:  
+    - pwd
+    - mvn sonar:sonar -Dsonar.analysis.mode="preview"
+
+install:
+  stage: mvn_install
+  script:  
+    - pwd
+    - mvn install
+  only:
+    - master
+    - staging
+    - dev
