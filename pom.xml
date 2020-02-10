@@ -5,6 +5,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>lpis-manager</name>
   <description>lpis-manager</description>
+  <packaging>bundle</packaging>
   
   <url>http://maven.apache.org</url>
 	<properties>
