@@ -16,7 +16,7 @@ const externals = {
   }
 };
 
-module.exports = (mode, env) => {
+module.exports = (mode, {env}) => {
   return {
     mode: mode,
     entry: './src/index.js',
