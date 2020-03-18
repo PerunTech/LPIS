@@ -1,1 +1,3 @@
-export const project = {};
+export const plugin = {
+    init: () => {}
+};
