@@ -1,7 +1,7 @@
 {
-  "name": "project-template",
+  "name": "plugin-template",
   "version": "1.0.0",
-  "description": "Template project.",
+  "description": "Template project for PerunJS plugins.",
   "main": "index.js",
   "scripts": {
     "build": "webpack",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.prtech.mk/perunv3/project-template.git"
+    "url": "https://gitlab.prtech.mk/perunv3/plugin-template.git"
   },
   "keywords": [
     "template",
