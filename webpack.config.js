@@ -1,5 +1,4 @@
 let path = require('path');
-let pck = require('./package.json');
 
 const externals = {
   react: {
@@ -23,7 +22,7 @@ module.exports = (mode, {env}) => {
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: 'plugin-template.min.js',
-      library: "plugin_template"
+      library: 'pluginTemplater'
     },
     module: {
       rules: [
