@@ -1,7 +1,22 @@
 let path = require('path');
 let pck = require('./package.json');
 
-module.exports = mode => {
+const externals = {
+  react: {
+      root: 'React',
+      commonjs2: 'react',
+      commonjs: 'react',
+      amd: 'react'
+  },
+  'react-dom': {
+      root: 'ReactDOM',
+      commonjs2: 'react-dom',
+      commonjs: 'react-dom',
+      amd: 'react-dom'
+  }
+};
+
+module.exports = (mode, env) => {
   return {
     mode: mode,
     entry: './src/index.js',
@@ -54,5 +69,6 @@ module.exports = mode => {
     resolve: {
       extensions: ['.js', '.jsx']
     },
+    externals: env === 'production' ? externals : {}
   }
 };

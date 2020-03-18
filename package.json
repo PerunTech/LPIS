@@ -4,8 +4,8 @@
   "description": "Template project for PerunJS plugins.",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --mode=production",
-    "build-dev": "webpack --mode=development",
+    "build": "webpack --mode=production --env=production",
+    "build-dev": "webpack --mode=development --env=development",
     "test": "echo \\\"Error: no test specified\\\" && exit 1"
   },
   "repository": {
