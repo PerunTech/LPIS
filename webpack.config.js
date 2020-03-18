@@ -5,7 +5,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'project-template.min.js'
+    filename: 'plugin-template.min.js'
   },
   module: {
     rules: [
