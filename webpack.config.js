@@ -51,13 +51,10 @@ module.exports = (mode, {env}) => {
             ]
         },
         resolve: {
-            extensions: ['.js', '.jsx'],
-            alias: {
-                'perun-core': './plugin-template.min.js'
-            }
+            extensions: ['.js', '.jsx']
         },
         externals: env === 'production' 
-            ? { 'perun-core': 'perun-core' } 
+            ? { 'perun-core': 'core' } 
             : {}
     }
 };

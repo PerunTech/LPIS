@@ -1,6 +1,7 @@
 import { React, ReactDOM } from 'perun-core';
+import { App } from 'perun-core'
 
 export const plugin = {
     init: () => {}
 };
-ReactDOM.render(<span >Hello World</span>, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));
