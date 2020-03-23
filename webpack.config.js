@@ -21,6 +21,18 @@ module.exports = (mode, {env}) => {
                             cacheDirectory: true
                         }
                     }
+                }, 
+                {
+                    test: /(\.jsx|\.js)$/,
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: ['@babel/preset-env', '@babel/preset-react'],
+                            cacheDirectory: true
+                        }
+                    },
+                    enforce: 'pre',
+                    include: [/perun-core/]
                 },
                 {
                     // For pure CSS (without CSS modules)
