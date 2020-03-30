@@ -1,5 +1,6 @@
 /**
- * This file is the entry point to the project build, when running a development environment*. 
+ * This file is the entry point to the build of the project web resources,
+ * when running a development environment*. 
  * 
  * This file must register with Core (perun-core), in order for the plugin to work.
  * In order to sucessfully register, import your plugin from the production entry point,
@@ -13,7 +14,7 @@
  *  - The name of your plugin, by convention the name specified in package.json
  *  - Your plugin implementation, assembled as an object.
  * 
- * You can change this file to another one, given that you change this line in webpack.config.js:
+ * You can change this default entry to another one, given that you change this line in webpack.config.js:
  *   - entry: env === 'production' ? './src/index.js' : './src/client.js'
  * Change client.js path above to the path of your desired dev entry file. Remember to do the exact steps
  * shown here in your newly created file.
