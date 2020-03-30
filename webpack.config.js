@@ -3,11 +3,16 @@ let path = require('path');
 module.exports = (mode, {env}) => {
     return {
         mode: mode,
-        entry: './src/index.js',
+        entry: env === 'production' ? './src/index.js' : './src/client.js',
         output: {
             path: path.resolve(__dirname, 'dist'),
             filename: 'plugin-template.min.js',
-            library: 'pluginTemplate'
+            library: 'pluginTemplate',
+            libraryTarget: 'umd',
+            globalObject: 'this'
+        },
+        devServer: {
+            contentBase: './dist',
         },
         module: {
             rules: [
@@ -65,8 +70,6 @@ module.exports = (mode, {env}) => {
         resolve: {
             extensions: ['.js', '.jsx']
         },
-        externals: env === 'production' 
-            ? { 'perun-core': 'core' } 
-            : {}
+        externals: env === 'production' ? { 'perun-core': 'perun-core' } : {}
     }
 };
