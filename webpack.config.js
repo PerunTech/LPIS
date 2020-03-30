@@ -5,14 +5,14 @@ module.exports = (mode, {env}) => {
         mode: mode,
         entry: env === 'production' ? './frontend/index.js' : './frontend/client.js',
         output: {
-            path: path.resolve(__dirname, 'dist'),
+            path: path.resolve('./backend/www'),
             filename: 'plugin-template.min.js',
             library: 'pluginTemplate',
             libraryTarget: 'umd',
             globalObject: 'this'
         },
         devServer: {
-            contentBase: './dist',
+            contentBase: './backend/www',
         },
         module: {
             rules: [
