@@ -1,6 +1,7 @@
 # plugin-template
 
 Blank plugin project to get you started.
+
 Includes: 
     - Base configiration of development dependencies.
     - Base configuration of runtime dependencies (i.e. Perun-Core).
