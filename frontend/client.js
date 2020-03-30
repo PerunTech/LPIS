@@ -15,7 +15,7 @@
  *  - Your plugin implementation, assembled as an object.
  * 
  * You can change this default entry to another one, given that you change this line in webpack.config.js:
- *   - entry: env === 'production' ? './src/index.js' : './src/client.js'
+ *   - entry: env === 'production' ? './frontend/index.js' : './frontend/client.js'
  * Change client.js path above to the path of your desired dev entry file. Remember to do the exact steps
  * shown here in your newly created file.
  */

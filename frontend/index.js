@@ -9,10 +9,10 @@
  * routes must be specified, such that:
  *  - we export a list of routes, each element is an individual route
  *  - each route is represented by an object, with the following attributes:
- *      - name => the internal reference name to the route
+ *      - name => the internal reference name to the route, name it any string you like.
  *      - path => the URL path of the route.
  *      - render => The markup to be rendered at the specified path, usually a React component.
- *      - isExact => boolean flag, indicates whether an exact match of the URL is required, use true in most cases.
+ *      - isExact => boolean flag, indicates whether an exact match of the URL is required, use `true` in most cases.
  *      - example: { name: 'demo', path: '/main/demo', render: Main, isExact: true }
  *  - You need to specify at least one route (the main route) from which the App will go to the plugin.
  *  - In case the plugin uses multiple routes internally, declare those as well as elements of the routes list.
@@ -20,15 +20,16 @@
  * 
  * 
  * You can change this default entry to another one, given that you change this line in webpack.config.js:
- *   - entry: env === 'production' ? './src/index.js' : './src/client.js'
+ *   - entry: env === 'production' ? './frontend/index.js' : './frontend/client.js'
  * Change index.js path above to the path of your desired dev entry file.
  * Change the import statement in the development entry (client.js by default) to import from you newly created
  * production entry file.
  * Remember to do the exact steps shown here in the new production entry.
  */
 
-/**
- * @example
+/** 
+ * @example, paths are imaginary.
+ * 
 import * as assets from './assets'; // eslint-disable-line
 import { Main } from './proto/Main';
 import { TestForm } from './proto/Form';

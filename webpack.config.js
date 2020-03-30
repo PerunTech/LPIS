@@ -3,7 +3,7 @@ let path = require('path');
 module.exports = (mode, {env}) => {
     return {
         mode: mode,
-        entry: env === 'production' ? './src/index.js' : './src/client.js',
+        entry: env === 'production' ? './frontend/index.js' : './frontend/client.js',
         output: {
             path: path.resolve(__dirname, 'dist'),
             filename: 'plugin-template.min.js',
