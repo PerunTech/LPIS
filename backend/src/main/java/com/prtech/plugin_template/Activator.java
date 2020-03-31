@@ -12,8 +12,6 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog_interfaces.ISvExecutor;
-import com.prtech.svx_spatial.service.SpatialServices;
-import com.prtech.svx_spatial.service.WSGeometry;
 
 /**
  * This class implements a simple bundle that uses the bundle context to
@@ -54,8 +52,6 @@ public class Activator implements BundleActivator {
 	private ArrayList<Class<?>> initWebServices() {
 		ArrayList<Class<?>> list = new ArrayList<Class<?>>();
 		// add web services here.
-		list.add(SpatialServices.class);
-		list.add(WSGeometry.class);
 		return list;
 	}
 
