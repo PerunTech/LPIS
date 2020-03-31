@@ -2,7 +2,9 @@
 
 Blank plugin project to get you started.
 
-Includes: 
+./frontend includes:
+
+    - All JavaScript code and resources.
 
     - Base configiration of development dependencies.
 
@@ -21,3 +23,24 @@ Includes:
         - Proper output configuration to an `Universal Module Definition` library.
         
         - External specifier for production build, defines resources provided by the host in a production environment.
+
+
+./backend includes:
+
+    - All Java code and resources.
+
+    - A maven (3.6) project lives in this folder.
+
+    - Minimal configured pom.xml, including:
+
+        - base Maven plugins: compiler, source and bundle plugin.
+
+        - Svarog et all., your OSGI container.
+
+        - OSGI required packages.
+
+        - junit, the java testing suite.
+
+        - base service packages.
+
+    - Activator template class, with method stubs to declare your web   services and executors.
