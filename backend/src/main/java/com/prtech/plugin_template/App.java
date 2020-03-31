@@ -1,4 +1,4 @@
-package plugin_template.plugin_template;
+package com.prtech.plugin_template;
 
 /**
  * Hello world!
