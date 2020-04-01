@@ -85,13 +85,13 @@
 	<dependency>
 		<groupId>svarog-interfaces</groupId>
 		<artifactId>svarog-interfaces</artifactId>
-		<version>[3.0.1-SNAPSHOT,)</version>
+		<version>[3.0.1,)</version>
 		<scope>provided</scope>
 	</dependency>
 	<dependency>
 		<groupId>svarog</groupId>
 		<artifactId>svarog</artifactId>
-		<version>[3.0.1-SNAPSHOT,)</version>
+		<version>[3.0.1,)</version>
 		<scope>provided</scope>
 	</dependency>
 	<dependency>
@@ -102,7 +102,7 @@
 	<dependency>
 		<groupId>svarog-io</groupId>
 		<artifactId>svarog-io</artifactId>
-		<version>[1.0.1-SNAPSHOT,)</version>
+		<version>[1.0.1,)</version>
 		<scope>provided</scope>
 	</dependency>
 	<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-multipart -->
