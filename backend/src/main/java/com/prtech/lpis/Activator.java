@@ -1,4 +1,4 @@
-package com.prtech.plugin_template;
+package com.prtech.lpis;
 
 import java.util.ArrayList;
 
