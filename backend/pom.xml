@@ -2,12 +2,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-<groupId>plugin-template</groupId>
-<artifactId>plugin-template</artifactId>
+<groupId>lpis</groupId>
+<artifactId>lpis</artifactId>
 <version>0.0.1-SNAPSHOT</version>
 <packaging>bundle</packaging>
-<name>Plugin Template</name>
-<description>Blank plugin project to get you started.</description>
+<name>Land Parcel Identification System</name>
 <properties>
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 </properties>
@@ -50,12 +49,12 @@
 			<extensions>true</extensions>
 			<configuration>
 				<instructions>
-					<Bundle-SymbolicName>com.prtech.plugin_template</Bundle-SymbolicName>
+					<Bundle-SymbolicName>com.prtech.lpis</Bundle-SymbolicName>
 					<Bundle-Name>${project.name}</Bundle-Name>
 					<Bundle-Version>${project.version}</Bundle-Version>
 					<Bundle-Vendor>Perun.Tech</Bundle-Vendor>
 					<Bundle-Description>${project.description}</Bundle-Description>
-					<Bundle-Activator>com.prtech.plugin_template.Activator</Bundle-Activator>
+					<Bundle-Activator>com.prtech.lpis.Activator</Bundle-Activator>
 				</instructions>
 			</configuration>
 		</plugin>

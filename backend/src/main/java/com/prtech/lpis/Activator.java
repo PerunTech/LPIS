@@ -32,7 +32,7 @@ public class Activator implements BundleActivator {
 	 * The context path on the http server under which the static content from
 	 * the /www folder inside the bundle will be served.
 	 */
-	static final String httpContextPath = "/perun_spatial";
+	static final String httpContextPath = "/lpis";
 
 	/**
 	 * Directory inside the bundle which will be served at the context path.
