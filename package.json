@@ -7,7 +7,7 @@
         "build": "webpack --mode=production --env=production",
         "build-dev": "webpack --mode=development --env=development",
         "dev": "webpack-dev-server --mode=development",
-        "test": "echo \\\"Error: no test specified\\\" && exit 1"
+        "test": "eslint --fix frontend/ || exit 0"
     },
     "repository": {
         "type": "git",
