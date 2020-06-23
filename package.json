@@ -1,20 +1,20 @@
 {
-    "name": "plugin-template",
+    "name": "lpis",
     "version": "0.0.1",
-    "description": "Template project for Perun plugins.",
-    "main": "./lib/plugin-template.min.js",
+    "description": "Land Parcel Identification System",
+    "main": "backend/www/lpis.min.js",
     "scripts": {
         "build": "webpack --mode=production --env=production",
         "build-dev": "webpack --mode=development --env=development",
         "dev": "webpack-dev-server --mode=development",
-        "test": "echo \\\"Error: no test specified\\\" && exit 1"
+        "test": "eslint --fix frontend/ || exit 0"
     },
     "repository": {
         "type": "git",
-        "url": "https://gitlab.prtech.mk/perunv3/plugin-template.git"
+        "url": "https://gitlab.prtech.mk/iacs_custom/lpis"
     },
     "dependencies": {
-        "perun-core": "git+ssh://git@gitlab.prtech.mk/perunv3/perun-core"
+        "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core#dev"
     },
     "devDependencies": {
         "@babel/core": "^7.8.7",
