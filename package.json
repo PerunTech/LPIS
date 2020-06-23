@@ -14,7 +14,7 @@
         "url": "https://gitlab.prtech.mk/iacs_custom/lpis"
     },
     "dependencies": {
-        "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core"
+        "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core#dev"
     },
     "devDependencies": {
         "@babel/core": "^7.8.7",
