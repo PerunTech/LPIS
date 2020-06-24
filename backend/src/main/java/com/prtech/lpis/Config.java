@@ -9,18 +9,17 @@ public class Config {
 	/*  */
 	private static final Logger log = LogManager.getLogger(Config.class.getName());
 	
-	private final Properties properties = loadProperties();
+	static private final Properties properties = loadProperties();
 
-	private Properties loadProperties () {
+	private static Properties loadProperties () {
 		Properties properties = new Properties();
 		try {
-			properties.load(this.getClass().getClassLoader().getResourceAsStream("lpis.properties"));
+			properties.load(Config.class.getClassLoader().getResourceAsStream("lpis.properties"));
 		} catch (Exception e) {
-			// TODO: handle exception
+			log.error("Failed loading configuration.");
+			log.error(e);
 		}
 		
 		return properties;
 	}
-	
-	
 }
