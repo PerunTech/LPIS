@@ -22,4 +22,20 @@ public class Config {
 		
 		return properties;
 	}
+	
+	static String getProjectGroup () {
+		return properties.getProperty("projectGroup", "");
+	}
+	
+	static String getProjectName () {
+		return properties.getProperty("projectName", "lpis");
+	}
+	
+	static String getProjectVersion () {
+		return properties.getProperty("version", "1");
+	}
+	
+	static String getDescription () {
+		return properties.getProperty("description", "");
+	}
 }
