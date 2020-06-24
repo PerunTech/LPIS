@@ -1,5 +1,7 @@
 package com.prtech.lpis;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,11 +15,20 @@ public class Config {
 
 	private static Properties loadProperties () {
 		Properties properties = new Properties();
+		InputStream is = Config.class.getClassLoader().getResourceAsStream("lpis.properties");
+	
 		try {
-			properties.load(Config.class.getClassLoader().getResourceAsStream("lpis.properties"));
-		} catch (Exception e) {
+			properties.load(is);
+		} catch (IOException e) {
 			log.error("Failed loading configuration.");
 			log.error(e);
+		} finally {
+			try {
+				if (is != null) 
+					is.close();
+			} catch (IOException ioe) {
+				log.error(ioe);
+			}
 		}
 		
 		return properties;
