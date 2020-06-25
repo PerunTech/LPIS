@@ -50,7 +50,7 @@ public class DbInit implements IDbInit {
 		dbf2.setGeometrySrid(SRID);
 		dbf2.setIndexName("pb_geom_sidx"); // name must be unique
 		dbf2.setIsNull(false);
-		dbf2.setLabel_code("sdi_common.geometry");
+		dbf2.setLabel_code("common.geometry");
 
 		/* C3 [read-write, not null, form-hidden], derivative of geometry. */
 		DbDataField dbf3 = new DbDataField();
@@ -60,7 +60,7 @@ public class DbInit implements IDbInit {
 		dbf3.setGeometrySrid(SRID);
 		dbf3.setIndexName("pb_cnt_sidx");
 		dbf3.setIsNull(false);
-		dbf3.setLabel_code("sdi_common.centroid");
+		dbf3.setLabel_code("common.centroid");
 		
 		/* C4 [read-write, not null, form-hidden], derivative of geometry. */
 		DbDataField dbf4 = new DbDataField();
@@ -69,7 +69,7 @@ public class DbInit implements IDbInit {
 		dbf4.setDbFieldSize(18);
 		dbf4.setDbFieldSize(2);
 		dbf4.setIsNull(false);
-		dbf4.setLabel_code("sdi_common.perimeter");
+		dbf4.setLabel_code("common.perimeter");
 		
 		/* C5 [read-write, not null, form-hidden], derivative of geometry. */
 		DbDataField dbf5 = new DbDataField();
@@ -78,7 +78,44 @@ public class DbInit implements IDbInit {
 		dbf5.setDbFieldSize(18);
 		dbf5.setDbFieldSize(2);
 		dbf5.setIsNull(false);
-		dbf5.setLabel_code("sdi_common.area");
+		dbf5.setLabel_code("common.area");
+		
+		/* C6 [read-write, not null, form-visible], essential alphanumerical data of this object.*/
+		DbDataField dbf6 = new DbDataField();
+		dbf6.setDbFieldName("LAND_COVER_CODE");
+		dbf6.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf6.setDbFieldSize(50);
+		dbf6.setIsNull(false);
+		dbf6.setLabel_code("physical_block.land_cover_code");
+		dbf6.setCode_list_user_code("LAND_COVER");
+		
+		/* C7 [read-write, can be null, form-visible] */
+		DbDataField dbf7 = new DbDataField();
+		dbf7.setDbFieldName("NOTE");
+		dbf7.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf7.setDbFieldSize(2000);
+		dbf7.setIsNull(true);
+		dbf7.setLabel_code("common.note");
+		
+		/* C8 [system, form-hidden] */
+		DbDataField dbf8 = new DbDataField();
+		dbf8.setDbFieldName("OLD_ID");
+		dbf8.setDbFieldType(DbFieldType.NUMERIC);
+		dbf8.setDbFieldSize(18);
+		dbf8.setDbFieldScale(0);
+		dbf8.setIsNull(true);
+		dbf8.setLabel_code("physical_block.old_id");
+
+		DbDataField[] fieldList = new DbDataField[8];
+		fieldList[0] = dbf1;
+		fieldList[1] = dbf2;
+		fieldList[2] = dbf3;
+		fieldList[3] = dbf4;
+		fieldList[4] = dbf5;
+		fieldList[5] = dbf6;
+		fieldList[6] = dbf7;
+		fieldList[7] = dbf8;
+		dbt.setDbTableFields(fieldList);
 		
 		return dbt;
 	}
