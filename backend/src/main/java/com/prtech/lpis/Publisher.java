@@ -17,8 +17,8 @@ public class Publisher implements IPerunPlugin {
 	 * This value is used in triggering update of the plugin dbo.
 	 *
 	 * It is our host responsibility to implement robust maven version comparison,
-	 * which is currently absent, until then we provide a fairly gimmicky, but consequentially trivial
-	 * value here.
+	 * which is currently absent, until then we provide a fairly gimmicky,
+	 * but consequentially trivial value here.
 	 * 
 	 * @return The first digit of the Maven version.
 	 */
