@@ -15,6 +15,18 @@ public class DbInit implements IDbInit {
 	static final String CONST_DEFAULT_SCHEMA = "{DEFAULT_SCHEMA}";
 	static final String SRID = new Integer(SvConf.getSDISrid()).toString();
 	
+	private static DbDataTable addSortOrder(DbDataTable dbtt) {
+		Integer order = 100;
+		if (dbtt.getDbTableFields() != null)
+			for (DbDataField dbf : dbtt.getDbTableFields()) {
+				if (dbf != null && dbf.getSort_order() == null) {
+					dbf.setSort_order(order);
+					order = order + 100;
+				}
+			}
+		return dbtt;
+	}
+	
 	public static DbDataTable createPhysicalBlock () {
 		/* The flagship table of the project. */
 		DbDataTable dbt = new DbDataTable();
@@ -122,8 +134,10 @@ public class DbInit implements IDbInit {
 
 	@Override
 	public ArrayList<DbDataTable> getCustomObjectTypes() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<DbDataTable> dbtList = new ArrayList<DbDataTable>();
+		dbtList.add(addSortOrder(DbInit.createPhysicalBlock()));
+		
+		return dbtList;
 	}
 
 	@Override
