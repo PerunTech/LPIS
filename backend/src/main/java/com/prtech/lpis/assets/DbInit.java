@@ -13,7 +13,7 @@ public class DbInit implements IDbInit {
 	
 	static final String CONST_MASTER_REPO = "{MASTER_REPO}";
 	static final String CONST_DEFAULT_SCHEMA = "{DEFAULT_SCHEMA}";
-	static final String SRID = new Integer(SvConf.getSDISrid()).toString();
+	static final String SRID = Integer.valueOf(SvConf.getSDISrid()).toString();
 	
 	private static DbDataTable addSortOrder(DbDataTable dbtt) {
 		Integer order = 100;
