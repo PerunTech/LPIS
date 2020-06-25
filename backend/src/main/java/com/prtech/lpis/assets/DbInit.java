@@ -62,6 +62,24 @@ public class DbInit implements IDbInit {
 		dbf3.setIsNull(false);
 		dbf3.setLabel_code("sdi_common.centroid");
 		
+		/* C4 [read-write, not null, form-hidden], derivative of geometry. */
+		DbDataField dbf4 = new DbDataField();
+		dbf4.setDbFieldName("PERIMETER");
+		dbf4.setDbFieldType(DbFieldType.NUMERIC);
+		dbf4.setDbFieldSize(18);
+		dbf4.setDbFieldSize(2);
+		dbf4.setIsNull(false);
+		dbf4.setLabel_code("sdi_common.perimeter");
+		
+		/* C5 [read-write, not null, form-hidden], derivative of geometry. */
+		DbDataField dbf5 = new DbDataField();
+		dbf5.setDbFieldName("AREA");
+		dbf5.setDbFieldType(DbFieldType.NUMERIC);
+		dbf5.setDbFieldSize(18);
+		dbf5.setDbFieldSize(2);
+		dbf5.setIsNull(false);
+		dbf5.setLabel_code("sdi_common.area");
+		
 		return dbt;
 	}
 
