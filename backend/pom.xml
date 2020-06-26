@@ -11,6 +11,8 @@
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 </properties>
 <build>
+	<sourceDirectory>src</sourceDirectory>
+	<testSourceDirectory>tests</testSourceDirectory>
 	<resources>
 		<resource>
 			<directory>${project.basedir}</directory>
@@ -19,7 +21,7 @@
 			</includes>
 		</resource>
 		<resource>
-			<directory>src/main/resources</directory>
+			<directory>src/com/prtech/lpis/resources</directory>
 			<filtering>true</filtering>
 		</resource>
 	</resources>
@@ -83,7 +85,7 @@
 		<groupId>junit</groupId>
 		<artifactId>junit</artifactId>
 		<version>4.12</version>
-		<scope>test</scope>
+		<scope>tests</scope>
 	</dependency>
 	<!-- https://mvnrepository.com/artifact/javax.ws.rs/jsr311-api -->
 	<dependency>

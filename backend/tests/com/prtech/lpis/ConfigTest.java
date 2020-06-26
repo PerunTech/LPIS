@@ -20,4 +20,24 @@ public class ConfigTest {
 				+ "It evaluates to the maven artifactId.\n"
 				+ "Since it is not defined properly, expect nothing to work.", (name != null && name.length() > 1));
 	}
+	
+	@Test
+	public void testAccessCard () {
+		String icon = Config.getCardIcon();
+		String permissionCode = Config.getPermissionCode();
+		String label = Config.getCardLabel();
+		String order = Config.getCardOrder();
+		
+		String url = Config.getJSURL();
+		int urlLen = url.length();
+		
+		Assert.assertTrue("Frontend card label is not defined, check configuration.", label != null);
+		Assert.assertTrue("Frontend card order is not properly defined, check configuration.", order != null && Integer.parseInt(order) > 0);
+		Assert.assertTrue("Permission code is not properly defined, check configuration.", permissionCode != null);
+		Assert.assertTrue("Frontend card icon path is not set, check configuration", icon != null);
+		Assert.assertTrue(
+				"Frontend js script path is not set, check configuration.\n"
+				+ "Without a registered script name, the user will not be able to access the plugin.", 
+				url != null && url.substring(urlLen -3, urlLen).equals(".js"));
+	}
 }

@@ -11,6 +11,7 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.prtech.svarog.SvConf;
+import com.prtech.svarog_interfaces.IPerunPlugin;
 import com.prtech.svarog_interfaces.ISvExecutor;
 
 /**
@@ -32,7 +33,7 @@ public class Activator implements BundleActivator {
 	 * The context path on the http server under which the static content from
 	 * the /www folder inside the bundle will be served.
 	 */
-	static final String httpContextPath = "/lpis";
+	static final String httpContextPath = "/" + Config.getProjectName();
 
 	/**
 	 * Directory inside the bundle which will be served at the context path.
@@ -96,9 +97,12 @@ public class Activator implements BundleActivator {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void start(BundleContext context) {
 
-		log4j.info("Starting svarog-spatial OSGI bundle");
-
 		ServiceRegistration svc = null;
+		log4j.info("Starting " + Config.getDescription() +" OSGI bundle");
+
+		IPerunPlugin publisher = new PerunPluginInfo();
+		log4j.info("Registering "+ Config.getDescription() +" plugin with Svarog");
+		svc = context.registerService(IPerunPlugin.class.getName(), publisher, null);		
 
 		for (Class<?> ws : webServices) {
 			try {
@@ -121,7 +125,7 @@ public class Activator implements BundleActivator {
 			if (svc != null)
 				this.services.add(svc);
 		}
-
+		
 		httpTracker = new ServiceTracker(context, HttpService.class.getName(), null) {
 			public void removedService(ServiceReference reference, Object service) {
 				// HTTP service is no longer available, unregister our
