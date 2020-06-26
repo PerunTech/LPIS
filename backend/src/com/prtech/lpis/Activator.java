@@ -100,7 +100,7 @@ public class Activator implements BundleActivator {
 		ServiceRegistration svc = null;
 		log4j.info("Starting " + Config.getDescription() +" OSGI bundle");
 
-		IPerunPlugin publisher = new Publisher();
+		IPerunPlugin publisher = new PerunPLuginInfo();
 		log4j.info("Registering "+ Config.getDescription() +" plugin with Svarog");
 		svc = context.registerService(IPerunPlugin.class.getName(), publisher, null);		
 

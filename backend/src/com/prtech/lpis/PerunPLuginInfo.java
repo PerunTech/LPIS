@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 import com.prtech.svarog_interfaces.IPerunPlugin;
 import com.prtech.svarog_interfaces.ISvCore;
 
-public class Publisher implements IPerunPlugin {
+public class PerunPLuginInfo implements IPerunPlugin {
 	
 	private static final Logger log = LogManager.getLogger(Config.class.getName());
 	
