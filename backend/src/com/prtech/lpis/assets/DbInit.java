@@ -131,6 +131,22 @@ public class DbInit implements IDbInit {
 		
 		return dbt;
 	}
+	
+	public static DbDataTable createHighlandPastures () {
+		DbDataTable dbt = new DbDataTable();
+		dbt.setDbTableName("HIGHLAND_PASTURES");
+		dbt.setDbRepoName(CONST_MASTER_REPO);
+		dbt.setDbSchema(CONST_DEFAULT_SCHEMA);
+		dbt.setIsSystemTable(false);
+		dbt.setIsRepoTable(false);
+		dbt.setIsConfigTable(false);
+		dbt.setLabel_code("highland_pastures.general");
+		dbt.setUse_cache(true);
+		
+		
+		
+		return dbt;
+	}
 
 	@Override
 	public ArrayList<DbDataTable> getCustomObjectTypes() {
