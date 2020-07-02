@@ -48,7 +48,9 @@ public class DbInit implements IDbInit {
 		dbf1.setDbFieldScale(0);
 		dbf1.setIsNull(false);
 		dbf1.setLabel_code("physical_block.pkid");
-
+		dbf1.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+		
 		/*
 		 * C2, [read-write, not null, form-hidden]
 		 * 
@@ -63,6 +65,7 @@ public class DbInit implements IDbInit {
 		dbf2.setIndexName("pb_geom_sidx"); // name must be unique
 		dbf2.setIsNull(false);
 		dbf2.setLabel_code("common.geometry");
+		dbf2.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 
 		/* C3 [read-write, not null, form-hidden], derivative of geometry. */
 		DbDataField dbf3 = new DbDataField();
@@ -73,6 +76,7 @@ public class DbInit implements IDbInit {
 		dbf3.setIndexName("pb_cnt_sidx");
 		dbf3.setIsNull(false);
 		dbf3.setLabel_code("common.centroid");
+		dbf3.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		/* C4 [read-write, not null, form-hidden], derivative of geometry. */
 		DbDataField dbf4 = new DbDataField();
@@ -82,6 +86,8 @@ public class DbInit implements IDbInit {
 		dbf4.setDbFieldSize(2);
 		dbf4.setIsNull(false);
 		dbf4.setLabel_code("common.perimeter");
+		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
 		
 		/* C5 [read-write, not null, form-hidden], derivative of geometry. */
 		DbDataField dbf5 = new DbDataField();
@@ -91,6 +97,8 @@ public class DbInit implements IDbInit {
 		dbf5.setDbFieldSize(2);
 		dbf5.setIsNull(false);
 		dbf5.setLabel_code("common.area");
+		dbf5.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
 		
 		/* C6 [read-write, not null, form-visible], essential alphanumerical data of this object.*/
 		DbDataField dbf6 = new DbDataField();
@@ -100,6 +108,8 @@ public class DbInit implements IDbInit {
 		dbf6.setIsNull(false);
 		dbf6.setLabel_code("physical_block.land_cover_code");
 		dbf6.setCode_list_user_code("LAND_COVER");
+		dbf6.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":true}}");
 		
 		/* C7 [read-write, can be null, form-visible] */
 		DbDataField dbf7 = new DbDataField();
@@ -108,6 +118,8 @@ public class DbInit implements IDbInit {
 		dbf7.setDbFieldSize(2000);
 		dbf7.setIsNull(true);
 		dbf7.setLabel_code("common.note");
+		dbf7.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":false,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":true}}");
 		
 		/* C8 [system, form-hidden] */
 		DbDataField dbf8 = new DbDataField();
@@ -117,6 +129,7 @@ public class DbInit implements IDbInit {
 		dbf8.setDbFieldScale(0);
 		dbf8.setIsNull(true);
 		dbf8.setLabel_code("physical_block.old_id");
+		dbf8.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 
 		DbDataField[] fieldList = new DbDataField[8];
 		fieldList[0] = dbf1;
