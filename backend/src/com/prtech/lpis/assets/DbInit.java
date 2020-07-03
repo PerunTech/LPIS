@@ -155,6 +155,8 @@ public class DbInit implements IDbInit {
 
 	@Override
 	public ArrayList<DbDataObject> getCustomObjectInstances() {
-		return null;
+		ArrayList<DbDataObject> dbtList = new ArrayList<DbDataObject>();
+		
+		return dbtList;
 	}
 }
