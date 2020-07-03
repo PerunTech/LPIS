@@ -21,6 +21,12 @@
 			</includes>
 		</resource>
 		<resource>
+			<directory>${project.basedir}</directory>
+			<includes>
+				<include>labels/**/*.*</include>
+			</includes>
+		</resource>
+		<resource>
 			<directory>src/com/prtech/lpis/resources</directory>
 			<filtering>true</filtering>
 		</resource>
