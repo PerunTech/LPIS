@@ -83,7 +83,7 @@ public class DbInit implements IDbInit {
 		dbf4.setDbFieldName("PERIMETER");
 		dbf4.setDbFieldType(DbFieldType.NUMERIC);
 		dbf4.setDbFieldSize(18);
-		dbf4.setDbFieldSize(2);
+		dbf4.setDbFieldScale(4);
 		dbf4.setIsNull(false);
 		dbf4.setLabel_code("common.perimeter");
 		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
@@ -94,7 +94,7 @@ public class DbInit implements IDbInit {
 		dbf5.setDbFieldName("AREA");
 		dbf5.setDbFieldType(DbFieldType.NUMERIC);
 		dbf5.setDbFieldSize(18);
-		dbf5.setDbFieldSize(2);
+		dbf5.setDbFieldScale(4);
 		dbf5.setIsNull(false);
 		dbf5.setLabel_code("common.area");
 		dbf5.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
