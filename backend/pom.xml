@@ -2,22 +2,33 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-<groupId>plugin-template</groupId>
-<artifactId>plugin-template</artifactId>
+<groupId>perun</groupId>
+<artifactId>lpis</artifactId>
 <version>0.0.1-SNAPSHOT</version>
 <packaging>bundle</packaging>
-<name>Plugin Template</name>
-<description>Blank plugin project to get you started.</description>
+<name>Land Parcel Identification System</name>
 <properties>
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 </properties>
 <build>
+	<sourceDirectory>src</sourceDirectory>
+	<testSourceDirectory>tests</testSourceDirectory>
 	<resources>
 		<resource>
 			<directory>${project.basedir}</directory>
 			<includes>
 				<include>www/**/*.*</include>
 			</includes>
+		</resource>
+		<resource>
+			<directory>${project.basedir}</directory>
+			<includes>
+				<include>labels/**/*.*</include>
+			</includes>
+		</resource>
+		<resource>
+			<directory>src/com/prtech/lpis/resources</directory>
+			<filtering>true</filtering>
 		</resource>
 	</resources>
 	<plugins>
@@ -46,16 +57,16 @@
 		<plugin>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>maven-bundle-plugin</artifactId>
-			<version>4.2.0</version>
+			<version>1.4.0</version>
 			<extensions>true</extensions>
 			<configuration>
 				<instructions>
-					<Bundle-SymbolicName>com.prtech.plugin_template</Bundle-SymbolicName>
+					<Bundle-SymbolicName>com.prtech.lpis</Bundle-SymbolicName>
 					<Bundle-Name>${project.name}</Bundle-Name>
 					<Bundle-Version>${project.version}</Bundle-Version>
 					<Bundle-Vendor>Perun.Tech</Bundle-Vendor>
 					<Bundle-Description>${project.description}</Bundle-Description>
-					<Bundle-Activator>com.prtech.plugin_template.Activator</Bundle-Activator>
+					<Bundle-Activator>com.prtech.lpis.Activator</Bundle-Activator>
 				</instructions>
 			</configuration>
 		</plugin>
@@ -75,23 +86,24 @@
 		<version>1.2.1</version>
 		<scope>provided</scope>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/junit/junit -->
 	<dependency>
 		<groupId>junit</groupId>
-    	<artifactId>junit</artifactId>
-    	<version>3.8.1</version>
-    	<scope>test</scope>
-  	</dependency>
+		<artifactId>junit</artifactId>
+		<version>4.12</version>
+		<scope>tests</scope>
+	</dependency>
 	<!-- https://mvnrepository.com/artifact/javax.ws.rs/jsr311-api -->
 	<dependency>
-		<groupId>svarog-interfaces</groupId>
+		<groupId>svarog</groupId>
 		<artifactId>svarog-interfaces</artifactId>
-		<version>[3.0.1,)</version>
+		<version>[3.0.6,)</version>
 		<scope>provided</scope>
 	</dependency>
 	<dependency>
 		<groupId>svarog</groupId>
 		<artifactId>svarog</artifactId>
-		<version>[3.0.1,)</version>
+		<version>[3.0.6,)</version>
 		<scope>provided</scope>
 	</dependency>
 	<dependency>
@@ -100,9 +112,9 @@
 		<version>12.2.0.1.0</version>
 	</dependency>
 	<dependency>
-		<groupId>svarog-io</groupId>
+		<groupId>svarog</groupId>
 		<artifactId>svarog-io</artifactId>
-		<version>[1.0.1,)</version>
+		<version>[1.0.4,)</version>
 		<scope>provided</scope>
 	</dependency>
 	<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-multipart -->

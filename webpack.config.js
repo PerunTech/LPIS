@@ -6,8 +6,8 @@ module.exports = (mode, {env}) => {
         entry: env === 'production' ? './frontend/index.js' : './frontend/client.js',
         output: {
             path: path.resolve('./backend/www'),
-            filename: 'plugin-template.min.js',
-            library: 'pluginTemplate',
+            filename: 'lpis.min.js',
+            library: 'lpis',
             libraryTarget: 'umd',
             globalObject: 'this'
         },

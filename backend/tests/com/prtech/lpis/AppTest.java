@@ -1,4 +1,4 @@
-package com.prtech.plugin_template;
+package com.prtech.lpis;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
