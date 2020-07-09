@@ -62,7 +62,7 @@ public class DbInit implements IDbInit {
 		dbf2.setDbFieldType(DbFieldType.GEOMETRY);
 		dbf2.setGeometryType("MULTIPOLYGON"); // allows holes, do not use Polygon.
 		dbf2.setGeometrySrid(SRID);
-		dbf2.setIndexName("pb_geom_sidx"); // name must be unique
+		dbf2.setIndexName("GEOM_SIDX"); // name must be unique
 		dbf2.setIsNull(false);
 		dbf2.setLabel_code("common.geometry");
 		dbf2.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
@@ -73,7 +73,7 @@ public class DbInit implements IDbInit {
 		dbf3.setDbFieldType(DbFieldType.GEOMETRY);
 		dbf3.setGeometryType("POINT");
 		dbf3.setGeometrySrid(SRID);
-		dbf3.setIndexName("pb_cnt_sidx");
+		dbf3.setIndexName("CNT_SIDX");
 		dbf3.setIsNull(false);
 		dbf3.setLabel_code("common.centroid");
 		dbf3.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
