@@ -11,7 +11,7 @@ import com.prtech.svarog_interfaces.ISvCore;
 
 public class PerunPluginInfo implements IPerunPlugin {
 	
-	private static final Logger log = LogManager.getLogger(Config.class.getName());
+	private static final Logger log = LogManager.getLogger(PerunPluginInfo.class.getName());
 	
 	/**
 	 * This value is used in triggering update of the plugin dbo.
