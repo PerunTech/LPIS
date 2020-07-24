@@ -2,7 +2,7 @@
     "name": "lpis",
     "version": "0.0.1",
     "description": "Land Parcel Identification System",
-    "main": "backend/www/lpis.min.js",
+    "main": "backend/www/lpis.js",
     "scripts": {
         "build": "webpack --mode=production --env=production",
         "build-dev": "webpack --mode=development --env=development",
@@ -14,7 +14,8 @@
         "url": "https://gitlab.prtech.mk/iacs_custom/lpis"
     },
     "dependencies": {
-        "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core#dev"
+        "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core#feature/plugin_loader",
+        "spatial": "git+https://git@gitlab.prtech.mk/perunv3/spatial#dev"
     },
     "devDependencies": {
         "@babel/core": "^7.8.7",
