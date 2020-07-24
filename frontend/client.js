@@ -1,5 +1,9 @@
 import { pluginManager } from 'perun-core';
-import { name } from '../package.json'
-import * as plugin from './index';
+import { spatial } from 'spatial';
+import { lpis } from './index';
 
-pluginManager.registerPlugin(name, plugin);
+// register spatial plugin dependency
+pluginManager.registerPlugin(spatial.name, spatial); 
+
+// register self.
+pluginManager.registerPlugin(lpis.name, lpis);
