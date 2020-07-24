@@ -1,6 +1,8 @@
 package com.prtech.lpis;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -143,5 +145,13 @@ public class PerunPluginInfo implements IPerunPlugin {
 	@Override
 	public boolean replaceContextMenuOnNew() {
 		return false;
+	}
+
+	@Override
+	public List<String> dependencies() {
+		List<String> deps = new ArrayList<String>();
+		deps.add("spatial");
+
+		return deps;
 	}
 }
