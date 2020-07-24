@@ -3,3 +3,6 @@ node_modules
 .project
 .settings
 target
+lpis.js
+config.js
+index.html
