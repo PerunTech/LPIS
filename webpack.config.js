@@ -37,7 +37,7 @@ module.exports = (mode, {env}) => {
                         }
                     },
                     enforce: 'pre',
-                    include: [/perun-core/]
+                    include: [/perun-core/, /spatial/]
                 },
                 {
                     // For pure CSS (without CSS modules)
@@ -70,6 +70,6 @@ module.exports = (mode, {env}) => {
         resolve: {
             extensions: ['.js', '.jsx']
         },
-        externals: env === 'production' ? { 'perun-core': 'perun-core'} : {}
+        externals: env === 'production' ? { 'perun-core': 'perun-core', spatial: 'spatial'} : {}
     }
 };
