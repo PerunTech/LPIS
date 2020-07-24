@@ -1,11 +1,15 @@
 import { React } from 'perun-core';
-// import { spatial } from '../core';
+import { factory } from '../core';
+
+const Lpis = () => {
+    const { Provider, MapContainer } = factory.core;
+
+    return <Provider children={<MapContainer />} />
+}
+
 
 export const lpis = {
     init () {
-        // const { Provider, MapContainer } = spatial.init().core;
-        return <span >LPIS</span>
+        return Lpis;
     }
 }
-
-{/* <Provider children={<MapContainer />} />]*/};
