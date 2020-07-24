@@ -1,1 +1,1 @@
-export { spatial } from './Spatial';
+export { factory } from './Factory';

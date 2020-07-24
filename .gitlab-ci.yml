@@ -1,8 +1,7 @@
 stages:
-  - 1_linter
-  - 2_build_and_install
-  - 3_mvn_install
-  - 4_sonarqube
+  - test
+  - install
+  - sonar
 
 before_script:
   - pwd
@@ -17,25 +16,25 @@ after_script:
   - git stash
   - git pull origin $CI_BUILD_REF_NAME
 
-1_npm_install_test_build:
-  stage: 1_linter
+npm_test:
+  stage: test
   script:
     - pwd
     - git reset --hard HEAD
     - rm -rf node_modules
     - npm install
     - npm run test
-    - npm run build-dev
+    - npm run build
 
-1_build_test_java:
-  stage: 2_build_and_install
+mvn_test:
+  stage: test
   script:
     - cd backend
     - mvn clean
     - mvn test
     
-1_lpis-dev-install:
-  stage: 3_mvn_install
+dev_install:
+  stage: install
   script:  
     - pwd
     - cd $CI_PROJECT_DIR/
@@ -45,12 +44,14 @@ after_script:
     - npm run build-dev
     - cd backend
     - pwd
-    - mvn install -DskipTests
-  only:
-    - dev    
+    - mvn clean install -DskipTests
+  except:
+    - dev
+    - staging
+    - master
 
-2_lpis-stable-install:
-  stage: 3_mvn_install
+prod_install:
+  stage: install
   script:  
     - pwd
     - cd $CI_PROJECT_DIR/
@@ -60,20 +61,22 @@ after_script:
     - npm run build
     - cd backend
     - pwd
-    - mvn install -DskipTests
+    - mvn clean install -DskipTests
   only:
     - master
     - staging
+    - dev
 
-1_perun-sonarqube_backend:
-  stage: 4_sonarqube
+sonarqube_backend:
+  stage: sonar
   script:
     - cd $CI_PROJECT_DIR/
     - cd backend
     - mvn sonar:sonar -Dsonar.analysis.mode=preview -Dsonar.projectName=$CI_PROJECT_NAME -Dsonar.gitlab.commit_sha=$CI_BUILD_REF -Dsonar.gitlab.ref_name=$CI_BUILD_REF_NAME -Dsonar.gitlab.project_id=$CI_PROJECT_ID
+  when: manual
 
-2_perun-sonarqube_backend_publish:
-  stage: 4_sonarqube
+sonarqube_backend_publish:
+  stage: sonar
   script:
     - cd $CI_PROJECT_DIR/
     - cd backend
@@ -85,10 +88,10 @@ after_script:
     - dev  
   when: manual
 
-3_sonarqube_frontend:
-  stage: 4_sonarqube
+sonarqube_frontend:
+  stage: sonar
   script:
     - sonar-scanner -Dsonar.sources=. -Dsonar.projectKey=$CI_PROJECT_NAME -Dsonar.analysis.mode=preview -Dsonar.login=a02003f1f8f90382d7570b57a85c00c38132f85f -Dsonar.branch=$CI_BUILD_REF_NAME -Dsonar.projectName=$CI_PROJECT_NAME -Dsonar.gitlab.commit_sha=$CI_BUILD_REF -Dsonar.gitlab.ref_name=$CI_BUILD_REF_NAME -Dsonar.gitlab.project_id=$CI_PROJECT_ID
     - sonar-scanner -Dsonar.sources=. -Dsonar.projectKey=$CI_PROJECT_NAME -Dsonar.analysis.mode=publish -Dsonar.login=a02003f1f8f90382d7570b57a85c00c38132f85f -Dsonar.branch=$CI_BUILD_REF_NAME -Dsonar.projectName=$CI_PROJECT_NAME
-
+  when: manual
 
