@@ -1,1 +1,1 @@
-export { lpis } from './Lpis';
+export { Lpis } from './Lpis';
