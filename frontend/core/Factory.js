@@ -1,5 +1,3 @@
-import * as spatial from 'spatial';
-
-console.log(spatial)
+import { spatial } from 'spatial';
 
 export const factory = Object.getPrototypeOf(spatial);
