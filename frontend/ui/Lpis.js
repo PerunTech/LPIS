@@ -2,7 +2,7 @@ import { spatial } from '../core';
 
 export const Lpis = () => {
     return spatial.ui.init('token')
-        .withStatusBar ()
+        .withStatusBar()
         .withToolsBar()
         .withLayerPanel()
         .withDataPanel()
