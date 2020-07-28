@@ -1,7 +1,7 @@
-import { factory } from '../core';
+import { spatial } from '../core';
 
 export const Lpis = () => {
-    return factory.ui.init('token')
+    return spatial.ui.init('token')
         .withStatusBar ()
         .withToolsBar()
         .withLayerPanel()
