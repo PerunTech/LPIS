@@ -97,13 +97,13 @@
 	<dependency>
 		<groupId>svarog</groupId>
 		<artifactId>svarog-interfaces</artifactId>
-		<version>[3.0.6,)</version>
+		<version>[3.0.6.4]</version>
 		<scope>provided</scope>
 	</dependency>
 	<dependency>
 		<groupId>svarog</groupId>
 		<artifactId>svarog</artifactId>
-		<version>[3.0.6,)</version>
+		<version>[3.0.6.1]</version>
 		<scope>provided</scope>
 	</dependency>
 	<dependency>
