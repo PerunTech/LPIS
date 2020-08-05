@@ -1,0 +1,14 @@
+#toolsbar {
+    margin-left: 249px;
+    margin-right: 249px; 
+    border-left: 1px solid rgba(0, 0, 0, 0.25);
+}
+#toolsbar .nav {
+    background-color: #F9F9F9;
+}
+#toolsbar .nav-link.active {
+    color: #3399FF;
+}
+#toolsbar .btn-sm {
+    padding: 0.25rem 0.5rem;
+}
