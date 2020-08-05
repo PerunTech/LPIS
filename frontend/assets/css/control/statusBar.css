@@ -1,0 +1,43 @@
+.status-bar {
+    font: inherit;
+    display: inline-flex;
+    float: right;
+    min-height: 40px;
+    align-items: center;
+}
+
+.coordinates-control {
+    display: inherit;
+    align-items: inherit;
+}
+
+.status-bar > div {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.status-bar .btn {
+    white-space: nowrap;
+}
+.status-bar .form-control-sm {
+    width: 120px;
+    text-align: center;
+}
+.status-bar .dropdown-menu {
+    min-width: unset;
+    padding: 0.25rem 0.25rem;
+}
+.status-bar .dropdown-item {
+    padding: 0.25rem 0.25rem;
+    font-size: 0.75rem;
+}
+.status-bar .author-link {
+    width: 250px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: underline;
+}
+.status-bar .invalid-feedback {
+    text-align: center;
+}
+
