@@ -122,7 +122,7 @@ export const _registry = {
         version: '1.1',
         x: '0px',
         y: '0px',
-        viewBox: '0 0 60 60',
+        viewBox: '0 0 512 512',
         path: <g>
         </g>
     },
@@ -132,7 +132,7 @@ export const _registry = {
         version: '1.1',
         x: '0px',
         y: '0px',
-        viewBox: '0 0 512 512',
+        viewBox: '0 0 60 60',
         path: <g>
             <path style={{fill:'#000000'}} d="M43.5,18H42v-1.5c0-0.553,0.447-1,1-1c0.405,0,0.755,0.241,0.912,0.588
                 C44.259,16.245,44.5,16.595,44.5,17C44.5,17.553,44.053,18,43.5,18z" />
