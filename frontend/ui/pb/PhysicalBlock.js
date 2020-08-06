@@ -18,8 +18,8 @@ export const PhysicalBlock = () =>
             <span style={{display: 'block', marginTop: '5px' }}>Пресечи парцела</span>
         </Button>
         <Button >
-            <Icon name='fill-parcel' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>Пополни парцела</span>
+            <Icon name='fill-parcel' size='34px' />
+            <span style={{display: 'block', marginTop: '2px' }}>Пополни парцела</span>
         </Button>
         <Button >
             <Icon name='split-parcel' size='30px' />
