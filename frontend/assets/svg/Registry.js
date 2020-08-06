@@ -93,6 +93,29 @@ export const _registry = {
         y: '0px',
         viewBox: '0 0 512 512',
         path: <g>
+            <path d="m48 48h416v416h-416z" style={{fill:'#008D21'}} />
+            <path d="m16 16h64v64h-64z" style={{fill:'#FFFFFF'}}/>
+            <path d="m224 16h64v64h-64z" style={{fill:'#FFFFFF'}}/>
+            <path d="m16 432h64v64h-64z" style={{fill:'#FFFFFF'}}/>
+            <path d="m432 16h64v64h-64z" style={{fill:'#FFFFFF'}}/>
+            <path d="m432 432h64v64h-64z" style={{fill:'#FFFFFF'}}/>
+            <path d="m224 432h64v64h-64z" style={{fill:'#FFFFFF'}}/>
+            <path d="m432 224h64v64h-64z" transform="matrix(0 1 -1 0 720 -208)" style={{fill:'#FFFFFF'}}/>
+            <path d="m16 224h64v64h-64z" transform="matrix(0 1 -1 0 304 208)" style={{fill:'#FFFFFF'}}/>
+            <circle cx="256" cy="256" r="88" style={{fill:'#FFFFFF'}} />
+            <path d="m496 88a8 8 0 0 0 8-8v-64a8 8 0 0 0 -8-8h-64a8 8 0 0 0 -8 8v24h-128v-24a8 8 0 0 0 -8-8h-64a8 8 0 0 0
+                -8 8v24h-128v-24a8 8 0 0 0 -8-8h-64a8 8 0 0 0 -8 8v64a8 8 0 0 0 8 8h24v128h-24a8 8 0 0 0 -8 8v64a8 8 0 0 0
+                8 8h24v128h-24a8 8 0 0 0 -8 8v64a8 8 0 0 0 8 8h64a8 8 0 0 0 8-8v-24h128v24a8 8 0 0 0 8 8h64a8 8 0 0 0
+                8-8v-24h128v24a8 8 0 0 0 8 8h64a8 8 0 0 0 8-8v-64a8 8 0 0 0 -8-8h-24v-128h24a8 8 0 0 0 8-8v-64a8 8 0 0 0
+                -8-8h-24v-128zm-264-64h48v48h-48zm-208 48v-48h48v48zm0 208v-48h48v48zm48 208h-48v-48h48zm208
+                0h-48v-48h48zm144-56v24h-128v-24a8 8 0 0 0 -8-8h-64a8 8 0 0 0 -8 8v24h-128v-24a8 8 0 0 0 -8-8h-24v-128h24a8
+                8 0 0 0 8-8v-64a8 8 0 0 0 -8-8h-24v-128h24a8 8 0 0 0 8-8v-24h128v24a8 8 0 0 0 8 8h64a8 8 0 0 0 8-8v-24h128v24a8
+                8 0 0 0 8 8h24v128h-24a8 8 0 0 0 -8 8v64a8 8 0 0 0 8 8h24v128h-24a8 8 0 0 0 -8 8zm64
+                8v48h-48v-48zm0-208v48h-48v-48zm-48-160v-48h48v48z" style={{fill:'#000000'}}/>
+            <path d="m264 248v-48a8 8 0 0 0 -16 0v48h-48a8 8 0 0 0 0 16h48v48a8 8 0 0 0 16 0v-48h48a8 8
+                0 0 0 0-16z" style={{fill:'#000000'}}/>
+            <path d="m256 160a96 96 0 1 0 96 96 96.115 96.115 0 0 0 -96-96zm0 176a80 80 0 1 1 80-80 80.093 80.093
+                0 0 1 -80 80z" style={{fill:'#000000'}}/>
         </g>
     },
     'split-parcel': {
