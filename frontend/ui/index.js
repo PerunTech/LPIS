@@ -1,4 +1,7 @@
+
 export { PhysicalBlock } from './pb/PhysicalBlock';
+
+export { IO } from './io/IO';
 
 /* controls */
 export { DataPanel } from './controls/DataPanel';

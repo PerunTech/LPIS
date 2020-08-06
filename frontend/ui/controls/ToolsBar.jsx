@@ -1,8 +1,8 @@
 import { React } from 'perun-core';
 import { spatial } from '../../core';
-import { PhysicalBlock } from '..';
+import { PhysicalBlock, IO } from '..';
 
-const { Tab, Tabs, Selection, Measurement, Import, Export  } = spatial.ui;
+const { Tab, Tabs, Selection, Measurement } = spatial.ui;
 
 export const ToolsBar = () => 
     <div id='toolsbar' >
@@ -17,8 +17,7 @@ export const ToolsBar = () =>
                 <Measurement />
             </Tab>
             <Tab eventKey='io' title='Увезување / Извезување' >
-                <Import />
-                <Export />
+                <IO />
             </Tab>
         </Tabs>
     </div>;

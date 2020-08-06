@@ -1,7 +1,7 @@
 import { React } from 'perun-core';
 import { spatial } from '../../core';
 
-const { ButtonGroup, Button, Icon } = spatial.ui
+const { ButtonGroup, Button, Icon, Divider } = spatial.ui
 
 export const PhysicalBlock = () =>
     <ButtonGroup id='physical-block' >
@@ -13,6 +13,7 @@ export const PhysicalBlock = () =>
             <Icon name='edit-pb' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Промени физички блок</span>
         </Button>
+        <Divider />
         <Button >
             <Icon name='cut-parcel' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Пресечи парцела</span>
