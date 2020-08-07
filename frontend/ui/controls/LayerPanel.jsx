@@ -1,17 +1,23 @@
 import { React } from 'perun-core';
 import { spatial } from '../../core';
 
+const { useState, useEffect } = React;
 const { ButtonGroup, Button, Icon, Divider } = spatial.ui;
-const { useState } = React;
-console.log('moved to const')
+const { layerControl } = spatial.data
 
 export const LayerPanel = () => {
     const [open, isOpen] = useState(true);
 
+    useEffect(() => {
+        open ? layerControl.expand() : layerControl.collapse();
+    }, [open])
+
     return <div id='layer-panel' >
         <ButtonGroup>
-            <Button disabled className='as-label layer-panel-title' >Листа на слоеви</Button>
-            <Divider style={{margin: '10px 10px 10px 10px'}} />
+            {open && <>
+                <Button disabled className='as-label layer-panel-title' >Листа на слоеви</Button>
+                <Divider style={{margin: '10px 10px 10px 10px'}} />
+            </>}
             <Button id='layer-panel-toggle' disabled >
                 <Button onClick={() => isOpen(!open)} >
                     <Icon name={open ? 'chevron-right' : 'chevron-left'} size='12px' />
