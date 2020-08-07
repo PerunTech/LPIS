@@ -18,7 +18,7 @@ export const LayerPanel = () => {
                 <Button disabled className='as-label layer-panel-title' >Листа на слоеви</Button>
                 <Divider style={{margin: '10px 10px 10px 10px'}} />
             </>}
-            <Button id='layer-panel-toggle' disabled >
+            <Button id='layer-panel-toggle' disabled style={!open ? {width: '60px', height: '60px'} : {}} >
                 <Button onClick={() => isOpen(!open)} >
                     <Icon name={open ? 'chevron-right' : 'chevron-left'} size='12px' />
                 </Button> 
