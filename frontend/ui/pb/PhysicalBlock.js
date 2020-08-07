@@ -6,8 +6,8 @@ const { ButtonGroup, Button, Icon, Divider } = spatial.ui
 export const PhysicalBlock = () =>
     <ButtonGroup id='physical-block' >
         <Button >
-            <Icon name='add-pb' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>Додади физички блок</span>
+            <Icon name='add-pb' size='34px' />
+            <span style={{display: 'block', marginTop: '1px' }}>Додади физички блок</span>
         </Button>
         <Button >
             <Icon name='edit-pb' size='30px' />
