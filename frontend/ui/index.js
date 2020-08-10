@@ -1,5 +1,5 @@
 
-export { PhysicalBlock } from './pb/PhysicalBlock';
+export { PhysicalBlock } from './digitization/PhysicalBlock';
 
 export { IO } from './io/IO';
 
