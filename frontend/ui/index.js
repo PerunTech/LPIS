@@ -1,4 +1,4 @@
-
+export { PhysicalBlock } from './digitization/pb/PhysicalBlock';
 export { Digitization } from './digitization/Digitization';
 
 export { IO } from './io/IO';

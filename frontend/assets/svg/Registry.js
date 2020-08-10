@@ -256,7 +256,7 @@ export const _registry = {
             <rect x='21' y='21' style={{fill:'#00E334'}} width='18' height='18' />
         </g>
     },
-    'add-pb': {
+    'addPB': {
         version: '1.1',
         x: '0px',
         y: '0px',
@@ -298,7 +298,7 @@ export const _registry = {
                 c0,4.418,3.582,8,8,8s8-3.582,8-8v-64h64c4.418,0,8-3.582,8-8s-3.582-8-8-8h-64V235.96z' />
         </g>
     },
-    'edit-pb': {
+    'editPB': {
         version: '1.1',
         x: '0px',
         y: '0px',
