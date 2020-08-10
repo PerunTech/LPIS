@@ -18,12 +18,21 @@
     top: 10px;
     height: 40px;
     width: 40px;
+    border-radius: 50%;
 }
-
+#toolsbar .toolbar-docs {
+    position: absolute;
+    right: 55px;
+    top: 10px;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+}
 #toolsbar .toolbar-logout {
     position: absolute;
     right: 10px;
     top: 10px;
     height: 40px;
     width: 40px;
+    border-radius: 50%;
 }
