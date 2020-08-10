@@ -3,6 +3,9 @@ import './css/control/statusBar.css'
 import './css/control/toolsBar.css';
 import './css/control/layerPanel.css';
 
+/* css.digitization */
+import './css/digitization/physicalBlock.css'
+
 /**
  * Include local svg registry in build.
  * 

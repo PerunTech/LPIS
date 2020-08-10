@@ -15,7 +15,7 @@ export const PB_DRAW = {
     // allow snapping to the middle of segments
     snapMiddle: false,
     // self intersection
-    allowSelfIntersection: false,
+    allowSelfIntersection: true,
     // the vector that is currently being drawn (while measurement is active).
     templineStyle: {
         weight: 2.0,
