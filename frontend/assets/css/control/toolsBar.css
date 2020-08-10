@@ -12,3 +12,18 @@
 #toolsbar .btn-sm {
     padding: 0.25rem 0.5rem;
 }
+#toolsbar .toolbar-home {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    height: 40px;
+    width: 40px;
+}
+
+#toolsbar .toolbar-logout {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    height: 40px;
+    width: 40px;
+}
