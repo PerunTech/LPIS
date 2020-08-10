@@ -36,9 +36,6 @@ export const PB_DRAW = {
         opacity: 0.9,
         fillOpacity: 0.25,
         dashArray: [10, 10],
-        /* This will enable runtime calculation of measurements on each new pixel location of the mouse cursor. */
-        /* DO NOT ENABLE, impedes application performance, creates hundreds - thousands DOM elements each second. */
-        /* showMeasurements: true */ 
     },
     // show a marker at the cursor
     cursorMarker: false,
@@ -53,7 +50,6 @@ export const PB_DRAW = {
         fillColor: '#f8f8ff',
         opacity: 0.9,
         fillOpacity: 0.25,
-        dashArray: [10, 10],
         showMeasurements: true
     }
 }

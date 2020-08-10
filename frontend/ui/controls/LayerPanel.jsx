@@ -3,13 +3,12 @@ import { spatial } from '../../core';
 
 const { useState, useEffect } = React;
 const { ButtonGroup, Button, Icon, Divider } = spatial.ui;
-const { layerControl } = spatial.data
 
 export const LayerPanel = () => {
     const [open, isOpen] = useState(true);
 
     useEffect(() => {
-        open ? layerControl.expand() : layerControl.collapse();
+        open ? spatial.data.layerControl.expand() : spatial.data.layerControl.collapse();
     }, [open])
 
     return <div id='layer-panel' >
