@@ -3,8 +3,8 @@ import { spatial } from '../../core';
 
 const { ButtonGroup, Button, Icon, Divider } = spatial.ui
 
-export const PhysicalBlock = () =>
-    <ButtonGroup id='physical-block' >
+export const Digitization = () =>
+    <ButtonGroup id='digitization' >
         <Button >
             <Icon name='add-pb' size='34px' />
             <span style={{display: 'block', marginTop: '1px' }}>Додади физички блок</span>
