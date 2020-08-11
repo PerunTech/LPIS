@@ -6,17 +6,17 @@ const { http, store } = spatial.core;
 
 store.addState('http', {
     add_pb_data: {
-        url: '/services/ReactElements/getTableFormData/{init.token}/0/PHYSICAL_BLOCK',
+        url: '/ReactElements/getTableFormData/{init.token}/0/PHYSICAL_BLOCK',
         method: 'get',
         responseType: 'application/json'
     },
     add_pb_ui: {
-        url: '/services/ReactElements/getTableUISchema/{init.token}/PHYSICAL_BLOCK',
+        url: '/ReactElements/getTableUISchema/{init.token}/PHYSICAL_BLOCK',
         method: 'get',
         responseType: 'application/json'
     },
     add_pb_json: {
-        url: '/services/ReactElements/getTableJSONSchema/{init.token}/PHYSICAL_BLOCK',
+        url: '/ReactElements/getTableJSONSchema/{init.token}/PHYSICAL_BLOCK',
         method: 'get',
         responseType: 'application/json'
     }
