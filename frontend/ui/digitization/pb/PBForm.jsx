@@ -4,20 +4,18 @@ import { spatial } from '../../../core';
 const { useState, useEffect } = React;
 const { http, store } = spatial.core;
 
-//const currSlice = { ...store.getState().http };
-//store.removeState('http');
-store.extendState('http', {
-    addPB_data: {
+store.addState('http', {
+    add_pb_data: {
         url: '/services/ReactElements/getTableFormData/{init.token}/0/PHYSICAL_BLOCK',
         method: 'get',
         responseType: 'application/json'
     },
-    addPB_ui: {
+    add_pb_ui: {
         url: '/services/ReactElements/getTableUISchema/{init.token}/PHYSICAL_BLOCK',
         method: 'get',
         responseType: 'application/json'
     },
-    addPB_json: {
+    add_pb_json: {
         url: '/services/ReactElements/getTableJSONSchema/{init.token}/PHYSICAL_BLOCK',
         method: 'get',
         responseType: 'application/json'
@@ -29,7 +27,7 @@ export const PBForm = () => {
     
     useEffect(() => {
         console.log(store.getState())
-        http.callConcurrently(['addPB_data', 'addPB_ui', 'addPB_json'])
+        http.callConcurrently(['add_pb_data', 'add_pb_ui', 'add_pb_json'])
             .then(response => console.log(response))
     }, [])
 
