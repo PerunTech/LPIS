@@ -53,3 +53,40 @@ export const PB_DRAW = {
         showMeasurements: true
     }
 }
+
+/** @constant */
+export const PB_SCHEMA = {
+    properties: {
+        LAND_COVER_CODE: {
+            enum: [ '423', '400', '310', '410', '421', '600', '490', '200', '422',
+                '420', '210', '900', '320', '300', '500', '430'],
+            enumNames: ['Јаткасто овошје', 'Долгогодишни култури (траен насад)', 'Ливада', 'Лозов насад',
+                'Маслинов насад', 'Матични насади', 'Мешани трајни насади', 'Нива (обработливо земјиште)',
+                'Овошен насад', 'Овоштарник', 'Оранжерии и пластеници на обработливо земјиште',
+                'Останати типови на употреба на земјиштето', 'Пасиште', 'Постојан тревник',
+                'Различна искористеност на земјиштето', 'Растенија со брзо растечка маса' ],
+            maxLength: 50,
+            title: 'Употреба на земјиште',
+            type: 'string'
+        },
+        NOTE: {
+            maxLength: 2000,
+            title: 'Забелешка',
+            type: 'string'
+        }
+    },
+    required: ['LAND_COVER_CODE'],
+    'type': 'object',
+}
+
+/** @constant */
+export const PB_UI_SCHEMA = {
+    LAND_COVER_CODE: {
+        /*'ui:placeholder': '200',*/
+        /* classNames: 'form-control-sm'*/
+    },
+    NOTE: {
+        'ui:widget': 'textarea',
+        /*classNames: 'form-control-sm'*/
+    }
+}

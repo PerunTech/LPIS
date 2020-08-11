@@ -51,7 +51,7 @@ const _PhysicalBlock = ({processID, ...props}) => {
                             <PBForm />
                         </Modal.Body>
                         <Modal.Footer >
-                            <Button size='' className='end-measurement' onClick={disable.bind(_addPB)} >Заврши</Button>
+                            <Button size='' className='end-measurement' onClick={disable.bind(_addPB)} >Зачувај</Button>
                         </Modal.Footer>
                 </Modal>}
         </Button>
