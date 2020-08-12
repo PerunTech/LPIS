@@ -68,12 +68,14 @@ export const PB_SCHEMA = {
                 'Останати типови на употреба на земјиштето' ],
             maxLength: 50,
             title: 'Употреба на земјиште',
-            type: 'string'
+            type: 'string',
+            default: '200'
         },
         NOTE: {
             maxLength: 2000,
             title: 'Забелешка',
-            type: 'string'
+            type: 'string',
+            default: ''
         }
     },
     required: ['LAND_COVER_CODE'],
@@ -83,10 +85,12 @@ export const PB_SCHEMA = {
 /** @constant */
 export const PB_UI_SCHEMA = {
     LAND_COVER_CODE: {
+        /*'ui:emptyValue': ''*/
         /*'ui:placeholder': '200',*/
         /* classNames: 'form-control-sm'*/
     },
     NOTE: {
+        /*'ui:emptyValue': 'test',*/
         'ui:widget': 'textarea',
         /*classNames: 'form-control-sm'*/
     }

@@ -5,8 +5,14 @@ import { PB_SCHEMA, PB_UI_SCHEMA } from '../../config';
 const { Form, Button, Modal, DrawActions } = spatial.ui;
 const { draw } = spatial.tools;
 
-export function Metadata ({action, data}) {
+export function Metadata ({action, data = {} }) {
     const { disable } = action;
+
+    const onSubmit = ({ formData }) => {
+        console.log(formData)
+        disable.call(action)
+    }
+        
 
     return <Modal show
         id='measure-dialog'
@@ -22,15 +28,15 @@ export function Metadata ({action, data}) {
         </Modal.Title>
         <Modal.Body >
             <Form 
-                schema={PB_SCHEMA} 
-                uiSchema={PB_UI_SCHEMA} 
-                formData={{ LAND_COVER_CODE: '200', ...data }} >
-                <span />
+                schema={PB_SCHEMA}
+                uiSchema={PB_UI_SCHEMA}
+                formData={data} 
+                onSubmit={onSubmit}>
+                <Button type='submit' size='' className='end-measurement' >
+                    Зачувај
+                </Button>
             </Form>
         </Modal.Body>
-        <Modal.Footer >
-            <Button size='' className='end-measurement' onClick={disable.bind(action)} >Зачувај</Button>
-        </Modal.Footer>
     </Modal>;
 }
 
