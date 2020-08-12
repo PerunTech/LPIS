@@ -1,6 +1,6 @@
 import { React, PropTypes } from 'perun-core';
 import { spatial } from '../../core';
-import { PROCESS_ENUM, PB_DRAW } from '../../config';
+import { PROCESS_ENUM, DRAW_PB } from '../../config';
 import { Metadata } from './Metadata';
 
 const { Map, store } = spatial.core;
@@ -8,17 +8,14 @@ const { draw } = spatial.tools;
 const {  Button, Icon, Modal, DrawActions } = spatial.ui;
 
 export const createPB = {
-    /* The internal id of the process */
     id: PROCESS_ENUM.createPB,
 
     enable () {
-        // Map.on('new_shape', this.disable.bind(this));
         store.dispatch({ processID: this.id });
-        draw.polygon.enable(PB_DRAW);
+        draw.polygon.enable(DRAW_PB);
     },
 
     disable () {
-        Map.off('new_shape');
         store.dispatch({processID: ''});
         draw.polygon.disable('force');
     },

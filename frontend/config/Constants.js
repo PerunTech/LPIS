@@ -5,7 +5,7 @@ export const PROCESS_ENUM = {
 }
 
 /** @constant */
-export const PB_DRAW = {
+export const DRAW_PB = {
     // allow multiple drawn shapes
     repeatable: false,
     // snapping
