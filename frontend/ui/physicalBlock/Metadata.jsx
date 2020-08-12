@@ -12,7 +12,6 @@ export function Metadata ({action, data = {} }) {
         console.log(formData)
         disable.call(action)
     }
-        
 
     return <Modal show
         id='measure-dialog'
@@ -32,9 +31,14 @@ export function Metadata ({action, data = {} }) {
                 uiSchema={PB_UI_SCHEMA}
                 formData={data} 
                 onSubmit={onSubmit}>
-                <Button type='submit' size='' className='end-measurement' >
+                <>
+                <Button type='submit' size='' className='save-pb' >
                     Зачувај
                 </Button>
+                <Button size='sm' className='add-pb-to-list' >
+                    Додади во работен лист
+                </Button>
+                </>
             </Form>
         </Modal.Body>
     </Modal>;

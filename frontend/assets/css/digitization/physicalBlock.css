@@ -2,3 +2,19 @@
     margin-right: 20px;
     margin-left: 10px;
 }
+#measure-dialog .save-pb {
+    color: #3399ff;
+    border: 1px solid #3399ff;
+    float: right;
+}
+#measure-dialog .save-pb:hover:not(.disabled) {
+    background-color: #e2e6ea;
+}
+#measure-dialog .add-pb-to-list {
+    color: #3399ff;
+    float: left;
+    padding: 0.75rem;
+}
+#measure-dialog .add-pb-to-list:hover:not(.disabled) {
+    background-color: #e2e6ea;
+}
