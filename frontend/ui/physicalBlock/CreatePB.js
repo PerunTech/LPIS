@@ -5,7 +5,7 @@ import { Metadata } from './Metadata';
 
 const { Map, store } = spatial.core;
 const { draw } = spatial.tools;
-const {  Button, Icon, Modal, DrawActions } = spatial.ui;
+const {  Button, Icon } = spatial.ui;
 
 export const createPB = {
     id: PROCESS_ENUM.createPB,
@@ -21,7 +21,7 @@ export const createPB = {
     },
     
     render: ({processID, ...props}) => {
-        const { id, enable, disable } = createPB;
+        const { id, enable } = createPB;
 
         return <Button {...props}
             id={id} 
@@ -29,26 +29,7 @@ export const createPB = {
             onClick={enable.bind(createPB)} >
                 <Icon name={id} size='34px' />
                 <span style={{display: 'block', marginTop: '1px' }}>Додади физички блок</span>
-                {processID === id
-                    && <Modal show
-                        id='measure-dialog'
-                        backdrop={false} 
-                        enforceFocus={false}
-                        container={document.getElementsByClassName('control-map')[0]} >
-                        <Modal.Title>
-                            <Button disabled className='as-label pb-modal-title' >Физички Блок</Button>
-                            <DrawActions
-                                finish={() => draw.polygon._finishShape()} 
-                                undo={() => draw.polygon._removeLastVertex()}
-                                cancel={disable.bind(createPB)} />
-                        </Modal.Title>
-                        <Modal.Body >
-                            <Metadata />
-                        </Modal.Body>
-                        <Modal.Footer >
-                            <Button size='' className='end-measurement' onClick={disable.bind(createPB)} >Зачувај</Button>
-                        </Modal.Footer>
-                </Modal>}
+                { processID === id && <Metadata action={createPB} /> }
         </Button>;
     }
 }
