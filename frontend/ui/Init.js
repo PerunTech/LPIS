@@ -2,7 +2,7 @@ import { redux } from 'perun-core';
 import { spatial } from '../core';
 import { ToolsBar, DataPanel, LayerPanel, StatusBar  } from '.';
 
-export const Lpis = () => {
+export const Init = () => {
     const _token = redux.store.getState().security.svSession;
 
     return spatial.ui.init(_token)
