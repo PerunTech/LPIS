@@ -1,6 +1,7 @@
 /** @constant */
 export const PROCESS_ENUM = {
-    addPB: 'addPB',
+    createPB: 'createPB',
+    editPB: 'editPB'
 }
 
 /** @constant */

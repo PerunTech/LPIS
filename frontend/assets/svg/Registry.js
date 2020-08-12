@@ -256,7 +256,7 @@ export const _registry = {
             <rect x='21' y='21' style={{fill:'#00E334'}} width='18' height='18' />
         </g>
     },
-    'addPB': {
+    'createPB': {
         version: '1.1',
         x: '0px',
         y: '0px',
