@@ -1,7 +1,9 @@
-export { PhysicalBlock } from './digitization/physicalBlock/PhysicalBlock';
-export { Digitization } from './digitization/Digitization';
+/* physical block  */
+export { PhysicalBlock } from './physicalBlock/PhysicalBlock';
 
-export { IO } from './io/IO';
+/* toolbars  */
+export { Digitization } from './toolbars/Digitization';
+export { IO } from './toolbars/IO';
 
 /* controls */
 export { DataPanel } from './controls/DataPanel';
