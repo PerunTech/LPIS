@@ -1,3 +1,3 @@
-import { spatial as plugin } from 'spatial';
+import { spatial as s } from 'spatial';
 
-export const spatial = Object.getPrototypeOf(plugin);
+export const spatial = Object.getPrototypeOf(s);
