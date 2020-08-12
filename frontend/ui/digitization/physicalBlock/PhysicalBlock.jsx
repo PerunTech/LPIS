@@ -1,7 +1,7 @@
 import { React, PropTypes } from 'perun-core';
 import { spatial } from '../../../core';
 import { PROCESS_ENUM, PB_DRAW } from '../../../config';
-import { PBForm } from './PBForm';
+import { Metadata } from './Metadata';
 
 const { Map, connect, store } = spatial.core;
 const { draw } = spatial.tools;
@@ -48,7 +48,7 @@ const _PhysicalBlock = ({processID, ...props}) => {
                                 cancel={disable.bind(_addPB)} />
                         </Modal.Title>
                         <Modal.Body >
-                            <PBForm />
+                            <Metadata />
                         </Modal.Body>
                         <Modal.Footer >
                             <Button size='' className='end-measurement' onClick={disable.bind(_addPB)} >Зачувај</Button>
