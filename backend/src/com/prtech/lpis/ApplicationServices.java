@@ -29,7 +29,7 @@ import com.prtech.svarog_common.DbDataObject;
 public class ApplicationServices {
 	private static final Logger log = LogManager.getLogger(ApplicationServices.class.getName());
 	
-	@Path("/save/physicalBlock/{token}/{objectId}/")
+	@Path("/save/physicalBlock/{token}/{objectId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("text/html;charset=utf-8")

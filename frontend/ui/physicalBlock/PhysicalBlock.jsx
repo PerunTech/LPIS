@@ -29,6 +29,7 @@ store.addState('http', {
     save_pb: {
         url: '/lpis/save/physicalBlock/{init.token}/0',
         method: 'post',
-        responseType: 'text'
+        responseType: 'text',
+        contentType: 'text'
     }
 })

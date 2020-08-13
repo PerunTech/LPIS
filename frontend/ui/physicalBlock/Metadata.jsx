@@ -9,7 +9,7 @@ const { Form, Button, Modal, DrawActions } = spatial.ui;
 export function Metadata ({action, data = {} }) {
     const onSubmit = ({ formData }) => {
         action.disable.call(action)
-        http.call('save_pb', { data: { ...formData, GEOM: '' }});
+        http.call('save_pb', { data: JSON.stringify({ ...formData, GEOM: '' }) });
     }
 
     return <Modal show
