@@ -16,5 +16,6 @@
     padding: 0.75rem;
 }
 #measure-dialog .add-pb-to-list:hover:not(.disabled) {
-    background-color: #e2e6ea;
+    background-color: #fff;
+    text-decoration: underline;
 }

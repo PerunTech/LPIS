@@ -4,7 +4,7 @@ import { spatial } from '../../core';
 /* private local imports */
 import { createPB } from './CreatePB';
 
-const { connect } = spatial.core;
+const { connect, store } = spatial.core;
 const {  Button, Icon } = spatial.ui;
 
 const _PhysicalBlock = ({processID, ...props}) => {
@@ -23,3 +23,12 @@ _PhysicalBlock.propTypes = {
 
 export const PhysicalBlock = connect(state => 
     ({ processID: state.app.processID }))(_PhysicalBlock);
+
+/* State slice extensions */
+store.addState('http', {
+    save_pb: {
+        url: '/lpis/save/physicalBlock/{init.token}/0',
+        method: 'post',
+        responseType: 'text'
+    }
+})

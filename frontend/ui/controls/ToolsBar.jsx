@@ -12,7 +12,7 @@ export const ToolsBar = () =>
             onClick={() => history.push('/')} 
             className='toolbar-home btn_background'
             title='Кон почетна'>
-                <Icon name='home' size='20px' />
+                <Icon name='home' size='20px' style={{fill: '#5a5a5a'}} />
         </Button>
         <Tabs defaultActiveKey='digitization' >
             <Tab eventKey='digitization' title='Дигитизација' >

@@ -2,15 +2,14 @@ import { React, PropTypes } from 'perun-core';
 import { spatial } from '../../core';
 import { PB_SCHEMA, PB_UI_SCHEMA } from '../../config';
 
-const { Form, Button, Modal, DrawActions } = spatial.ui;
+const { http } = spatial.core;
 const { draw } = spatial.tools;
+const { Form, Button, Modal, DrawActions } = spatial.ui;
 
 export function Metadata ({action, data = {} }) {
-    const { disable } = action;
-
     const onSubmit = ({ formData }) => {
-        console.log(formData)
-        disable.call(action)
+        action.disable.call(action)
+        http.call('save_pb', { data: { ...formData, GEOM: '' }});
     }
 
     return <Modal show
@@ -23,7 +22,7 @@ export function Metadata ({action, data = {} }) {
             <DrawActions
                 finish={() => draw.polygon._finishShape()} 
                 undo={() => draw.polygon._removeLastVertex()}
-                cancel={disable.bind(action)} />
+                cancel={action.disable.bind(action)} />
         </Modal.Title>
         <Modal.Body >
             <Form 
@@ -36,7 +35,7 @@ export function Metadata ({action, data = {} }) {
                     Зачувај
                 </Button>
                 <Button size='sm' className='add-pb-to-list' >
-                    Додади во работен лист
+                    Додади во работна листа
                 </Button>
                 </>
             </Form>
