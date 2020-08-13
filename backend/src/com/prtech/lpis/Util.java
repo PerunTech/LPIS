@@ -5,8 +5,14 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.prtech.svarog.SvUtil;
 import com.prtech.svarog_common.DbDataObject;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 
 public class Util {
 	private static final Logger log = LogManager.getLogger(Util.class.getName());
@@ -83,4 +89,23 @@ public class Util {
 		
 		return dbo;
 	}
+
+	public static Geometry jsonToGeometry (JsonElement el) {
+		Geometry geom = null;
+		
+		try {
+			GeometryFactory gf = SvUtil.sdiFactory;
+			GeoJsonReader gjr = new GeoJsonReader(gf);
+			geom = gjr.read(el.toString());
+			
+			String polyType = geom.getGeometryType();
+			if ("Polygon".equalsIgnoreCase(polyType))
+				geom = gf.createMultiPolygon(new Polygon[] { (Polygon) geom });
+		} catch (Exception e) {
+			log.error("Failed parsing geometry. " + e);
+		}
+		
+		return geom;
+	}
+
 }

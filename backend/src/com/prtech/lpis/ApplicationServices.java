@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.prtech.svarog.SvCore;
+import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
@@ -39,6 +40,7 @@ public class ApplicationServices {
 			@Context HttpServletRequest httpRequest) {
 		
 		SvReader svr = null;
+		SvGeometry svg = null;
 		DbDataObject pb = null;
 		String formData = "";
 		JsonObject metadata = null;
@@ -46,6 +48,7 @@ public class ApplicationServices {
 		try {
 			svr = new SvReader(token);
 			svr.setIncludeGeometries(true);
+			svg = new SvGeometry(svr);
 			pb = new DbDataObject();
 			Long typeId = SvCore.getTypeIdByName("PHYSICAL_BLOCK");
 			DbDataArray fieldSet = SvCore.getFields(typeId);
@@ -77,8 +80,10 @@ public class ApplicationServices {
 				}
 			}
 			
+			SvGeometry.setGeometry(pb, Util.jsonToGeometry(metadata.get("GEOM")));
+			svg.saveGeometry(pb);
 		} catch (Exception e) {
-			
+			log.error("Failed saving physical block. " + e);
 		}
 		
 		return Response.status(200).entity("".toString()).build();
