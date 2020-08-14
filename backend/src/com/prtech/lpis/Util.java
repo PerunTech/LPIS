@@ -17,8 +17,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 
-import oracle.net.aso.p;
-
 public class Util {
 	private static final Logger log = LogManager.getLogger(Util.class.getName());
 
