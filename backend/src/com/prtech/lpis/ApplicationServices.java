@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.prtech.svarog.SvCore;
+import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog_common.DbDataArray;
@@ -81,9 +82,14 @@ public class ApplicationServices {
 			}
 			
 			SvGeometry.setGeometry(pb, Util.jsonToGeometry(metadata.get("GEOM")));
+			Util.calculateGeometryDerivatives(pb);
 			svg.saveGeometry(pb);
 		} catch (Exception e) {
-			log.error("Failed saving physical block. " + e);
+			if (e instanceof SvException) {
+				log.error("Failed saving physical block. " + ((SvException) e).getFormattedMessage(), e);
+			} else {
+				log.error("Failed saving physical block. " + e);
+			}
 		}
 		
 		return Response.status(200).entity("".toString()).build();

@@ -1,5 +1,7 @@
 package com.prtech.lpis;
 
+import java.text.DecimalFormat;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -7,12 +9,15 @@ import org.joda.time.DateTime;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog_common.DbDataObject;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
+
+import oracle.net.aso.p;
 
 public class Util {
 	private static final Logger log = LogManager.getLogger(Util.class.getName());
@@ -107,5 +112,12 @@ public class Util {
 		
 		return geom;
 	}
-
+	
+	public static void calculateGeometryDerivatives (DbDataObject dbo) {
+		Geometry geom = SvGeometry.getGeometry(dbo);
+		DecimalFormat df = new DecimalFormat("#.####");
+		
+		dbo.setVal("AREA", Double.parseDouble(df.format(geom.getArea()).replace(",", ".")));
+		dbo.setVal("PERIMETER", Double.parseDouble(df.format(geom.getLength()).replace(",", ".")));
+	}
 }
