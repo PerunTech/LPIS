@@ -2,16 +2,9 @@ import { React, PropTypes } from 'perun-core';
 import { spatial } from '../../core';
 import { PB_SCHEMA, PB_UI_SCHEMA } from '../../config';
 
-const { http } = spatial.core;
-const { draw } = spatial.tools;
-const { Form, Button, Modal, DrawActions } = spatial.ui;
+const { Form, Button, Modal } = spatial.ui;
 
-export function Metadata ({tool, data = {} }) {
-    const onSubmit = ({ formData }) => {
-        tool.disable.call(tool)
-        http.call('save_pb', { data: JSON.stringify({ ...formData, GEOM: tool.feature }) });
-    }
-
+export function Metadata ({onSubmit, data = {}, children }) {
     return <Modal show
         id='measure-dialog'
         backdrop={false} 
@@ -19,10 +12,7 @@ export function Metadata ({tool, data = {} }) {
         container={document.getElementsByClassName('control-map')[0]} >
         <Modal.Title>
             <Button disabled className='as-label pb-modal-title' >Физички Блок</Button>
-            <DrawActions
-                finish={() => draw.polygon._finishShape()} 
-                undo={() => draw.polygon._removeLastVertex()}
-                cancel={tool.disable.bind(tool)} />
+            { children }
         </Modal.Title>
         <Modal.Body className='pb-modal-body' >
             <Form 
@@ -44,7 +34,8 @@ export function Metadata ({tool, data = {} }) {
 }
 
 Metadata.propTypes = {
-    tool: PropTypes.object.isRequired,
-    data: PropTypes.object
+    onSubmit: PropTypes.func.isRequired,
+    data: PropTypes.object,
+    children: PropTypes.Node
 }
 
