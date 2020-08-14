@@ -2,6 +2,10 @@
     margin-right: 20px;
     margin-left: 10px;
 }
+.pb-modal-body {
+    margin-top: 10px;
+}
+
 #measure-dialog .save-pb {
     color: #3399ff;
     border: 1px solid #3399ff;

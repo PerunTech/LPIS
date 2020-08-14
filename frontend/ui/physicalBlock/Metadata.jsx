@@ -6,10 +6,10 @@ const { http } = spatial.core;
 const { draw } = spatial.tools;
 const { Form, Button, Modal, DrawActions } = spatial.ui;
 
-export function Metadata ({action, data = {} }) {
+export function Metadata ({tool, data = {} }) {
     const onSubmit = ({ formData }) => {
-        action.disable.call(action)
-        http.call('save_pb', { data: JSON.stringify({ ...formData, GEOM: '' }) });
+        tool.disable.call(tool)
+        http.call('save_pb', { data: JSON.stringify({ ...formData, GEOM: tool.feature }) });
     }
 
     return <Modal show
@@ -22,9 +22,9 @@ export function Metadata ({action, data = {} }) {
             <DrawActions
                 finish={() => draw.polygon._finishShape()} 
                 undo={() => draw.polygon._removeLastVertex()}
-                cancel={action.disable.bind(action)} />
+                cancel={tool.disable.bind(tool)} />
         </Modal.Title>
-        <Modal.Body >
+        <Modal.Body className='pb-modal-body' >
             <Form 
                 schema={PB_SCHEMA}
                 uiSchema={PB_UI_SCHEMA}
@@ -44,7 +44,7 @@ export function Metadata ({action, data = {} }) {
 }
 
 Metadata.propTypes = {
-    action: PropTypes.object.isRequired,
+    tool: PropTypes.object.isRequired,
     data: PropTypes.object
 }
 

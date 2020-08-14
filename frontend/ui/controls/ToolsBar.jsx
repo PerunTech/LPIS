@@ -12,7 +12,7 @@ export const ToolsBar = () =>
             onClick={() => history.push('/')} 
             className='toolbar-home btn_background'
             title='Кон почетна'>
-                <Icon name='home' size='20px' style={{fill: '#5a5a5a'}} />
+                <Icon name='home' size='18px' style={{fill: '#3a3a3a'}} />
         </Button>
         <Tabs defaultActiveKey='digitization' >
             <Tab eventKey='digitization' title='Дигитизација' >
@@ -32,7 +32,7 @@ export const ToolsBar = () =>
             onClick={() => console.log('tbd')} 
             className='toolbar-docs btn_background'
             title='Документи'>
-                <Icon name='docs' size='22px' />
+                <Icon name='docs' size='20px' />
         </Button>
         <Button 
             onClick={() => {
@@ -44,6 +44,6 @@ export const ToolsBar = () =>
             }} 
             className='toolbar-logout btn_background'
             title='Одјави се'>
-                <Icon name='logout' size='22px' />
+                <Icon name='logout' size='20px' />
         </Button>
     </div>;
