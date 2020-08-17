@@ -10,17 +10,21 @@ const { useCallback, useState } = React;
 const _id = PROCESS_ENUM.createPB;
 
 export const CreatePB = ({processID, ...props}) => {
-    const [feature, setFeature] = useState({});
+    const [layer, setLayer] = useState({});
 
     const _finishShape = useCallback(e => {
         (e && e.layer) 
-            && setFeature(factory.GeoJSON.fromLayer(e.layer, Map.getCRS()));
-    }, [setFeature]);
+            && setLayer(e.layer);
+    }, [setLayer]);
 
     const onSubmit = useCallback(({ formData }) => {
-        disable()
-        http.call('save_pb', { data: JSON.stringify({ ...formData, GEOM: feature }) });
-    }, [disable, feature])
+        disable();
+        http.call('save_pb', { 
+            data: JSON.stringify({ ...formData, GEOM: factory.GeoJSON.fromLayer(layer, Map.getCRS()) }) 
+        })
+            .then(response => console.log(response))
+            .catch(err => console.log(err));
+    }, [disable, layer])
 
     const enable = useCallback(() => {
         Map.on('new_shape', _finishShape);
@@ -29,11 +33,12 @@ export const CreatePB = ({processID, ...props}) => {
     }, [_finishShape]);
 
     const disable = useCallback(() => {
+        layer.removeFrom(Map);
         Map.off('new_shape');
         store.dispatch({processID: ''});
-        setFeature({})
+        setLayer({})
         draw.polygon.disable('force');
-    }, [setFeature]);
+    }, [layer, setLayer]);
 
     return <Button {...props}
         id={_id} 
