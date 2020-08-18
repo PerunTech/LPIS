@@ -1,21 +1,23 @@
 import { React, PropTypes } from 'perun-core';
 import { spatial } from '../../core';
 import { PROCESS_ENUM, DRAW_PB } from '../../config';
+
 import { Metadata } from './Metadata';
+import { renderPB } from './RenderPB';
 
 const { Map, store, factory, http } = spatial.core;
-const { edit } = spatial.tools;
-const {  Button, Icon, DrawActions } = spatial.ui;
+const {tools: { edit }, ui: { Button, Icon, DrawActions }} = spatial;
+
 const { useCallback, useState, useEffect } = React;
 const _id = PROCESS_ENUM.editPB;
 
+/**
+ * Edit a physical block.
+ * 
+ * @param {*} props 
+ */
 export const EditPB = ({processID, ...props}) => {
     const [layer, setLayer] = useState({});
-
-    const _finishShape = useCallback(e => {
-        (e && e.layer) 
-            && setLayer(e.layer);
-    }, [setLayer]);
 
     const onSubmit = useCallback(({ formData }) => {
         disable();
@@ -27,12 +29,14 @@ export const EditPB = ({processID, ...props}) => {
     }, [disable, layer])
 
     const enable = useCallback(() => {
+        renderPB.byBBox();
         // Map.on('new_shape', _finishShape);
         store.dispatch({ processID: _id });
         edit.polygon.enable(DRAW_PB);
-    }, [_finishShape]);
+    }, []);
 
     const disable = useCallback(() => {
+        renderPB.removeAll()
         // layer.removeFrom(Map);
         // Map.off('new_shape');
         store.dispatch({processID: ''});

@@ -3,9 +3,7 @@ import { spatial } from '../../core';
 import { PROCESS_ENUM, DRAW_PB } from '../../config';
 import { Metadata } from './Metadata';
 
-const { Map, store, factory, http } = spatial.core;
-const { draw } = spatial.tools;
-const {  Button, Icon, DrawActions } = spatial.ui;
+const { core: { Map, store, factory, http }, tools: { draw }, ui: { Button, Icon, DrawActions } } = spatial;
 const { useCallback, useState } = React;
 const _id = PROCESS_ENUM.createPB;
 

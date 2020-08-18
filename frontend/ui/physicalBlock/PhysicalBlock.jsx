@@ -29,3 +29,11 @@ store.addState('http', {
         contentType: 'text'
     }
 })
+
+store.addState('http', {
+    render_pb: {
+        url: '/lpis/render/physicalBlock/{init.token}/{map.bbox}',
+        method: 'get',
+        responseType: 'application/json',
+    }
+})
