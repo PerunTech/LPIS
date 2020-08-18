@@ -3,17 +3,14 @@ import { spatial } from '../../core';
 
 /* private local imports */
 import { CreatePB } from './CreatePB';
+import { EditPB } from './EditPB';
 
 const { connect, store } = spatial.core;
-const {  Button, Icon } = spatial.ui;
 
 const _PhysicalBlock = ({processID, ...props}) => 
     <>
         <CreatePB {...props} processID={processID} />
-        <Button >
-            <Icon name='editPB' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>Промени физички блок</span>
-        </Button>
+        <EditPB {...props} processID={processID} />
     </>;
 
 _PhysicalBlock.propTypes = {
