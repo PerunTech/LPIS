@@ -90,6 +90,9 @@ public class ApplicationServices {
 			} else {
 				log.error("Failed saving physical block. " + e);
 			}
+		} finally {
+			if (svg != null)
+				svg.release();
 		}
 		
 		return Response.status(200).entity("".toString()).build();

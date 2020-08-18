@@ -32,8 +32,8 @@ store.addState('http', {
 
 store.addState('http', {
     render_pb: {
-        url: '/lpis/render/physicalBlock/{init.token}/{map.bbox}',
+        url: '/spatial/getGeometry/bbox/{init.token}/PHYSICAL_BLOCK/{map.bbox}',
         method: 'get',
-        responseType: 'application/json',
+        responseType: 'application/pbf',
     }
 })

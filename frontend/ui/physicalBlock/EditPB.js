@@ -1,6 +1,6 @@
 import { React, PropTypes } from 'perun-core';
 import { spatial } from '../../core';
-import { PROCESS_ENUM, DRAW_PB } from '../../config';
+import { PROCESS_ENUM } from '../../config';
 
 import { Metadata } from './Metadata';
 import { renderPB } from './RenderPB';
@@ -32,7 +32,7 @@ export const EditPB = ({processID, ...props}) => {
         renderPB.byBBox();
         // Map.on('new_shape', _finishShape);
         store.dispatch({ processID: _id });
-        edit.polygon.enable(DRAW_PB);
+        edit.polygon.enable();
     }, []);
 
     const disable = useCallback(() => {
