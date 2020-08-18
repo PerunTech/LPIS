@@ -22,7 +22,7 @@ export const CreatePB = ({processID, ...props}) => {
         http.call('save_pb', { 
             data: JSON.stringify({ ...formData, GEOM: factory.GeoJSON.fromLayer(layer, Map.getCRS()) }) 
         })
-            .then(response => console.log(response))
+            .then(response => console.log(response))    // Add Alerts here.
             .catch(err => console.log(err));
     }, [disable, layer])
 
@@ -33,12 +33,12 @@ export const CreatePB = ({processID, ...props}) => {
     }, [_finishShape]);
 
     const disable = useCallback(() => {
-        layer.removeFrom(Map);
+        // layer.removeFrom(Map);
         Map.off('new_shape');
         store.dispatch({processID: ''});
         setLayer({})
         draw.polygon.disable('force');
-    }, [layer, setLayer]);
+    }, [setLayer]);
 
     return <Button {...props}
         id={_id} 
