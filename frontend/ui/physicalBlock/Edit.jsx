@@ -3,9 +3,9 @@ import { spatial } from '../../core';
 import { PROCESS_ENUM } from '../../config';
 
 import { Metadata } from './Metadata';
-import { renderPB } from './RenderPB';
+import { render } from './Render';
 
-const { Map, store, factory, http } = spatial.core;
+const { Map, store, factory, http, connect } = spatial.core;
 const {tools: { edit }, ui: { Button, Icon, DrawActions }} = spatial;
 
 const { useCallback, useState, useEffect } = React;
@@ -16,8 +16,12 @@ const _id = PROCESS_ENUM.editPB;
  * 
  * @param {*} props 
  */
-export const EditPB = ({processID, ...props}) => {
+const _Edit = ({processID, bbox, ...props}) => {
     const [layer, setLayer] = useState({});
+
+    useEffect(() => {
+        (bbox && processID === _id) && render.byBBox();
+        return render.removeAll(); }, [ bbox, processID ]) 
 
     const onSubmit = useCallback(({ formData }) => {
         disable();
@@ -26,23 +30,21 @@ export const EditPB = ({processID, ...props}) => {
         })
             .then(response => console.log(response))    // Add Alerts here.
             .catch(err => console.log(err));
-    }, [disable, layer])
+    }, [disable, layer]);
 
     const enable = useCallback(() => {
-        renderPB.byBBox();
+        render.byBBox();
         // Map.on('new_shape', _finishShape);
         store.dispatch({ processID: _id });
-        edit.polygon.enable();
-    }, []);
+        edit.polygon.enable(); }, []);
 
     const disable = useCallback(() => {
-        renderPB.removeAll()
+        render.removeAll()
         // layer.removeFrom(Map);
         // Map.off('new_shape');
         store.dispatch({processID: ''});
         setLayer({})
-        edit.polygon.disable();
-    }, [setLayer]);
+        edit.polygon.disable(); }, [setLayer]);
 
     return <Button {...props}
         id={_id} 
@@ -58,6 +60,10 @@ export const EditPB = ({processID, ...props}) => {
     </Button>;
 }
 
-EditPB.propTypes = {
+_Edit.propTypes = {
     processID: PropTypes.string,
+    bbox: PropTypes.string
 }
+
+export const Edit = connect(state => 
+    ({ bbox: state.map.bbox }))(_Edit);

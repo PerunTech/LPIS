@@ -7,7 +7,7 @@ const { core: { Map, store, factory, http }, tools: { draw }, ui: { Button, Icon
 const { useCallback, useState } = React;
 const _id = PROCESS_ENUM.createPB;
 
-export const CreatePB = ({processID, ...props}) => {
+export const Create = ({processID, ...props}) => {
     const [layer, setLayer] = useState({});
 
     const _finishShape = useCallback(e => {
@@ -54,6 +54,6 @@ export const CreatePB = ({processID, ...props}) => {
     </Button>;
 }
 
-CreatePB.propTypes = {
+Create.propTypes = {
     processID: PropTypes.string,
 }

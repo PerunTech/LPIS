@@ -1,16 +1,17 @@
 import { spatial } from '../../core';
 
-const { core: { store, factory, http }, config: { MIN_DIGI_SCALE, MAP_CONFIG } } = spatial;
+const { core: { store, factory, http }, 
+        config: { MIN_DIGI_SCALE, MAP_CONFIG },
+        data: { protobuf, geobuf } } = spatial;
 
-export const renderPB = {
+export const render = {
     pbGroup: new factory.LayerGroup(),
 
     byBBox () {
         store.dispatch({minZoom: MIN_DIGI_SCALE});
-        console.log(store.getState())
 
         http.call('render_pb')
-            .then(response => console.log(response))
+            .then(response => console.log(geobuf.decode(protobuf(response))))
             .catch(err => console.log(err))
     },
 

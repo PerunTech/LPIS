@@ -2,15 +2,15 @@ import { React, PropTypes } from 'perun-core';
 import { spatial } from '../../core';
 
 /* private local imports */
-import { CreatePB } from './CreatePB';
-import { EditPB } from './EditPB';
+import { Create } from './Create';
+import { Edit } from './Edit';
 
 const { connect, store } = spatial.core;
 
 const _PhysicalBlock = ({processID, ...props}) => 
     <>
-        <CreatePB {...props} processID={processID} />
-        <EditPB {...props} processID={processID} />
+        <Create {...props} processID={processID} />
+        <Edit {...props} processID={processID} />
     </>;
 
 _PhysicalBlock.propTypes = {
@@ -34,6 +34,6 @@ store.addState('http', {
     render_pb: {
         url: '/spatial/getGeometry/bbox/{init.token}/PHYSICAL_BLOCK/{map.bbox}',
         method: 'get',
-        responseType: 'application/pbf',
+        responseType: 'arraybuffer',
     }
 })
