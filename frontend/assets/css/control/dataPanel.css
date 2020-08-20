@@ -20,7 +20,15 @@
 }
 
 #data-panel .data-panel-title.as-label {
-    font-size: 16px;
-    padding: 1rem;
-    margin-right: 25px;
+    font-size: 14px;
+    font-style: italic;
+    padding: 0.75rem;
+    margin-left: 25px;
+}
+
+#data-panel .title-divider {
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

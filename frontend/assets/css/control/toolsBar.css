@@ -36,3 +36,6 @@
     width: 40px;
     border-radius: 50%;
 }
+#toolsbar .nav-tabs .nav-link {
+    font-style: italic;
+}

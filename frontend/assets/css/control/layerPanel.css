@@ -20,9 +20,11 @@
 }
 
 #layer-panel .layer-panel-title.as-label {
-    font-size: 16px;
-    padding: 1rem;
-    margin-right: 25px;
+    font-size: 14px;
+    font-style: italic;
+    padding: 0.75rem;
+    margin-left: 25px;
+    margin-right: 22px;
 }
 
 .control-right .leaflet-control-layers-toggle {

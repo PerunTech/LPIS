@@ -15,7 +15,7 @@ export const DataPanel = () => {
                 </Button> 
             </Button>
             {open && <>
-                <Divider style={{margin: '10px 10px 10px 10px'}} />
+                <Divider style={{margin: '10px 10px 10px 0px'}} />
                 <Button disabled className='as-label data-panel-title' >Работна листа</Button>
             </>}
         </ButtonGroup>
