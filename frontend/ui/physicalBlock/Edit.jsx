@@ -19,9 +19,10 @@ const _id = PROCESS_ENUM.editPB;
 const _Edit = ({processID, bbox, ...props}) => {
     const [layer, setLayer] = useState({});
 
+    /*
     useEffect(() => {
         (bbox && processID === _id) && render.byBBox();
-        return render.removeAll(); }, [ bbox, processID ]) 
+        return render.removeAll(); }, [ bbox, processID ]) */
 
     const onSubmit = useCallback(({ formData }) => {
         disable();
