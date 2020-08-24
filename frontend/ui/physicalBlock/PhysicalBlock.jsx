@@ -2,15 +2,15 @@ import { React, PropTypes } from 'perun-core';
 import { spatial } from '../../core';
 
 /* private local imports */
-import { Create } from './Create';
-import { Edit } from './Edit';
+import { createPB } from './Create';
+import { editPB } from './Edit';
 
 const { connect, store } = spatial.core;
 
 const _PhysicalBlock = ({processID, ...props}) => 
     <>
-        <Create {...props} processID={processID} />
-        <Edit {...props} processID={processID} />
+        <createPB.render {...props} processID={processID} />
+        <editPB.render {...props} processID={processID} />
     </>;
 
 _PhysicalBlock.propTypes = {
