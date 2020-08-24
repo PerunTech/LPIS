@@ -13,7 +13,7 @@ public class DbInit implements IDbInit {
 	
 	static final String CONST_MASTER_REPO = "{MASTER_REPO}";
 	static final String CONST_DEFAULT_SCHEMA = "{DEFAULT_SCHEMA}";
-	static final String SRID = "4326";
+	static final String SRID = "6316";
 	
 	private static DbDataTable addSortOrder(DbDataTable dbtt) {
 		Integer order = 100;
