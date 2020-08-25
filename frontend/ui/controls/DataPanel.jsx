@@ -1,12 +1,13 @@
 import { React } from 'perun-core';
 import { spatial } from '../../core';
+import { DataTree } from '../DataTreeList/DataTree'
 
 const { useState} = React;
 const { ButtonGroup, Button, Icon, Divider } = spatial.ui;
 
 export const DataPanel = () => {
-    const [open, isOpen] = useState(true);
 
+    const [open, isOpen] = useState(true);
     return <div id='data-panel' style={open ? {width: '249px'} : {}}>
         <ButtonGroup>
             <Button id='data-panel-toggle' disabled style={!open ? {width: '60px', height: '60px'} : {}} >
@@ -20,5 +21,6 @@ export const DataPanel = () => {
             </>}
         </ButtonGroup>
         <Divider vertical={false} style={{margin: '0px'}} />
+        <DataTree />
     </div>;
 } 
