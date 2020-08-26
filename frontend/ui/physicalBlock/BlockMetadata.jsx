@@ -4,7 +4,7 @@ import { PB_SCHEMA, PB_UI_SCHEMA } from '../../config';
 
 const { Form, Button, Modal } = spatial.ui;
 
-export function Metadata ({onSubmit, data = {}, children }) {
+export function BlockMetadata ({onSubmit, data = {}, children }) {
     return <Modal show
         id='measure-dialog'
         backdrop={false} 
@@ -33,7 +33,7 @@ export function Metadata ({onSubmit, data = {}, children }) {
     </Modal>;
 }
 
-Metadata.propTypes = {
+BlockMetadata.propTypes = {
     onSubmit: PropTypes.func.isRequired,
     data: PropTypes.object,
     children: PropTypes.Node
