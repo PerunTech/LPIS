@@ -1,7 +1,7 @@
 /** @constant */
 export const PROCESS_ENUM = {
-    createPB: 'createPB',
-    editPB: 'editPB'
+    createBlock: 'createBlock',
+    editBlock: 'editBlock'
 }
 
 /** @constant */
@@ -51,7 +51,12 @@ export const DRAW_PB = {
         fillColor: '#f8f8ff',
         opacity: 0.9,
         fillOpacity: 0.25,
-        showMeasurements: true
+        showMeasurements: true,
+        descriptor: {
+            sdiType: 'pb',
+            name: 'Физички блок',
+            label: 'Нов физички блок',
+        }
     }
 }
 
@@ -94,4 +99,22 @@ export const PB_UI_SCHEMA = {
         'ui:widget': 'textarea',
         /*classNames: 'form-control-sm'*/
     }
+}
+
+/** @constant */
+export const PB_STYLE = {
+    fillColor: '#000000'
+};
+
+/** @constant */
+export const PB_STYLE_HOVER = {
+    fillColor: '#FFFFFF'
+};
+
+export const DATA_CATEGORIES = {
+    data_pb: 'Физички блокови',
+    data_ap: 'Земјоделски парцели',
+    data_sel: 'Одбрани елементи',
+    data_meas: 'Мерења',
+    data_io: 'Увезени геометрии',
 }
