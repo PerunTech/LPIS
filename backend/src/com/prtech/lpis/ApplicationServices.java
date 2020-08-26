@@ -87,14 +87,16 @@ public class ApplicationServices {
 		} catch (Exception e) {
 			if (e instanceof SvException) {
 				log.error("Failed saving physical block. " + ((SvException) e).getFormattedMessage(), e);
+				return Response.status(401).entity(((SvException) e).getJsonMessage()).build();
 			} else {
 				log.error("Failed saving physical block. " + e);
+				return Response.status(401).entity(e).build();
 			}
 		} finally {
 			if (svg != null)
 				svg.release();
 		}
 		
-		return Response.status(200).entity("".toString()).build();
+		return Response.status(200).entity(pb.toSimpleJson().toString()).build();
 	}
 }
