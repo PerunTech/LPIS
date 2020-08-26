@@ -1,6 +1,6 @@
 import { React } from 'perun-core';
 import { spatial } from '../../core';
-import { DataTree } from '../DataTreeList/DataTree'
+import { DataList } from '..';
 
 const { useState} = React;
 const { ButtonGroup, Button, Icon, Divider } = spatial.ui;
@@ -21,6 +21,6 @@ export const DataPanel = () => {
             </>}
         </ButtonGroup>
         <Divider vertical={false} style={{margin: '0px'}} />
-        <DataTree />
+        <DataList />
     </div>;
 } 

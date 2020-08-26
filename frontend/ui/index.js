@@ -1,3 +1,6 @@
+/*  */
+export { DataList } from './dataList/DataList';
+
 /* physical block  */
 export { PhysicalBlock } from './physicalBlock/PhysicalBlock';
 
