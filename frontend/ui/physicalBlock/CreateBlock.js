@@ -54,7 +54,6 @@ export const createBlock = {
     _finishShape (e) {
         if (e && e.layer) {
             this._layer = e.layer;
-            console.log(Map)
             store.dispatch({ 
                 [dc.data_pb]: {
                     ...store.getState().data[dc.data_pb],
