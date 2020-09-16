@@ -5,7 +5,7 @@ import { BlockMetadata } from './BlockMetadata';
 
 const {
     config: { MIN_DIGI_SCALE, MAP_CONFIG }, 
-    core: { Map, store, factory, http, connect, geoJson },
+    core: { Map, store, factory, http, connect },
     data: { protobuf, geobuf },
     tools: { edit },
     ui: { Button, Icon, DrawActions }} = spatial;
@@ -96,7 +96,7 @@ export const editBlock = {
 
     _renderBlocks (jsonArr) {
         jsonArr.features.map(el => {
-            geoJson(el, {
+            factory.geoJSON(el, {
                 onEachFeature: function (feature, layer) {
                     this._setBlockEvents(layer);
                     this._layerGroup.addLayer(layer);
