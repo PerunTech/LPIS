@@ -7,7 +7,7 @@ const { Form, Button, Modal } = spatial.ui;
 export function BlockMetadata ({onSubmit, data = {}, children }) {
     return <Modal show
         id='measure-dialog'
-        backdrop={false} 
+        backdrop={false}
         enforceFocus={false}
         container={document.getElementsByClassName('control-map')[0]} >
         <Modal.Title>

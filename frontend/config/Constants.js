@@ -52,7 +52,7 @@ export const DRAW_PB = {
         opacity: 0.9,
         fillOpacity: 0.25,
         showMeasurements: true,
-        descriptor: {
+        metadata: {
             sdiType: 'pb',
             name: 'Физички блок',
             label: 'Нов физички блок',

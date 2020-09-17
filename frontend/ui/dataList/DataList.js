@@ -14,37 +14,24 @@ const _opt = {
 }
 
 const _DataList = ({data}) => {
-    const transformData = () => 
-        Object.keys(data).map(key => {
-            return { 
-                key: key, 
-                label: key, 
-                nodes: Object.keys(data[key]).map(el => {
-                    data[key][el].addTo(Map)
-                    return {key: el, label: el}})
-            };
-        });
+    console.log(data)
+    if (Object.values(data).length > 0) {
+        console.log(Object.values(data)[0].getMetadata())
+    }
 
-    const goToLayer = ({parent, label}) => 
-        parent.length > 0 
-            && Map.fitBounds(data[parent][label].getBounds());
+    const goToLayer = (e) =>
+(        console.log(e),
+        e.parent.length > 0 
+            && Map.fitBounds(data[e.parent][e.label].getBounds()));
 
     return <div id='dataList'>
-        <TreeMenu {..._opt}  data={transformData()} onClickItem={goToLayer} />
+        <TreeMenu {..._opt}  data={{}} onClickItem={goToLayer} />
     </div> 
 } 
-
-store.addState('data', {
-    [dc.data_pb]: {},
-    [dc.data_ap]: {},
-    [dc.data_sel]: {},
-    [dc.data_meas]: {},
-    [dc.data_io]: {},
-})
 
 _DataList.propTypes = {
     data: PropTypes.object
 }
 
 export const DataList = connect(state => 
-    ({data: state.data}))(_DataList);
+    ({data: state.data.layers}))(_DataList);
