@@ -1,6 +1,6 @@
 import { React, PropTypes, elements } from 'perun-core';
 import { spatial } from '../../core';
-import { PROCESS_ENUM, DRAW_PB, DATA_CATEGORIES as dc } from '../../config';
+import { PROCESS_ENUM, PB_CONF } from '../../config';
 import { BlockMetadata } from './BlockMetadata';
 
 const { 
@@ -9,7 +9,7 @@ const {
     ui: { Button, Icon, DrawActions } } = spatial;
 
 /**
- * Create physical block.
+ * Create a physical block.
  */
 export const createBlock = {
     _id: PROCESS_ENUM.createBlock,
@@ -19,7 +19,7 @@ export const createBlock = {
     enable () {
         Map.on('new_shape', this._finishShape.bind(this));
         store.dispatch({ processID: this._id });
-        draw.polygon.enable(DRAW_PB);
+        draw.polygon.enable(PB_CONF);
     },
 
     disable () {
@@ -35,7 +35,7 @@ export const createBlock = {
         http.call('save_pb', { 
             data: JSON.stringify({ 
                 ...formData, 
-                GEOM: factory.GeoJSON.fromLayer(this._layer, Map.getCRS()) 
+                GEOM: factory.GeoJSON.fromLayer(this._layer) 
             }) 
         }).then(() => {
             this.disable();
@@ -51,16 +51,9 @@ export const createBlock = {
         })
     },
 
-    _finishShape (e) {
-        if (e && e.layer) {
-            this._layer = e.layer;
-            store.dispatch({ 
-                [dc.data_pb]: {
-                    ...store.getState().data[dc.data_pb],
-                    [this._genLayerId(e.layer)]: e.layer 
-                }
-            })
-        } 
+    _finishShape (e) { 
+        (e && e.layer) 
+            && (this._layer = e.layer); 
     },
 
     _genLayerId (layer) {

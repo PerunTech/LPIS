@@ -5,7 +5,7 @@ export const PROCESS_ENUM = {
 }
 
 /** @constant */
-export const DRAW_PB = {
+export const PB_CONF = {
     // allow multiple drawn shapes
     repeatable: false,
     // snapping
@@ -43,7 +43,7 @@ export const DRAW_PB = {
     // specify type of layer event to finish the drawn shape
     // example events: 'mouseout', 'dblclick', 'contextmenu'
     finishOn: null,
-    // configuration of the resulting vector, after measurement finished. 
+    // configuration of the drawn vector. 
     pathOptions: {
         weight: 2.0,
         stroke: true,
@@ -52,52 +52,42 @@ export const DRAW_PB = {
         opacity: 0.9,
         fillOpacity: 0.25,
         showMeasurements: true,
-        metadata: {
-            sdiType: 'pb',
-            name: 'Физички блок',
-            label: 'Нов физички блок',
-        }
+        metadata: PB_METADATA
     }
 }
 
 /** @constant */
-export const PB_SCHEMA = {
-    properties: {
-        LAND_COVER_CODE: {
-            enum: [ '200', '210', '300', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500',
-                '600', '900' ],
-            enumNames: ['Нива (обработливо земјиште)', 'Оранжерии и пластеници на обработливо земјиште',
-                'Постојан тревник', 'Ливада', 'Пасиште', 'Долгогодишни култури (траен насад)', 'Лозов насад',
-                'Овоштарник', 'Маслинов насад', 'Овошен насад', 'Јаткасто овошје', 'Растенија со брзо растечка маса',
-                'Мешани трајни насади', 'Различна искористеност на земјиштето', 'Матични насади',
-                'Останати типови на употреба на земјиштето' ],
-            maxLength: 50,
-            title: 'Употреба на земјиште',
-            type: 'string',
-            default: '200'
+export const PB_METADATA = {
+    schema: {
+        properties: {
+            LAND_COVER_CODE: {
+                enum: [ '200', '210', '300', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500',
+                    '600', '900' ],
+                enumNames: ['Нива (обработливо земјиште)', 'Оранжерии и пластеници на обработливо земјиште',
+                    'Постојан тревник', 'Ливада', 'Пасиште', 'Долгогодишни култури (траен насад)', 'Лозов насад',
+                    'Овоштарник', 'Маслинов насад', 'Овошен насад', 'Јаткасто овошје', 'Растенија со брзо растечка маса',
+                    'Мешани трајни насади', 'Различна искористеност на земјиштето', 'Матични насади',
+                    'Останати типови на употреба на земјиштето' ],
+                maxLength: 50,
+                title: 'Употреба на земјиште',
+                type: 'string',
+                default: '200'
+            },
+            NOTE: {
+                maxLength: 2000,
+                title: 'Забелешка',
+                type: 'string',
+                default: ''
+            }
         },
-        NOTE: {
-            maxLength: 2000,
-            title: 'Забелешка',
-            type: 'string',
-            default: ''
+        required: ['LAND_COVER_CODE'],
+        'type': 'object',
+    },
+    uiSchema: {
+        LAND_COVER_CODE: { },
+        NOTE: { 
+            'ui:widget': 'textarea' 
         }
-    },
-    required: ['LAND_COVER_CODE'],
-    'type': 'object',
-}
-
-/** @constant */
-export const PB_UI_SCHEMA = {
-    LAND_COVER_CODE: {
-        /*'ui:emptyValue': ''*/
-        /*'ui:placeholder': '200',*/
-        /* classNames: 'form-control-sm'*/
-    },
-    NOTE: {
-        /*'ui:emptyValue': 'test',*/
-        'ui:widget': 'textarea',
-        /*classNames: 'form-control-sm'*/
     }
 }
 
@@ -110,11 +100,3 @@ export const PB_STYLE = {
 export const PB_STYLE_HOVER = {
     fillColor: '#FFFFFF'
 };
-
-export const DATA_CATEGORIES = {
-    data_pb: 'Физички блокови',
-    data_ap: 'Земјоделски парцели',
-    data_sel: 'Одбрани елементи',
-    data_meas: 'Мерења',
-    data_io: 'Увезени геометрии',
-}

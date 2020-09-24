@@ -7,17 +7,6 @@ const { ButtonGroup, Button, Icon, Divider } = spatial.ui
 export const Digitization = () =>
     <ButtonGroup id='digitization' >
         <PhysicalBlock />
-        {/*
-        <Divider />
-        <Button >
-            <Icon name='createAP' size='34px' />
-            <span style={{display: 'block', marginTop: '1px' }}>Додади земјоделска парцела</span>
-        </Button>
-        <Button >
-            <Icon name='editAP' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>Промени земјоделска парцела</span>
-        </Button>
-        */}
         <Divider />
         <Button >
             <Icon name='cut-parcel' size='30px' />
