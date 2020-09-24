@@ -8,9 +8,10 @@ const history = createHashHistory();
 
 export const ToolsBar = () => 
     <div id='toolsbar' >
+        <Button disabled className='left-corner-filler' />
         <Button 
             onClick={() => history.push('/')} 
-            className='toolbar-home btn_background'
+            className='toolbar-home'
             title='Кон почетна'>
                 <Icon name='home' size='18px' style={{fill: '#3a3a3a'}} />
         </Button>
@@ -28,11 +29,12 @@ export const ToolsBar = () =>
                 <IO />
             </Tab>
         </Tabs>
+        <Button disabled className='right-corner-filler' />
         <Button 
             onClick={() => console.log('tbd')} 
-            className='toolbar-docs btn_background'
-            title='Документи'>
-                <Icon name='docs' size='20px' />
+            className='toolbar-settings'
+            title='Поставки'>
+                <Icon name='settings' size='20px' />
         </Button>
         <Button 
             onClick={() => {
@@ -42,7 +44,7 @@ export const ToolsBar = () =>
                     + store.getState().security.svSession));
                 history.push('/');
             }} 
-            className='toolbar-logout btn_background'
+            className='toolbar-logout'
             title='Одјави се'>
                 <Icon name='logout' size='20px' />
         </Button>

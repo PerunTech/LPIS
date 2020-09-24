@@ -21,24 +21,24 @@ export const DataPanel = () => {
         </ButtonGroup>
         <Divider vertical={false} style={{margin: '0px'}} />
         <ButtonGroup className='data-list-utils' >
-            <Button onClick={() => {}}  >
+            <Button onClick={() => {}} title='Додади запис'  >
                 <Icon name='add-data-list-item' size='18px' />
             </Button>
-            <Button onClick={() => {}} >
+            <Button onClick={() => {}} title='Додади листа' >
                 <Icon name='load-data-list' size='22px' />
             </Button>
             <Divider />
-            <Button onClick={() => {}} >
+            <Button onClick={() => {}} title='Сочувај листа' >
                 <Icon name='save' size='16px' />
             </Button> 
-            <Button onClick={() => {}} >
+            <Button onClick={() => {}} title='Извези листа' >
                 <Icon name='export' size='18px' />
             </Button> 
             <Divider />
-            <Button onClick={() => {}} >
+            <Button onClick={() => {}} title='Освежи листа' >
                 <Icon name='refresh' size='16px' />
             </Button> 
-            <Button onClick={() => {}} >
+            <Button onClick={() => {}} title='Минимизирај листа' >
                 <Icon name='collapse-all' size='18px' />
             </Button> 
         </ButtonGroup>
