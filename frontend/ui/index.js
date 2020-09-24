@@ -1,5 +1,3 @@
-/*  */
-export { DataList } from './dataPanel/DataList';
 
 /* physical block  */
 export { PhysicalBlock } from './physicalBlock/PhysicalBlock';
@@ -8,10 +6,17 @@ export { PhysicalBlock } from './physicalBlock/PhysicalBlock';
 export { Digitization } from './toolbars/Digitization';
 export { IO } from './toolbars/IO';
 
-/* controls */
+/* data panel  */
+export { DataList } from './dataPanel/DataList';
 export { DataPanel } from './dataPanel/DataPanel';
-export { LayerPanel } from './controls/LayerPanel';
-export { StatusBar } from './controls/StatusBar';
-export { ToolsBar } from './controls/ToolsBar';
+
+/* layer panel  */
+export { LayerPanel } from './layerPanel/LayerPanel';
+
+/* status bar  */
+export { StatusBar } from './statusBar/StatusBar';
+
+/* tools bar  */
+export { ToolsBar } from './toolsBar/ToolsBar';
 
 export { Init } from './Init';

@@ -2,7 +2,6 @@
 import './css/elements/form.css'
 
 /* css.control */
-import './css/control/dataList.css';
 import './css/control/dataPanel.css';
 import './css/control/statusBar.css';
 import './css/control/toolsBar.css';
