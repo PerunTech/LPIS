@@ -1,5 +1,5 @@
 /*  */
-export { DataList } from './dataList/DataList';
+export { DataList } from './dataPanel/DataList';
 
 /* physical block  */
 export { PhysicalBlock } from './physicalBlock/PhysicalBlock';
@@ -9,7 +9,7 @@ export { Digitization } from './toolbars/Digitization';
 export { IO } from './toolbars/IO';
 
 /* controls */
-export { DataPanel } from './controls/DataPanel';
+export { DataPanel } from './dataPanel/DataPanel';
 export { LayerPanel } from './controls/LayerPanel';
 export { StatusBar } from './controls/StatusBar';
 export { ToolsBar } from './controls/ToolsBar';
