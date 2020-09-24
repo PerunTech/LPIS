@@ -8,6 +8,16 @@
     border-color:  #F9F9F9;
 }
 
+.data-list-utils {
+    display: flex;
+}
+
+.data-list-utils button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ccc;
+}
+
 #data-panel .btn-light:hover:not(.disabled) {
     background-color: #e2e6ea;
     border-color: #dae0e5;
