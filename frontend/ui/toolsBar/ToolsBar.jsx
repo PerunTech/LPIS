@@ -34,7 +34,7 @@ export const ToolsBar = () =>
             onClick={() => console.log('tbd')} 
             className='toolbar-settings'
             title='Поставки'>
-                <Icon name='settings' size='20px' />
+                <Icon name='settings' size='18px' />
         </Button>
         <Button 
             onClick={() => {

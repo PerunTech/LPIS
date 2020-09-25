@@ -10,18 +10,18 @@ export const Digitization = () =>
         <Divider />
         <Button >
             <Icon name='cut-parcel' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>Пресечи парцела</span>
+            <span style={{display: 'block', marginTop: '5px' }}>Пресечи полигон</span>
         </Button>
         <Button >
             <Icon name='fill-parcel' size='34px' />
-            <span style={{display: 'block', marginTop: '2px' }}>Пополни парцела</span>
+            <span style={{display: 'block', marginTop: '2px' }}>Пополни полигон</span>
         </Button>
         <Button >
             <Icon name='split-parcel' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>Подели парцела</span>
+            <span style={{display: 'block', marginTop: '5px' }}>Подели полигон</span>
         </Button>
         <Button >
             <Icon name='merge-parcel' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>Приспои парцели</span>
+            <span style={{display: 'block', marginTop: '5px' }}>Приспои полигон</span>
         </Button>
     </ButtonGroup>;

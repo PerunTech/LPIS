@@ -2,6 +2,9 @@
     background-color: #F9F9F9;
     transition: width 1s;
 }
+#layer-panel-toggle {
+    width: 50px;
+}
 
 #layer-panel button {
     background-color: #F9F9F9;
