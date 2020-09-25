@@ -1,48 +1,35 @@
-import { React } from 'perun-core';
+import { React, PropTypes } from 'perun-core';
 import { spatial } from '../../core';
-import { DataList } from '..';
+import { DataList, DataListUtils } from '..';
 
-const { useState} = React;
-const { ButtonGroup, Button, Icon, Divider, Input } = spatial.ui;
+const { connect } = spatial.core;
+const { Button, Divider } = spatial.ui;
+const { useState, useEffect, useCallback } = React;
 
-export const DataPanel = () => {
-    const [open, isOpen] = useState(true);
+
+const _DataPanel = ({layers}) => {
+    /* Transforms layers into a viable data structure for our panel. */
+    const transform = useCallback(input => console.log(input), []);
+    
+    /* Hook into React lifecycles. Preserve internal data, refresh on each change in state.data.layers */
+    const [data, setData] = useState({})
+    useEffect(() => { 
+        setData(transform(layers)); }, [transform, layers])
+
     return <div id='data-panel' style={open ? {width: '299px'} : {}}>
-        <ButtonGroup>
-            <Button id='data-panel-toggle' disabled style={!open ? {width: '60px', height: '60px', backgroundColor: '#F9F9F9'} : {}} >
-                <Button onClick={() => isOpen(!open)} >
-                    <Icon name={open ? 'chevron-left' : 'chevron-right'} size='12px' />
-                </Button> 
-            </Button>
-            {open && <>
-                <Divider style={{margin: '10px 10px 10px 0px'}} />
-                <Button disabled className='as-label data-panel-title' >Работна листа</Button>
-            </>}
-        </ButtonGroup>
+        {/* Data list title */}
+        <Button disabled className='as-label data-panel-title' >Работна листа</Button>
         <Divider vertical={false} style={{margin: '0px'}} />
-        <ButtonGroup className='data-list-utils' >
-            <Button onClick={() => {}} title='Додади запис'  >
-                <Icon name='add-data-list-item' size='18px' />
-            </Button>
-            <Button onClick={() => {}} title='Додади листа' >
-                <Icon name='load-data-list' size='22px' />
-            </Button>
-            <Divider />
-            <Button onClick={() => {}} title='Сочувај листа' >
-                <Icon name='save' size='16px' />
-            </Button> 
-            <Button onClick={() => {}} title='Извези листа' >
-                <Icon name='export' size='18px' />
-            </Button> 
-            <Divider />
-            <Button onClick={() => {}} title='Освежи листа' >
-                <Icon name='refresh' size='16px' />
-            </Button> 
-            <Button onClick={() => {}} title='Минимизирај листа' >
-                <Icon name='collapse-all' size='18px' />
-            </Button> 
-        </ButtonGroup>
-        <Input placeholder='Пребарај' style={{padding: '1rem', backgroundColor: '#fff', textIndent: '5px'}} />
-        <DataList />
+        {/* Data list utilities */}
+        <DataListUtils data={data} setData={setData} transform={transform} />
+        {/* Data list content */}
+        <DataList data={data} />
     </div>;
-} 
+}
+
+_DataPanel.propTypes = {
+    layers: PropTypes.object
+}
+
+export const DataPanel = connect(state => 
+    ({layers: state.data.layers}))(_DataPanel);
