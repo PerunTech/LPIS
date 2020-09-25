@@ -1,25 +1,9 @@
 import { React, PropTypes } from 'perun-core';
 import { spatial } from '../../core'
 
-const { Map, store, connect } = spatial.core;
 const { TreeNode } = spatial.ui;
 
-/* internal configuration */
-const _opt = {
-    debounceTime: 125,
-    disableKeyboard: false,
-    hasSearch: true,
-    resetOpenNodesOnDataUpdate: false,
-}
-
-const _DataList = ({data}) => {
-    console.log(data)
-
-    const goToLayer = (e) =>
-(        console.log(e),
-        e.parent.length > 0 
-            && Map.fitBounds(data[e.parent][e.label].getBounds()));
-
+export const DataList = ({data}) => {
     return <div id='dataList' style={{backgroundColor: '#fff'}}>
         <TreeNode label='Физички блокови' style={{marginLeft: '5px'}} >
             <div >12345678 Употреба на земјиште Површина</div>
@@ -33,9 +17,24 @@ const _DataList = ({data}) => {
     </div> 
 } 
 
-_DataList.propTypes = {
+DataList.propTypes = {
     data: PropTypes.object
 }
+/*    const _generateNode = el => 
+        <TreeNode 
+            key={el.getLabel()} 
+            label={el.getLabel()}
+            collapsed={el.isCollapsed()} >
+            {el.getChildren()}
+        </TreeNode>
 
-export const DataList = connect(state => 
-    ({data: state.data.layers}))(_DataList);
+    return data.map(el => 
+        <TreeNode 
+            key={el.getLabel()} 
+            label={el.getLabel()}
+            collapsed={el.isCollapsed()} >
+            {el.getChildren().map(entry => {
+
+            })}
+        </TreeNode>
+    });*/
