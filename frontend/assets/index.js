@@ -1,8 +1,11 @@
 /* css.elements */
 import './css/elements/form.css'
 
+/* css.dataPanel */
+import './css/dataPanel/dataList.css'
+import './css/dataPanel/dataPanel.css';
+
 /* css.control */
-import './css/control/dataPanel.css';
 import './css/control/statusBar.css';
 import './css/control/toolsBar.css';
 import './css/control/layerPanel.css';

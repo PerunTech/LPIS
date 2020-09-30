@@ -7,6 +7,8 @@ export { Digitization } from './toolbars/Digitization';
 export { IO } from './toolbars/IO';
 
 /* data panel  */
+export { DataGrid } from './dataPanel/DataGrid';
+export { DataEntry } from './dataPanel/DataEntry';
 export { DataListUtils } from './dataPanel/DataListUtils';
 export { DataList } from './dataPanel/DataList';
 export { DataPanel } from './dataPanel/DataPanel';
