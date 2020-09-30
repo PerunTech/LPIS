@@ -1,40 +1,32 @@
 import { React, PropTypes } from 'perun-core';
-import { spatial } from '../../core'
+import { spatial } from '../../core';
+import { DataGrid } from '..';
 
+const { replaceElement } = spatial.core.util;
 const { TreeNode } = spatial.ui;
 
-export const DataList = ({data}) => {
-    return <div id='dataList' style={{backgroundColor: '#fff'}}>
-        <TreeNode label='Физички блокови' style={{marginLeft: '5px'}} >
-            <div >12345678 Употреба на земјиште Површина</div>
-            <div >4321</div>
-            <div >78787</div>
-        </TreeNode>
-        <TreeNode label='Земјоделски парцели' style={{marginLeft: '5px'}} />
-        <TreeNode label='Катастарски парцели' style={{marginLeft: '5px'}} />
-        <TreeNode label='Мерења' style={{marginLeft: '5px'}} />
-        <TreeNode label='Увезувања' style={{marginLeft: '5px'}} />
-    </div> 
-} 
+export const _DataList = ({data, setData, layers}) => 
+    <div id='dataList' >
+        {data.map((el, idx) => 
+            <TreeNode 
+                id={idx} 
+                key={el.id} 
+                label={el.label} 
+                isOpen={el.isOpen} 
+                onClick={id =>
+                    setData(replaceElement(data, id, { ...data[id], isOpen: !(el.isOpen) }))} >
+                {<DataGrid 
+                    type={el} 
+                    rows={Object.values(layers).filter(layer => 
+                        layer.getMetadata().type === el.id)} />}
+            </TreeNode> )}
+    </div>;
 
-DataList.propTypes = {
-    data: PropTypes.object
-}
-/*    const _generateNode = el => 
-        <TreeNode 
-            key={el.getLabel()} 
-            label={el.getLabel()}
-            collapsed={el.isCollapsed()} >
-            {el.getChildren()}
-        </TreeNode>
+_DataList.propTypes = {
+    data: PropTypes.object,
+    setData: PropTypes.func,
+    layers: PropTypes.obj
+};
 
-    return data.map(el => 
-        <TreeNode 
-            key={el.getLabel()} 
-            label={el.getLabel()}
-            collapsed={el.isCollapsed()} >
-            {el.getChildren().map(entry => {
-
-            })}
-        </TreeNode>
-    });*/
+export const DataList = spatial.core.connect(state => 
+    ({layers: state.data.layers}))(_DataList);

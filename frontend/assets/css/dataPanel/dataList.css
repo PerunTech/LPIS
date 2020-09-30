@@ -1,0 +1,37 @@
+#dataList {
+    background-color: #fff;
+}
+#dataList .tree-node-label {
+    font-weight: bold;
+}
+
+.data-list-utils {
+    display: flex;
+    border-bottom: 1px solid #00000025;
+}
+.data-list-utils button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ccc;
+}
+
+.data-list-header {
+    display: flex;
+}
+.data-list-header .btn.disabled {
+    font-style: italic;
+    opacity: 0.8;
+    border-bottom: 1px solid #00000025;
+    background-color: #f9f9f9;
+}
+
+.tree-node-children .divider-horizontal {
+    margin: 0px 3px 5px 3px;
+}
+
+.data-list-empty-rows {
+    height: 60px;
+    display: flex;
+    justify-content: center;
+}
+
