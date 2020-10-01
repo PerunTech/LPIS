@@ -1,3 +1,7 @@
+.data-grid {
+    /*display: flex;*/
+}
+
 .data-grid-header {
     display: flex;
 }
@@ -6,4 +10,23 @@
     opacity: 0.8;
     border-bottom: 1px solid #00000025;
     background-color: #f9f9f9;
+}
+.data-grid-header .data-grid-index {
+    flex: 0 0 22px;
+}
+.data-grid-header .data-grid-column {
+    flex: 0 0 78px;
+    text-align: start;
+}
+
+.data-grid-row {
+    display: flex;
+}
+.data-grid-row .data-grid-index {
+    flex: 0 0 22px;
+}
+.data-grid-row .data-grid-column {
+    flex: 0 0 78px;
+    text-align: start;
+    opacity: 1;
 }
