@@ -1,12 +1,13 @@
 import { React, PropTypes } from 'perun-core';
 import { spatial } from '../../core';
 
+const { factory, Map } = spatial.core;
 const { ButtonGroup, Button, Icon } = spatial.ui;
 
 export const DataGrid = ({type, rows, ...props}) => {
     return <div id={type.id + '-grid'} >
         <_GridHeader typeId={type.id} />
-        {rows.length > 0 ? <_GridRows /> : <_NoData />}
+        {rows.length > 0 ? <_GridRows rows={rows} /> : <_NoData />}
     </div>
 }
 
@@ -21,16 +22,16 @@ DataGrid.propTypes = {
 const columnEnum = {
     physical_block:     [ 'Ид. Број', 'Класа', 'Површина' ],
     agri_parcel:        [ 'Ид. Број', 'ИДБР', 'Површина' ],
-    cad_parcel:         [ 'Ид. Број', 'Oпштина', 'Површина'],
+    cad_parcel:         [ 'Ид. Број', 'K. Oпштина', 'Површина'],
     measurements:       [ 'Ид. Број', 'Тип', 'Мерење' ],
-    imports:            [ 'Ид. Број' ],
+    imports:            [ 'Ид. Број', 'Тип', 'Површина' ],
     pastures:           [ 'Ид. Број', 'Локалитет', 'Површина' ],
-    landscape_features: [ 'Ид. Број', 'Тип', 'Број на Парцела'],
-    npa:                [ 'Ид. Број', 'Име', 'Површина' ],
+    landscape_features: [ 'Ид. Број', 'Број на ЗП', 'Површина'],
+    npa:                [ 'Ид. Број', 'Назив', 'Површина' ],
     soil_types:         [ 'Ид. Број', 'Тип', 'Површина' ],
-    transport_network:  [ 'Ид. Број' ],
-    water_bodies:       [ 'Ид. Број' ],
-    resto:              [ 'Ид. Број' ]
+    transport_network:  [ 'Ид. Број', 'Назив', 'Должина' ],
+    water_bodies:       [ 'Ид. Број', 'Назив', 'Должина' ],
+    resto:              [ 'Ид. Број', 'Тип', 'Површина']
 };
 
 /* Column names above each set of data types in the list. */
@@ -38,7 +39,7 @@ const _GridHeader = ({ typeId }) => {
     const columns = columnEnum[typeId] || columnEnum['resto'];
 
     return <>
-        <ButtonGroup className='data-list-header' >
+        <ButtonGroup className='data-grid-header' >
             <Button disabled >{columns[0]}</Button>
             <Button disabled >{columns[1]}</Button>
             <Button disabled >{columns[2]}</Button>
@@ -55,8 +56,24 @@ _GridHeader.propTypes = {
 /* ----------------------- */
 /*      GRID CONTENT      */
 /* ---------------------- */
-const _GridRows = ({rows}) => null
+const _GridRows = ({typeId, rows}) => {
+    return rows.map((el) => {
+        const id = el.getId(),
+            name = el.getName(),
+            measurement = Math.round(el.getMeasurement()),
+            unit = el instanceof factory.Polygon ? 'm²' : 'm';
 
+        // Connect and filter when id || name || measurement matches search string. Thats our search list filter.
+        return <ButtonGroup classname={'data-grid-row'} key={id} >
+            <Button disabled >{id}</Button>
+            <Button disabled >{name}</Button>
+            <Button disabled >{measurement + ' ' + unit}</Button>
+            <Button onClick={() => {}} >
+                <Icon name='' size='16px' />
+            </Button>
+        </ButtonGroup>
+    });
+}
 
 /* ----------------------------- */
 /*      NESSUN DATO TROVATO      */

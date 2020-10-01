@@ -2,6 +2,7 @@
 import './css/elements/form.css'
 
 /* css.dataPanel */
+import './css/dataPanel/dataGrid.css'
 import './css/dataPanel/dataList.css'
 import './css/dataPanel/dataPanel.css';
 

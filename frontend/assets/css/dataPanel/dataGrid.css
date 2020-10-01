@@ -1,0 +1,9 @@
+.data-grid-header {
+    display: flex;
+}
+.data-grid-header .btn.disabled {
+    font-style: italic;
+    opacity: 0.8;
+    border-bottom: 1px solid #00000025;
+    background-color: #f9f9f9;
+}
