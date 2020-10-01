@@ -67,11 +67,11 @@ const _GridRows = ({typeId, rows}) => {
             <Button disabled className='data-grid-column' >{id}</Button>
             <Button disabled className='data-grid-column' >{'Полигон'}</Button>
             <Button disabled className='data-grid-column' >{measurement + ' ' + unit}</Button>
-            <Button onClick={() => Map.fitBounds(el.getBounds())} >
+            <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} >
                 <Icon name='pinpoint' size='16px' />
             </Button>
-            <Button onClick={() => console.log('more')} >
-                <Icon name='more' size='16px' />
+            <Button className='data-grid-util' onClick={() => console.log('more')} >
+                <Icon name='more' size='12px' />
             </Button>
         </ButtonGroup>
     });
@@ -81,7 +81,7 @@ const _GridRows = ({typeId, rows}) => {
 /*      NESSUN DATO TROVATO      */
 /* ----------------------------- */
 const _NoData = () =>
-    <div className='data-list-empty-rows' >
+    <div className='data-grid-empty-rows' >
         <ButtonGroup >
             <Button disabled style={{opacity: 1}}>
                 <Icon name='empty-grid' size='18px' />

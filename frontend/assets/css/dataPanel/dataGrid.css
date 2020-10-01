@@ -1,5 +1,6 @@
 .data-grid {
-    /*display: flex;*/
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .data-grid-header {
@@ -21,12 +22,34 @@
 
 .data-grid-row {
     display: flex;
+    border-bottom: 1px solid #00000025;
+}
+.data-grid-row:nth-child(odd) button {
+    background-color: #f9f9f9;
 }
 .data-grid-row .data-grid-index {
     flex: 0 0 22px;
+    opacity: 1;
 }
 .data-grid-row .data-grid-column {
     flex: 0 0 78px;
     text-align: start;
     opacity: 1;
+}
+.data-grid-row:hover .data-grid-index,
+.data-grid-row:hover .data-grid-column,
+.data-grid-row:hover .data-grid-util 
+{
+    background-color: #3399ff25 ;
+}
+
+.data-grid-util {
+    height: 30px;
+    width: 30px;
+}
+
+.data-grid-empty-rows {
+    height: 50px;
+    display: flex;
+    justify-content: center;
 }
