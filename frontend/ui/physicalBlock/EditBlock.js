@@ -1,6 +1,6 @@
 import { React, PropTypes, elements } from 'perun-core';
 import { spatial } from '../../core';
-import { PROCESS_ENUM, PB_STYLE, PB_STYLE_HOVER } from '../../config';
+import { PROCESS_ENUM, PB_STYLE, PB_STYLE_HOVER, PB_CONF } from '../../config';
 import { BlockMetadata } from './BlockMetadata';
 
 const {
@@ -42,13 +42,7 @@ export const editBlock = {
             }),
             url: '/lpis/save/physicalBlock/{init.token}/' + this._layer.feature.id
         }).then(() => {
-            store.dispatch({ 
-                [dc.data_pb]: {
-                    ...store.getState().data[dc.data_pb],
-                    [this._genLayerId(this._layer)]: this._layer 
-                },
-                processID: this._id
-            });
+            store.dispatch({ processID: this._id });
             this._layerGroup.removeLayer(this._layer);
             this._layer.addTo(Map);
 
@@ -67,19 +61,13 @@ export const editBlock = {
             layer.off('mouseover mouseout click'));
 
         // publish active process, edit begins.
-        store.dispatch({ 
-            [dc.data_pb]: {
-                ...store.getState().data[dc.data_pb],
-                [this._genLayerId(layer)]: layer 
-            },
-            processID: this._id
-        });
+        store.dispatch({ processID: this._id });
 
         //Move map view on top of selected polygon.
         Map.fitBounds(layer.getBounds());
 
         // Activate edit handler on selected polygon
-        edit.polygon.enable(this._simplifyMultipolygon(layer));
+        edit.polygon.enable(this._simplifyMultipolygon(layer), PB_CONF);
 
         // Activate edit event listeners on layer.
         layer.on('pm:edit', e => this._layer = e.target );

@@ -1,6 +1,6 @@
 import { React, PropTypes } from 'perun-core';
 import { spatial } from '../../core';
-import { PB_SCHEMA, PB_UI_SCHEMA } from '../../config';
+import { PB_METADATA } from '../../config';
 
 const { Form, Button, Modal } = spatial.ui;
 
@@ -16,8 +16,8 @@ export function BlockMetadata ({onSubmit, data = {}, children }) {
         </Modal.Title>
         <Modal.Body className='pb-modal-body' >
             <Form 
-                schema={PB_SCHEMA}
-                uiSchema={PB_UI_SCHEMA}
+                schema={PB_METADATA.schema}
+                uiSchema={PB_METADATA.uiSchema}
                 formData={data} 
                 onSubmit={onSubmit}>
                 <>
