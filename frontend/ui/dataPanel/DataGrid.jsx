@@ -65,7 +65,7 @@ const _GridRows = ({typeId, rows}) => {
         return <ButtonGroup className='data-grid-row' key={id} >
             <Button disabled className='data-grid-index' />
             <Button disabled className='data-grid-column' >{id}</Button>
-            <Button disabled className='data-grid-column' >{'Полигон'}</Button>
+            <Button disabled className='data-grid-column' >{name}</Button>
             <Button disabled className='data-grid-column' >{measurement + ' ' + unit}</Button>
             <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} >
                 <Icon name='pinpoint' size='16px' />

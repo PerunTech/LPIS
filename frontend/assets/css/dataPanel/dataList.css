@@ -18,10 +18,3 @@
 .tree-node-children .divider-horizontal {
     margin: 0px 3px 5px 3px;
 }
-
-.data-list-empty-rows {
-    height: 60px;
-    display: flex;
-    justify-content: center;
-}
-
