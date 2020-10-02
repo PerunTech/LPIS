@@ -41,23 +41,15 @@ export const createBlock = {
             this.disable();
             elements.alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
         }).catch(() => {
-            const data = { ...store.getState().data[dc.data_pb] }
-            delete data[this._genLayerId(this._layer)];
-            store.dispatch({ [dc.data_pb]: data });
-            
             this._layer.removeFrom(Map);
             this.disable();
             elements.alertUser(true, 'error', 'Грешка при зачувување', 'Физичкиот блок не е запишан во базата на податоци.')
         })
     },
 
-    _finishShape (e) { 
+    _finishShape (e) {
         (e && e.layer) 
-            && (this._layer = e.layer); 
-    },
-
-    _genLayerId (layer) {
-        return String('Нов блок ' + layer._leaflet_id);
+            && (this._layer = e.layer, e.layer.addTo(Map));
     },
 
     render ({processID, ...props}) {
@@ -72,7 +64,7 @@ export const createBlock = {
                 { processID === _id  
                     && <BlockMetadata onSubmit={_onSubmit.bind(createBlock)} >
                         <DrawActions
-                            finish={() => draw.polygon._finishShape()} 
+                            finish={() => draw.polygon._finishShape()}
                             undo={() => draw.polygon._removeLastVertex()}
                             cancel={disable.bind(createBlock)} />
                     </BlockMetadata> }
