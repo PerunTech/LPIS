@@ -12,7 +12,7 @@ export const lpis = {
     routes: [{
         name: 'lpis',
         path: '/main/lpis',
-        render: ui.Lpis,
+        render: ui.Init,
         isExact: true
     }],
     core,

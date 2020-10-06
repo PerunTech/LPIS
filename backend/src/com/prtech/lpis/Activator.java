@@ -52,7 +52,7 @@ public class Activator implements BundleActivator {
 	 */
 	private ArrayList<Class<?>> initWebServices() {
 		ArrayList<Class<?>> list = new ArrayList<Class<?>>();
-		// add web services here.
+		list.add(ApplicationServices.class);
 		return list;
 	}
 

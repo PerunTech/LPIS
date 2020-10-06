@@ -1,7 +1,7 @@
 #toolsbar {
-    margin-left: 249px;
-    margin-right: 249px; 
-    border-left: 1px solid rgba(0, 0, 0, 0.25);
+    margin-left: 60px;
+    margin-right: 120px; 
+    /*border-left: 1px solid rgba(0, 0, 0, 0.25);*/
 }
 #toolsbar .nav {
     background-color: #F9F9F9;
@@ -9,6 +9,70 @@
 #toolsbar .nav-link.active {
     color: #3399FF;
 }
+#toolsbar .nav-tabs .nav-link {
+    font-style: italic;
+}
 #toolsbar .btn-sm {
     padding: 0.25rem 0.5rem;
+}
+
+#toolsbar .left-corner-filler {
+    background-color: #F9F9F9;
+    border-color: #F9F9F9;
+    height: 36px;
+    width: 60px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#toolsbar .right-corner-filler {
+    background-color: #F9F9F9;
+    border-color: #F9F9F9;
+    height: 36px;
+    width: 120px;
+    position: absolute;
+    top: 0;
+    right: 0;
+
+}
+
+
+#toolsbar .toolbar-home {
+    position: absolute;
+    left: 0px;
+    top: 36px;
+    height: 60px;
+    width: 61px;
+    background-color: #F9F9F9;
+    border-color: #F9F9F9;
+    border-right: 1px solid #dee2e6;
+    z-index: 2000;
+}
+#toolsbar .toolbar-settings {
+    position: absolute;
+    right: 60px;
+    top: 36px;
+    height: 60px;
+    width: 60px;
+    background-color: #F9F9F9;
+    border-color: #F9F9F9;
+    border-left: 1px solid #dee2e6;
+    z-index: 2000;
+}
+#toolsbar .toolbar-logout {
+    position: absolute;
+    right: 0px;
+    top: 36px;
+    height: 60px;
+    width: 60px;
+    background-color: #F9F9F9;
+    border-color: #F9F9F9;
+    z-index: 2000;
+}
+#toolsbar .toolbar-home:hover:not(.disabled),
+#toolsbar .toolbar-settings:hover:not(.disabled),
+#toolsbar .toolbar-logout:hover:not(.disabled)
+{
+    background-color: #e2e6ea;
+    border-color: #dae0e5;
 }
