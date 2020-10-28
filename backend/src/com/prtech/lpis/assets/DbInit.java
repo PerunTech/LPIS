@@ -384,7 +384,7 @@ public class DbInit implements IDbInit {
 		dbf6.setCode_list_user_code("SOIL_TYPES");
 		
 		
-		DbDataField[] fieldList = new DbDataField[8];
+		DbDataField[] fieldList = new DbDataField[26];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
