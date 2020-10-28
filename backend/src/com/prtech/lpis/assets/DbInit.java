@@ -2,7 +2,6 @@ package com.prtech.lpis.assets;
 
 import java.util.ArrayList;
 
-import com.prtech.svarog.SvConf;
 import com.prtech.svarog_common.DbDataField;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_common.DbDataTable;
@@ -377,11 +376,11 @@ public class DbInit implements IDbInit {
 		
 		DbDataField dbf26 = new DbDataField();
 		dbf26.setDbFieldName("SOIL_TYPE");
-		dbf6.setDbFieldType(DbFieldType.NVARCHAR);
-		dbf6.setDbFieldSize(50);
+		dbf26.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf26.setDbFieldSize(50);
 		dbf26.setIsNull(true);
 		dbf26.setLabel_code("agri_parcel.soil_types");
-		dbf6.setCode_list_user_code("SOIL_TYPES");
+		dbf26.setCode_list_user_code("SOIL_TYPES");
 		
 		
 		DbDataField[] fieldList = new DbDataField[26];
