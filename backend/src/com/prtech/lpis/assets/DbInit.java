@@ -28,7 +28,6 @@ public class DbInit implements IDbInit {
 	}
 	
 	public static DbDataTable createPhysicalBlock () {
-		/* The flagship table of the project. */
 		DbDataTable dbt = new DbDataTable();
 		dbt.setDbTableName("PHYSICAL_BLOCK");
 		dbt.setDbRepoName(CONST_MASTER_REPO);
@@ -144,11 +143,290 @@ public class DbInit implements IDbInit {
 		
 		return dbt;
 	}
+	
+	public static DbDataTable createAgriParcel () {
+		DbDataTable dbt = new DbDataTable();
+		dbt.setDbTableName("AGRI_PARCEL");
+		dbt.setDbRepoName(CONST_MASTER_REPO);
+		dbt.setDbSchema(CONST_DEFAULT_SCHEMA);
+		dbt.setIsSystemTable(false);
+		dbt.setIsRepoTable(false);
+		dbt.setIsConfigTable(false);
+		dbt.setLabel_code("agri_parcel.general");
+		dbt.setUse_cache(true);
+		
+		/* C1N, [system, form-hidden] */
+		DbDataField dbf1 = new DbDataField();
+		dbf1.setDbFieldName("PKID");
+		dbf1.setDbFieldType(DbFieldType.NUMERIC);
+		dbf1.setIsPrimaryKey(true);
+		dbf1.setDbFieldSize(18);
+		dbf1.setDbFieldScale(0);
+		dbf1.setIsNull(false);
+		dbf1.setLabel_code("agri_parcel.pkid");
+		dbf1.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+		
+		/**
+		 * Geometry segment
+		 */
+		DbDataField dbf2 = new DbDataField();
+		dbf2.setDbFieldName("GEOM");
+		dbf2.setDbFieldType(DbFieldType.GEOMETRY);
+		dbf2.setGeometryType("MULTIPOLYGON"); // allows holes, do not use Polygon.
+		dbf2.setGeometrySrid(SRID);
+		dbf2.setIndexName("_GEOM_SIDX"); // name must be unique
+		dbf2.setIsNull(false);
+		dbf2.setLabel_code("common.geometry");
+		dbf2.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+
+		/* C3 [read-write, not null, form-hidden], derivative of geometry. */
+		DbDataField dbf3 = new DbDataField();
+		dbf3.setDbFieldName("CENTROID");
+		dbf3.setDbFieldType(DbFieldType.GEOMETRY);
+		dbf3.setGeometryType("POINT");
+		dbf3.setGeometrySrid(SRID);
+		dbf3.setIndexName("_CNT_SIDX");
+		dbf3.setIsNull(false);
+		dbf3.setLabel_code("common.centroid");
+		dbf3.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+		
+		/* C4 [read-write, not null, form-hidden], derivative of geometry. */
+		DbDataField dbf4 = new DbDataField();
+		dbf4.setDbFieldName("PERIMETER");
+		dbf4.setDbFieldType(DbFieldType.NUMERIC);
+		dbf4.setDbFieldSize(18);
+		dbf4.setDbFieldScale(4);
+		dbf4.setIsNull(false);
+		dbf4.setLabel_code("common.perimeter");
+		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+		
+		/* C5 [read-write, not null, form-hidden], derivative of geometry. */
+		DbDataField dbf5 = new DbDataField();
+		dbf5.setDbFieldName("AREA");
+		dbf5.setDbFieldType(DbFieldType.NUMERIC);
+		dbf5.setDbFieldSize(18);
+		dbf5.setDbFieldScale(4);
+		dbf5.setIsNull(false);
+		dbf5.setLabel_code("common.area");
+		dbf5.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+		
+		/**
+		 * Primary data
+		 */
+		DbDataField dbf6 = new DbDataField();
+		dbf6.setDbFieldName("LAND_COVER_CODE");
+		dbf6.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf6.setDbFieldSize(50);
+		dbf6.setIsNull(false);
+		dbf6.setLabel_code("agri_parcel.land_cover_code");
+		dbf6.setCode_list_user_code("LAND_COVER");
+		
+		DbDataField dbf7 = new DbDataField();
+		dbf7.setDbFieldName("HOME_NAME");
+		dbf7.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf7.setDbFieldSize(2000);
+		dbf7.setIsNull(true);
+		dbf7.setLabel_code("agri_parcel.home_name");
+		
+		DbDataField dbf8 = new DbDataField();
+		dbf8.setDbFieldName("NOTE_INSERT");
+		dbf8.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf8.setDbFieldSize(2000);
+		dbf8.setIsNull(true);
+		dbf8.setLabel_code("agri_parcel.note_insert");
+		
+		DbDataField dbf9 = new DbDataField();
+		dbf9.setDbFieldName("NOTE_FARMER");
+		dbf9.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf9.setDbFieldSize(2000);
+		dbf9.setIsNull(true);
+		dbf9.setLabel_code("agri_parcel.note_farmer");
+		
+		DbDataField dbf10 = new DbDataField();
+		dbf10.setDbFieldName("NOTE_ORGANISATION");
+		dbf10.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf10.setDbFieldSize(2000);
+		dbf10.setIsNull(true);
+		dbf10.setLabel_code("agri_parcel.note_organisation");
+		
+		/**
+		 * Supporting data 
+		 */
+		DbDataField dbf11 = new DbDataField();
+		dbf11.setDbFieldName("LAND_COVER_CODE_2");
+		dbf11.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf11.setDbFieldSize(50);
+		dbf11.setIsNull(true);
+		dbf11.setLabel_code("agri_parcel.land_cover_code_2");
+		dbf11.setCode_list_user_code("LAND_COVER");
+		
+		DbDataField dbf12 = new DbDataField();
+		dbf12.setDbFieldName("KO_ID");
+		dbf12.setDbFieldType(DbFieldType.NUMERIC);
+		dbf12.setDbFieldSize(1);
+		dbf12.setDbFieldScale(0);
+		dbf12.setIsNull(true);	// this needs to be mandatory, but politics... 
+		dbf12.setLabel_code("agri_parcel.cadastral_municipality");
+		
+		DbDataField dbf13 = new DbDataField();
+		dbf13.setDbFieldName("INVISIBLE_BORDER");
+		dbf13.setDbFieldType(DbFieldType.NUMERIC);
+		dbf13.setDbFieldSize(1);
+		dbf13.setDbFieldScale(0);
+		dbf13.setIsNull(true);
+		dbf13.setLabel_code("agri_parcel.invisible_border");
+		
+		DbDataField dbf14 = new DbDataField();
+		dbf14.setDbFieldName("CHANGED_BORDER");
+		dbf14.setDbFieldType(DbFieldType.NUMERIC);
+		dbf14.setDbFieldSize(1);
+		dbf14.setDbFieldScale(0);
+		dbf14.setIsNull(true);
+		dbf14.setLabel_code("agri_parcel.changed_border");
+		
+		DbDataField dbf15 = new DbDataField();
+		dbf15.setDbFieldName("IRRIGATION");
+		dbf15.setDbFieldType(DbFieldType.NUMERIC);
+		dbf15.setDbFieldSize(1);
+		dbf15.setDbFieldScale(0);
+		dbf15.setIsNull(true);
+		dbf15.setLabel_code("agri_parcel.irrigation");
+		
+		DbDataField dbf16 = new DbDataField();
+		dbf16.setDbFieldName("SLOPE_AVG");
+		dbf16.setDbFieldType(DbFieldType.NUMERIC);
+		dbf16.setDbFieldSize(18);
+		dbf16.setDbFieldScale(0);
+		dbf16.setIsNull(true);
+		dbf16.setLabel_code("agri_parcel.slope_avg");
+		
+		DbDataField dbf17 = new DbDataField();
+		dbf17.setDbFieldName("IND_STATE");
+		dbf17.setDbFieldType(DbFieldType.NUMERIC);
+		dbf17.setDbFieldSize(18);
+		dbf17.setDbFieldScale(0);
+		dbf17.setIsNull(true);
+		dbf17.setLabel_code("agri_parcel.ind_state");
+		
+		DbDataField dbf18 = new DbDataField();
+		dbf18.setDbFieldName("PO_ID");
+		dbf18.setDbFieldType(DbFieldType.NUMERIC);
+		dbf18.setDbFieldSize(18);
+		dbf18.setDbFieldScale(0);
+		dbf18.setIsNull(true);
+		dbf18.setLabel_code("agri_parcel.po_id");
+		
+		DbDataField dbf19 = new DbDataField();
+		dbf19.setDbFieldName("Z_AVG");
+		dbf19.setDbFieldType(DbFieldType.NUMERIC);
+		dbf19.setDbFieldSize(18);
+		dbf19.setDbFieldScale(4);
+		dbf19.setIsNull(true);
+		dbf19.setLabel_code("agri_parcel.z_avg");
+		
+		DbDataField dbf20 = new DbDataField();
+		dbf20.setDbFieldName("EXPOSITION_AVG");
+		dbf20.setDbFieldType(DbFieldType.NUMERIC);
+		dbf20.setDbFieldSize(3);
+		dbf20.setDbFieldScale(0);
+		dbf20.setIsNull(true);
+		dbf20.setLabel_code("agri_parcel.exposition_avg");
+		
+		DbDataField dbf21 = new DbDataField();
+		dbf21.setDbFieldName("LANDSCAPE_FEATURES");
+		dbf21.setDbFieldType(DbFieldType.NUMERIC);
+		dbf21.setDbFieldSize(1);
+		dbf21.setDbFieldScale(0);
+		dbf21.setIsNull(true);
+		dbf21.setLabel_code("agri_parcel.landscape_features");
+		
+		DbDataField dbf22 = new DbDataField();
+		dbf22.setDbFieldName("ELIGIBILITY_COEF");
+		dbf22.setDbFieldType(DbFieldType.NUMERIC);
+		dbf22.setDbFieldSize(3);
+		dbf22.setDbFieldScale(0);
+		dbf22.setIsNull(true);
+		dbf22.setLabel_code("agri_parcel.eligibility_coef");		
+
+		DbDataField dbf23 = new DbDataField();
+		dbf23.setDbFieldName("COMMON_USE");
+		dbf23.setDbFieldType(DbFieldType.NUMERIC);
+		dbf23.setDbFieldSize(1);
+		dbf23.setDbFieldScale(0);
+		dbf23.setIsNull(true);
+		dbf23.setLabel_code("agri_parcel.common_use");
+		
+		DbDataField dbf24 = new DbDataField();
+		dbf24.setDbFieldName("CERTIFICATE_OF_USE");
+		dbf24.setDbFieldType(DbFieldType.NUMERIC);
+		dbf24.setDbFieldSize(1);
+		dbf24.setDbFieldScale(0);
+		dbf24.setIsNull(true);
+		dbf24.setLabel_code("agri_parcel.certificate_of_use");
+		
+		DbDataField dbf25 = new DbDataField();
+		dbf25.setDbFieldName("ORGANIC");
+		dbf25.setDbFieldType(DbFieldType.NUMERIC);
+		dbf25.setDbFieldSize(1);
+		dbf25.setDbFieldScale(0);
+		dbf25.setIsNull(true);
+		dbf25.setLabel_code("agri_parcel.organic");
+		
+		DbDataField dbf26 = new DbDataField();
+		dbf26.setDbFieldName("SOIL_TYPE");
+		dbf6.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf6.setDbFieldSize(50);
+		dbf26.setIsNull(true);
+		dbf26.setLabel_code("agri_parcel.soil_types");
+		dbf6.setCode_list_user_code("SOIL_TYPES");
+		
+		
+		DbDataField[] fieldList = new DbDataField[8];
+		fieldList[0] = dbf1;
+		fieldList[1] = dbf2;
+		fieldList[2] = dbf3;
+		fieldList[3] = dbf4;
+		fieldList[4] = dbf5;
+		
+		fieldList[5] = dbf6;
+		fieldList[6] = dbf7;
+		fieldList[7] = dbf8;
+		fieldList[8] = dbf9;
+		fieldList[9] = dbf10;
+		
+		fieldList[10] = dbf11;
+		fieldList[11] = dbf12;
+		fieldList[12] = dbf13;
+		fieldList[13] = dbf14;
+		fieldList[14] = dbf15;
+		
+		fieldList[15] = dbf16;
+		fieldList[16] = dbf17;
+		fieldList[17] = dbf18;
+		fieldList[18] = dbf19;
+		fieldList[19] = dbf20;
+		
+		fieldList[20] = dbf21;
+		fieldList[21] = dbf22;
+		fieldList[22] = dbf23;
+		fieldList[23] = dbf24;
+		fieldList[24] = dbf25;
+		
+		fieldList[25] = dbf26;
+
+		dbt.setDbTableFields(fieldList);
+		
+		return dbt;	
+	}
 
 	@Override
 	public ArrayList<DbDataTable> getCustomObjectTypes() {
 		ArrayList<DbDataTable> dbtList = new ArrayList<DbDataTable>();
 		dbtList.add(addSortOrder(DbInit.createPhysicalBlock()));
+		dbtList.add(addSortOrder(DbInit.createAgriParcel()));
 		
 		return dbtList;
 	}
