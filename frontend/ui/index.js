@@ -1,10 +1,11 @@
 
 /* physical block  */
-export { PhysicalBlock } from './physicalBlock/PhysicalBlock';
+export { PhysicalBlock } from './toolsBar/physicalBlock/PhysicalBlock';
 
 /* toolbars  */
-export { Digitization } from './toolbars/Digitization';
-export { IO } from './toolbars/IO';
+export { Parcels } from './toolsBar/tabs/Parcels';
+export { AdvanceDigitization } from './toolsBar/tabs/AdvanceDigitization';
+export { IO } from './toolsBar/tabs/IO';
 
 /* data panel  */
 export { DataGrid } from './dataPanel/DataGrid';

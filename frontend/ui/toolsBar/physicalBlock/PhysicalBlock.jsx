@@ -1,5 +1,5 @@
 import { React, PropTypes } from 'perun-core';
-import { spatial } from '../../core';
+import { spatial } from '../../../core';
 
 /* private local imports */
 import { createBlock } from './CreateBlock';

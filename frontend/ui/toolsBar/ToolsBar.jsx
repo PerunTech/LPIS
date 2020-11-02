@@ -1,6 +1,6 @@
 import { React, redux, createHashHistory } from 'perun-core';
 import { spatial } from '../../core';
-import { Digitization, IO } from '..';
+import { Parcels, AdvanceDigitization, IO } from '..';
 
 const { Tab, Tabs, Button, Icon, Selection, Measurement } = spatial.ui;
 const { store, logoutUser } = redux;
@@ -15,9 +15,12 @@ export const ToolsBar = () =>
             title='Кон почетна'>
                 <Icon name='home' size='18px' style={{fill: '#3a3a3a'}} />
         </Button>
-        <Tabs defaultActiveKey='digitization' >
-            <Tab eventKey='digitization' title='Дигитизација' >
-                <Digitization />
+        <Tabs defaultActiveKey='parcels' >
+            <Tab eventKey='parcels' title='Parceli' >
+                <Parcels />
+            </Tab> 
+            <Tab eventKey='advance-digitization' title='Napredna Дигитизација' >
+                <AdvanceDigitization />
             </Tab> 
             <Tab eventKey='selection' title='Селекција' >
                 <Selection />

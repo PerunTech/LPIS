@@ -1,13 +1,10 @@
 import { React } from 'perun-core';
-import { spatial } from '../../core';
-import { PhysicalBlock } from '..';
+import { spatial } from '../../../core';
 
 const { ButtonGroup, Button, Icon, Divider } = spatial.ui
 
-export const Digitization = () =>
-    <ButtonGroup id='digitization' >
-        <PhysicalBlock />
-        <Divider />
+export const AdvanceDigitization = () =>
+    <ButtonGroup id='advance-digitization' >
         <Button >
             <Icon name='cut-parcel' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Пресечи полигон</span>

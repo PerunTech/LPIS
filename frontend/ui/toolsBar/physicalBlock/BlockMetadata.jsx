@@ -1,6 +1,6 @@
 import { React, PropTypes } from 'perun-core';
-import { spatial } from '../../core';
-import { PB_METADATA } from '../../config';
+import { spatial } from '../../../core';
+import { PB_METADATA } from '../../../config';
 
 const { Form, Button, Modal } = spatial.ui;
 

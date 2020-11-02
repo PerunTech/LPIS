@@ -1,6 +1,6 @@
 import { React, PropTypes, elements } from 'perun-core';
-import { spatial } from '../../core';
-import { PROCESS_ENUM, PB_CONF } from '../../config';
+import { spatial } from '../../../core';
+import { PROCESS_ENUM, PB_CONF } from '../../../config';
 import { BlockMetadata } from './BlockMetadata';
 
 const { 
