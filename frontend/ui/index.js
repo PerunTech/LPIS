@@ -2,6 +2,12 @@
 /* physical block  */
 export { PhysicalBlock } from './toolsBar/physicalBlock/PhysicalBlock';
 
+/* agricultural parcel */
+export { AgriParcel } from './toolsBar/agriParcel/AgriParcel';
+
+/* crop parcel */
+export { CropParcel } from './toolsBar/cropParcel/CropParcel';
+
 /* toolbars  */
 export { Parcels } from './toolsBar/tabs/Parcels';
 export { AdvanceDigitization } from './toolsBar/tabs/AdvanceDigitization';

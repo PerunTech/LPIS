@@ -1,7 +1,7 @@
 import { React } from 'perun-core';
 import { spatial } from '../../../core';
 
-const { ButtonGroup, Button, Icon, Divider } = spatial.ui
+const { ButtonGroup, Button, Icon } = spatial.ui;
 
 export const AdvanceDigitization = () =>
     <ButtonGroup id='advance-digitization' >

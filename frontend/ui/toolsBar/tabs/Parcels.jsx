@@ -1,11 +1,14 @@
 import { React } from 'perun-core';
 import { spatial } from '../../../core';
-import { PhysicalBlock } from '../..';
+import { PhysicalBlock, AgriParcel, CropParcel } from '../..';
 
-const { ButtonGroup, Button, Icon, Divider } = spatial.ui
+const { ButtonGroup, Divider } = spatial.ui
 
 export const Parcels = () =>
-    <ButtonGroup id='advance-digitization' >
+    <ButtonGroup id='parcels' >
         <PhysicalBlock />
         <Divider />
+        <AgriParcel />
+        <Divider />
+        <CropParcel />
     </ButtonGroup>;
