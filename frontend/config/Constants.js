@@ -16,7 +16,9 @@ export const GEOM_TYPES = {
 /** @constant */
 export const PROCESS_ENUM = {
     createBlock: 'createBlock',
-    editBlock: 'editBlock'
+    editBlock: 'editBlock',
+    createAP: 'createAP',
+    editAP: 'editAP'
 }
 
 /** @constant */

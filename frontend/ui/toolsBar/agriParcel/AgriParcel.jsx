@@ -8,11 +8,11 @@ const _AgriParcel = ({processID, ...props}) =>
     <>
         <Button >
             <Icon name='createAP' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>Dodadi zemjodelska parcela</span>
+            <span style={{display: 'block', marginTop: '5px' }}>Додади земјоделска парцела</span>
         </Button>
         <Button >
             <Icon name='editAP' size='30px' />
-            <span style={{display: 'block', marginTop: '2px' }}>Promeni zemjodelska parcela</span>
+            <span style={{display: 'block', marginTop: '2px' }}>Промени земјоделска парцела</span>
         </Button>
     </>;
 

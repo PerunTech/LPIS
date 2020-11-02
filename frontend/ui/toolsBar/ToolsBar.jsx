@@ -16,8 +16,8 @@ export const ToolsBar = () =>
                 <Icon name='home' size='18px' style={{fill: '#3a3a3a'}} />
         </Button>
         <Tabs defaultActiveKey='parcels' >
-            <Tab eventKey='parcels' title='Parceli' ><Parcels /></Tab> 
-            <Tab eventKey='advance-digitization' title='Napredna Дигитизација' ><AdvanceDigitization /></Tab> 
+            <Tab eventKey='parcels' title='Парцели' ><Parcels /></Tab> 
+            <Tab eventKey='advance-digitization' title='Напредна Дигитизација' ><AdvanceDigitization /></Tab> 
             <Tab eventKey='selection' title='Селекција' ><Selection /></Tab>
             <Tab eventKey='measurement' title='Мерења' ><Measurement /></Tab>
             <Tab eventKey='io' title='Увезување / Извезување' ><IO /></Tab>
