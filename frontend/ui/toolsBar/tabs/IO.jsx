@@ -1,7 +1,7 @@
 import { React } from 'perun-core';
-import { spatial } from '../../../core';
+import { ui } from '../../../Spatial';
 
-const { ButtonGroup, Divider, Import, Export  } = spatial.ui;
+const { ButtonGroup, Divider, Import, Export  } = ui;
 
 export const IO = () => 
     <ButtonGroup>

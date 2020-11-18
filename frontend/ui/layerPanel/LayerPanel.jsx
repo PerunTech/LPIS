@@ -1,14 +1,14 @@
 import { React } from 'perun-core';
-import { spatial } from '../../core';
+import { data, ui } from '../../Spatial';
 
 const { useState, useEffect } = React;
-const { ButtonGroup, Button, Icon, Divider } = spatial.ui;
+const { ButtonGroup, Button, Icon, Divider } = ui;
 
 export const LayerPanel = () => {
     const [isOpen, open] = useState(true);
 
     useEffect(() => {
-        isOpen ? spatial.data.layerList.expand() : spatial.data.layerList.collapse();
+        isOpen ? data.layerList.expand() : data.layerList.collapse();
     }, [isOpen])
 
     return <div id='layer-panel' >

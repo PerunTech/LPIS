@@ -1,12 +1,24 @@
 import { React, PropTypes } from 'perun-core';
-import { spatial } from '../../core';
-import { GEOM_TYPES } from '../../config';
+import { ui } from '../../Spatial';
 import { DataList, DataListUtils } from '..';
 
-const { Button, Divider } = spatial.ui;
+const { Button, Divider } = ui;
+
 /* Root nodes in the data panel tree. */
 const dataCategories = (function () {
-    return Object.entries(GEOM_TYPES)
+    return Object.entries({
+        physical_block: 'Физички блокови',
+        agri_parcel: 'Земјоделски парцели',
+        cad_parcel: 'Катастарски парцели',
+        measurements: 'Мерења',
+        imports: 'Увезувања',
+        pastures: 'Пасишта',
+        landscape_features: 'Обележја на пејсажот',
+        npa: 'Заштитени подрачја',
+        soil_types: 'Почвени типови',
+        transport_network: 'Транспортна мрежа',
+        water_bodies: 'Води',
+    })
         .map(entry => ({ id: entry[0], label: entry[1], isOpen: false, }))
         .concat([{ id: 'resto', label: 'Останато', isOpen: false }]);
 })();

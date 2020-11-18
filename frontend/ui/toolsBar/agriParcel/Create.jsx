@@ -1,24 +1,23 @@
 import { React, PropTypes, elements } from 'perun-core';
-import { spatial } from '../../../core';
-import { PROCESS_ENUM, PB_CONF } from '../../../config';
+import { core, tools, ui } from '../../../Spatial';
+import { config } from './Config';
+import { Form } from './Form';
 
-const { 
-    core: { Map, store, factory, http }, 
-    tools: { draw }, 
-    ui: { Button, Icon, DrawActions } } = spatial;
+const { Map, store, factory, http } = core;
+const { draw } = tools;
+const { Button, Icon, DrawActions } = ui;
 
 /**
  * Create a physical block.
  */
 export const createAP = {
-    _id: PROCESS_ENUM.createAP,
-
+    _id: 'createAP',
     _layer: {},
 
     enable () {
         Map.on('new_shape', this._finishShape.bind(this));
         store.dispatch({ processID: this._id });
-        draw.polygon.enable(PB_CONF);
+        draw.polygon.enable(config);
     },
 
     disable () {
@@ -34,7 +33,7 @@ export const createAP = {
         http.call('save_pb', { 
             data: JSON.stringify({ 
                 ...formData, 
-                GEOM: factory.GeoJSON.fromLayer(this._layer) 
+                GEOM: factory.GeoJSON.fromLayer(this._layer)
             }) 
         }).then(() => {
             this.disable();
@@ -51,22 +50,22 @@ export const createAP = {
             && (this._layer = e.layer, e.layer.addTo(Map));
     },
 
-    render ({processID, ...props}) {
+    render ({processID}) {
         const { _id, enable, disable, _onSubmit} = createAP;
 
-        return <Button {...props}
+        return <Button
             id={_id} 
             className={processID === _id ? 'active' : ''}
             onClick={enable.bind(createAP)} >
-                <Icon name={_id} size='34px' />
-                <span style={{display: 'block', marginTop: '1px' }}>Додади физички блок</span>
+                <Icon name={_id} size='30px' />
+                <span style={{display: 'block', marginTop: '5px' }}>Додади земјоделска парцела</span>
                 { processID === _id  
-                    && <BlockMetadata onSubmit={_onSubmit.bind(createAP)} >
+                    && <Form onSubmit={_onSubmit.bind(createAP)} >
                         <DrawActions
                             finish={() => draw.polygon._finishShape()}
                             undo={() => draw.polygon._removeLastVertex()}
                             cancel={disable.bind(createAP)} />
-                    </BlockMetadata> }
+                    </Form> }
         </Button>;
     }
 }

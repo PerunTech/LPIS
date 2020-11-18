@@ -1,12 +1,11 @@
 import { React, PropTypes } from 'perun-core';
-import { spatial } from '../../core';
+import { core, ui } from '../../Spatial';
 
-const { store } = spatial.core;
-const { ButtonGroup, Button, Icon, Divider, Input } = spatial.ui;
+const { ButtonGroup, Button, Icon, Divider, Input } = ui;
 
 export const DataListUtils = ({setData}) => {
     const _refresh = () =>
-        store.dispatch({ layers: store.getState().data.layers });
+    core.store.dispatch({ layers: core.store.getState().data.layers });
     const _expandAll = () => 
         setData(data => data.map(el => ({ ...el, isOpen: true })));
     const _collapseAll = () => 

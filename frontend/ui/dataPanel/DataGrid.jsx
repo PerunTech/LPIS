@@ -1,8 +1,8 @@
 import { React, PropTypes } from 'perun-core';
-import { spatial } from '../../core';
+import { core, ui } from '../../Spatial';
 
-const { factory, Map } = spatial.core;
-const { ButtonGroup, Button, Icon } = spatial.ui;
+const { factory, Map } = core;
+const { ButtonGroup, Button, Icon } = ui;
 
 export const DataGrid = ({type, rows, ...props}) => {
     return <div id={type.id + '-grid'} className='data-grid' >

@@ -1,4 +1,3 @@
-
 /* physical block  */
 export { PhysicalBlock } from './toolsBar/physicalBlock/PhysicalBlock';
 
@@ -9,8 +8,7 @@ export { AgriParcel } from './toolsBar/agriParcel/AgriParcel';
 export { CropParcel } from './toolsBar/cropParcel/CropParcel';
 
 /* toolbars  */
-export { Parcels } from './toolsBar/tabs/Parcels';
-export { AdvanceDigitization } from './toolsBar/tabs/AdvanceDigitization';
+
 export { IO } from './toolsBar/tabs/IO';
 
 /* data panel  */

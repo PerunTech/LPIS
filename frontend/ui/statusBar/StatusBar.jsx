@@ -1,7 +1,7 @@
 import { React } from 'perun-core';
-import { spatial } from '../../core';
+import { ui } from '../../Spatial';
 
-const  { CoordinatesControl, CRSControl, ScaleControl } = spatial.ui;
+const  { CoordinatesControl, CRSControl, ScaleControl } = ui;
 
 export function StatusBar () {
     return <>

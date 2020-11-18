@@ -1,11 +1,12 @@
 import { React, PropTypes } from 'perun-core';
-import { spatial } from '../../../core';
+import { core, ui } from '../../../Spatial';
+import { AdvanceDigitization } from './Advance';
 
-const { connect } = spatial.core;
-const { Button, Icon } = spatial.ui
+const { connect } = core;
+const { ButtonGroup, Button, Icon, Divider } = ui
 
 const _CropParcel = ({processID, ...props}) => 
-    <>
+    <ButtonGroup>
         <Button >
             <Icon name='createCP' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Додади производна парцела</span>
@@ -18,7 +19,9 @@ const _CropParcel = ({processID, ...props}) =>
             <Icon name='cropPlan' size='30px' />
             <span style={{display: 'block', marginTop: '2px' }}>Производствен план</span>
         </Button>
-    </>;
+        <Divider />
+        <AdvanceDigitization name='производна парцела' />
+    </ButtonGroup>;
 
 _CropParcel.propTypes = {
     processID: PropTypes.string,

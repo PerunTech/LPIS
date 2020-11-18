@@ -1,20 +1,19 @@
 import { React, PropTypes, elements } from 'perun-core';
-import { spatial } from '../../../core';
-import { PROCESS_ENUM, PB_STYLE, PB_STYLE_HOVER, PB_CONF } from '../../../config';
-import { BlockMetadata } from './BlockMetadata';
+import { config, core, data, tools, ui } from '../../../Spatial';
+import { config as cfg } from './Config';
+import { Form } from './Form';
 
-const {
-    config: { MIN_DIGI_SCALE, MAP_CONFIG }, 
-    core: { Map, store, factory, http, connect },
-    data: { protobuf, geobuf },
-    tools: { edit },
-    ui: { Button, Icon, DrawActions }} = spatial;
+const { MIN_DIGI_SCALE, MAP_CONFIG } = config;
+const { Map, store, factory, http, connect } = core;
+const { protobuf, geobuf } = data;
+const { edit } = tools;
+const { Button, Icon, DrawActions } = ui;
 
 /**
  * Edit a physical block.
  */
 export const editBlock = {
-    _id: PROCESS_ENUM.editBlock,
+    _id: 'editBlock',
 
     _layer: {},
     _layerGroup: factory.layerGroup(),
@@ -67,7 +66,7 @@ export const editBlock = {
         Map.fitBounds(layer.getBounds());
 
         // Activate edit handler on selected polygon
-        edit.polygon.enable(this._simplifyMultipolygon(layer), PB_CONF);
+        edit.polygon.enable(this._simplifyMultipolygon(layer), cfg);
 
         // Activate edit event listeners on layer.
         layer.on('pm:edit', e => this._layer = e.target );
@@ -94,8 +93,8 @@ export const editBlock = {
     },
 
     _setBlockEvents (layer) {
-        layer.on('mouseover', function () { this.setStyle(PB_STYLE_HOVER) })
-            .on('mouseout', function () { this.setStyle(PB_STYLE) })
+        layer.on('mouseover', function () { this.setStyle({ fillColor: '#FFFFFF' })})
+            .on('mouseout', function () { this.setStyle({ fillColor: '#000000' })})
             .on('click', function () { editBlock.initEdit(this); })
     },
 
@@ -114,23 +113,25 @@ export const editBlock = {
         return String('Променет блок ' + layer._leaflet_id);
     },
 
-    render: connect(state => ({ bbox: state.map.bbox })) (({processID, ...props}) => {
-        // const [layer, setLayer] = useState({});
-        const { _id, enable, disable, onSubmit, _layer } = editBlock;
+    render: connect(state => ({ 
+            bbox: state.map.bbox 
+        })) (props => {
+            // const [layer, setLayer] = useState({});
+            const { _id, enable, disable, onSubmit, _layer } = editBlock;
 
-        return <Button {...props}
-            id={_id} 
-            className={processID === _id ? 'active' : ''}
-            onClick={enable.bind(editBlock)} >
-                <Icon name={_id} size='30px' />
-                <span style={{display: 'block', marginTop: '5px' }}>Промени физички блок</span>
-                { processID === _id  
-                    && <BlockMetadata onSubmit={onSubmit.bind(editBlock)} data={_layer.feature.properties} >
-                        <DrawActions
-                            cancel={disable.bind(editBlock)} />
-                    </BlockMetadata> }
-        </Button>;
-    })       
+            return <Button
+                id={_id} 
+                className={props.processID === _id ? 'active' : ''}
+                onClick={enable.bind(editBlock)} >
+                    <Icon name={_id} size='30px' />
+                    <span style={{display: 'block', marginTop: '5px' }}>Промени физички блок</span>
+                    { props.processID === _id  
+                        && <Form onSubmit={onSubmit.bind(editBlock)} data={_layer.feature.properties} >
+                            <DrawActions
+                                cancel={disable.bind(editBlock)} />
+                        </Form> }
+            </Button>;
+        })
 }
 
 editBlock.render.propTypes = {
