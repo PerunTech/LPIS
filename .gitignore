@@ -4,5 +4,4 @@ node_modules
 .settings
 target
 www/lpis.js
-config.js
 index.html
