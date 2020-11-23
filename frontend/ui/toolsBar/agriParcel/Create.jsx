@@ -25,22 +25,27 @@ export const createAP = {
         Map.off('new_shape');
         store.dispatch({processID: ''});
         this._layer = {};
+        this._formData = {};
         draw.polygon.disable('force');
     },
 
+    _onChange ({ formData }) {
+        this._formData = { ...this._formData, ...formData};
+    },
+
     _onSubmit ({ formData }) {
-        http.call('save_pb', { 
+        http.call('save_ap', {
             data: JSON.stringify({ 
-                ...formData, 
+                ...{...this._formData, ...formData}, 
                 GEOM: factory.GeoJSON.fromLayer(this._layer)
             }) 
         }).then(() => {
             this.disable();
-            elements.alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
+            elements.alertUser(true, 'success', 'Успешно зачувување', 'Земјоделската парцела е запишана во базата на податоци.')
         }).catch(() => {
             this._layer.removeFrom(Map);
             this.disable();
-            elements.alertUser(true, 'error', 'Грешка при зачувување', 'Физичкиот блок не е запишан во базата на податоци.')
+            elements.alertUser(true, 'error', 'Грешка при зачувување', 'Земјоделската парцела не е запишана во базата на податоци.')
         })
     },
 
@@ -50,7 +55,7 @@ export const createAP = {
     },
 
     render ({processID}) {
-        const { _id, enable, disable, _onSubmit} = createAP;
+        const { _id, enable, disable, _onChange, _onSubmit} = createAP;
 
         return <Button
             id={_id} 
@@ -59,7 +64,7 @@ export const createAP = {
                 <Icon name={_id} size='30px' />
                 <span style={{display: 'block', marginTop: '5px' }}>Додади земјоделска парцела</span>
                 { processID === _id  
-                    && <Form onSubmit={_onSubmit.bind(createAP)} >
+                    && <Form onSubmit={_onSubmit.bind(createAP)} onChange={_onChange.bind(createAP)} >
                         <DrawActions
                             finish={() => draw.polygon._finishShape()}
                             undo={() => draw.polygon._removeLastVertex()}

@@ -5,11 +5,12 @@ import { metadataMain, metadataAux, metadataAdmin } from './Config';
 const { Form, Button } = ui;
 
 /* Main Metadata */
-export function Main ({formData, activeStep, totalSteps, prev, next, submit}) {
+export function Main ({formData, onChange, next}) {
     return <Form schema={metadataMain.schema}
         uiSchema={metadataMain.uiSchema}
         formData={formData}
-        onSubmit={() => activeStep() === totalSteps() ? submit() : next()} >
+        onChange={onChange}
+        onSubmit={() => next()} >
             <div id='formActions' >
                 <Button type='submit' size='' className='next' > Наредно </Button>
             </div>
@@ -18,19 +19,17 @@ export function Main ({formData, activeStep, totalSteps, prev, next, submit}) {
 
 Main.propTypes = {
     formData: PropTypes.any,
-    activeStep: PropTypes.number,
-    totalSteps: PropTypes.number,
-    prev: PropTypes.func,
+    onChange: PropTypes.func,
     next: PropTypes.func,
-    submit: PropTypes.func
 };
 
 /* Aux Metadata */
-export function Aux ({formData, activeStep, totalSteps, prev, next, submit}) {
+export function Aux ({formData, onChange, prev, next}) {
     return <Form schema={metadataAux.schema}
         uiSchema={metadataAux.uiSchema}
         formData={formData}
-        onSubmit={() => activeStep() === totalSteps() ? submit() : next()} >
+        onChange={onChange}
+        onSubmit={() => next()} >
             <div id='formActions' >
                 <Button type='button' size='' className='prev' onClick={prev} > Претходно </Button>
                 <Button type='submit' size='' className='next' > Наредно </Button>
@@ -40,19 +39,18 @@ export function Aux ({formData, activeStep, totalSteps, prev, next, submit}) {
 
 Aux.propTypes = {
     formData: PropTypes.any,
-    activeStep: PropTypes.number,
-    totalSteps: PropTypes.number,
+    onChange: PropTypes.func,
     prev: PropTypes.func,
     next: PropTypes.func,
-    submit: PropTypes.func
 };
 
 /* Aux Metadata */
-export function Admin ({formData, activeStep, totalSteps, prev, next, submit}) {
+export function Admin ({formData, onChange, prev, onSubmit}) {
     return <Form schema={metadataAdmin.schema}
         uiSchema={metadataAdmin.uiSchema}
         formData={formData}
-        onSubmit={() => activeStep() === totalSteps() ? submit() : next()} >
+        onChange={onChange}
+        onSubmit={onSubmit} >
             <div id='formActions' >
                 <Button type='button' size='' className='prev' onClick={prev} > Претходно </Button>
                 <Button type='submit' size='' className='next' > Зачувај </Button>
@@ -62,9 +60,7 @@ export function Admin ({formData, activeStep, totalSteps, prev, next, submit}) {
 
 Admin.propTypes = {
     formData: PropTypes.any,
-    activeStep: PropTypes.number,
-    totalSteps: PropTypes.number,
+    onChange: PropTypes.func,
     prev: PropTypes.func,
-    next: PropTypes.func,
-    submit: PropTypes.func
+    onSubmit: PropTypes.func
 };

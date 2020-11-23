@@ -4,7 +4,7 @@ import { Main, Aux, Admin } from './Steps';
 
 const { Button, Modal, Wizard } = ui;
 
-export function Form ({onSubmit, data = {}, children }) {
+export function Form ({onSubmit, onChange, children }) {
     return <Modal show
         id='measure-dialog'
         backdrop={false}
@@ -16,9 +16,9 @@ export function Form ({onSubmit, data = {}, children }) {
         </Modal.Title>
         <Modal.Body className='ap-modal-body' >
             <Wizard >
-                {[ <Main key='main' />, 
-                    <Aux key='aux' />,
-                    <Admin key='admin' />]}
+                {[ <Main key='main' onChange={onChange} />, 
+                    <Aux key='aux' onChange={onChange} />,
+                    <Admin key='admin' onChange={onChange} onSubmit={onSubmit} />]}
             </Wizard>
         </Modal.Body>
     </Modal>;
@@ -26,7 +26,7 @@ export function Form ({onSubmit, data = {}, children }) {
 
 Form.propTypes = {
     onSubmit: PropTypes.func.isRequired,
-    data: PropTypes.object,
+    onChange: PropTypes.func.isRequired,
     children: PropTypes.Node
 }
 

@@ -2,6 +2,7 @@ import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../../Spatial';
 import { AdvanceDigitization } from './Advance';
 import { createAP } from './Create';
+import { saveAP } from './Config';
 
 const { ButtonGroup, Button, Icon, Divider } = ui
 
@@ -22,3 +23,5 @@ _AgriParcel.propTypes = {
 
 export const AgriParcel = core.connect(state => 
     ({ processID: state.app.processID }))(_AgriParcel);
+
+core.store.addState('http', saveAP);
