@@ -13,6 +13,7 @@ const { Button, Icon, DrawActions } = ui;
 export const createAP = {
     _id: 'createAP',
     _layer: {},
+    _formData: {},
 
     enable () {
         Map.on('new_shape', this._finishShape.bind(this));
@@ -23,8 +24,6 @@ export const createAP = {
     disable () {
         Map.off('new_shape');
         store.dispatch({processID: ''});
-        
-        // this._layer.removeFrom && this._layer.hideMeasurements();
         this._layer = {};
         draw.polygon.disable('force');
     },
