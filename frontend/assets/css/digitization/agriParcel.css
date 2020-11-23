@@ -1,0 +1,31 @@
+.ap-modal-title {
+    margin-right: 20px;
+    margin-left: 10px;
+}
+.ap-modal-body {
+    margin-top: 10px;
+}
+
+#measure-dialog .next {
+    color: #3399ff;
+    border: 1px solid #3399ff;
+    float: right;
+}
+#measure-dialog .next:hover:not(.disabled) {
+    background-color: #e2e6ea;
+}
+#measure-dialog .prev {
+    color: #3399ff;
+    float: left;
+    border: 1px solid transparent;
+    /*padding: 0.75rem;*/
+}
+#measure-dialog .prev:hover:not(.disabled) {
+    background-color: #e2e6ea;
+}
+#measure-dialog .rjsf {
+    margin: unset;
+    border: unset;
+    background-color: unset;
+    padding: unset;
+}
