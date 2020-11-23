@@ -148,12 +148,12 @@ export const metadataAdmin = {
                 default: false
             },
             COMMON_USE: {
-                title: 'Обработувана од заедницата',
+                title: 'Заедничка употреба',
                 type: 'boolean',
                 default: false
             },
             CERTIFICATE_OF_USE: {
-                title: 'Уредна документација',
+                title: 'Право на користење',
                 type: 'boolean',
                 default: false
             },
@@ -224,5 +224,14 @@ export const config = {
         fillOpacity: 0.25,
         showMeasurements: true,
         metadata: { ...metadataMain, ...metadataAux, ...metadataAdmin }
+    }
+};
+
+export const saveAP = {
+    save_ap: {
+        url: '/lpis/save/agriParcel/{init.token}/0',
+        method: 'post',
+        responseType: 'text',
+        contentType: 'text'
     }
 };
