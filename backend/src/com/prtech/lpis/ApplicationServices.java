@@ -94,9 +94,79 @@ public class ApplicationServices {
 			}
 		} finally {
 			if (svg != null)
-				svg.release();
+				svg.close();
 		}
 		
 		return Response.status(200).entity(pb.toSimpleJson().toString()).build();
+	}
+	
+	@Path("/save/agriParcel/{token}/{objectId}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("text/html;charset=utf-8")
+	public Response saveAgriParcel(
+			@PathParam("token") String token,
+			@PathParam("objectId") Long objectId,
+			MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
+		
+		SvReader svr = null;
+		SvGeometry svg = null;
+		DbDataObject ap = null;
+		String formData = "";
+		JsonObject metadata = null;
+		
+		try {
+			svr = new SvReader(token);
+			svr.setIncludeGeometries(true);
+			svg = new SvGeometry(svr);
+			ap = new DbDataObject();
+			Long typeId = SvCore.getTypeIdByName("AGRI_PARCEL");
+			DbDataArray fieldSet = SvCore.getFields(typeId);
+			Gson gson = new Gson();
+			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
+			
+			if (isUpdate) {
+				ap = svr.getObjectById(objectId, typeId, null);
+			} else {
+				ap.setObjectId(0L);
+				ap.setObjectType(typeId);
+			}
+			
+			// handle empty, prep json, create data
+			for (Entry<String, List<String>> entry : formVals.entrySet()) {
+				if (entry.getKey() != null && !entry.getKey().isEmpty()) {
+					String key = entry.getKey();
+					formData = key;
+				}
+			}
+			metadata = gson.fromJson(formData, JsonObject.class);
+			
+			// Map form values to dbo fields
+			for (DbDataObject field : fieldSet.getItems()) {
+				String fieldName = field.getVal("FIELD_NAME").toString();
+				if (Util.excludeField(fieldName)
+						&& !"".equalsIgnoreCase(field.getVal("FIELD_TYPE").toString())) {
+					ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
+				}
+			}
+			
+			SvGeometry.setGeometry(ap, Util.jsonToGeometry(metadata.get("GEOM")));
+			Util.calculateGeometryDerivatives(ap);
+			svg.saveGeometry(ap);
+		} catch (Exception e) {
+			if (e instanceof SvException) {
+				log.error("Failed saving agri parcel. " + ((SvException) e).getFormattedMessage(), e);
+				return Response.status(401).entity(((SvException) e).getJsonMessage()).build();
+			} else {
+				log.error("Failed saving agri parcel. " + e);
+				return Response.status(401).entity(e).build();
+			}
+		} finally {
+			if (svg != null)
+				svg.close();
+		}
+		
+		return Response.status(200).entity(ap.toSimpleJson().toString()).build();
 	}
 }
