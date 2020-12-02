@@ -272,25 +272,19 @@ public class DbInit implements IDbInit {
 		
 		DbDataField dbf13 = new DbDataField();
 		dbf13.setDbFieldName("INVISIBLE_BORDER");
-		dbf13.setDbFieldType(DbFieldType.NUMERIC);
-		dbf13.setDbFieldSize(1);
-		dbf13.setDbFieldScale(0);
+		dbf13.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf13.setIsNull(true);
 		dbf13.setLabel_code("agri_parcel.invisible_border");
 		
 		DbDataField dbf14 = new DbDataField();
 		dbf14.setDbFieldName("CHANGED_BORDER");
-		dbf14.setDbFieldType(DbFieldType.NUMERIC);
-		dbf14.setDbFieldSize(1);
-		dbf14.setDbFieldScale(0);
+		dbf14.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf14.setIsNull(true);
 		dbf14.setLabel_code("agri_parcel.changed_border");
 		
 		DbDataField dbf15 = new DbDataField();
 		dbf15.setDbFieldName("IRRIGATION");
-		dbf15.setDbFieldType(DbFieldType.NUMERIC);
-		dbf15.setDbFieldSize(1);
-		dbf15.setDbFieldScale(0);
+		dbf15.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf15.setIsNull(true);
 		dbf15.setLabel_code("agri_parcel.irrigation");
 		
@@ -303,12 +297,10 @@ public class DbInit implements IDbInit {
 		dbf16.setLabel_code("agri_parcel.slope_avg");
 		
 		DbDataField dbf17 = new DbDataField();
-		dbf17.setDbFieldName("IND_STATE");
-		dbf17.setDbFieldType(DbFieldType.NUMERIC);
-		dbf17.setDbFieldSize(18);
-		dbf17.setDbFieldScale(0);
+		dbf17.setDbFieldName("TERRACE");
+		dbf17.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf17.setIsNull(true);
-		dbf17.setLabel_code("agri_parcel.ind_state");
+		dbf17.setLabel_code("agri_parcel.terrace");
 		
 		DbDataField dbf18 = new DbDataField();
 		dbf18.setDbFieldName("PO_ID");
@@ -336,9 +328,7 @@ public class DbInit implements IDbInit {
 		
 		DbDataField dbf21 = new DbDataField();
 		dbf21.setDbFieldName("LANDSCAPE_FEATURES");
-		dbf21.setDbFieldType(DbFieldType.NUMERIC);
-		dbf21.setDbFieldSize(1);
-		dbf21.setDbFieldScale(0);
+		dbf21.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf21.setIsNull(true);
 		dbf21.setLabel_code("agri_parcel.landscape_features");
 		
@@ -352,25 +342,19 @@ public class DbInit implements IDbInit {
 
 		DbDataField dbf23 = new DbDataField();
 		dbf23.setDbFieldName("COMMON_USE");
-		dbf23.setDbFieldType(DbFieldType.NUMERIC);
-		dbf23.setDbFieldSize(1);
-		dbf23.setDbFieldScale(0);
+		dbf23.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf23.setIsNull(true);
 		dbf23.setLabel_code("agri_parcel.common_use");
 		
 		DbDataField dbf24 = new DbDataField();
 		dbf24.setDbFieldName("CERTIFICATE_OF_USE");
-		dbf24.setDbFieldType(DbFieldType.NUMERIC);
-		dbf24.setDbFieldSize(1);
-		dbf24.setDbFieldScale(0);
+		dbf24.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf24.setIsNull(true);
 		dbf24.setLabel_code("agri_parcel.certificate_of_use");
 		
 		DbDataField dbf25 = new DbDataField();
 		dbf25.setDbFieldName("ORGANIC");
-		dbf25.setDbFieldType(DbFieldType.NUMERIC);
-		dbf25.setDbFieldSize(1);
-		dbf25.setDbFieldScale(0);
+		dbf25.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf25.setIsNull(true);
 		dbf25.setLabel_code("agri_parcel.organic");
 		
