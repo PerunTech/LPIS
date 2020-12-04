@@ -12,7 +12,7 @@ export function Main ({formData, onChange, next}) {
         onChange={onChange}
         onSubmit={() => next()} >
             <div id='formActions' >
-                <Button type='submit' size='' className='next' > Наредно </Button>
+                <Button type='submit' size='' className='next' > Следно </Button>
             </div>
         </Form>;
 }
@@ -31,8 +31,8 @@ export function Aux ({formData, onChange, prev, next}) {
         onChange={onChange}
         onSubmit={() => next()} >
             <div id='formActions' >
-                <Button type='button' size='' className='prev' onClick={prev} > Претходно </Button>
-                <Button type='submit' size='' className='next' > Наредно </Button>
+                <Button type='button' size='' className='prev' onClick={prev} > Назад </Button>
+                <Button type='submit' size='' className='next' > Следно </Button>
             </div>
         </Form>;
 }
@@ -52,7 +52,7 @@ export function Admin ({formData, onChange, prev, onSubmit}) {
         onChange={onChange}
         onSubmit={onSubmit} >
             <div id='formActions' >
-                <Button type='button' size='' className='prev' onClick={prev} > Претходно </Button>
+                <Button type='button' size='' className='prev' onClick={prev} > Назад </Button>
                 <Button type='submit' size='' className='next' > Зачувај </Button>
             </div>
         </Form>;

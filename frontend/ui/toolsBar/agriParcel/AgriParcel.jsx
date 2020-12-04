@@ -1,14 +1,14 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../../Spatial';
 import { AdvanceDigitization } from './Advance';
-import { createAP } from './Create';
-import { saveAP } from './Config';
+import { Create } from './Create';
+import { restAP } from './Config';
 
 const { ButtonGroup, Button, Icon, Divider } = ui
 
 const _AgriParcel = ({processID}) => 
     <ButtonGroup>
-        <createAP.render processID={processID} />
+        <Create processID={processID} />
         <Button >
             <Icon name='editAP' size='30px' />
             <span style={{display: 'block', marginTop: '2px' }}>Промени земјоделска парцела</span>
@@ -24,4 +24,4 @@ _AgriParcel.propTypes = {
 export const AgriParcel = core.connect(state => 
     ({ processID: state.app.processID }))(_AgriParcel);
 
-core.store.addState('http', saveAP);
+core.store.addState('http', restAP);

@@ -1,7 +1,7 @@
 /** @constant */
 export const metadataMain = {
     type: 'agri_parcel',
-    namePath: 'options.metadata.schema.properties.LAND_COVER_CODE.default',
+    namePath: 'options.metadata.schema.properties.PARENT_ID',
     schema: {
         properties: {
             LAND_COVER_CODE: {
@@ -57,13 +57,13 @@ export const metadataMain = {
 /** @constant */
 export const metadataAux = {
     type: 'agri_parcel',
-    namePath: 'options.metadata.schema.properties.LAND_COVER_CODE_2.default',
+    namePath: 'options.metadata.schema.properties.PARENT_ID',
     schema: {
         properties: {
             LAND_COVER_CODE_2: {
-                enum: [ '200', '210', '300', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500',
+                enum: [ ' ', '200', '210', '300', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500',
                     '600', '900' ],
-                enumNames: ['Нива (обработливо земјиште)', 'Оранжерии и пластеници на обработливо земјиште',
+                enumNames: [' ', 'Нива (обработливо земјиште)', 'Оранжерии и пластеници на обработливо земјиште',
                     'Постојан тревник', 'Ливада', 'Пасиште', 'Долгогодишни култури (траен насад)', 'Лозов насад',
                     'Овоштарник', 'Маслинов насад', 'Овошен насад', 'Јаткасто овошје', 'Растенија со брзо растечка маса',
                     'Мешани трајни насади', 'Различна искористеност на земјиштето', 'Матични насади',
@@ -71,7 +71,7 @@ export const metadataAux = {
                 maxLength: 50,
                 title: 'Секундарна употреба на земјиште',
                 type: 'string',
-                default: '200'
+                default: ' '
             },
             TERRACE: {
                 title: 'Тераси',
@@ -98,7 +98,7 @@ export const metadataAux = {
                 type: 'boolean',
                 default: false
             },
-            EXP_AVG: {
+            EXPOSITION_AVG: {
                 title: 'Експозиција',
                 type: 'integer',
                 minimum: 0,
@@ -121,7 +121,7 @@ export const metadataAux = {
     },
     uiSchema: {
         LAND_COVER_CODE_2: { },
-        EXP_AVG: { 'ui:widget': 'range' },
+        EXPOSITION_AVG: { 'ui:widget': 'range' },
         INVISIBLE_BORDER: { 'ui:disabled': true },
         CHANGED_BORDER: { 'ui:disabled': true },
         SLOPE_AVG: { 'ui:disabled': true },
@@ -132,7 +132,7 @@ export const metadataAux = {
 /** @constant */
 export const metadataAdmin = {
     type: 'agri_parcel',
-    namePath: 'options.metadata.schema.properties.LAND_COVER_CODE.default',
+    namePath: 'options.metadata.schema.properties.PARENT_ID',
     schema: {
         properties: {
             ELIGIBILITY_COEF: {
@@ -210,7 +210,7 @@ export const config = {
         dashArray: [10, 10],
     },
     // show a marker at the cursor
-    cursorMarker: false,
+    cursorMarker: true,
     // specify type of layer event to finish the drawn shape
     // example events: 'mouseout', 'dblclick', 'contextmenu'
     finishOn: null,
@@ -227,11 +227,14 @@ export const config = {
     }
 };
 
-export const saveAP = {
-    save_ap: {
-        url: '/lpis/save/agriParcel/{init.token}/0',
+export const restAP = {
+    check_ap: {
+        url: '/lpis/check/PBContainsAP/{init.token}',
         method: 'post',
-        responseType: 'text',
-        contentType: 'text'
-    }
+    },
+    save_ap: {
+        url: '/lpis/save/agriParcel/{init.token}/0/0',
+        method: 'post',
+        responseType: 'arraybuffer'
+    },
 };
