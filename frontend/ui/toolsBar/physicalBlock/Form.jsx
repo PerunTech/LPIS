@@ -1,10 +1,10 @@
 import { React, PropTypes } from 'perun-core';
-import { spatial } from '../../core';
-import { PB_METADATA } from '../../config';
+import { ui } from '../../../Spatial';
+import { metadata } from './Config';
 
-const { Form, Button, Modal } = spatial.ui;
+const { Button, Modal } = ui;
 
-export function BlockMetadata ({onSubmit, data = {}, children }) {
+export function Form ({onSubmit, data = {}, children }) {
     return <Modal show
         id='measure-dialog'
         backdrop={false}
@@ -15,27 +15,21 @@ export function BlockMetadata ({onSubmit, data = {}, children }) {
             { children }
         </Modal.Title>
         <Modal.Body className='pb-modal-body' >
-            <Form 
-                schema={PB_METADATA.schema}
-                uiSchema={PB_METADATA.uiSchema}
+            <ui.Form
+                schema={metadata.schema}
+                uiSchema={metadata.uiSchema}
                 formData={data} 
                 onSubmit={onSubmit}>
-                <>
                 <Button type='submit' size='' className='save-pb' >
                     Зачувај
                 </Button>
-                <Button size='sm' className='add-pb-to-list' >
-                    Додади во работна листа
-                </Button>
-                </>
-            </Form>
+            </ui.Form>
         </Modal.Body>
     </Modal>;
 }
 
-BlockMetadata.propTypes = {
+Form.propTypes = {
     onSubmit: PropTypes.func.isRequired,
     data: PropTypes.object,
     children: PropTypes.Node
 }
-

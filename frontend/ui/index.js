@@ -1,10 +1,15 @@
-
 /* physical block  */
-export { PhysicalBlock } from './physicalBlock/PhysicalBlock';
+export { PhysicalBlock } from './toolsBar/physicalBlock/PhysicalBlock';
+
+/* agricultural parcel */
+export { AgriParcel } from './toolsBar/agriParcel/AgriParcel';
+
+/* crop parcel */
+export { CropParcel } from './toolsBar/cropParcel/CropParcel';
 
 /* toolbars  */
-export { Digitization } from './toolbars/Digitization';
-export { IO } from './toolbars/IO';
+
+export { IO } from './toolsBar/tabs/IO';
 
 /* data panel  */
 export { DataGrid } from './dataPanel/DataGrid';

@@ -1,6 +1,10 @@
 package com.prtech.lpis;
 
 import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Map.Entry;
+
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +20,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
+import com.vividsolutions.jts.io.svarog_geojson.GeoJsonWriter;
 
 public class Util {
 	private static final Logger log = LogManager.getLogger(Util.class.getName());
@@ -91,6 +96,33 @@ public class Util {
 		}
 		
 		return dbo;
+	}
+	
+	public static JsonObject dataToJson (MultivaluedMap<String, String> data) {
+		String formData = "";
+		JsonObject json = null;
+
+		try {
+			Gson gson = new Gson();
+			// handle empty, prep json, create data
+			for (Entry<String, List<String>> entry : data.entrySet()) {
+				if (entry.getKey() != null && !entry.getKey().isEmpty()) {
+					String key = entry.getKey();
+					formData = key;
+				}
+			}
+			
+			json = gson.fromJson(formData, JsonObject.class);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return json;
+	}
+	
+	public static String geometryToJson (Geometry g) {
+		GeoJsonWriter gjw = new GeoJsonWriter();
+		return gjw.write(g);
 	}
 
 	public static Geometry jsonToGeometry (JsonElement el) {

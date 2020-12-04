@@ -1,8 +1,8 @@
 import { React, redux, createHashHistory } from 'perun-core';
-import { spatial } from '../../core';
-import { Digitization, IO } from '..';
+import { ui } from '../../Spatial';
+import { PhysicalBlock, AgriParcel, CropParcel, IO } from '..';
 
-const { Tab, Tabs, Button, Icon, Selection, Measurement } = spatial.ui;
+const { Tab, Tabs, Button, Icon, Selection, Measurement } = ui;
 const { store, logoutUser } = redux;
 const history = createHashHistory();
 
@@ -15,19 +15,13 @@ export const ToolsBar = () =>
             title='Кон почетна'>
                 <Icon name='home' size='18px' style={{fill: '#3a3a3a'}} />
         </Button>
-        <Tabs defaultActiveKey='digitization' >
-            <Tab eventKey='digitization' title='Дигитизација' >
-                <Digitization />
-            </Tab> 
-            <Tab eventKey='selection' title='Селекција' >
-                <Selection />
-            </Tab>
-            <Tab eventKey='measurement' title='Мерења' >
-                <Measurement />
-            </Tab>
-            <Tab eventKey='io' title='Увезување / Извезување' >
-                <IO />
-            </Tab>
+        <Tabs defaultActiveKey='agri-parcel' >
+            <Tab eventKey='physical-block' title='Физички блокови' ><PhysicalBlock /></Tab> 
+            <Tab eventKey='agri-parcel' title='Земјоделски Парцели' ><AgriParcel /></Tab> 
+            <Tab eventKey='crop-parcel' title='Производни парцели' ><CropParcel /></Tab>
+            <Tab eventKey='selection' title='Селекција' ><Selection /></Tab>
+            <Tab eventKey='measurement' title='Мерења' ><Measurement /></Tab>
+            <Tab eventKey='io' title='Увезување / Извезување' ><IO /></Tab>
         </Tabs>
         <Button disabled className='right-corner-filler' />
         <Button 

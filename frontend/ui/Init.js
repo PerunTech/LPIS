@@ -1,11 +1,11 @@
 import { redux } from 'perun-core';
-import { spatial } from '../core';
+import { ui } from '../Spatial';
 import { ToolsBar, DataPanel, LayerPanel, StatusBar  } from '.';
 
 export const Init = () => {
     const _token = redux.store.getState().security.svSession;
 
-    return spatial.ui.init(_token)
+    return ui.init(_token)
         .addControl(ToolsBar, {}, { position: 'top' })
         .addControl(DataPanel, {}, { position: 'left' })
         .addControl(LayerPanel, {}, { position: 'right' })
