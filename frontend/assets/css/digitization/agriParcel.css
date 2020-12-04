@@ -29,3 +29,72 @@
     background-color: unset;
     padding: unset;
 }
+
+#measure-dialog .rjsf input[type=checkbox] {
+    vertical-align: middle;
+}
+
+#measure-dialog .rjsf span {
+    margin-left: 5px;
+}
+
+#pb-contains-ap-dialog {
+    /*position: initial;*/
+}
+#pb-contains-ap-dialog .modal-title {
+    font-size: 20px;
+    text-align: center;
+    padding: 1.5rem;
+    background-color: #F9F9F9;
+    border-bottom: 1px solid #00000025;
+    cursor: unset;
+}
+#pb-contains-ap-dialog .modal-body {
+    padding: 1.5rem;
+}
+#pb-contains-ap-dialog .modal-body button {
+    font-size: 16px;
+    padding: 1rem;
+}
+
+#ap-ap-intersect-dialog {
+    /*position: initial;*/
+}
+#ap-ap-intersect-dialog .modal-title {
+    font-size: 20px;
+    text-align: center;
+    padding: 1.5rem;
+    background-color: #F9F9F9;
+    border-bottom: 1px solid #00000025;
+    cursor: unset;
+}
+#ap-ap-intersect-dialog .modal-body {
+    padding: 1.5rem;
+}
+#ap-ap-intersect-dialog .modal-body button {
+    font-size: 16px;
+    padding: 1rem;
+}
+
+.control-center .control-map.modal-open .modal-backdrop {
+    z-index: 4000;
+}
+.control-center .control-map.modal-open .modal{
+    z-index: 4100;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding-top: unset;
+}
+/* topleft corner used for prompts, highest z index of all */
+.control-center .control-map .control-topleft.modal-open {
+    z-index: 9000;
+}
+
+.control-center .control-map .control-topleft.modal-open .modal{
+    z-index: 9100;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding-top: unset;
+}

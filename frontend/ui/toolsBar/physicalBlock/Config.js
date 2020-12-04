@@ -87,16 +87,13 @@ export const config = {
     }
 };
 
-export const savePB = {
+export const restPB = {
     save_pb: {
         url: '/lpis/save/physicalBlock/{init.token}/0',
         method: 'post',
         responseType: 'text',
         contentType: 'text'
-    }
-};
-
-export const renderPB = {
+    },
     render_pb: {
         url: '/spatial/getGeometry/bbox/{init.token}/PHYSICAL_BLOCK/{map.bbox}',
         method: 'get',

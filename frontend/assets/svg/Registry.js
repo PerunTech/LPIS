@@ -1419,6 +1419,25 @@ export const _registry = {
                 c35.285,0,64,28.715,64,64c0,35.285-28.715,64-64,64s-64-28.715-64-64C192.015,115.062,220.73,86.347,256.015,86.347z'/>
         </g>
     },
+    /* <div>Icons made by <a href='https://www.flaticon.com/authors/vectors-market'
+    title='Vectors Market'>Vectors Market</a>
+    from <a href='https://www.flaticon.com/' title='Flaticon'>www.flaticon.com</a></div> */
+    warning: {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 451.74 451.74',
+        path: <g>
+            <path style={{fill:'#F6D800'}} d='M446.324,367.381L262.857,41.692c-15.644-28.444-58.311-28.444-73.956,
+                0L5.435,367.381 c-15.644,28.444,4.267,64,36.978,64h365.511C442.057,429.959,461.968,395.825,446.324,
+                367.381z'/>
+            <path style={{fill:'#FFFFFF'}} d='M225.879,63.025l183.467,325.689H42.413L225.879,63.025L225.879,63.025z'/>
+            <path style={{fill:'#F6D800'}} d='M196.013,212.359l11.378,75.378c1.422,8.533,8.533,15.644,18.489,15.644l0,0
+                c8.533,0,17.067-7.111,18.489-15.644l11.378-75.378c2.844-18.489-11.378-34.133-29.867-34.133l0,0
+                C207.39,178.225,194.59,193.87,196.013,212.359z'/>
+            <circle style={{fill:'#F6D800'}} cx='225.879' cy='336.092' r='17.067'/>
+        </g>
+    },
 }
 Object.entries(_registry).forEach(v => assets.setSVG(v[0], v[1]));
 

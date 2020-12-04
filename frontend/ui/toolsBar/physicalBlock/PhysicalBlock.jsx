@@ -3,7 +3,7 @@ import { core, ui } from '../../../Spatial';
 import { AdvanceDigitization } from './Advance';
 import { createBlock } from './Create';
 import { editBlock } from './Edit';
-import { renderPB, savePB } from './Config';
+import { restPB } from './Config';
 
 const { connect, store } = core;
 const { ButtonGroup, Divider } = ui
@@ -24,5 +24,4 @@ export const PhysicalBlock = connect(state =>
     ({ processID: state.app.processID }))(_PhysicalBlock);
 
 /* State slice extensions */
-store.addState('http', savePB);
-store.addState('http', renderPB);
+store.addState('http', restPB);
