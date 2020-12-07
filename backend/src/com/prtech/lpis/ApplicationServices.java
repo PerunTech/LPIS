@@ -123,7 +123,8 @@ public class ApplicationServices {
 					svr.setIncludeGeometries(true);
 					svg = new SvGeometry(svr);
 					ap = new DbDataObject();
-					DbDataArray geomArr = new DbDataArray();
+					DbDataArray intersectArr = new DbDataArray();
+					DbDataArray resultArr = new DbDataArray();
 					Geometry geom = null;
 					Long typeId = SvCore.getTypeIdByName("AGRI_PARCEL");
 					DbDataArray fieldSet = SvCore.getFields(typeId);
@@ -159,30 +160,29 @@ public class ApplicationServices {
 							Collection<Geometry> apCol = svg.cutGeomFromLayer(geom, typeId);
 							Iterator<Geometry> it = apCol.iterator();
 							while (it.hasNext()) {
-								DbDataObject dbo = new DbDataObject();
  								Geometry g = it.next();
- 								DbDataObject oldDbo = (DbDataObject) g.getUserData();
+ 								DbDataObject dbo = (DbDataObject) g.getUserData();
 							
- 								dbo.setValuesMap(oldDbo.getValuesMap());
  								if ("Polygon".equalsIgnoreCase(g.getGeometryType()))
  									g = SvUtil.sdiFactory.createMultiPolygon(new Polygon[] { (Polygon) g });
  								SvGeometry.setGeometry(dbo, g);
- 								dbo.setObjectType(oldDbo.getObjectType());
- 								dbo.setObjectId(oldDbo.getObjectId());
  								
  								Util.calculateGeometryDerivatives(dbo);
- 								geomArr.addDataItem(dbo);
+ 								intersectArr.addDataItem(dbo);
+ 								resultArr.addDataItem(dbo);
 							}
+							
+							svg.saveGeometry(intersectArr);
 						}
 					} else {
 						SvGeometry.setGeometry(ap, geom);
 					}
 					
 					Util.calculateGeometryDerivatives(ap);
-					geomArr.addDataItem(ap);
+					resultArr.addDataItem(ap);
 					
-					svg.saveGeometry(geomArr);	
-					enc.writeDbDataArray(geomArr);
+					svg.saveGeometry(ap);	
+					enc.writeDbDataArray(resultArr);
 				} catch (Exception e) {
 					String errMsg = "Failed saving agri parcel. Please see server logs";
 					if (e instanceof SvException)

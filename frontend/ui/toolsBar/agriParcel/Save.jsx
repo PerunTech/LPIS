@@ -23,11 +23,18 @@ export const saveAP = (layer, callback) => {
     const _succeed = data => {
         // Create layer from geojson, operate on the individual layer, rather than the feature collection.
         const geojson = factory.geoJSON(data, config.pathOptions);
-        const parcel = geojson.getLayers()[0];
-        // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
-        parcel.setLatLngs([ ...util.flattenDeep(parcel.getLatLngs()) ])
-        parcel.addTo(Map);
+        const stateData = store.getState().data.layers;
 
+        geojson.getLayers().forEach(layer => {
+            const id = layer.feature.id
+
+            // remove old app layers entries, will update with the new geojson set.
+            stateData[id] && stateData[id].removeFrom(Map);
+
+            // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
+            layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
+            layer.addTo(Map);
+        })
         callback();
         elements.alertUser(true, 
             'success', 
