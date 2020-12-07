@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -27,9 +30,12 @@ import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSDITile.SDIRelation;
+import com.prtech.svarog.SvUtil;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
+import com.prtech.svarog_common.SvCharId;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Polygon;
 
 @Path("/lpis")
 public class ApplicationServices {
@@ -101,7 +107,7 @@ public class ApplicationServices {
 	public StreamingOutput saveAgriParcel(
 			@PathParam("token") String token,
 			@PathParam("objectId") Long objectId,
-			@PathParam("objectId") Long opType,
+			@PathParam("opType") Long opType,
 			MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
 		
@@ -117,6 +123,7 @@ public class ApplicationServices {
 					svr.setIncludeGeometries(true);
 					svg = new SvGeometry(svr);
 					ap = new DbDataObject();
+					DbDataArray geomArr = new DbDataArray();
 					Geometry geom = null;
 					Long typeId = SvCore.getTypeIdByName("AGRI_PARCEL");
 					DbDataArray fieldSet = SvCore.getFields(typeId);
@@ -140,15 +147,42 @@ public class ApplicationServices {
 					}
 					
 					// Run cut operations with neighbour agri parcels.
+					geom = Util.jsonToGeometry(metadata.get("GEOM"));
 					if (opType > 0) {
-						
+						if (opType.equals(1L)) {
+							geom = svg.cutLayerFromGeom(geom, typeId);
+							if ("Polygon".equalsIgnoreCase(geom.getGeometryType()))
+								geom = SvUtil.sdiFactory.createMultiPolygon(new Polygon[] { (Polygon) geom });
+							SvGeometry.setGeometry(ap, geom);
+						} else if (opType.equals(2L)) {
+							SvGeometry.setGeometry(ap, geom);
+							Collection<Geometry> apCol = svg.cutGeomFromLayer(geom, typeId);
+							Iterator<Geometry> it = apCol.iterator();
+							while (it.hasNext()) {
+								DbDataObject dbo = new DbDataObject();
+ 								Geometry g = it.next();
+ 								DbDataObject oldDbo = (DbDataObject) g.getUserData();
+							
+ 								dbo.setValuesMap(oldDbo.getValuesMap());
+ 								if ("Polygon".equalsIgnoreCase(g.getGeometryType()))
+ 									g = SvUtil.sdiFactory.createMultiPolygon(new Polygon[] { (Polygon) g });
+ 								SvGeometry.setGeometry(dbo, g);
+ 								dbo.setObjectType(oldDbo.getObjectType());
+ 								dbo.setObjectId(oldDbo.getObjectId());
+ 								
+ 								Util.calculateGeometryDerivatives(dbo);
+ 								geomArr.addDataItem(dbo);
+							}
+						}
+					} else {
+						SvGeometry.setGeometry(ap, geom);
 					}
 					
-					SvGeometry.setGeometry(ap, Util.jsonToGeometry(metadata.get("GEOM")));
 					Util.calculateGeometryDerivatives(ap);
-					svg.saveGeometry(ap);	
-
-					enc.writeDbDataObject(ap);
+					geomArr.addDataItem(ap);
+					
+					svg.saveGeometry(geomArr);	
+					enc.writeDbDataArray(geomArr);
 				} catch (Exception e) {
 					String errMsg = "Failed saving agri parcel. Please see server logs";
 					if (e instanceof SvException)
