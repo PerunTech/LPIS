@@ -265,7 +265,7 @@ public class DbInit implements IDbInit {
 		DbDataField dbf12 = new DbDataField();
 		dbf12.setDbFieldName("KO_ID");
 		dbf12.setDbFieldType(DbFieldType.NUMERIC);
-		dbf12.setDbFieldSize(1);
+		dbf12.setDbFieldSize(18);
 		dbf12.setDbFieldScale(0);
 		dbf12.setIsNull(true);	// this needs to be mandatory, but politics... 
 		dbf12.setLabel_code("agri_parcel.cadastral_municipality");
@@ -366,6 +366,14 @@ public class DbInit implements IDbInit {
 		dbf26.setLabel_code("agri_parcel.soil_types");
 		dbf26.setCode_list_user_code("SOIL_TYPES");
 		
+		DbDataField dbf27 = new DbDataField();
+		dbf27.setDbFieldName("OLD_ID");
+		dbf27.setDbFieldType(DbFieldType.NUMERIC);
+		dbf27.setDbFieldSize(18);
+		dbf27.setDbFieldScale(0);
+		dbf27.setIsNull(true);
+		dbf27.setLabel_code("agri_parcel.old_id");
+		
 		
 		DbDataField[] fieldList = new DbDataField[26];
 		fieldList[0] = dbf1;
@@ -399,6 +407,7 @@ public class DbInit implements IDbInit {
 		fieldList[24] = dbf25;
 		
 		fieldList[25] = dbf26;
+		fieldList[26] = dbf27;
 
 		dbt.setDbTableFields(fieldList);
 		
