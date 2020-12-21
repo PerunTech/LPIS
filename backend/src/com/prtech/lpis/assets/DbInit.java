@@ -374,7 +374,6 @@ public class DbInit implements IDbInit {
 		dbf27.setIsNull(true);
 		dbf27.setLabel_code("agri_parcel.old_id");
 		
-		
 		DbDataField[] fieldList = new DbDataField[26];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;

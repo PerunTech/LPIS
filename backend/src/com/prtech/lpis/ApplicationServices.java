@@ -5,8 +5,10 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -223,11 +225,14 @@ public class ApplicationServices {
 			svg = new SvGeometry(token);
 			json = Util.dataToJson(formVals);
 			
-			ArrayList<Geometry> geoms = new ArrayList<>();
+			Set<Geometry> geoms = new HashSet<Geometry>();
 			geoms = svg.getRelatedGeometries(
 					Util.jsonToGeometry(json.get("GEOM")),
 					SvCore.getTypeIdByName("PHYSICAL_BLOCK"),
-					SDIRelation.COVERS);
+					SDIRelation.COVERS,
+					null,
+					null,
+					true);
 
 			result = geoms.size() == 1;	
 		} catch (Exception e) {
@@ -261,11 +266,14 @@ public class ApplicationServices {
 			// Perform cut of agri parcel against a container physical block.
 			// In case of multiple blocks, use the block that lends maximum size to the parcel
 			if (!isContained) {
-				ArrayList<Geometry> blocks = new ArrayList<>();
+				Set<Geometry> blocks = new HashSet<Geometry>();
 				blocks = svg.getRelatedGeometries(
 						geom,
 						SvCore.getTypeIdByName("PHYSICAL_BLOCK"),
-						SDIRelation.INTERSECTS);
+						SDIRelation.INTERSECTS,
+						null,
+						null,
+						true);
 			
 				if (blocks.size() == 0) // Fix this abuse, eventually.
 					return Response.status(401).entity("AP must be covered by PB.").build();
@@ -285,11 +293,14 @@ public class ApplicationServices {
 			}
 			
 			// Perform check if our parcel crosses with neighbouring parcels. 
-			ArrayList<Geometry> neighbourAP = new ArrayList<>();
+			Set<Geometry> neighbourAP = new HashSet<>();
 			neighbourAP = svg.getRelatedGeometries(
 					containedAP,
 					SvCore.getTypeIdByName("AGRI_PARCEL"),
-					SDIRelation.INTERSECTS);
+					SDIRelation.INTERSECTS,
+					null,
+					null,
+					true);
 
 			json.addProperty("GEOM", Util.geometryToJson(containedAP));
 			result = new JsonObject();
