@@ -7,15 +7,15 @@ const { ButtonGroup, Button, Icon, Divider } = ui
 
 const _CropParcel = ({processID, ...props}) => 
     <ButtonGroup>
-        <Button >
+        <Button disabled >
             <Icon name='createCP' size='30px' />
             <span style={{display: 'block', marginTop: '5px' }}>Додади производна парцела</span>
         </Button>
-        <Button >
+        <Button disabled >
             <Icon name='editCP' size='30px' />
             <span style={{display: 'block', marginTop: '2px' }}>Промени производна парцела</span>
         </Button>
-        <Button >
+        <Button disabled >
             <Icon name='cropPlan' size='30px' />
             <span style={{display: 'block', marginTop: '2px' }}>Производствен план</span>
         </Button>
