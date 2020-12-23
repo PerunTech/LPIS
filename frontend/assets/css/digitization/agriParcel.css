@@ -98,3 +98,28 @@
     justify-content: center;
     padding-top: unset;
 }
+
+#measure-dialog .modal-body #createAP {
+    text-align: left;
+    padding: 0.5rem;
+}
+#measure-dialog .modal-body #createAP div {
+    margin: 3px;
+}
+#measure-dialog .modal-body #createAP div:nth-child(2) {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+#measure-dialog .modal-body #createAP div:nth-child(3) {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+#measure-dialog .modal-body .cancel {
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    float: right;
+}
+#measure-dialog .modal-body .cancel:hover:not(.disabled) {
+    background-color: #e2e6ea;
+}

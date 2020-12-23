@@ -237,4 +237,15 @@ export const restAP = {
         method: 'post',
         responseType: 'arraybuffer'
     },
+    create_ap: {
+        url: '/spatial/geometry/layer/cutoff/{init.token}/PHYSICAL_BLOCK/AGRI_PARCEL/0/0',
+        method: 'get',
+        responseType: 'arraybuffer'
+    }
 };
+
+export const createAPMsg = [
+    'Притиснете на левото копче од глувчето врз слободен физички блок за да додадете земјоделска парцела.',
+    '1. Одбраната локација мора да припаѓа во границите на физичкиот блок.',
+    '2. Одбраната локација не смее да се преклопува со површината на друга земјоделска парцела.'
+];
