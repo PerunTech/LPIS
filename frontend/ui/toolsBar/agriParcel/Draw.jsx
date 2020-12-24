@@ -20,7 +20,7 @@ export const Draw = ({ processID }) => {
     const enable = () => {
         Map.on('new_shape', e => {
             (e && e.layer) 
-                && (console.log(factory.GeoJSON.fromLayer(e.layer)), setState({layer: e.layer}), e.layer.addTo(Map));
+                && (setState({layer: e.layer}), e.layer.addTo(Map));
             Map.off('new_shape');
         });
         store.dispatch({ processID: _id });

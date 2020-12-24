@@ -1,8 +1,11 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../../Spatial';
-import { AdvanceDigitization } from './Advance';
 import { Draw } from './Draw';
 import { Create } from './Create';
+import { Split } from './Split';
+import { Merge } from './Merge';
+import { Cut } from './Cut';
+import { Fill } from './Fill';
 import { Delete } from './Delete';
 import { Assign } from './Assign';
 import { restAP } from './Config';
@@ -18,11 +21,14 @@ const _AgriParcel = ({processID}) =>
             <span style={{display: 'block', marginTop: '3px' }}>Промени парцела</span>
         </Button>
         <Divider />
-        <AdvanceDigitization />
+        <Split processID={processID}/>
+        <Merge processID={processID}/>
+        <Cut />
+        <Fill />
         <Divider />
         <Assign />
         <Divider />
-        <Delete />
+        <Delete processID={processID}/>
     </ButtonGroup>;
 
 _AgriParcel.propTypes = {

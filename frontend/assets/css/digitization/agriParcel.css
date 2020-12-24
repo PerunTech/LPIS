@@ -116,10 +116,19 @@
 }
 
 #measure-dialog .modal-body .cancel {
+    margin-top: 30px;
     color: #dc3545;
     border: 1px solid #dc3545;
     float: right;
 }
 #measure-dialog .modal-body .cancel:hover:not(.disabled) {
     background-color: #e2e6ea;
+}
+
+#measure-dialog .modal-body #deleteAP {
+    text-align: left;
+    padding: 0.5rem;
+}
+#measure-dialog .modal-body #deleteAP div {
+    margin: 3px;
 }

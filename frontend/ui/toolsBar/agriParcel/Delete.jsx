@@ -1,18 +1,65 @@
 import { React, PropTypes } from 'perun-core';
-import { ui } from '../../../Spatial';
+import { ui, core } from '../../../Spatial';
 import { Form } from './Form';
+import { Guidance } from './Guidance';
+import { deleteAPMsg } from './Config';
 
-const { Button, Icon } = ui;
+const { Map, store } = core;
+const { Button, Icon, DrawActions, Modal } = ui;
 const _id = 'deleteAP';
 
 /**
  * Delete an agri parcel.
  */
 export const Delete = ({ processID }) => {
-    return <Button id={_id} onClick={() => {}} className={processID === _id ? 'active' : ''} >
+    const [{isGuided, layer}, setState] = React.useReducer((currState, update) => 
+        ({...currState, ...update}), { isGuided: false, layer: {} });
+
+    const getLayer = e => setState({layer: e.target, isGuided: false})
+
+    const enable = () => {
+        store.dispatch({ processID: _id });
+        setState({isGuided: true})
+
+        Map.eachLayer(function(layer) {
+            if (layer.toGeoJSON) {
+                layer.on('click', getLayer)
+            }
+        });
+    }
+
+    const disable = () => {
+        Map.eachLayer(function(layer) {
+            if (layer.toGeoJSON) {
+                layer.off('click')
+            }
+        });
+
+        // Reset state, internal and application-wide.
+        setState({ isGuided: false, layer: {} });
+        store.dispatch({processID: ''});
+    }
+
+    return <Button id={_id} onClick={() => enable()} className={processID === _id ? 'active' : ''} >
         <Icon name={_id} size='22px' style={{marginTop: '8px'}} />
         <span style={{display: 'block', marginTop: '5px' }}>Избриши парцела</span>
-        {processID === _id && <Form />}
+        {processID === _id 
+            && (isGuided
+                ? <Guidance id={_id} disable={disable} msg={deleteAPMsg} title='Избриши земјоделска парцела' />
+                : <Modal id='measure-dialog'
+                    show 
+                    backdrop={false}
+                    enforceFocus={false}
+                    container={document.getElementsByClassName('control-map')[0]} >
+                    <Modal.Title>
+                        <Button disabled className='as-label ap-modal-title' >Избриши земјоделска парцела</Button>
+                        <DrawActions cancel={disable} />
+                    </Modal.Title>
+                    <Modal.Body className='ap-modal-body' >
+                        <div id={_id} >Дали сте сигурни дека сакате да ја избришете оваа земјоделска парцела?</div>
+                        <Button onClick={() => { layer.removeFrom(Map); disable(); }} size='' className='cancel' > Избриши </Button>
+                    </Modal.Body>
+                </Modal>)}
     </Button>;
 };
 

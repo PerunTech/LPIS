@@ -576,7 +576,7 @@ export const _registry = {
             <path d='m216 138h-112c-2.209 0-4-1.789-4-4s1.791-4 4-4h112c2.211 0 4 1.789 4 4s-1.789 4-4 4z' style={{fill:'#000000'}}/>
         </g>
     },
-    'split-ap': {
+    'splitAP': {
         version: '1.1',
         x: '0px',
         y: '0px',
@@ -645,7 +645,7 @@ export const _registry = {
     },
     /* <div>Icons made by <a href='https://www.flaticon.com/authors/smashicons' title='Smashicons'>Smashicons</a> 
         from <a href='https://www.flaticon.com/' title='Flaticon'>www.flaticon.com</a></div>  */
-    'merge-ap': {
+    'mergeAP': {
         version: '1.1',
         x: '0px',
         y: '0px',

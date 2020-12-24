@@ -241,6 +241,16 @@ export const restAP = {
         url: '/spatial/geometry/layer/cutoff/{init.token}/PHYSICAL_BLOCK/AGRI_PARCEL/0/0',
         method: 'get',
         responseType: 'arraybuffer'
+    },
+    splitAP: {
+        url: '/spatial/geometry/split/preview/{init.token}/AGRI_PARCEL',
+        method: 'post',
+        responseType: 'arraybuffer'
+    },
+    mergeAP: {
+        url: '/spatial/geometry/merge/preview/{init.token}/AGRI_PARCEL',
+        method: 'post',
+        responseType: 'arraybuffer'
     }
 };
 
@@ -249,3 +259,9 @@ export const createAPMsg = [
     '1. Одбраната локација мора да припаѓа во границите на физичкиот блок.',
     '2. Одбраната локација не смее да се преклопува со површината на друга земјоделска парцела.'
 ];
+
+export const deleteAPMsg = [
+    'Одберете земјоделска парцела на мапата која ќе се избрише од базата на податоци.',
+    '1. Изборот се прави со притискање на левото копче од глувчето врз земјоделската парцела.',
+    '2. Одеднаш може да биде избришана само една земјоделска парцела.',
+]
