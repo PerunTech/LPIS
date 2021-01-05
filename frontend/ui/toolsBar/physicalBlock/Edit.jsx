@@ -124,7 +124,7 @@ export const editBlock = {
                 className={props.processID === _id ? 'active' : ''}
                 onClick={enable.bind(editBlock)} >
                     <Icon name={_id} size='30px' />
-                    <span style={{display: 'block', marginTop: '5px' }}>Промени физички блок</span>
+                    <span style={{display: 'block', marginTop: '5px' }}>Промени блок</span>
                     { props.processID === _id  
                         && <Form onSubmit={onSubmit.bind(editBlock)} data={_layer.feature.properties} >
                             <DrawActions

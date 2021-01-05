@@ -6,7 +6,7 @@ import { editBlock } from './Edit';
 import { restPB } from './Config';
 
 const { connect, store } = core;
-const { ButtonGroup, Divider } = ui
+const { ButtonGroup, Button, Icon, Divider } = ui
 
 const _PhysicalBlock = ({ processID }) => 
     <ButtonGroup>
@@ -14,6 +14,11 @@ const _PhysicalBlock = ({ processID }) =>
         <editBlock.render processID={processID} />
         <Divider />
         <AdvanceDigitization name='физички блок' />
+        <Divider />
+        <Button disabled>
+            <Icon name='deletePB' size='28px' style={{marginTop: '2px'}} />
+            <span style={{display: 'block', marginTop: '5px' }}>Избриши парцела</span>
+        </Button>
     </ButtonGroup>;
 
 _PhysicalBlock.propTypes = {

@@ -58,7 +58,7 @@ export const createBlock = {
             className={processID === _id ? 'active' : ''}
             onClick={enable.bind(createBlock)} >
                 <Icon name={_id} size='34px' />
-                <span style={{display: 'block', marginTop: '1px' }}>Додади физички блок</span>
+                <span style={{display: 'block', marginTop: '1px' }}>Нацртај блок</span>
                 { processID === _id  
                     && <Form onSubmit={_onSubmit.bind(createBlock)} >
                         <DrawActions

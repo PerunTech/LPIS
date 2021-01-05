@@ -1,5 +1,5 @@
 import { React, PropTypes } from 'perun-core';
-import { ui } from '../../Spatial';
+import { ui, core } from '../../Spatial';
 import { DataList, DataListUtils } from '..';
 
 const { Button, Divider } = ui;
@@ -27,9 +27,25 @@ const dataCategories = (function () {
  * 
  * @param {*} props 
  */
-export const DataPanel = () => {
+const _DataPanel = () => {
     const [data, setData] = React.useState(dataCategories);
-
+/*
+    React.useEffect(() => {
+        const left = document.getElementsByClassName('control-left')[0];
+        const center = document.getElementsByClassName('control-map')[0];
+        const right = document.getElementsByClassName('control-right')[0];
+        const addClass = core.factory.DomUtil.addClass;
+        const removeClass = core.factory.DomUtil.removeClass;
+        
+        processID.length > 1 
+            ? (addClass(left, 'hide-data-panel'),
+                addClass(right, 'hide-layer-panel'),
+                setTimeout(() => addClass(center, 'expand-center-map'), 2010)) 
+            : (removeClass(left, 'hide-data-panel'),
+                removeClass(right, 'hide-layer-panel'),
+                removeClass(center, 'expand-center-map'))
+    }, [processID])
+*/
     return <div id='data-panel' >
         {/* Data list title */}
         <Button disabled className='as-label data-panel-title' >Работна листа</Button>
@@ -41,6 +57,9 @@ export const DataPanel = () => {
     </div>;
 }
 
-DataPanel.propTypes = {
-    layers: PropTypes.object
+_DataPanel.propTypes = {
+    processID: PropTypes.string
 }
+
+export const DataPanel = core.connect(state => 
+    ({processID: state.app.processID}))(_DataPanel);

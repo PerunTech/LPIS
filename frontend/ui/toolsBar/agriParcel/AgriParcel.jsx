@@ -1,20 +1,32 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../../Spatial';
-import { AdvanceDigitization } from './Advance';
+import { Draw } from './Draw';
 import { Create } from './Create';
+import { Edit } from './Edit';
+import { Split } from './Split';
+import { Merge } from './Merge';
+import { Cut } from './Cut';
+import { Fill } from './Fill';
+import { Delete } from './Delete';
+import { Assign } from './Assign';
 import { restAP } from './Config';
 
-const { ButtonGroup, Button, Icon, Divider } = ui
+const { ButtonGroup, Divider } = ui
 
 const _AgriParcel = ({processID}) => 
     <ButtonGroup>
         <Create processID={processID} />
-        <Button >
-            <Icon name='editAP' size='30px' />
-            <span style={{display: 'block', marginTop: '2px' }}>Промени земјоделска парцела</span>
-        </Button>
+        <Draw processID={processID} />
+        <Edit processID={processID} />
         <Divider />
-        <AdvanceDigitization name='земјоделска парцела' />
+        <Split />
+        <Merge />
+        <Cut processID={processID} />
+        <Fill processID={processID} />
+        <Divider />
+        <Assign />
+        <Divider />
+        <Delete processID={processID}/>
     </ButtonGroup>;
 
 _AgriParcel.propTypes = {

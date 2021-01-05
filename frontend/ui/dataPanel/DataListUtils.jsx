@@ -13,17 +13,17 @@ export const DataListUtils = ({setData}) => {
 
     return <>
         <ButtonGroup className='data-list-utils' >
-            <Button onClick={() => {}} title='Додади запис'  >
+            <Button disabled onClick={() => {}} title='Додади запис'  >
                 <Icon name='add-data-list-item' size='18px' />
             </Button>
-            <Button onClick={() => {}} title='Додади листа' >
+            <Button disabled onClick={() => {}} title='Додади листа' >
                 <Icon name='load-data-list' size='22px' />
             </Button>
             <Divider />
-            <Button onClick={() => {}} title='Сочувај листа' >
+            <Button disabled onClick={() => {}} title='Сочувај листа' >
                 <Icon name='save' size='16px' />
             </Button> 
-            <Button onClick={() => {}} title='Извези листа' >
+            <Button disabled onClick={() => {}} title='Извези листа' >
                 <Icon name='export' size='18px' />
             </Button> 
             <Divider />
@@ -33,7 +33,7 @@ export const DataListUtils = ({setData}) => {
             <Button onClick={_collapseAll} title='Минимизирај листа' >
                 <Icon name='collapse-all' size='18px' />
             </Button>
-            <Button onClick={_collapseAll} title='Отстрани записи' >
+            <Button disabled onClick={_collapseAll} title='Отстрани записи' >
                 <Icon name='delete' size='18px' />
             </Button> 
         </ButtonGroup>
