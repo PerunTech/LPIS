@@ -25,6 +25,7 @@ export const saveAP = (layer, callback) => {
         const geojson = factory.geoJSON(data, config.pathOptions);
         const stateData = store.getState().data.layers;
 
+
         geojson.getLayers().forEach(layer => {
             const id = layer.feature.id
 
@@ -77,7 +78,7 @@ export const saveAP = (layer, callback) => {
         // Make the call for the final save, with results from prompt 2.
         http.call('save_ap', { 
                 data: JSON.stringify({ ...layer, GEOM: JSON.parse(layer.GEOM)}),
-                url: '/lpis/save/agriParcel/{init.token}/0/' + action,
+                url: '/lpis/save/agriParcel/{init.token}/' + layer.OBJECT_ID + '/' + action,
             })
             .then(response => _succeed(geobuf.decode(protobuf(response))))
             .catch(() => _fail());

@@ -106,12 +106,30 @@
 #measure-dialog .modal-body #createAP div {
     margin: 3px;
 }
-#measure-dialog .modal-body #createAP div:nth-child(2) {
+#measure-dialog .modal-body #createAP div:not(:nth-child(1)) {
     margin-left: 10px;
+}
+#measure-dialog .modal-body #createAP div:nth-child(2) {
     margin-top: 10px;
 }
-#measure-dialog .modal-body #createAP div:nth-child(3) {
+#measure-dialog .modal-body #createAP div:nth-last-child() {
+    margin-bottom: 10px;
+}
+
+#measure-dialog .modal-body #drawAP {
+    text-align: left;
+    padding: 0.5rem;
+}
+#measure-dialog .modal-body #drawAP div {
+    margin: 3px;
+}
+#measure-dialog .modal-body #drawAP div:not(:nth-child(1)) {
     margin-left: 10px;
+}
+#measure-dialog .modal-body #drawAP div:nth-child(2) {
+    margin-top: 10px;
+}
+#measure-dialog .modal-body #drawAP div:nth-last-child() {
     margin-bottom: 10px;
 }
 

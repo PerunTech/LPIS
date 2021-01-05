@@ -1,7 +1,7 @@
 #data-panel {
     width: '299px';
     background-color: #F9F9F9;
-    transition: width 1s;
+    transition: all 2s ease-in-out;
 }
 #data-panel-toggle {
     width: 60px;
@@ -39,3 +39,16 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+/*
+.hide-data-panel {
+    transform: translateX(-350px);
+}
+.expand-center-map {
+    position: absolute;
+    width: 100%;
+    height: 81%;
+}
+.hide-layer-panel {
+    transform: translateX(80vw);
+}*/

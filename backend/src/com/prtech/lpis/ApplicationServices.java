@@ -292,6 +292,14 @@ public class ApplicationServices {
 				containedAP = geom;
 			}
 			
+			// Apply user data to containedAP
+			DbDataObject userData = new DbDataObject();
+			Long oid = json.get("OBJECT_ID").getAsLong();
+			if (oid > 0L) {
+				userData.setObjectId(oid);
+				containedAP.setUserData(userData);
+			}
+			
 			// Perform check if our parcel crosses with neighbouring parcels. 
 			Set<Geometry> neighbourAP = new HashSet<>();
 			neighbourAP = svg.getRelatedGeometries(
@@ -302,6 +310,8 @@ public class ApplicationServices {
 					null,
 					true);
 
+			// revert user data, do not return as part of json.
+			containedAP.setUserData(null);
 			json.addProperty("GEOM", Util.geometryToJson(containedAP));
 			result = new JsonObject();
 			result.add("layer", json);

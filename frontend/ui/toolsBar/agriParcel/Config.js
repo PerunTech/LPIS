@@ -112,8 +112,8 @@ export const metadataAux = {
             },
             Z_AVG: {
                 title: 'Надморска височина',
-                type: 'number',
-                default: 0
+                type: 'string',
+                default: '0'
             },
 
         },
@@ -223,9 +223,160 @@ export const config = {
         opacity: 0.9,
         fillOpacity: 0.25,
         showMeasurements: true,
-        metadata: { ...metadataMain, ...metadataAux, ...metadataAdmin }
+        metadata: {
+            type: 'agri_parcel',
+            namePath: 'options.metadata.schema.properties.PARENT_ID',
+            schema: {
+                'type': 'object',
+                'properties': {
+                    ...metadataMain.schema.properties, 
+                    ...metadataAux.schema.properties, 
+                    ...metadataAdmin.schema.properties
+                }
+            },
+            uiSchema: {
+                ...metadataMain.uiSchema, 
+                ...metadataAux.uiSchema, 
+                ...metadataAdmin.uiSchema
+            }
+        }
     }
 };
+
+/** @constant */
+export const cutConfig = {
+    // allow multiple drawn shapes
+    repeatable: false,
+    // snapping
+    snappable: true,
+    snapDistance: 20,
+    // show tooltips
+    tooltips: true,
+    // allow snapping to the middle of segments
+    snapMiddle: false,
+    // self intersection
+    allowSelfIntersection: true,
+    // the vector that is currently being drawn (while measurement is active).
+    templineStyle: {
+        weight: 2.0,
+        stroke: true,
+        color: '#dc3545',
+        fillColor: '#dc3545',
+        opacity: 0.9,
+        fillOpacity: 0.25,
+        dashArray: [10, 10],
+        showMeasurements: true
+    },
+    // the temporary line from the last drawn marker to the mouse cursor
+    hintlineStyle: {
+        weight: 2.0,
+        stroke: true,
+        color: '#dc3545',
+        fillColor: '#dc3545',
+        opacity: 0.9,
+        fillOpacity: 0.25,
+        dashArray: [10, 10],
+    },
+    // show a marker at the cursor
+    cursorMarker: true,
+    // specify type of layer event to finish the drawn shape
+    // example events: 'mouseout', 'dblclick', 'contextmenu'
+    finishOn: null,
+    // configuration of the drawn vector. 
+    pathOptions: {
+        weight: 2.0,
+        stroke: true,
+        color: '#dc3545',
+        fillColor: '#dc3545',
+        opacity: 0.9,
+        fillOpacity: 0.25,
+        showMeasurements: true,
+        metadata: {
+            type: 'agri_parcel',
+            namePath: 'options.metadata.schema.properties.PARENT_ID',
+            schema: {
+                'type': 'object',
+                'properties': {
+                    ...metadataMain.schema.properties, 
+                    ...metadataAux.schema.properties, 
+                    ...metadataAdmin.schema.properties
+                }
+            },
+            uiSchema: {
+                ...metadataMain.uiSchema, 
+                ...metadataAux.uiSchema, 
+                ...metadataAdmin.uiSchema
+            }
+        }
+    }
+};
+
+export const fillConfig = {
+    // allow multiple drawn shapes
+    repeatable: false,
+    // snapping
+    snappable: true,
+    snapDistance: 20,
+    // show tooltips
+    tooltips: true,
+    // allow snapping to the middle of segments
+    snapMiddle: false,
+    // self intersection
+    allowSelfIntersection: true,
+    // the vector that is currently being drawn (while measurement is active).
+    templineStyle: {
+        weight: 2.0,
+        stroke: true,
+        color: '#04458F',
+        fillColor: '#04458F',
+        opacity: 0.9,
+        fillOpacity: 0.25,
+        dashArray: [10, 10],
+        showMeasurements: true
+    },
+    // the temporary line from the last drawn marker to the mouse cursor
+    hintlineStyle: {
+        weight: 2.0,
+        stroke: true,
+        color: '#04458F',
+        fillColor: '#04458F',
+        opacity: 0.9,
+        fillOpacity: 0.25,
+        dashArray: [10, 10],
+    },
+    // show a marker at the cursor
+    cursorMarker: true,
+    // specify type of layer event to finish the drawn shape
+    // example events: 'mouseout', 'dblclick', 'contextmenu'
+    finishOn: null,
+    // configuration of the drawn vector. 
+    pathOptions: {
+        weight: 2.0,
+        stroke: true,
+        color: '#04458F',
+        fillColor: '#04458F',
+        opacity: 0.9,
+        fillOpacity: 0.25,
+        showMeasurements: true,
+        metadata: {
+            type: 'agri_parcel',
+            namePath: 'options.metadata.schema.properties.PARENT_ID',
+            schema: {
+                'type': 'object',
+                'properties': {
+                    ...metadataMain.schema.properties, 
+                    ...metadataAux.schema.properties, 
+                    ...metadataAdmin.schema.properties
+                }
+            },
+            uiSchema: {
+                ...metadataMain.uiSchema, 
+                ...metadataAux.uiSchema, 
+                ...metadataAdmin.uiSchema
+            }
+        }
+    }
+}
 
 export const restAP = {
     check_ap: {
@@ -243,25 +394,57 @@ export const restAP = {
         responseType: 'arraybuffer'
     },
     splitAP: {
-        url: '/spatial/geometry/split/preview/{init.token}/AGRI_PARCEL',
+        url: '/spatial/geometry/split/preview/{init.token}/AGRI_PARCEL/""',
         method: 'post',
         responseType: 'arraybuffer'
     },
     mergeAP: {
-        url: '/spatial/geometry/merge/preview/{init.token}/AGRI_PARCEL',
+        url: '/spatial/geometry/merge/confirm/{init.token}/AGRI_PARCEL/""',
+        method: 'post',
+        responseType: 'arraybuffer'
+    },
+    cutAP: {
+        url: '/spatial/geometry/hole/{init.token}/AGRI_PARCEL/""',
+        method: 'post',
+        responseType: 'arraybuffer'
+    },
+    fillAP: {
+        url: '/spatial/geometry/fill/{init.token}/AGRI_PARCEL/""',
         method: 'post',
         responseType: 'arraybuffer'
     }
 };
 
 export const createAPMsg = [
-    'Притиснете на левото копче од глувчето врз слободен физички блок за да додадете земјоделска парцела.',
-    '1. Одбраната локација мора да припаѓа во границите на физичкиот блок.',
-    '2. Одбраната локација не смее да се преклопува со површината на друга земјоделска парцела.'
+    'Оберете слободен физички блок за да додадете земјоделска парцела.',
+    '1. Притиснете на левото копче од глувчето врз физичкиот блок за да направите избор.',
+    '2. Земјоделската парцела ќе се исцрта според границите на избраниот блок.',
+    '3. Одбраната локација мора да припаѓа во границите на активен физичкиот блок.',
+    '4. Одбраната локација не смее да се преклопува со површината на друга земјоделска парцела.'
 ];
 
 export const deleteAPMsg = [
     'Одберете земјоделска парцела на мапата која ќе се избрише од базата на податоци.',
     '1. Изборот се прави со притискање на левото копче од глувчето врз земјоделската парцела.',
     '2. Одеднаш може да биде избришана само една земјоделска парцела.',
+]
+
+export const drawAPMsg = [
+    'Алатката за исцртување на земјоделска парцела е активна.',
+    '1. Започнете со поставување на првото теме од парцелата, со притискање на левото копче од глувчето на саканата локација на мапата.',
+    '2. Продолжете со поставување на темиња според теренот прикажан на мапата.',
+    '3. За крај на цртањето и комплетирање на парцелата, притиснете врз првото поставено теме.',
+    '4. Полигонот мора да има најмалку три (3) темиња.',
+    '5. Полигонот мора да биде затворен.',
+    '6. Полигонот не смее да се сече сам со себе.',
+];
+
+export const cutAPMsg = [
+    'Во изработка',
+    ''
+]
+
+export const fillAPMsg = [
+    'Во изработка',
+    ''
 ]

@@ -1,10 +1,11 @@
 import { React, PropTypes } from 'perun-core';
-import { core, data, ui } from '../../../Spatial';
+import { core, data, ui, config as cfg } from '../../../Spatial';
 import { config, createAPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveAP } from './Save';
 
+const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory, http, util } = core;
 const { geobuf, protobuf } = data;
 const { Button, Icon, DrawActions } = ui;
@@ -20,7 +21,7 @@ export const Create = ({ processID }) => {
         { layer: {}, data: {}, isGuided: false });
 
     const enable = () => {
-        store.dispatch({ processID: _id });
+        store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
         setState({isGuided: true})
 
         // Click handler for selection of location and creation of agri parcel geometry.
@@ -67,7 +68,7 @@ export const Create = ({ processID }) => {
     const disable = () => {
         // Reset state, internal and application-wide.
         setState({ layer: {}, data: {}, isGuided: false });
-        store.dispatch({processID: ''});
+        store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
     }
@@ -76,11 +77,15 @@ export const Create = ({ processID }) => {
         setState({data: { ...data, ...formData }});
 
     const onSubmit = ({ formData }) => 
-        saveAP(JSON.stringify({ ...data, ...formData, GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
+        saveAP(JSON.stringify({ 
+            ...data, 
+            ...formData,
+            OBJECT_ID: 0,
+            GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
 
     return <Button id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
-        <Icon name={_id} size='26px' style={{marginTop: '4px'}} />
-        <span style={{display: 'block', marginTop: '5px' }}>Додади парцела</span>
+        <Icon name={_id} size='32px' style={{marginTop: '2px'}} />
+        <span style={{display: 'block', marginTop: '2px' }}>Додади парцела</span>
         {processID === _id 
             && (isGuided
                 ? <Guidance id={_id} disable={disable} msg={createAPMsg} title='Додади земјоделска парцела' />

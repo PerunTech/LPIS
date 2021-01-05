@@ -15,8 +15,8 @@ const _PhysicalBlock = ({ processID }) =>
         <Divider />
         <AdvanceDigitization name='физички блок' />
         <Divider />
-        <Button disabled >
-            <Icon name='deletePB' size='22px' style={{marginTop: '8px'}} />
+        <Button disabled>
+            <Icon name='deletePB' size='28px' style={{marginTop: '2px'}} />
             <span style={{display: 'block', marginTop: '5px' }}>Избриши парцела</span>
         </Button>
     </ButtonGroup>;

@@ -69,7 +69,7 @@ export const Merge = ({ processID }) => {
 
     return <Button id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
         <Icon name={_id} size='28px' style={{marginTop: '2px'}} />
-        <span style={{display: 'block', marginTop: '5px' }}>Приспои парцела</span>
+        <span style={{display: 'block', marginTop: '5px' }}>Приспои парцели</span>
         {processID === _id 
             && <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
                 <DrawActions 

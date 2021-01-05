@@ -41,7 +41,7 @@ export const Delete = ({ processID }) => {
     }
 
     return <Button id={_id} onClick={() => enable()} className={processID === _id ? 'active' : ''} >
-        <Icon name={_id} size='22px' style={{marginTop: '8px'}} />
+        <Icon name={_id} size='28px' style={{marginTop: '2px'}} />
         <span style={{display: 'block', marginTop: '5px' }}>Избриши парцела</span>
         {processID === _id 
             && (isGuided
