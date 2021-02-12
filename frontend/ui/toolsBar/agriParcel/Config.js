@@ -1,4 +1,42 @@
 /** @constant */
+export const restAP = {
+    check_ap: {
+        url: '/lpis/check/PBContainsAP/{init.token}',
+        method: 'post',
+    },
+    save_ap: {
+        url: '/lpis/save/agriParcel/{init.token}/0/0',
+        method: 'post',
+        responseType: 'arraybuffer'
+    },
+    create_ap: {
+        url: '/spatial/geometry/layer/cutoff/{init.token}/PHYSICAL_BLOCK/AGRI_PARCEL/0/0',
+        method: 'get',
+        responseType: 'arraybuffer'
+    },
+    splitAP: {
+        url: '/spatial/geometry/split/preview/{init.token}/AGRI_PARCEL/""',
+        method: 'post',
+        responseType: 'arraybuffer'
+    },
+    mergeAP: {
+        url: '/spatial/geometry/merge/confirm/{init.token}/AGRI_PARCEL/""',
+        method: 'post',
+        responseType: 'arraybuffer'
+    },
+    cutAP: {
+        url: '/spatial/geometry/hole/{init.token}/AGRI_PARCEL/""',
+        method: 'post',
+        responseType: 'arraybuffer'
+    },
+    fillAP: {
+        url: '/spatial/geometry/fill/{init.token}/AGRI_PARCEL/""',
+        method: 'post',
+        responseType: 'arraybuffer'
+    }
+};
+
+/** @constant */
 export const metadataMain = {
     type: 'agri_parcel',
     namePath: 'options.metadata.schema.properties.PARENT_ID',
@@ -173,8 +211,6 @@ export const metadataAdmin = {
     }
 };
 
-
-
 /** @constant */
 export const config = {
     // allow multiple drawn shapes
@@ -245,18 +281,6 @@ export const config = {
 
 /** @constant */
 export const cutConfig = {
-    // allow multiple drawn shapes
-    repeatable: false,
-    // snapping
-    snappable: true,
-    snapDistance: 20,
-    // show tooltips
-    tooltips: true,
-    // allow snapping to the middle of segments
-    snapMiddle: false,
-    // self intersection
-    allowSelfIntersection: true,
-    // the vector that is currently being drawn (while measurement is active).
     templineStyle: {
         weight: 2.0,
         stroke: true,
@@ -267,7 +291,6 @@ export const cutConfig = {
         dashArray: [10, 10],
         showMeasurements: true
     },
-    // the temporary line from the last drawn marker to the mouse cursor
     hintlineStyle: {
         weight: 2.0,
         stroke: true,
@@ -277,12 +300,6 @@ export const cutConfig = {
         fillOpacity: 0.25,
         dashArray: [10, 10],
     },
-    // show a marker at the cursor
-    cursorMarker: true,
-    // specify type of layer event to finish the drawn shape
-    // example events: 'mouseout', 'dblclick', 'contextmenu'
-    finishOn: null,
-    // configuration of the drawn vector. 
     pathOptions: {
         weight: 2.0,
         stroke: true,
@@ -312,18 +329,6 @@ export const cutConfig = {
 };
 
 export const fillConfig = {
-    // allow multiple drawn shapes
-    repeatable: false,
-    // snapping
-    snappable: true,
-    snapDistance: 20,
-    // show tooltips
-    tooltips: true,
-    // allow snapping to the middle of segments
-    snapMiddle: false,
-    // self intersection
-    allowSelfIntersection: true,
-    // the vector that is currently being drawn (while measurement is active).
     templineStyle: {
         weight: 2.0,
         stroke: true,
@@ -344,12 +349,6 @@ export const fillConfig = {
         fillOpacity: 0.25,
         dashArray: [10, 10],
     },
-    // show a marker at the cursor
-    cursorMarker: true,
-    // specify type of layer event to finish the drawn shape
-    // example events: 'mouseout', 'dblclick', 'contextmenu'
-    finishOn: null,
-    // configuration of the drawn vector. 
     pathOptions: {
         weight: 2.0,
         stroke: true,
@@ -377,43 +376,6 @@ export const fillConfig = {
         }
     }
 }
-
-export const restAP = {
-    check_ap: {
-        url: '/lpis/check/PBContainsAP/{init.token}',
-        method: 'post',
-    },
-    save_ap: {
-        url: '/lpis/save/agriParcel/{init.token}/0/0',
-        method: 'post',
-        responseType: 'arraybuffer'
-    },
-    create_ap: {
-        url: '/spatial/geometry/layer/cutoff/{init.token}/PHYSICAL_BLOCK/AGRI_PARCEL/0/0',
-        method: 'get',
-        responseType: 'arraybuffer'
-    },
-    splitAP: {
-        url: '/spatial/geometry/split/preview/{init.token}/AGRI_PARCEL/""',
-        method: 'post',
-        responseType: 'arraybuffer'
-    },
-    mergeAP: {
-        url: '/spatial/geometry/merge/confirm/{init.token}/AGRI_PARCEL/""',
-        method: 'post',
-        responseType: 'arraybuffer'
-    },
-    cutAP: {
-        url: '/spatial/geometry/hole/{init.token}/AGRI_PARCEL/""',
-        method: 'post',
-        responseType: 'arraybuffer'
-    },
-    fillAP: {
-        url: '/spatial/geometry/fill/{init.token}/AGRI_PARCEL/""',
-        method: 'post',
-        responseType: 'arraybuffer'
-    }
-};
 
 export const createAPMsg = [
     'Оберете слободен физички блок за да додадете земјоделска парцела.',
