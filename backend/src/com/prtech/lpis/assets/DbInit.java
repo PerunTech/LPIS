@@ -198,8 +198,7 @@ public class DbInit implements IDbInit {
 		dbf4.setDbFieldScale(4);
 		dbf4.setIsNull(false);
 		dbf4.setLabel_code("common.perimeter");
-		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
-				+ "\"resizable\":true,\"editable\":false}}");
+		dbf4.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		/* C5 [read-write, not null, form-hidden], derivative of geometry. */
 		DbDataField dbf5 = new DbDataField();
@@ -222,6 +221,8 @@ public class DbInit implements IDbInit {
 		dbf6.setIsNull(false);
 		dbf6.setLabel_code("agri_parcel.land_cover_code");
 		dbf6.setCode_list_user_code("LAND_COVER");
+		dbf6.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
 		
 		DbDataField dbf7 = new DbDataField();
 		dbf7.setDbFieldName("HOME_NAME");
@@ -229,6 +230,8 @@ public class DbInit implements IDbInit {
 		dbf7.setDbFieldSize(2000);
 		dbf7.setIsNull(true);
 		dbf7.setLabel_code("agri_parcel.home_name");
+		dbf7.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
 		
 		DbDataField dbf8 = new DbDataField();
 		dbf8.setDbFieldName("NOTE_INSERT");
@@ -236,6 +239,7 @@ public class DbInit implements IDbInit {
 		dbf8.setDbFieldSize(2000);
 		dbf8.setIsNull(true);
 		dbf8.setLabel_code("agri_parcel.note_insert");
+		dbf8.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf9 = new DbDataField();
 		dbf9.setDbFieldName("NOTE_FARMER");
@@ -243,6 +247,7 @@ public class DbInit implements IDbInit {
 		dbf9.setDbFieldSize(2000);
 		dbf9.setIsNull(true);
 		dbf9.setLabel_code("agri_parcel.note_farmer");
+		dbf9.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf10 = new DbDataField();
 		dbf10.setDbFieldName("NOTE_ORGANISATION");
@@ -250,6 +255,7 @@ public class DbInit implements IDbInit {
 		dbf10.setDbFieldSize(2000);
 		dbf10.setIsNull(true);
 		dbf10.setLabel_code("agri_parcel.note_organisation");
+		dbf10.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		/**
 		 * Supporting data 
@@ -261,6 +267,7 @@ public class DbInit implements IDbInit {
 		dbf11.setIsNull(true);
 		dbf11.setLabel_code("agri_parcel.land_cover_code_2");
 		dbf11.setCode_list_user_code("LAND_COVER");
+		dbf11.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf12 = new DbDataField();
 		dbf12.setDbFieldName("KO_ID");
@@ -269,24 +276,29 @@ public class DbInit implements IDbInit {
 		dbf12.setDbFieldScale(0);
 		dbf12.setIsNull(true);	// this needs to be mandatory, but politics... 
 		dbf12.setLabel_code("agri_parcel.cadastral_municipality");
+		dbf12.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
 		
 		DbDataField dbf13 = new DbDataField();
 		dbf13.setDbFieldName("INVISIBLE_BORDER");
 		dbf13.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf13.setIsNull(true);
 		dbf13.setLabel_code("agri_parcel.invisible_border");
+		dbf13.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf14 = new DbDataField();
 		dbf14.setDbFieldName("CHANGED_BORDER");
 		dbf14.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf14.setIsNull(true);
 		dbf14.setLabel_code("agri_parcel.changed_border");
+		dbf14.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf15 = new DbDataField();
 		dbf15.setDbFieldName("IRRIGATION");
 		dbf15.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf15.setIsNull(true);
 		dbf15.setLabel_code("agri_parcel.irrigation");
+		dbf15.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf16 = new DbDataField();
 		dbf16.setDbFieldName("SLOPE_AVG");
@@ -295,12 +307,14 @@ public class DbInit implements IDbInit {
 		dbf16.setDbFieldScale(0);
 		dbf16.setIsNull(true);
 		dbf16.setLabel_code("agri_parcel.slope_avg");
+		dbf16.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf17 = new DbDataField();
 		dbf17.setDbFieldName("TERRACE");
 		dbf17.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf17.setIsNull(true);
 		dbf17.setLabel_code("agri_parcel.terrace");
+		dbf17.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf18 = new DbDataField();
 		dbf18.setDbFieldName("PO_ID");
@@ -309,6 +323,7 @@ public class DbInit implements IDbInit {
 		dbf18.setDbFieldScale(0);
 		dbf18.setIsNull(true);
 		dbf18.setLabel_code("agri_parcel.po_id");
+		dbf18.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf19 = new DbDataField();
 		dbf19.setDbFieldName("Z_AVG");
@@ -317,6 +332,8 @@ public class DbInit implements IDbInit {
 		dbf19.setDbFieldScale(4);
 		dbf19.setIsNull(true);
 		dbf19.setLabel_code("agri_parcel.z_avg");
+		dbf19.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
 		
 		DbDataField dbf20 = new DbDataField();
 		dbf20.setDbFieldName("EXPOSITION_AVG");
@@ -325,12 +342,14 @@ public class DbInit implements IDbInit {
 		dbf20.setDbFieldScale(0);
 		dbf20.setIsNull(true);
 		dbf20.setLabel_code("agri_parcel.exposition_avg");
+		dbf20.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf21 = new DbDataField();
 		dbf21.setDbFieldName("LANDSCAPE_FEATURES");
 		dbf21.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf21.setIsNull(true);
 		dbf21.setLabel_code("agri_parcel.landscape_features");
+		dbf21.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf22 = new DbDataField();
 		dbf22.setDbFieldName("ELIGIBILITY_COEF");
@@ -338,25 +357,31 @@ public class DbInit implements IDbInit {
 		dbf22.setDbFieldSize(3);
 		dbf22.setDbFieldScale(0);
 		dbf22.setIsNull(true);
-		dbf22.setLabel_code("agri_parcel.eligibility_coef");		
+		dbf22.setLabel_code("agri_parcel.eligibility_coef");
+		dbf22.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 
 		DbDataField dbf23 = new DbDataField();
 		dbf23.setDbFieldName("COMMON_USE");
 		dbf23.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf23.setIsNull(true);
 		dbf23.setLabel_code("agri_parcel.common_use");
+		dbf23.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
 		
 		DbDataField dbf24 = new DbDataField();
 		dbf24.setDbFieldName("CERTIFICATE_OF_USE");
 		dbf24.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf24.setIsNull(true);
 		dbf24.setLabel_code("agri_parcel.certificate_of_use");
+		dbf24.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
 		
 		DbDataField dbf25 = new DbDataField();
 		dbf25.setDbFieldName("ORGANIC");
 		dbf25.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf25.setIsNull(true);
 		dbf25.setLabel_code("agri_parcel.organic");
+		dbf25.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf26 = new DbDataField();
 		dbf26.setDbFieldName("SOIL_TYPE");
@@ -365,6 +390,7 @@ public class DbInit implements IDbInit {
 		dbf26.setIsNull(true);
 		dbf26.setLabel_code("agri_parcel.soil_types");
 		dbf26.setCode_list_user_code("SOIL_TYPES");
+		dbf26.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf27 = new DbDataField();
 		dbf27.setDbFieldName("OLD_ID");
@@ -373,6 +399,8 @@ public class DbInit implements IDbInit {
 		dbf27.setDbFieldScale(0);
 		dbf27.setIsNull(true);
 		dbf27.setLabel_code("agri_parcel.old_id");
+		dbf27.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+		
 		
 		DbDataField[] fieldList = new DbDataField[27];
 		fieldList[0] = dbf1;
