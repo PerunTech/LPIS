@@ -27,8 +27,9 @@ const dataCategories = (function () {
  * 
  * @param {*} props 
  */
-const _DataPanel = () => {
-    const [data, setData] = React.useState(dataCategories);
+const _DataPanel = ({categories}) => {
+    const [data, setData] = React.useState(categories);
+
 /*
     React.useEffect(() => {
         const left = document.getElementsByClassName('control-left')[0];
@@ -46,6 +47,7 @@ const _DataPanel = () => {
                 removeClass(center, 'expand-center-map'))
     }, [processID])
 */
+
     return <div id='data-panel' >
         {/* Data list title */}
         <Button disabled className='as-label data-panel-title' >Работна листа</Button>
@@ -57,7 +59,12 @@ const _DataPanel = () => {
     </div>;
 }
 
+_DataPanel.defaultProps = {
+    categories: dataCategories
+}
+
 _DataPanel.propTypes = {
+    categories: PropTypes.obj,
     processID: PropTypes.string
 }
 

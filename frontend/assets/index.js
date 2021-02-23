@@ -9,6 +9,7 @@ import './css/dataPanel/dataPanel.css';
 /* css.control */
 import './css/control/statusBar.css';
 import './css/control/toolsBar.css';
+import './css/control/miniBar.css';
 import './css/control/layerPanel.css';
 
 /* css.digitization */

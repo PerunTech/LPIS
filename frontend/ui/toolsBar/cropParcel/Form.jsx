@@ -1,0 +1,38 @@
+import { React, PropTypes } from 'perun-core';
+import { ui } from '../../../Spatial';
+import { metadata } from './Config';
+
+const { Button, Modal } = ui;
+
+export function Form ({formData, onSubmit, onChange, children }) {
+    return <Modal id='measure-dialog'
+        show 
+        backdrop={false}
+        enforceFocus={false}
+        container={document.getElementsByClassName('control-map')[0]} >
+        <Modal.Title>
+            <Button disabled className='as-label ap-modal-title' >Земјоделска Парцела</Button>
+            { children }
+        </Modal.Title>
+        <Modal.Body className='ap-modal-body' >
+            <ui.Form
+                schema={metadata.schema}
+                uiSchema={metadata.uiSchema}
+                formData={formData} 
+                onSubmit={onSubmit}
+                onChange={onChange} >
+                <Button type='submit' size='' className='save-pb' >
+                    Зачувај
+                </Button>
+            </ui.Form>
+        </Modal.Body>
+    </Modal>;
+}
+
+Form.propTypes = {
+    formData: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    children: PropTypes.Node
+}
+

@@ -9,9 +9,15 @@ export const lpis = {
     version, 
     description,
     routes: [{
+        name: 'gsaa',
+        path: '/main/gsaa',
+        render: ui.gsaa,
+        isExact: true
+    }, {
         name: 'lpis',
         path: '/main/lpis',
-        render: ui.Init,
+        render: ui.lpis,
+        // render: ui.gsaa,
         isExact: true
     }],
     ui
