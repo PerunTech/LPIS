@@ -15,6 +15,7 @@ import './css/control/layerPanel.css';
 /* css.digitization */
 import './css/digitization/physicalBlock.css'
 import './css/digitization/agriParcel.css'
+import './css/digitization/cropParcel.css'
 
 /**
  * Include local svg registry in build.

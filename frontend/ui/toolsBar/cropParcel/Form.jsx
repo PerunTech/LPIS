@@ -11,7 +11,7 @@ export function Form ({formData, onSubmit, onChange, children }) {
         enforceFocus={false}
         container={document.getElementsByClassName('control-map')[0]} >
         <Modal.Title>
-            <Button disabled className='as-label ap-modal-title' >Земјоделска Парцела</Button>
+            <Button disabled className='as-label ap-modal-title' >Производна Парцела</Button>
             { children }
         </Modal.Title>
         <Modal.Body className='ap-modal-body' >

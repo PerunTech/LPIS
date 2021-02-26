@@ -31,9 +31,11 @@ export const Create = ({ processID }) => {
                 url: '/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/' +p.x + '/' + p.y})
             .then(response => {
                 const data = geobuf.decode(protobuf(response));
+                console.log(data)
                 const geojson = factory.geoJSON(data, config.pathOptions);
                 const stateData = store.getState().data.layers;
-        
+                console.log(geojson)
+
                 geojson.getLayers().forEach(layer => {
                     const id = layer.feature.id
         
@@ -85,7 +87,7 @@ export const Create = ({ processID }) => {
 
     return <Button id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
         <Icon name={_id} size='30px' />
-        <span style={{display: 'block', marginTop: '5px' }}>Додади производна парцела</span>
+        <span style={{display: 'block', marginTop: '2px' }}>Додади производна парцела</span>
         {processID === _id 
             && (isGuided
                 ? <Guidance id={_id} disable={disable} msg={createCPMsg} title='Додади производна парцела' />

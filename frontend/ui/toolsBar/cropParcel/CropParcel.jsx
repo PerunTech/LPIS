@@ -6,7 +6,7 @@ import { Edit } from './Edit';
 import { Delete } from './Delete';
 
 const { connect } = core;
-const { ButtonGroup, Button, Icon, Divider } = ui
+const { ButtonGroup, Divider } = ui
 
 const _CropParcel = ({processID, ...props}) => 
     <ButtonGroup>

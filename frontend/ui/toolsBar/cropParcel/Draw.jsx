@@ -65,7 +65,7 @@ export const Draw = ({ processID }) => {
             </Form>;
 
     return <Button id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
-        <Icon name={_id} size='30px' />
+        <Icon name={_id} size='32px' />
         <span style={{display: 'block', marginTop: '2px' }}>Нацртај производна парцела</span>
         {processID === _id && renderForm()}
     </Button>;

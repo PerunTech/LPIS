@@ -1,8 +1,7 @@
 import { React, PropTypes } from 'perun-core';
 import { config as cfg, core, data, tools, ui } from '../../../Spatial';
-import { config, createCPMsg } from './Config';
+import { config } from './Config';
 import { Form } from './Form';
-import { Guidance } from './Guidance';
 import { saveCP } from './Save';
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
@@ -122,12 +121,10 @@ export const Edit = ({ processID }) => {
         id={_id} 
         className={processID === _id ? 'active' : ''}
         onClick={enable}>
-        <Icon name='editAP' size='30px' />
+        <Icon name={_id} size='32px' />
         <span style={{display: 'block', marginTop: '2px' }}>Промени производна парцела</span>
         {processID === _id 
-            && (isGuided
-                ? <Guidance id={_id} disable={disable} msg={createCPMsg} title='Промени производна парцела' />
-                : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
+            && (isGuided && <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
                     <DrawActions cancel={disable} />
                 </Form>)}
     </Button>;
