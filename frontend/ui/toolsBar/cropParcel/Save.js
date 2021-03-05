@@ -1,9 +1,8 @@
 import { elements } from 'perun-core';
-import { core, data } from '../../../Spatial';
+import { core } from '../../../Spatial';
 import {config} from './Config'
 
-const { http, store, factory, Map, util } = core;
-const { protobuf, geobuf } = data;
+const { http, factory, Map } = core;
 
 export const saveCP = (data, callback) => {
     http.call('save_cp', {
@@ -11,9 +10,10 @@ export const saveCP = (data, callback) => {
         data: data
     })
     .then(response => {
+        console.log(response)
         const data = response.data && response.data.data
 
-        if (response.data.type === 'ERROR') {
+        if (response.data.type === 'ERROR' || response.data.type === 'EXCEPTION') {
             elements.alertUser(true, 
                 'error', 
                 response.data.title || 'Грешка при зачувување', 
@@ -34,6 +34,3 @@ export const saveCP = (data, callback) => {
     })
     .catch(err => (callback(), console.log(err)))
 };
-
-
-// (callback(), console.log(response))

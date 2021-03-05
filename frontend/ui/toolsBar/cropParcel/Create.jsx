@@ -31,9 +31,7 @@ export const Create = ({ processID }) => {
                 url: '/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/' +p.x + '/' + p.y})
             .then(response => {
                 const data = geobuf.decode(protobuf(response));
-                console.log(data)
                 const geojson = factory.geoJSON(data, config.pathOptions);
-                console.log(geojson)
                 const stateData = store.getState().data.layers;
 
                 geojson.getLayers().forEach(layer => {
@@ -44,18 +42,9 @@ export const Create = ({ processID }) => {
         
                     // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
                     layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
-
+                    
                     // assign metadata
-                    layer.feature.id = '0'
-                    layer.feature.properties = {
-                        AREA: layer.feature.properties.AREA,
-                        CENTROID: layer.feature.properties.CENTROID,
-                        GEOM: layer.feature.properties.GEOM,
-                        LAND_COVER_CODE: layer.feature.properties.LAND_COVER_CODE,
-                        PERIMETER: layer.feature.properties.PERIMETER,
-                        parent_id: layer.feature.properties.parent_id,
-                        DESCRIPTOR: 'AGRI_PARCEL'
-                    }
+                    // layer.feature.properties = { parent_id: 20348156 } // get from cookie
 
                     layer.addTo(Map);
                     setState({data: layer.feature.properties, layer: layer, isGuided: false})
@@ -82,7 +71,6 @@ export const Create = ({ processID }) => {
         saveCP(JSON.stringify({ 
             ...data, 
             ...formData,
-            OBJECT_ID: 0,
             GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
 
     return <Button id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
