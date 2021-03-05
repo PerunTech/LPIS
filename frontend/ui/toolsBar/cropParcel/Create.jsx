@@ -31,7 +31,9 @@ export const Create = ({ processID }) => {
                 url: '/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/' +p.x + '/' + p.y})
             .then(response => {
                 const data = geobuf.decode(protobuf(response));
+                console.log(data)
                 const geojson = factory.geoJSON(data, config.pathOptions);
+                console.log(geojson)
                 const stateData = store.getState().data.layers;
 
                 geojson.getLayers().forEach(layer => {

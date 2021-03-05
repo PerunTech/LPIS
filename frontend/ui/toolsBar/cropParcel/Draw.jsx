@@ -44,12 +44,13 @@ export const Draw = ({ processID }) => {
     const onChange = ({ formData }) => 
         setState({data: { ...data, ...formData }});
 
-    const onSubmit = ({ formData }) => 
+    const onSubmit = ({ formData }) => {
         saveCP(JSON.stringify({ 
             ...data, 
             ...formData,
-            OBJECT_ID: 0,
             GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
+    }
+
 
     const renderForm = () =>
         isGuided

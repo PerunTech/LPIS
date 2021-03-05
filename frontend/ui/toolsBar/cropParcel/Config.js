@@ -2,7 +2,7 @@ import {crop_codes_idx, crop_codes_desc} from './Crop_Codes';
 
 export const metadata = {
     type: 'land_use_plan',
-    namePath: 'options.metadata.schema.properties.PARENT_ID',
+    namePath: 'feature.properties.parent_id',
     schema: {
         properties: {
             CROP_CODE: {
@@ -83,17 +83,7 @@ export const config = {
         opacity: 0.9,
         fillOpacity: 0.25,
         showMeasurements: true,
-        metadata: {
-            type: 'land_use_plan',
-            namePath: 'options.metadata.schema.properties.PARENT_ID',
-            schema: {
-                'type': 'object',
-                'properties': {
-                }
-            },
-            uiSchema: {
-            }
-        }
+        metadata: metadata
     }
 };
 export const createCPMsg = [
