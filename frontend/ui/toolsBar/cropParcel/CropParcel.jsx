@@ -1,5 +1,6 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../../Spatial';
+import { restCP } from './Config';
 import { Create } from './Create';
 import { Draw } from './Draw';
 import { Edit } from './Edit';
@@ -23,3 +24,5 @@ _CropParcel.propTypes = {
 
 export const CropParcel = connect(state => 
     ({ processID: state.app.processID }))(_CropParcel);
+
+core.store.addState('http', restCP);

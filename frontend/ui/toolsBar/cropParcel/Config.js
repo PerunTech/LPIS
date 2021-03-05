@@ -10,7 +10,7 @@ export const metadata = {
                 enumNames: crop_codes_desc,
                 title: 'Земјоделска култура',
                 type: 'number',
-                default: '1',
+                default: 1,
             },
             AREA: {
                 title: 'Површина',
@@ -117,3 +117,11 @@ export const deleteCPMsg = [
     '1. Изборот се прави со притискање на левото копче од глувчето врз производната парцела.',
     '2. Одеднаш може да биде избришана само една производна парцела.',
 ];
+
+export const restCP = {
+    save_cp: {
+        url: '/table/createTableRecord/{init.token}/LAND_USE_PLAN/0',
+        method: 'post',
+        responseType: 'json'
+    }
+}
