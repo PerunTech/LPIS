@@ -1,9 +1,18 @@
 import { redux } from 'perun-core';
-import { ui } from '../Spatial';
-import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar  } from '.';
+import { ui, core } from '../Spatial';
+import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets  } from '.';
 
 export const gsaa = () => {
-    const _token = redux.store.getState().security.svSession;
+    // const _token = redux.store.getState().security.svSession;
+    const _token = readCookie('token');
+    const _farmerId = readCookie('farmerObj');
+    console.log(_token)
+    console.log(_farmerId)
+    // add check for token, farmerId existance and validate.
+    // exit properly for the user on fail.
+
+    core.store.addState('gsaa', { farmerId: _farmerId });
+    loadFarmerAssets(_token, _farmerId);
 
     return ui.init(_token)
         .addControl(MiniBar, {}, { position: 'top' })

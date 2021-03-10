@@ -18,7 +18,7 @@ export const metadata = {
                 default: 0
             },
             NUMBER_PLANTS: {
-                title: 'Број на стебла',
+                title: 'Број на насади',
                 type: 'number',
                 default: 0
             },

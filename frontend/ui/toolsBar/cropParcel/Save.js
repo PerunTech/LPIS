@@ -10,7 +10,6 @@ export const saveCP = (data, callback) => {
         data: data
     })
     .then(response => {
-        console.log(response)
         const data = response.data && response.data.data
 
         if (response.data.type === 'ERROR' || response.data.type === 'EXCEPTION') {
