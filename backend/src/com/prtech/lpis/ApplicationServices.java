@@ -35,6 +35,7 @@ import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.svCONST;
+import com.prtech.svarog.DbCacheTable.DboComparator;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_common.SvCharId;
@@ -329,22 +330,23 @@ public class ApplicationServices {
 		return Response.status(200).entity(result.toString()).build();
 	}
 	
-	@Path("/get/farmerAssets/{token}/{objectId}")
+	@Path("/get/farmerAssets/{token}/{objectId}/{typeName}")
 	@GET
 	@Produces("application/pbf")
 	public StreamingOutput getFarmerAssets(
 			@PathParam("token") final String token,
 			@PathParam("objectId") final Long objectId,
+			@PathParam("typeName") final String typeName,
 			@Context HttpServletRequest httpRequest) {
 		
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				DbDataArray dbArr = new DbDataArray();
-				
+
 				try (SvReader svr = new SvReader(token)) {
 					svr.setIncludeGeometries(true);
-					dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName("LAND_USE_PLAN"), null);
+					dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
 
 					enc.writeDbDataArray(dbArr);
 				} catch (Exception e) {

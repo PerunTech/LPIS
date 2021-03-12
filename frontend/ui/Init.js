@@ -3,8 +3,8 @@ import { ui, core } from '../Spatial';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets  } from '.';
 
 export const gsaa = () => {
-    // const _token = redux.store.getState().security.svSession;
-    const _token = readCookie('token');
+    const _token = redux.store.getState().security.svSession;
+    //const _token = readCookie('token');
     const _farmerId = readCookie('farmerObj');
     console.log(_token)
     console.log(_farmerId)
