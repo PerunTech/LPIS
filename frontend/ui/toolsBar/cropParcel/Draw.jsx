@@ -14,7 +14,7 @@ const _id = 'drawCP';
 /**
  * Draw crop parcel.
  */
-export const Draw = ({ processID }) => {
+export const Draw = ({ processID, farmerId }) => {
     const [{layer, data, isGuided}, setState] = useReducer((currState, update) => 
         ({...currState, ...update}), { layer: {}, data: {}, isGuided: false });
 
@@ -48,6 +48,7 @@ export const Draw = ({ processID }) => {
         saveCP(JSON.stringify({ 
             ...data, 
             ...formData,
+            parent_id: farmerId,
             GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
     }
 
@@ -74,4 +75,5 @@ export const Draw = ({ processID }) => {
 
 Draw.propTypes = {
     processID: PropTypes.string,
+    farmerId: PropTypes.number
 }

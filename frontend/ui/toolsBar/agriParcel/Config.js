@@ -39,7 +39,7 @@ export const restAP = {
 /** @constant */
 export const metadataMain = {
     type: 'agri_parcel',
-    namePath: 'options.metadata.schema.properties.PARENT_ID',
+    namePath: 'options.metadata.schema.properties.parent_id',
     schema: {
         properties: {
             LAND_COVER_CODE: {
@@ -95,7 +95,7 @@ export const metadataMain = {
 /** @constant */
 export const metadataAux = {
     type: 'agri_parcel',
-    namePath: 'options.metadata.schema.properties.PARENT_ID',
+    namePath: 'options.metadata.schema.properties.parent_id',
     schema: {
         properties: {
             LAND_COVER_CODE_2: {
@@ -170,7 +170,7 @@ export const metadataAux = {
 /** @constant */
 export const metadataAdmin = {
     type: 'agri_parcel',
-    namePath: 'options.metadata.schema.properties.PARENT_ID',
+    namePath: 'options.metadata.schema.properties.parent_id',
     schema: {
         properties: {
             ELIGIBILITY_COEF: {
@@ -261,7 +261,7 @@ export const config = {
         showMeasurements: true,
         metadata: {
             type: 'agri_parcel',
-            namePath: 'options.metadata.schema.properties.PARENT_ID',
+            namePath: 'feature.properties.parent_id',
             schema: {
                 'type': 'object',
                 'properties': {

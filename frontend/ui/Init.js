@@ -3,11 +3,10 @@ import { ui, core } from '../Spatial';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets  } from '.';
 
 export const gsaa = () => {
-    //const _token = redux.store.getState().security.svSession;
+    // const _token = redux.store.getState().security.svSession;
     const _token = readCookie('token');
     const _farmerId = readCookie('farmerObj');
-    console.log(_token)
-    console.log(_farmerId)
+
     // add check for token, farmerId existance and validate.
     // exit properly for the user on fail.
 
@@ -39,4 +38,3 @@ export const lpis = () => {
         .withWindRose()
         .render();
 }
-

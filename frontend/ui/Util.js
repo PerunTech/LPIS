@@ -1,14 +1,14 @@
-import { core, data, util } from '../Spatial';
+import { core, data } from '../Spatial';
 import { config as apConfig } from './toolsBar/agriParcel/Config';
 import { config as cpConfig } from './toolsBar/cropParcel/Config';
 
-const { http, factory, store } = core;
+const { http, factory, store, Map } = core;
 const { geobuf, protobuf } = data;
 
 export function readCookie(name) {
     var nameEQ = name + "=";
-    var ca = String("farmerObj=20348156; token=92b39ce8-e7e2-4b12-bf6b-bbd31dd04b91; _ga=GA1.1.536760576.1612264197; _gid=GA1.1.1645977351.1615282019; _gat=1"
-    ).split(';');
+    // String("farmerObj=20348156; token=92b39ce8-e7e2-4b12-bf6b-bbd31dd04b91; _ga=GA1.1.536760576.1612264197; _gid=GA1.1.1645977351.1615282019; _gat=1"
+    var ca = document.cookie.split(';');
     for(var i=0;i < ca.length;i++) {
         var c = ca[i];
         while (c.charAt(0)==' ') c = c.substring(1,c.length);
@@ -34,7 +34,7 @@ export function loadFarmerAssets (token, id) {
             // remove old app layers entries, will update with the new geojson set.
             stateData[id] && stateData[id].removeFrom(Map);
             // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
-            layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
+            // layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
 
             layer.addTo(Map);
         })
@@ -50,12 +50,13 @@ export function loadFarmerAssets (token, id) {
         const data = geobuf.decode(protobuf(response))
         const geojson = factory.geoJSON(data, cpConfig.pathOptions);
         const stateData = store.getState().data.layers;
+
         geojson.getLayers().forEach(layer => {
             const id = layer.feature.id
             // remove old app layers entries, will update with the new geojson set.
             stateData[id] && stateData[id].removeFrom(Map);
             // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
-            layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
+            // layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
             layer.addTo(Map);
         })
     })

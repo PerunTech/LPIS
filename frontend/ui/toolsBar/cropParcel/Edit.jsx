@@ -32,7 +32,11 @@ export const Edit = ({ processID }) => {
         _layerGroup.addTo(Map);
         store.dispatch({minZoom: MIN_DIGI_SCALE, processID: _id})
         setState({isGuided: true})
-        _fetchBlocks();
+        
+        // Parcels are already loaded, activate handlers on each. Do not call REST.
+        // _fetchBlocks(); 
+        const layers = store.getState().data.layers;
+        console.log(layers)
     };
 
     const disable = () => {
@@ -42,6 +46,7 @@ export const Edit = ({ processID }) => {
         edit.polygon.disable();
     }
 
+    /*
     const _fetchBlocks = () => {
         http.call('render_pb', {
             url: '/spatial/geometry/get/bbox/{init.token}/LAND_USE_PLAN/' + Map.getBBox(),
@@ -66,7 +71,7 @@ export const Edit = ({ processID }) => {
             });
         })
     }
-
+    */
     const _setBlockEvents = layer => {
         layer.on('mouseover', function () { this.setStyle({ color: '#eed000',  fillColor: '#000000' })})
             .on('mouseout', function () { this.setStyle( _style )})

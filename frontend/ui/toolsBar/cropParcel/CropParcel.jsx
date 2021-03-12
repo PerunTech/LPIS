@@ -9,9 +9,9 @@ import { Delete } from './Delete';
 const { connect } = core;
 const { ButtonGroup, Divider } = ui
 
-const _CropParcel = ({processID, ...props}) => 
+const _CropParcel = ({processID, farmerId, ...props}) => 
     <ButtonGroup>
-        <Create {...props} processID={processID} />
+        <Create {...props} processID={processID} farmerId={farmerId} />
         <Draw {...props} processID={processID} />
         <Edit {...props} processID={processID} />
         <Divider />
@@ -20,9 +20,10 @@ const _CropParcel = ({processID, ...props}) =>
 
 _CropParcel.propTypes = {
     processID: PropTypes.string,
+    farmerId: PropTypes.number
 }
 
 export const CropParcel = connect(state => 
-    ({ processID: state.app.processID }))(_CropParcel);
+    ({ processID: state.app.processID, farmerId: state.gsaa.farmerId }))(_CropParcel);
 
 core.store.addState('http', restCP);

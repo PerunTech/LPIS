@@ -15,7 +15,7 @@ const _id = 'createCP';
 /**
  * Create a crop parcel by selecting a single point.
  */
-export const Create = ({ processID }) => {
+export const Create = ({ processID, farmerId }) => {
     const [{layer, data, isGuided}, setState] = useReducer((currState, update) => 
         ({...currState, ...update}), 
         { layer: {}, data: {}, isGuided: false });
@@ -44,7 +44,7 @@ export const Create = ({ processID }) => {
                     layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
                     
                     // assign metadata
-                    // layer.feature.properties = { parent_id: 20348156 } // get from cookie
+                    layer.feature.properties = { parent_id: farmerId }
 
                     layer.addTo(Map);
                     setState({data: layer.feature.properties, layer: layer, isGuided: false})
@@ -87,4 +87,5 @@ export const Create = ({ processID }) => {
 
 Create.propTypes = {
     processID: PropTypes.string,
+    farmerId: PropTypes.number
 }
