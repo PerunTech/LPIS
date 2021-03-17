@@ -18,7 +18,7 @@ export function readCookie(name) {
     return null;
 }
 
-export function loadFarmerAssets (token, id) {
+export function loadFarmerAssets (token, id, zoom = false) {
     http.call('getFarmerAssets', {
         url: window.server + '/lpis/get/farmerAssets/' + String(token) + '/' + Number(id)+ '/AGRI_PARCEL',
         method: 'get',
@@ -27,9 +27,10 @@ export function loadFarmerAssets (token, id) {
     .then(response => {
         const data = geobuf.decode(protobuf(response))
         const geojson = factory.geoJSON(data, apConfig.pathOptions);
+        const layers = geojson.getLayers();
         const stateData = store.getState().data.layers;
 
-        geojson.getLayers().forEach(layer => {
+        layers.forEach(layer => {
             const id = layer.feature.id
             // remove old app layers entries, will update with the new geojson set.
             stateData[id] && stateData[id].removeFrom(Map);
@@ -38,6 +39,9 @@ export function loadFarmerAssets (token, id) {
 
             layer.addTo(Map);
         })
+
+        // If init calls us and agri data is found, zoom to the first parcel.
+        zoom && layers.length > 0 &&  Map.fitBounds(layers[0].getBounds());
     })
     .catch(err => console.log(err))
 
@@ -58,6 +62,7 @@ export function loadFarmerAssets (token, id) {
             // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
             // layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
             layer.addTo(Map);
+            layer.bringToFront()
         })
     })
     .catch(err => console.log(err))

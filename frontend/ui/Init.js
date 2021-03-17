@@ -3,20 +3,20 @@ import { ui, core } from '../Spatial';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets  } from '.';
 
 export const gsaa = () => {
-    // const _token = redux.store.getState().security.svSession;
-    const _token = readCookie('token');
-    const _farmerId = readCookie('farmerObj');
+    const _token = redux.store.getState().security.svSession;
+    // const _token = readCookie('token');
+    const _farmerId = 20348156  //readCookie('farmerObj');
 
     // add check for token, farmerId existance and validate.
     // exit properly for the user on fail.
 
-    core.store.addState('gsaa', { farmerId: _farmerId });
-    loadFarmerAssets(_token, _farmerId);
+    core.store.addState('gsaa', { farmerId: _farmerId, token: _token });
+    loadFarmerAssets(_token, _farmerId, true);
 
     return ui.init(_token)
-        .addControl(MiniBar, {}, { position: 'top' })
+        .addControl(MiniBar, {}, { position: 'topleft'})
         .addControl(DataPanel, {categories: [
-            { id: 'agri_parcel', label: 'Земјоделски парцели', isOpen: false },
+            { id: 'agri_parcel', label: 'Земјоделски парцели', isOpen: true },
             { id: 'land_use_plan', label: 'Производни парцели', isOpen: true }
         ]}, { position: 'left' })
         .addControl(LayerPanel, {}, { position: 'right' })

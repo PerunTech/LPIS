@@ -5,17 +5,20 @@ import { Create } from './Create';
 import { Draw } from './Draw';
 import { Edit } from './Edit';
 import { Delete } from './Delete';
+import { Refresh } from './Refresh';
 
 const { connect } = core;
 const { ButtonGroup, Divider } = ui
 
-const _CropParcel = ({processID, farmerId, ...props}) => 
+const _CropParcel = ({processID, farmerId, ...props}) =>
     <ButtonGroup>
         <Create {...props} processID={processID} farmerId={farmerId} />
         <Draw {...props} processID={processID} />
-        <Edit {...props} processID={processID} />
+        <Edit {...props} processID={processID} farmerId={farmerId} />
         <Divider />
-        <Delete {...props} processID={processID} />
+        <Refresh {...props} processID={processID} farmerId={farmerId} />
+        <Divider />
+        <Delete {...props} processID={processID} farmerId={farmerId} />
     </ButtonGroup>;
 
 _CropParcel.propTypes = {

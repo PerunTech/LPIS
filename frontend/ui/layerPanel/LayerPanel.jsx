@@ -23,6 +23,6 @@ export const LayerPanel = () => {
                 </Button> 
             </Button>
         </ButtonGroup>
-        <Divider vertical={false} style={{margin: '0px'}} />
+        {/*<Divider vertical={false} style={{margin: '0px'}} />*/}
     </div>
 };

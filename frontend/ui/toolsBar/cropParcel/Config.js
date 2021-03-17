@@ -108,6 +108,12 @@ export const deleteCPMsg = [
     '2. Одеднаш може да биде избришана само една производна парцела.',
 ];
 
+export const editCPMsg = [
+    '',
+    '',
+    '',
+]
+
 export const restCP = {
     save_cp: {
         url: '/table/createTableRecord/{init.token}/LAND_USE_PLAN/0',

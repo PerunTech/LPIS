@@ -51,7 +51,7 @@ const _DataPanel = ({categories}) => {
     return <div id='data-panel' >
         {/* Data list title */}
         <Button disabled className='as-label data-panel-title' >Работна листа</Button>
-        <Divider vertical={false} style={{margin: '0px'}} />
+        {/*<Divider vertical={false} style={{margin: '0px'}} />*/}
         {/* Data list utilities */}
         <DataListUtils setData={setData} />
         {/* Data list content */}

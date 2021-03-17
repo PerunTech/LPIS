@@ -1,10 +1,16 @@
+/* Extends rule for minibar container */
+.control-topleft {
+    width: 100%
+}
+
 #minibar {
     width: 100%;
-    height: 60px;
+    /*height: 60px;*/
     background-color: #F9F9F9;
+    pointer-events: all;
     /*margin-left: 60px;
     margin-right: 120px; */
-    /*border-left: 1px solid rgba(0, 0, 0, 0.25);*/
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 }
 #minibar .nav {
     background-color: #F9F9F9;
