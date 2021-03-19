@@ -1,3 +1,9 @@
+/*  Override position of active process form*/
+.control-map .modal-dialog {
+    top: 70px;
+    right: 266px;
+}
+
 #measure-dialog .modal-body #createCP {
     text-align: left;
     padding: 0.5rem;
@@ -29,5 +35,39 @@
     margin-top: 10px;
 }
 #measure-dialog .modal-body #drawCP div:nth-last-child() {
+    margin-bottom: 10px;
+}
+
+#measure-dialog .modal-body #editCP {
+    text-align: left;
+    padding: 0.5rem;
+}
+#measure-dialog .modal-body #editCP div {
+    margin: 3px;
+}
+#measure-dialog .modal-body #editCP div:not(:nth-child(1)) {
+    margin-left: 10px;
+}
+#measure-dialog .modal-body #editCP div:nth-child(2) {
+    margin-top: 10px;
+}
+#measure-dialog .modal-body #editCP div:nth-last-child() {
+    margin-bottom: 10px;
+}
+
+#measure-dialog .modal-body #deleteCP {
+    text-align: left;
+    padding: 0.5rem;
+}
+#measure-dialog .modal-body #deleteCP div {
+    margin: 3px;
+}
+#measure-dialog .modal-body #deleteCP div:not(:nth-child(1)) {
+    margin-left: 10px;
+}
+#measure-dialog .modal-body #deleteCP div:nth-child(2) {
+    margin-top: 10px;
+}
+#measure-dialog .modal-body #deleteCP div:nth-last-child() {
     margin-bottom: 10px;
 }

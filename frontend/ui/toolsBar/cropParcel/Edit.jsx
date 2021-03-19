@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React, PropTypes, elements } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
 import { config, editCPMsg } from './Config';
 import { Form } from './Form';
@@ -29,8 +29,7 @@ export const Edit = ({ processID, farmerId }) => {
 
         // _layerGroup.addTo(Map);
         // store.dispatch({minZoom: MIN_DIGI_SCALE, processID: _id})
-        store.dispatch({processID: _id})
-        setState({isGuided: true})
+
         
         // Parcels are already loaded, activate handlers on each. Do not call REST.
         const layers = store.getState().data.layers;
@@ -38,9 +37,17 @@ export const Edit = ({ processID, farmerId }) => {
         
 
         if (cropParcels.length > 0) {
-            cropParcels.forEach(cp => _setBlockEvents(cp, cropParcels))// _layerGroup.addLayer(cp), 
+            cropParcels.forEach(cp => _setBlockEvents(cp, cropParcels))// _layerGroup.addLayer(cp),
+            store.dispatch({processID: _id})
+            setState({isGuided: true})
             // Map.fitBounds(cropParcels[0].getBounds());
-        } 
+        } else {
+            disable();
+            elements.alertUser(true, 
+                'warning', 
+                'Не се пронајдени производни парцели.', 
+                'Додадете производни парцели со просторна определба пред да ја користите алатката за менување.');
+        }
     };
 
     const disable = () => {
@@ -100,6 +107,7 @@ export const Edit = ({ processID, farmerId }) => {
             ...data, 
             ...formData,
             OBJECT_ID: Number(layer.feature.id),
+            object_id: Number(layer.feature.id),
             GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
     }
 
@@ -114,7 +122,7 @@ export const Edit = ({ processID, farmerId }) => {
         <span style={{display: 'block', marginTop: '2px' }}>Промени производна парцела</span>
         {processID === _id
             && (isGuided
-                ? <Guidance id={_id} disable={disable} msg={editCPMsg} title='Избриши производна парцела' />
+                ? <Guidance id={_id} disable={disable} msg={editCPMsg} title='Промени производна парцела' />
                 : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
                     <DrawActions cancel={disable} />
                 </Form>)}

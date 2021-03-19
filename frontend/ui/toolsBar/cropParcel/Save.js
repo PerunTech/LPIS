@@ -27,7 +27,18 @@ export const saveCP = (data, callback) => {
     
             const geojson = factory.geoJSON(geojsonTemplate, config.pathOptions);
             const layer = Object.values(geojson._layers)[0]
+
+            // Remove old entry on Map
+            const stateData = core.store.getState().data.layers;
+            const id = layer.feature.id
+            stateData[id] && stateData[id].removeFrom(Map);
+
             layer && layer.addTo(Map);
+
+            elements.alertUser(true, 
+                'success', 
+                'Успешно зачувување', 
+                'Производната парцела е запишана во базата на податоци.')
         }
         callback();
     })

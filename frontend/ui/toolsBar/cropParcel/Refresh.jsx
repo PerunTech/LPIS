@@ -12,7 +12,7 @@ export const Refresh = ({ processID, farmerId }) => {
     return <Button id={_id} 
         onClick={() => {
             String(processID).length < 1
-                && loadFarmerAssets(core.store.getState().gsaa.token, farmerId) 
+                && loadFarmerAssets(core.store.getState().gsaa.token, farmerId, false, true) 
         }} >
         <Icon name={_id} size='30px' />
         <span style={{display: 'block', marginTop: '2px' }}>Освежи парцели</span>

@@ -1,3 +1,4 @@
+import { elements } from 'perun-core';
 import { core, data } from '../Spatial';
 import { config as apConfig } from './toolsBar/agriParcel/Config';
 import { config as cpConfig } from './toolsBar/cropParcel/Config';
@@ -18,7 +19,7 @@ export function readCookie(name) {
     return null;
 }
 
-export function loadFarmerAssets (token, id, zoom = false) {
+export function loadFarmerAssets (token, id, zoom = false, msg = false) {
     http.call('getFarmerAssets', {
         url: window.server + '/lpis/get/farmerAssets/' + String(token) + '/' + Number(id)+ '/AGRI_PARCEL',
         method: 'get',
@@ -64,6 +65,8 @@ export function loadFarmerAssets (token, id, zoom = false) {
             layer.addTo(Map);
             layer.bringToFront()
         })
+
+        msg && elements.alertUser(true, 'success', 'Парцелите се успешно освежени.')
     })
     .catch(err => console.log(err))
 } 

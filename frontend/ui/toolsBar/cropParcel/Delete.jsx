@@ -4,7 +4,7 @@ import { Guidance } from './Guidance';
 import { deleteCPMsg } from './Config';
 import { loadFarmerAssets } from '../..'
 
-const { Map, store } = core;
+const { store } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
 const _id = 'deleteCP';
 
@@ -45,15 +45,15 @@ export const Delete = ({ processID, farmerId }) => {
             method: 'post',
             data: JSON.stringify(layer.feature.properties)
         })
-        .then(response => {
+        .then(() => {
             loadFarmerAssets(core.store.getState().init.token, farmerId);
-            disable()
             elements.alertUser(true, 
                 'success', 
                 'Успешно бришење', 
                 'Производната парцела е избришана од базата на податоци.');
+            disable()
         }) // add alert)
-        .catch(err => {
+        .catch(() => {
             elements.alertUser(true, 
                 'error', 
                 'Грешка при бришење', 
@@ -63,13 +63,20 @@ export const Delete = ({ processID, farmerId }) => {
     }
 
     const enable = () => {
-        store.dispatch({ processID: _id });
-        setState({isGuided: true})
-
         const layers = store.getState().data.layers;
         const cps = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
 
-        cps.forEach(cp => (cp.bringToFront(), cp.on('click', getLayer)))
+        if (cps.length > 0) {
+            store.dispatch({ processID: _id });
+            setState({isGuided: true})
+
+            cps.forEach(cp => (cp.bringToFront(), cp.on('click', getLayer)))
+        } else {
+            elements.alertUser(true, 
+                'warning', 
+                'Не се пронајдени производни парцели.', 
+                'Додадете производни парцели со просторна определба пред да ја користите алатката за бришење.');
+        }
         /*
         Map.eachLayer(function(layer) {
             console.log(layer.getMetadata().type)
@@ -92,8 +99,8 @@ export const Delete = ({ processID, farmerId }) => {
         });*/
 
         // Reset state, internal and application-wide.
-        setState({ isGuided: false, layer: {} });
         store.dispatch({processID: ''});
+        setState({ isGuided: false, layer: {} });
     }
 
     return <Button id={_id} onClick={() => enable()} className={processID === _id ? 'active' : ''} >
@@ -112,7 +119,8 @@ export const Delete = ({ processID, farmerId }) => {
                         <DrawActions cancel={disable} />
                     </Modal.Title>
                     <Modal.Body className='ap-modal-body' >
-                        <div id={_id} >Дали сте сигурни дека сакате да ја избришете оваа производна парцела?</div>
+                        <div id={_id} >{'Ја избравте производната парцела со ид. број ' 
+                            + layer.feature.id + ' и површина ' + Math.round(layer.getMeasurement()) + ' m². Дали сте сигурни дека сакате да ја избришете?'}</div>
                         <Button onClick={() => { deleteLayer() }} size='' className='cancel' > Избриши </Button>
                     </Modal.Body>
                 </Modal>)}

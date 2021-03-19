@@ -35,15 +35,17 @@ export const Create = ({ processID, farmerId }) => {
                 const stateData = store.getState().data.layers;
 
                 geojson.getLayers().forEach(layer => {
+                    /*
                     const id = layer.feature.id
         
                     // remove old app layers entries, will update with the new geojson set.
                     stateData[id] && stateData[id].removeFrom(Map);
-        
+        */
                     // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
                     layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
                     
                     // assign metadata
+                    layer.feature.id = 0
                     layer.feature.properties = { parent_id: farmerId }
 
                     layer.addTo(Map);
@@ -57,6 +59,7 @@ export const Create = ({ processID, farmerId }) => {
     };
 
     const disable = () => {
+        Map.off('click');
         // Reset state, internal and application-wide.
         setState({ layer: {}, data: {}, isGuided: false });
         store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
