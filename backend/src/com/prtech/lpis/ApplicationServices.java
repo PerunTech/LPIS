@@ -12,6 +12,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -33,6 +34,8 @@ import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog.SvUtil;
+import com.prtech.svarog.svCONST;
+import com.prtech.svarog.DbCacheTable.DboComparator;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_common.SvCharId;
@@ -325,5 +328,39 @@ public class ApplicationServices {
 		}
 
 		return Response.status(200).entity(result.toString()).build();
+	}
+	
+	@Path("/get/farmerAssets/{token}/{objectId}/{typeName}")
+	@GET
+	@Produces("application/pbf")
+	public StreamingOutput getFarmerAssets(
+			@PathParam("token") final String token,
+			@PathParam("objectId") final Long objectId,
+			@PathParam("typeName") final String typeName,
+			@Context HttpServletRequest httpRequest) {
+		
+		return new StreamingOutput() {
+			public void write(OutputStream stream) {
+				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				DbDataArray dbArr = new DbDataArray();
+
+				try (SvReader svr = new SvReader(token)) {
+					svr.setIncludeGeometries(true);
+					dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
+
+					enc.writeDbDataArray(dbArr);
+				} catch (Exception e) {
+					String errMsg = "Failed fetching geometry set. Please see server logs";
+					if (e instanceof SvException)
+						errMsg = ((SvException) e).getJsonMessage();
+					try {
+						stream.write(errMsg.getBytes(StandardCharsets.UTF_8));
+					} catch (IOException ioe) {
+						log.error("Stream closed, can't write error", ioe);
+					}
+					log.error(errMsg, e);
+				}
+			};
+		};
 	}
 }

@@ -1,21 +1,21 @@
 import { React, PropTypes } from 'perun-core';
 import { core, data, ui, config as cfg } from '../../../Spatial';
-import { config, createAPMsg } from './Config';
+import { config, createCPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
-import { saveAP } from './Save';
+import { saveCP } from './Save';
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory, http, util } = core;
 const { geobuf, protobuf } = data;
 const { Button, Icon, DrawActions } = ui;
 const { useReducer } = React;
-const _id = 'createAP';
+const _id = 'createCP';
 
 /**
- * Create an agri parcel by selecting a single point.
+ * Create a crop parcel by selecting a single point.
  */
-export const Create = ({ processID }) => {
+export const Create = ({ processID, farmerId }) => {
     const [{layer, data, isGuided}, setState] = useReducer((currState, update) => 
         ({...currState, ...update}), 
         { layer: {}, data: {}, isGuided: false });
@@ -24,36 +24,29 @@ export const Create = ({ processID }) => {
         store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
         setState({isGuided: true})
 
-        // Click handler for selection of location and creation of agri parcel geometry.
+        // Click handler for selection of location and creation of crop parcel geometry.
         Map.on('click', e => {
             const p = Map.transform(e.latlng);
             http.call('create_ap', {
-                url: '/spatial/geometry/layer/cutoff/{init.token}/PHYSICAL_BLOCK/AGRI_PARCEL/' +p.x + '/' + p.y})
+                url: '/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/' +p.x + '/' + p.y})
             .then(response => {
                 const data = geobuf.decode(protobuf(response));
                 const geojson = factory.geoJSON(data, config.pathOptions);
                 const stateData = store.getState().data.layers;
-        
+
                 geojson.getLayers().forEach(layer => {
+                    /*
                     const id = layer.feature.id
         
                     // remove old app layers entries, will update with the new geojson set.
                     stateData[id] && stateData[id].removeFrom(Map);
-        
+        */
                     // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
                     layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
-
+                    
                     // assign metadata
-                    layer.feature.id = '0'
-                    layer.feature.properties = {
-                        AREA: layer.feature.properties.AREA,
-                        CENTROID: layer.feature.properties.CENTROID,
-                        GEOM: layer.feature.properties.GEOM,
-                        LAND_COVER_CODE: layer.feature.properties.LAND_COVER_CODE,
-                        PERIMETER: layer.feature.properties.PERIMETER,
-                        parent_id: layer.feature.properties.parent_id,
-                        DESCRIPTOR: 'AGRI_PARCEL'
-                    }
+                    layer.feature.id = 0
+                    layer.feature.properties = { parent_id: farmerId }
 
                     layer.addTo(Map);
                     setState({data: layer.feature.properties, layer: layer, isGuided: false})
@@ -66,6 +59,7 @@ export const Create = ({ processID }) => {
     };
 
     const disable = () => {
+        Map.off('click');
         // Reset state, internal and application-wide.
         setState({ layer: {}, data: {}, isGuided: false });
         store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
@@ -77,18 +71,17 @@ export const Create = ({ processID }) => {
         setState({data: { ...data, ...formData }});
 
     const onSubmit = ({ formData }) => 
-        saveAP(JSON.stringify({ 
+        saveCP(JSON.stringify({ 
             ...data, 
             ...formData,
-            OBJECT_ID: 0,
             GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
 
     return <Button id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
-        <Icon name={_id} size='32px' style={{marginTop: '2px'}} />
-        <span style={{display: 'block', marginTop: '2px' }}>Додади парцела</span>
+        <Icon name={_id} size='30px' />
+        <span style={{display: 'block', marginTop: '2px' }}>Додади производна парцела</span>
         {processID === _id 
             && (isGuided
-                ? <Guidance id={_id} disable={disable} msg={createAPMsg} title='Додади земјоделска парцела' />
+                ? <Guidance id={_id} disable={disable} msg={createCPMsg} title='Додади производна парцела' />
                 : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
                     <DrawActions cancel={disable} />
                 </Form>)}
@@ -97,4 +90,5 @@ export const Create = ({ processID }) => {
 
 Create.propTypes = {
     processID: PropTypes.string,
+    farmerId: PropTypes.number
 }

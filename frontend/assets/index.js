@@ -9,11 +9,13 @@ import './css/dataPanel/dataPanel.css';
 /* css.control */
 import './css/control/statusBar.css';
 import './css/control/toolsBar.css';
+import './css/control/miniBar.css';
 import './css/control/layerPanel.css';
 
 /* css.digitization */
 import './css/digitization/physicalBlock.css'
 import './css/digitization/agriParcel.css'
+import './css/digitization/cropParcel.css'
 
 /**
  * Include local svg registry in build.

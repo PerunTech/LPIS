@@ -1,31 +1,32 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../../Spatial';
-import { AdvanceDigitization } from './Advance';
+import { restCP } from './Config';
+import { Create } from './Create';
+import { Draw } from './Draw';
+import { Edit } from './Edit';
+import { Delete } from './Delete';
+import { Refresh } from './Refresh';
 
 const { connect } = core;
-const { ButtonGroup, Button, Icon, Divider } = ui
+const { ButtonGroup, Divider } = ui
 
-const _CropParcel = ({processID, ...props}) => 
+const _CropParcel = ({processID, farmerId, ...props}) =>
     <ButtonGroup>
-        <Button disabled >
-            <Icon name='createCP' size='30px' />
-            <span style={{display: 'block', marginTop: '5px' }}>Додади производна парцела</span>
-        </Button>
-        <Button disabled >
-            <Icon name='editCP' size='30px' />
-            <span style={{display: 'block', marginTop: '2px' }}>Промени производна парцела</span>
-        </Button>
-        <Button disabled >
-            <Icon name='cropPlan' size='30px' />
-            <span style={{display: 'block', marginTop: '2px' }}>Производствен план</span>
-        </Button>
+        <Create {...props} processID={processID} farmerId={farmerId} />
+        <Draw {...props} processID={processID} />
+        <Edit {...props} processID={processID} farmerId={farmerId} />
         <Divider />
-        <AdvanceDigitization name='производна парцела' />
+        <Refresh {...props} processID={processID} farmerId={farmerId} />
+        <Divider />
+        <Delete {...props} processID={processID} farmerId={farmerId} />
     </ButtonGroup>;
 
 _CropParcel.propTypes = {
     processID: PropTypes.string,
+    farmerId: PropTypes.number
 }
 
 export const CropParcel = connect(state => 
-    ({ processID: state.app.processID }))(_CropParcel);
+    ({ processID: state.app.processID, farmerId: state.gsaa.farmerId }))(_CropParcel);
+
+core.store.addState('http', restCP);

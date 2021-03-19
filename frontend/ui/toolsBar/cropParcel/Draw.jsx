@@ -1,20 +1,20 @@
 import { React, PropTypes } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
-import { config, drawAPMsg } from './Config';
+import { config, drawCPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
-import { saveAP } from './Save';
+import { saveCP } from './Save';
 
 const { Map, store, factory } = core;
 const { draw: { polygon } } = tools;
 const { Button, Icon, DrawActions } = ui;
 const { useReducer } = React;
-const _id = 'drawAP';
+const _id = 'drawCP';
 
 /**
- * Draw an agri parcel.
+ * Draw crop parcel.
  */
-export const Draw = ({ processID }) => {
+export const Draw = ({ processID, farmerId }) => {
     const [{layer, data, isGuided}, setState] = useReducer((currState, update) => 
         ({...currState, ...update}), { layer: {}, data: {}, isGuided: false });
 
@@ -44,12 +44,14 @@ export const Draw = ({ processID }) => {
     const onChange = ({ formData }) => 
         setState({data: { ...data, ...formData }});
 
-    const onSubmit = ({ formData }) => 
-        saveAP(JSON.stringify({ 
+    const onSubmit = ({ formData }) => {
+        saveCP(JSON.stringify({ 
             ...data, 
             ...formData,
-            OBJECT_ID: 0,
+            parent_id: farmerId,
             GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
+    }
+
 
     const renderForm = () =>
         isGuided
@@ -57,20 +59,21 @@ export const Draw = ({ processID }) => {
                 finish={() => polygon._finishShape()} 
                 undo={() => polygon._removeLastVertex()} 
                 disable={disable} 
-                msg={drawAPMsg} 
-                title='Нацртај земјоделска парцела' />
+                msg={drawCPMsg} 
+                title='Нацртај производна парцела' />
             : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
                 <DrawActions 
                     cancel={disable} />
             </Form>;
 
     return <Button id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
-        <Icon name={_id} size='28px' style={{marginTop: '2px'}} />
-        <span style={{display: 'block', marginTop: '5px' }}>Нацртај парцела</span>
+        <Icon name={_id} size='32px' />
+        <span style={{display: 'block', marginTop: '2px' }}>Нацртај производна парцела</span>
         {processID === _id && renderForm()}
     </Button>;
 };
 
 Draw.propTypes = {
     processID: PropTypes.string,
+    farmerId: PropTypes.number
 }

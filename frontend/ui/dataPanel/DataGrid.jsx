@@ -22,6 +22,7 @@ DataGrid.propTypes = {
 const columnEnum = {
     physical_block:     [ 'Ид. Број', 'Класа', 'Површина' ],
     agri_parcel:        [ 'Ид. Број', 'ИДБР', 'Површина' ],
+    land_use_plan:      [ 'Ид. Број', 'ИДБР', 'Површина' ],
     cad_parcel:         [ 'Ид. Број', 'Број на КО', 'Површина'],
     measurements:       [ 'Ид. Број', 'Тип', 'Мерење' ],
     imports:            [ 'Ид. Број', 'Тип', 'Површина' ],
