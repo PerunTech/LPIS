@@ -2,6 +2,24 @@ import { redux } from 'perun-core';
 import { ui, core } from '../Spatial';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets  } from '.';
 
+let _isLoaded = false;
+const _gsaa = (_token) => {
+    // Prevent multiple initializations.
+    return !_isLoaded
+        ? ( _isLoaded = true, ui.init(_token)
+            .addControl(MiniBar, {}, { position: 'topleft'})
+            .addControl(DataPanel, {categories: [
+                { id: 'agri_parcel', label: 'Земјоделски парцели', isOpen: true },
+                { id: 'land_use_plan', label: 'Производни парцели', isOpen: true }
+            ]}, { position: 'left' })
+            .addControl(LayerPanel, {}, { position: 'right' })
+            .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
+            .withNavigationControl()
+            .withWindRose()
+            .render())
+        : null 
+}
+
 export const gsaa = () => {
     // const _token = redux.store.getState().security.svSession;
     const _token = readCookie('token');
@@ -12,18 +30,8 @@ export const gsaa = () => {
 
     core.store.addState('gsaa', { farmerId: _farmerId, token: _token });
     loadFarmerAssets(_token, _farmerId, true);
-
-    return ui.init(_token)
-        .addControl(MiniBar, {}, { position: 'topleft'})
-        .addControl(DataPanel, {categories: [
-            { id: 'agri_parcel', label: 'Земјоделски парцели', isOpen: true },
-            { id: 'land_use_plan', label: 'Производни парцели', isOpen: true }
-        ]}, { position: 'left' })
-        .addControl(LayerPanel, {}, { position: 'right' })
-        .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
-        .withNavigationControl()
-        .withWindRose()
-        .render();
+    
+    return _gsaa(_token);
 }
 
 export const lpis = () => {
