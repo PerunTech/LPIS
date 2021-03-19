@@ -23,7 +23,7 @@ const _gsaa = (_token) => {
 export const gsaa = () => {
     // const _token = redux.store.getState().security.svSession;
     const _token = readCookie('token');
-    const _farmerId = readCookie('farmerObj'); // 20348156
+    const _farmerId = Number(readCookie('farmerObj')); // 20348156
 
     // add check for token, farmerId existance and validate.
     // exit properly for the user on fail.
