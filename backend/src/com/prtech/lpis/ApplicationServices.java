@@ -25,6 +25,7 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 
 import com.google.gson.JsonObject;
 import com.prtech.spatial.geobuf.GeobufEncoder;
@@ -343,12 +344,26 @@ public class ApplicationServices {
 			public void write(OutputStream stream) {
 				GeobufEncoder enc = new GeobufEncoder(stream, 10);
 				DbDataArray dbArr = new DbDataArray();
+				DbDataArray assets = new DbDataArray();
 
 				try (SvReader svr = new SvReader(token)) {
 					svr.setIncludeGeometries(true);
 					dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
-
-					enc.writeDbDataArray(dbArr);
+					
+					// Filter for campaign year and geometry not null, when cp is requested.
+					if(typeName.equalsIgnoreCase("LAND_USE_PLAN")) {
+						for (DbDataObject dbo : dbArr.getItems()) {
+							String cYear = (String) dbo.getVal("CAMPAIGN_YEAR");
+							String now = String.valueOf(new DateTime().year().get());
+							Geometry g = SvGeometry.getGeometry(dbo);
+							
+							if (cYear.equals(now) && g != null) {
+								assets.addDataItem(dbo);
+							}
+						}						
+					}
+					
+					enc.writeDbDataArray(assets);
 				} catch (Exception e) {
 					String errMsg = "Failed fetching geometry set. Please see server logs";
 					if (e instanceof SvException)
