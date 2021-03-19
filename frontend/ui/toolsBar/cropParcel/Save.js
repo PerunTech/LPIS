@@ -2,11 +2,13 @@ import { elements } from 'perun-core';
 import { core } from '../../../Spatial';
 import {config} from './Config'
 
-const { http, factory, Map } = core;
+const { http, factory, Map, store } = core;
 
 export const saveCP = (data, callback) => {
+    const id = store.getState().gsaa.farmerId;
+
     http.call('save_cp', {
-        url: '/table/createTableRecord/{init.token}/LAND_USE_PLAN/20348156/null/0/null/null',
+        url: '/table/createTableRecord/{init.token}/LAND_USE_PLAN/' + id + '/null/0/null/null',
         data: data
     })
     .then(response => {
