@@ -3,9 +3,9 @@ import { ui, core } from '../Spatial';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets  } from '.';
 
 export const gsaa = () => {
-    const _token = redux.store.getState().security.svSession;
-    // const _token = readCookie('token');
-    const _farmerId = 20348156  //readCookie('farmerObj');
+    // const _token = redux.store.getState().security.svSession;
+    const _token = readCookie('token');
+    const _farmerId = readCookie('farmerObj'); // 20348156
 
     // add check for token, farmerId existance and validate.
     // exit properly for the user on fail.
