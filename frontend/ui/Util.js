@@ -9,7 +9,7 @@ const { geobuf, protobuf } = data;
 export function readCookie(name) {
     var nameEQ = name + "=";
     // String("farmerObj=20348156; token=92b39ce8-e7e2-4b12-bf6b-bbd31dd04b91; _ga=GA1.1.536760576.1612264197; _gid=GA1.1.1645977351.1615282019; _gat=1"
-    var ca = document.cookie.split(';');
+    var ca = window.parent.document.cookie.split(';');
     console.log(document.cookie)
     console.log(window.parent.document.cookie)
     for(var i=0;i < ca.length;i++) {
