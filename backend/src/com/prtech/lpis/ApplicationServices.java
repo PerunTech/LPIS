@@ -357,13 +357,14 @@ public class ApplicationServices {
 							String now = String.valueOf(new DateTime().year().get());
 							Geometry g = SvGeometry.getGeometry(dbo);
 							
-							if (cYear.equals(now) && g != null) {
+							if (cYear != null && cYear.equals(now) && g != null) {
 								assets.addDataItem(dbo);
 							}
-						}						
+						}
+						enc.writeDbDataArray(assets);
+					} else {
+						enc.writeDbDataArray(dbArr);
 					}
-					
-					enc.writeDbDataArray(assets);
 				} catch (Exception e) {
 					String errMsg = "Failed fetching geometry set. Please see server logs";
 					if (e instanceof SvException)
