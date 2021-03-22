@@ -4,7 +4,7 @@ import { Guidance } from './Guidance';
 import { deleteCPMsg } from './Config';
 import { loadFarmerAssets } from '../..'
 
-const { store } = core;
+const { Map, store } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
 const _id = 'deleteCP';
 
@@ -47,6 +47,7 @@ export const Delete = ({ processID, farmerId }) => {
         })
         .then(() => {
             loadFarmerAssets(core.store.getState().init.token, farmerId);
+            layer.removeFrom(Map);
             elements.alertUser(true, 
                 'success', 
                 'Успешно бришење', 
