@@ -61,7 +61,7 @@ prod_install:
     - npm run build
     - cd backend
     - pwd
-    - mvn clean install -DskipTests
+    - mvn clean deploy -DskipTests
   only:
     - master
     - staging
