@@ -36,8 +36,8 @@ export const DataListUtils = ({setData}) => {
             <Button disabled onClick={_collapseAll} title='Отстрани записи' >
                 <Icon name='delete' size='18px' />
             </Button> 
-        </ButtonGroup>
-        <Input placeholder='Пребарај' style={{padding: '1rem', backgroundColor: '#fff', textIndent: '5px'}} />
+        </ButtonGroup>      
+            <Input placeholder='Пребарај' id='search'/>
     </>
 }
 DataListUtils.propTypes = {

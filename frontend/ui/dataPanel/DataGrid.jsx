@@ -39,7 +39,7 @@ const columnEnum = {
 const _GridHeader = ({ typeId }) => {
     const columns = columnEnum[typeId] || columnEnum['resto'];
 
-    return <ButtonGroup className='data-grid-header' >
+    return <ButtonGroup className='data-grid-header' id="grid-header">
         <Button disabled className='data-grid-index' />
         <Button disabled className='data-grid-column' >{columns[0]}</Button>
         <Button disabled className='data-grid-column' >{columns[1]}</Button>

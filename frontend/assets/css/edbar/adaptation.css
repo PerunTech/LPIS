@@ -1,0 +1,106 @@
+#minibar {
+    background-color: #263038;
+    border-bottom: 5px solid #e0ab1c;
+    height: 60px;
+}
+
+#createCP, 
+#drawCP, 
+#editCP, 
+#refreshCP,
+#deleteCP {
+    background: transparent;
+    /* border-radius: 6px; */
+    color: white;
+    border: none;
+}
+
+#createCP:hover, 
+#drawCP:hover, 
+#editCP:hover, 
+#refreshCP:hover,
+#deleteCP:hover {
+    background: #e0ab1c;
+    /* border-radius: 6px; */
+    color: black;
+    border: none;
+}
+
+#data-panel .data-panel-title {
+    background-color: #263038;
+    color: white;
+    border-left: 5px solid #e0ab1c;
+    border-bottom: 5px solid #e0ab1c;
+    border-top: none;
+    border-right: none;
+}
+
+#data-panel .data-panel-title.as-label {
+    text-transform: uppercase;
+    font-style: normal;
+    height: 60px;
+}
+#layer-panel .layer-panel-title.as-label {
+    font-style: normal;
+    font-weight: bold;
+}
+#search {
+    padding: 1rem;
+    background-color: #fff;
+    text-indent: 5px;
+}
+#layer-panel {
+    background-color: #263038;
+    height: 55px;
+}
+
+#layer-panel button {
+    background-color: #263038;
+    border: none;
+    color: white;
+}
+
+#layer-panel .btn-light:hover:not(.disabled) {
+    background-color: #263038;
+    border: 2px solid white;
+    border-radius: 25px;
+}
+.control-bottom {
+    background-color: #263038;
+    border-top: 3px solid #e0ab1c;
+}
+#grid-header .btn.disabled {
+    font-style: normal;
+}
+.leaflet-control-layers-group-name {
+   font-style: normal;
+   font-size: 14px;
+   color: #ffffff;
+   border-left: 2px solid #e0ab1c;
+   padding-left: 4px;
+   margin-left: 0;
+}
+.leaflet-control-layers-expanded {
+    color: #fff;
+    background: #304352;
+    background: -webkit-linear-gradient(to right, #263038, #304352); 
+    background: linear-gradient(to right, #263038, #304352);
+    max-width: 260px;
+    border-top: 5px solid #e0ab1c;
+}
+.control-top {
+    border: none;
+}
+
+
+@media screen and (min-width: 1301px) and (max-width: 1440px) { 
+#minibar .btn-sm {
+    padding: 0.25rem 0.4rem;
+    }
+}
+
+@media screen and (min-width: 1441px) and (max-width: 2560px) { 
+    #minibar .btn-sm {
+        padding: 0.25rem 1.5rem;
+        }
+    }
