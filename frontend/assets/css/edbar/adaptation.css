@@ -1,4 +1,4 @@
-#minibar {
+#mapContainer #minibar {
     background-color: #263038;
     border-bottom: 5px solid #e0ab1c;
     height: 60px;
@@ -10,7 +10,6 @@
 #refreshCP,
 #deleteCP {
     background: transparent;
-    /* border-radius: 6px; */
     color: white;
     border: none;
 }
@@ -21,15 +20,39 @@
 #refreshCP:hover,
 #deleteCP:hover {
     background: #e0ab1c;
-    /* border-radius: 6px; */
     color: black;
     border: none;
+}
+
+#mapContainer #measure-dialog #createCP {
+    background: #304352;
+    background: -webkit-linear-gradient(to right, #263038, #304352); 
+    background: linear-gradient(to right, #263038, #304352);
+    border-radius: 0.5rem;
+    
+}
+#mapContainer #measure-dialog #createCP:hover {
+    color: white;
+}
+
+#mapContainer #measure-dialog #drawCP {
+    background: #304352;
+    background: -webkit-linear-gradient(to right, #263038, #304352); 
+    background: linear-gradient(to right, #263038, #304352);
+    border-radius: 0.5rem;
+    
+}
+#mapContainer #measure-dialog #drawCP:hover  {
+    color: white;
+}
+#mapContainer .leaflet-container .btn:disabled.as-label {
+    border-radius: 0;
 }
 
 #data-panel .data-panel-title {
     background-color: #263038;
     color: white;
-    border-left: 5px solid #e0ab1c;
+    /* border-left: 5px solid #e0ab1c; */
     border-bottom: 5px solid #e0ab1c;
     border-top: none;
     border-right: none;
@@ -65,14 +88,11 @@
     border: 2px solid white;
     border-radius: 25px;
 }
-.control-bottom {
-    background-color: #263038;
-    border-top: 3px solid #e0ab1c;
-}
+
 #grid-header .btn.disabled {
     font-style: normal;
 }
-.leaflet-control-layers-group-name {
+#mapContainer .leaflet-control-layers-group-name {
    font-style: normal;
    font-size: 14px;
    color: #ffffff;
@@ -80,7 +100,7 @@
    padding-left: 4px;
    margin-left: 0;
 }
-.leaflet-control-layers-expanded {
+#mapContainer .leaflet-control-layers-expanded {
     color: #fff;
     background: #304352;
     background: -webkit-linear-gradient(to right, #263038, #304352); 
@@ -88,19 +108,78 @@
     max-width: 260px;
     border-top: 5px solid #e0ab1c;
 }
-.control-top {
+#mapContainer #map .leaflet-control-layers {
+    background: #263038;
+    border-top: 5px solid #e0ab1c;
+}
+#mapContainer .control-right .leaflet-control-layers-toggle:hover:not(.disabled) {
+    background-color: #ffffff45;
+}
+
+#mapContainer .control-top {
+    background: #263038;
+}
+
+#mapContainer .control-bottom {
+    background-color: #263038;
+    border-top: 3px solid #e0ab1c;
+    color: white;
+}
+#mapContainer .control-left {
+    background-color: #263038;
+}
+#mapContainer .leaflet-container .form-control-sm {
+    color: white;
+}
+
+#mapContainer .ap-modal-body {
+    margin-top: 0;
+}
+#mapContainer .control-map .modal-content {
+    border-radius: 0.5rem;
+}
+#mapContainer .control-right {
+    background-color: #263038;
+}
+#mapContainer #dataList .tree-node {
+    margin-left: 0;
+}
+#mapContainer #dataList .tree-node-item {
+    background: #263038;
+    padding: 5px;
+    border: 0.5em outset #c7c7c7;
+}
+#mapContainer #dataList .tree-node-arrow:after {
+    color: white;
+}
+#mapContainer #dataList .tree-node-label {
+    background: #263038;
+    border: none;
+    color: white;
+    width: 100%;
+    padding: 9px;
+}
+#mapContainer #dataList .tree-node-item:active {
+    border: 5px inset #a0a0a0;
+}
+#mapContainer #dataList .tree-node-item:focus {
+    border: 5px inset #a0a0a0;
+}
+#mapContainer #data-panel .data-list-utils {
+    background: #263038;
     border: none;
 }
-
-
-@media screen and (min-width: 1301px) and (max-width: 1440px) { 
-#minibar .btn-sm {
-    padding: 0.25rem 0.4rem;
-    }
+#mapContainer #data-panel .data-list-utils button {
+    background-color: #263038;
+    color: white;
+    border: none;
+}
+#dataList .btn-light:not(:disabled):not(.disabled):active:focus {
+    box-shadow: none;
 }
 
-@media screen and (min-width: 1441px) and (max-width: 2560px) { 
-    #minibar .btn-sm {
-        padding: 0.25rem 1.5rem;
-        }
+@media screen and (min-width: 1301px) and (max-width: 1440px) { 
+    #mapContainer .btn-sm {
+        padding: 0.25rem 0.4rem;
     }
+}
