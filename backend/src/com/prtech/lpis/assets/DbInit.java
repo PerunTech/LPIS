@@ -399,7 +399,7 @@ public class DbInit implements IDbInit {
 		dbf27.setDbFieldScale(0);
 		dbf27.setIsNull(true);
 		dbf27.setLabel_code("agri_parcel.old_id");
-		dbf27.setSort_order(10);
+		dbf27.setSort_order(110);
 		//dbf27.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		
