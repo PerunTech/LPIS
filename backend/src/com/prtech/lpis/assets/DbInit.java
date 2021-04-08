@@ -386,7 +386,7 @@ public class DbInit implements IDbInit {
 		DbDataField dbf26 = new DbDataField();
 		dbf26.setDbFieldName("SOIL_TYPE");
 		dbf26.setDbFieldType(DbFieldType.NVARCHAR);
-		dbf26.setDbFieldSize(50);
+		dbf26.setDbFieldSize(100);
 		dbf26.setIsNull(true);
 		dbf26.setLabel_code("agri_parcel.soil_types");
 		dbf26.setCode_list_user_code("SOIL_TYPES");
