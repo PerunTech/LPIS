@@ -400,10 +400,16 @@ public class DbInit implements IDbInit {
 		dbf27.setIsNull(true);
 		dbf27.setLabel_code("agri_parcel.old_id");
 		dbf27.setSort_order(110);
-		//dbf27.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+		
+		DbDataField dbf28 = new DbDataField();
+		dbf28.setDbFieldName("PARCEL_INTERSECT");
+		dbf28.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf28.setDbFieldSize(1000);
+		dbf28.setIsNull(true);
+		dbf28.setLabel_code("agri_parcel.parcel_intersect");
 		
 		
-		DbDataField[] fieldList = new DbDataField[27];
+		DbDataField[] fieldList = new DbDataField[28];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
@@ -436,6 +442,7 @@ public class DbInit implements IDbInit {
 		
 		fieldList[25] = dbf26;
 		fieldList[26] = dbf27;
+		fieldList[27] = dbf28;
 
 		dbt.setDbTableFields(fieldList);
 		
