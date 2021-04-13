@@ -4,7 +4,7 @@
 
 <groupId>perun</groupId>
 <artifactId>lpis</artifactId>
-<version>1.1.19</version>
+<version>1.1.20</version>
 <packaging>bundle</packaging>
 <name>Land Parcel Identification System</name>
 <properties>
