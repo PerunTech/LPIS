@@ -16,14 +16,14 @@ const _gsaa = (_token) => {
             .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
             .withNavigationControl()
             .withWindRose()
-            .render())
+            .render('gsaa-map'))
         : null 
 }
 
 export const gsaa = () => {
-    // const _token = redux.store.getState().security.svSession;
-    const _token = readCookie('token');
-    const _farmerId = Number(readCookie('farmerObj')); // 20348156
+    const _token = redux.store.getState().security.svSession;
+    // const _token = readCookie('token');
+    const _farmerId = 242466 // Number(readCookie('farmerObj')); // 
 
     // add check for token, farmerId existance and validate.
     // exit properly for the user on fail.
@@ -44,5 +44,6 @@ export const lpis = () => {
         .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
         .withNavigationControl()
         .withWindRose()
-        .render();
+        // .render();
+        .render('gsaa-map')
 }

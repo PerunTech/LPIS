@@ -13,6 +13,8 @@ module.exports = (mode, {env}) => {
         },
         devServer: {
             contentBase: './backend/www',
+            hot: true,
+            inline: true
         },
         module: {
             rules: [

@@ -1,0 +1,274 @@
+#gsaa-map .control-bottom,
+#gsaa-map .control-left,
+#gsaa-map .control-right,
+#gsaa-map .control-topleft,
+#gsaa-map #minibar, 
+#gsaa-map .leaflet-control-layers,
+#gsaa-map #createCP.btn, #drawCP.btn, #gsaa-map #editCP.btn, #gsaa-map #refreshCP.btn,#gsaa-map #deleteCP.btn,
+#gsaa-map #data-panel, #gsaa-map #data-panel .data-list-utils .btn,
+#gsaa-map #dataList, #gsaa-map #dataList button,
+#gsaa-map .status-bar .btn, #gsaa-map .status-bar .dropdown-menu  {
+    background: #263038;
+    color: white;
+    border: none;
+}
+#gsaa-map #createCP.btn:hover, #gsaa-map #drawCP.btn:hover, #gsaa-map #editCP.btn:hover, #gsaa-map #refreshCP.btn:hover, #gsaa-map #deleteCP.btn:hover {
+    background: #e0ab1c;
+    color: black;
+}
+#gsaa-map #data-panel .data-list-utils .btn:hover:not(.disabled) {
+    background: #e0ab1c;
+    color: black;
+}
+#gsaa-map .leaflet-control-layers-group-name {
+    border-left: 2px solid #e0ab1c;
+    padding-left: 4px;
+    margin-left: 0;
+ }
+ #gsaa-map .divider-vertical {
+     border-right:  .5px solid black;
+ }
+ #gsaa-map #dataList .data-grid-header .btn, #gsaa-map #dataList .data-grid-row .btn:not(.data-grid-util) {
+     border-bottom: 1px solid rgb(117, 117, 117)
+ }
+#gsaa-map #data-panel #search {
+    /*background: white;*/
+    padding: 1.5rem;
+    border-bottom: 1px solid rgb(117, 117, 117)
+}
+#gsaa-map .leaflet-container .form-control-sm {
+    color: white;
+}
+
+#gsaa-map .data-grid-util {
+    color: white;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+#gsaa-map #createCP, 
+#gsaa-map #drawCP, 
+#gsaa-map #editCP, 
+#gsaa-map #refreshCP,
+#gsaa-map #deleteCP {
+    background: #263038;
+    color: white;
+    border: none;
+}
+
+#gsaa-map #createCP:hover, 
+#gsaa-map #drawCP:hover, 
+#gsaa-map #editCP:hover, 
+#gsaa-map #refreshCP:hover,
+#gsaa-map #deleteCP:hover {
+    background: #e0ab1c;
+    color: black;
+    border: none;
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+#gsaa-map #minibar {
+    height: 60px;
+}
+
+
+
+#gsaa-map #measure-dialog #createCP {
+    background: #304352;
+    background: -webkit-linear-gradient(to right, #263038, #304352); 
+    background: linear-gradient(to right, #263038, #304352);
+    border-radius: 0.5rem;
+    
+}
+#gsaa-map #measure-dialog #createCP:hover {
+    color: white;
+}
+
+#gsaa-map #measure-dialog #drawCP {
+    background: #304352;
+    background: -webkit-linear-gradient(to right, #263038, #304352); 
+    background: linear-gradient(to right, #263038, #304352);
+    border-radius: 0.5rem;
+    
+}
+#gsaa-map #measure-dialog #drawCP:hover  {
+    color: white;
+}
+#gsaa-map .leaflet-container .btn:disabled.as-label {
+    border-radius: 0;
+}
+
+#data-panel .data-panel-title {
+    background-color: #263038;
+    color: white;
+    border: none;
+}
+
+#data-panel .data-panel-title.as-label {
+    height: 60px;
+}
+#layer-panel .layer-panel-title.as-label {
+    font-style: normal;
+    font-weight: bold;
+}
+#search {
+    padding: 1rem;
+    background-color: #fff;
+    text-indent: 5px;
+}
+#layer-panel {
+    background-color: #263038;
+    height: 55px;
+}
+
+#layer-panel button {
+    background-color: #263038;
+    border: none;
+    color: white;
+}
+
+#layer-panel .btn-light:hover:not(.disabled) {
+    background-color: #263038;
+    border: 2px solid white;
+    border-radius: 25px;
+}
+
+#grid-header .btn.disabled {
+    font-style: normal;
+}
+#gsaa-map .leaflet-control-layers-group-name {
+   font-style: normal;
+   font-size: 14px;
+   color: #ffffff;
+   border-left: 2px solid #e0ab1c;
+   padding-left: 4px;
+   margin-left: 0;
+}
+#gsaa-map .leaflet-control-layers-expanded {
+    color: #fff;
+    background: #304352;
+    background: -webkit-linear-gradient(to right, #263038, #304352); 
+    background: linear-gradient(to right, #263038, #304352);
+    max-width: 260px;
+}
+#gsaa-map #map .leaflet-control-layers {
+    background: #263038;
+}
+#gsaa-map .control-right .leaflet-control-layers-toggle:hover:not(.disabled) {
+    background-color: #ffffff45;
+}
+
+#gsaa-map .control-top {
+    background: #263038;
+}
+
+#gsaa-map .control-bottom {
+    background-color: #263038;
+    border-top: 3px solid #e0ab1c;
+    color: white;
+}
+#gsaa-map .control-left {
+    background-color: #263038;
+}
+#gsaa-map .leaflet-container .form-control-sm {
+    color: white;
+}
+
+#gsaa-map .ap-modal-body {
+    margin-top: 0;
+}
+#gsaa-map .control-map .modal-content {
+    border-radius: 0.5rem;
+}
+#gsaa-map .control-right {
+    background-color: #263038;
+}
+#gsaa-map #dataList .tree-node {
+    margin-left: 0;
+}
+#gsaa-map #dataList .tree-node-item {
+    background: #263038;
+    padding: 5px;
+    border: 0.5em outset #c7c7c7;
+}
+#gsaa-map #dataList .tree-node-arrow:after {
+    color: white;
+}
+#gsaa-map #dataList .tree-node-label {
+    background: #263038;
+    border: none;
+    color: white;
+    width: 100%;
+    padding: 9px;
+}
+#gsaa-map #dataList .tree-node-item:active {
+    border: 5px inset #a0a0a0;
+}
+#gsaa-map #dataList .tree-node-item:focus {
+    border: 5px inset #a0a0a0;
+}
+#gsaa-map #data-panel .data-list-utils {
+    background: #263038;
+    border: none;
+}
+#gsaa-map #data-panel .data-list-utils button {
+    background-color: #263038;
+    color: white;
+    border: none;
+}
+#dataList .btn-light:not(:disabled):not(.disabled):active:focus {
+    box-shadow: none;
+}
+
+@media screen and (min-width: 1301px) and (max-width: 1440px) { 
+    #gsaa-map .btn-sm {
+        padding: 0.25rem 0.4rem;
+    }
+}*/

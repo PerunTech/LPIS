@@ -7,7 +7,7 @@
         "build": "webpack --mode=production --env=production",
         "build-dev": "webpack --mode=development --env=development",
         "deploy": "npm run build && cd backend && mvn clean package && (cp target/lpis* ../../svarog/osgi-bundles/ || true)",
-        "dev": "webpack-dev-server --mode=development",
+        "dev": "webpack-dev-server --mode=development --hot",
         "test": "eslint --fix frontend/ || exit 0"
     },
     "repository": {
