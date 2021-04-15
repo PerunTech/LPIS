@@ -153,7 +153,9 @@ const _GSAARows = ({rows}) => {
                     <Icon name='gsaa-pinpoint' size='16px' />
                 </Button>
             </ButtonGroup>
-        } else {
+        } else { 
+            if (props.AGRI_PARCEL_ID === undefined) return null; // if crop parcel is not a db row, exit.
+            console.log(props.AGRI_PARCEL_ID)
             const id = getAgriNum(props.AGRI_PARCEL_ID),  
                 code = crop_codes_desc[crop_codes_idx.findIndex(val => val === props.CROP_CODE)],
                 measurement = Math.round(props.AREA),
@@ -175,7 +177,10 @@ const _GSAARows = ({rows}) => {
 }
 
 const getAgriNum = id => {
-    const parcelArr = store.getState().data.layers.filter(el => Number(el.id) === Number(id));
+    console.log(Object.values(store.getState().data.layers))
+    console.log(id)
+    const parcelArr = Object.values(store.getState().data.layers).filter(el => Number(el.feature.id) === Number(id));
+    console.log(parcelArr) 
     return parcelArr.length > 0
         ? parcelArr[0].feature.properties.OLD_ID 
         : 0;

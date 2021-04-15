@@ -32,15 +32,8 @@ export const Create = ({ processID, farmerId }) => {
             .then(response => {
                 const data = geobuf.decode(protobuf(response));
                 const geojson = factory.geoJSON(data, config.pathOptions);
-                const stateData = store.getState().data.layers;
 
                 geojson.getLayers().forEach(layer => {
-                    /*
-                    const id = layer.feature.id
-        
-                    // remove old app layers entries, will update with the new geojson set.
-                    stateData[id] && stateData[id].removeFrom(Map);
-        */
                     // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
                     layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
                     
@@ -48,11 +41,16 @@ export const Create = ({ processID, farmerId }) => {
                     layer.feature.id = 0
                     layer.feature.properties = { parent_id: farmerId }
 
+                    console.log(layer)
+
                     layer.addTo(Map);
                     setState({data: layer.feature.properties, layer: layer, isGuided: false})
                 })
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                console.log(err)
+                disable()
+            });
 
             Map.off('click');
         });

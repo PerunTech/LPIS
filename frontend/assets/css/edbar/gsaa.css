@@ -31,20 +31,19 @@
  #gsaa-map #dataList .data-grid-header .btn, #gsaa-map #dataList .data-grid-row .btn:not(.data-grid-util) {
      border-bottom: 1px solid rgb(117, 117, 117)
  }
+#gsaa-map .leaflet-container .form-control-sm,
+#gsaa-map .data-grid-util,
+#gsaa-map #data-panel #search::placeholder {
+    color: white;
+}
 #gsaa-map #data-panel #search {
     /*background: white;*/
     padding: 1.5rem;
     border-bottom: 1px solid rgb(117, 117, 117)
 }
-#gsaa-map .leaflet-container .form-control-sm {
-    color: white;
+#gsaa-map #data-panel #search:focus {
+    color: black;
 }
-
-#gsaa-map .data-grid-util {
-    color: white;
-}
-
-
 
 
 
