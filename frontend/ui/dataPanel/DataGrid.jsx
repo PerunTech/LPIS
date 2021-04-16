@@ -155,15 +155,14 @@ const _GSAARows = ({rows}) => {
             </ButtonGroup>
         } else { 
             if (props.AGRI_PARCEL_ID === undefined) return null; // if crop parcel is not a db row, exit.
-            
-            console.log(props)
+
             const id = getAgriNum(props.AGRI_PARCEL_ID),  
                 code = crop_codes_desc[crop_codes_idx.findIndex(val => val === props.CROP_CODE)],
                 measurement = Math.round(props.AREA),
                 unit = 'm²',
                 nPlants = props.NUMBER_PLANTS;
 
-            return <ButtonGroup className='data-grid-row' key={id} >
+            return <ButtonGroup className='data-grid-row' key={id + measurement} >
                 <Button disabled className='data-grid-index' />
                 <Button disabled className='data-grid-column' >{id}</Button>
                 <Button disabled className='data-grid-column' >{code}</Button>
@@ -179,7 +178,6 @@ const _GSAARows = ({rows}) => {
 
 const getAgriNum = id => {
     const layers = Object.values(store.getState().data.layers);
-    console.log(id)
     const parcelArr = layers.filter(el => el.feature && el.feature.id && Number(el.feature.id) === Number(id));
 
     return parcelArr.length > 0
