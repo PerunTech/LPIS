@@ -44,7 +44,7 @@ dev_install:
     - npm run build-dev
     - cd backend
     - pwd
-    - mvn clean install -DskipTests
+    - mvn clean deploy -DskipTests
   except:
     - dev
     - staging

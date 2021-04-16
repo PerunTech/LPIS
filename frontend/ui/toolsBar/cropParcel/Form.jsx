@@ -30,9 +30,9 @@ export function Form ({formData, onSubmit, onChange, children }) {
 }
 
 Form.propTypes = {
-    formData: PropTypes.func.isRequired,
+    formData: PropTypes.object.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
-    children: PropTypes.Node
+    children: PropTypes.node
 }
 

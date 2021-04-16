@@ -24,7 +24,7 @@ export function Guidance ({id, title, msg, disable, finish, undo}) {
 Guidance.propTypes = {
     id: PropTypes.string,
     title: PropTypes.string,
-    msg: PropTypes.string,
+    msg: PropTypes.array,
     disable: PropTypes.func,
     finish: PropTypes.func,
     undo: PropTypes.func

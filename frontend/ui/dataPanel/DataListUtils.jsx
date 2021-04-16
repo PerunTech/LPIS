@@ -5,14 +5,14 @@ const { ButtonGroup, Button, Icon, Divider, Input } = ui;
 
 export const DataListUtils = ({setData}) => {
     const _refresh = () =>
-    core.store.dispatch({ layers: core.store.getState().data.layers });
+        core.store.dispatch({ layers: core.store.getState().data.layers });
     const _expandAll = () => 
         setData(data => data.map(el => ({ ...el, isOpen: true })));
     const _collapseAll = () => 
         setData(data => data.map(el => ({ ...el, isOpen: false })));
 
     return <>
-        <ButtonGroup className='data-list-utils' >
+        {core.store.getState().map.id !== 'gsaa-map' && <ButtonGroup className='data-list-utils' >
             <Button disabled onClick={() => {}} title='Додади запис'  >
                 <Icon name='add-data-list-item' size='18px' />
             </Button>
@@ -36,8 +36,8 @@ export const DataListUtils = ({setData}) => {
             <Button disabled onClick={_collapseAll} title='Отстрани записи' >
                 <Icon name='delete' size='18px' />
             </Button> 
-        </ButtonGroup>
-        <Input placeholder='Пребарај' style={{padding: '1rem', backgroundColor: '#fff', textIndent: '5px'}} />
+        </ButtonGroup>}      
+            <Input placeholder='Пребарај' id='search'/>
     </>
 }
 DataListUtils.propTypes = {
