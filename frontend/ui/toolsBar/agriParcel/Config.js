@@ -258,7 +258,7 @@ export const config = {
         fillColor: '#F6D800',
         opacity: 0.9,
         fillOpacity: 0.25,
-        showMeasurements: true,
+        /* showMeasurements: true, */
         metadata: {
             type: 'agri_parcel',
             namePath: 'feature.properties.parent_id',

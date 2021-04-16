@@ -17,7 +17,7 @@ export const _DataList = ({data, setData, layers}) =>
                     rows={Object.values(layers).filter(layer => 
                         layer.getMetadata().type === el.id)} />}
             </ui.TreeNode> )}
-    </div>;
+    </div>
 
 _DataList.propTypes = {
     data: PropTypes.object,

@@ -1,5 +1,5 @@
 import { React } from 'perun-core';
-import { ui } from '../../Spatial';
+import { ui, core } from '../../Spatial';
 
 const  { CoordinatesControl, CRSControl, ScaleControl } = ui;
 
@@ -13,7 +13,7 @@ export function StatusBar () {
             target='_blank'
             rel= 'noopener noreferrer' 
             className='author-link' >
-                Perun Technologies ©
+                {core.store.getState().map.id !== 'gsaa-map' && 'Perun Technologies ©'}
         </a>
     </>
 }

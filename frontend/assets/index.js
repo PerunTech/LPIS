@@ -18,7 +18,7 @@ import './css/digitization/agriParcel.css'
 import './css/digitization/cropParcel.css'
 
 /* css.edbar, adapt rules to edbar style  */
-import './css/edbar/adaptation.css'
+import './css/edbar/gsaa.css'
 
 /**
  * Include local svg registry in build.
