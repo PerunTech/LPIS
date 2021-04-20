@@ -5,9 +5,11 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +31,10 @@ import org.joda.time.DateTime;
 
 import com.google.gson.JsonObject;
 import com.prtech.spatial.geobuf.GeobufEncoder;
+import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
+import com.prtech.svarog.SvExecManager;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSDITile.SDIRelation;
@@ -45,22 +49,27 @@ import com.vividsolutions.jts.geom.Polygon;
 
 @Path("/lpis")
 public class ApplicationServices {
+	private static int precisionScale = 2;
+
+	static {
+		Float d = new Float(Math.round(SvConf.getSDIPrecision() / 10));
+		String s = d.toString();
+		precisionScale = s.length();
+	}
+
 	private static final Logger log = LogManager.getLogger(ApplicationServices.class.getName());
-	
+
 	@Path("/save/physicalBlock/{token}/{objectId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response savePhysicalBlock(
-			@PathParam("token") String token,
-			@PathParam("objectId") Long objectId,
-			MultivaluedMap<String, String> formVals,
-			@Context HttpServletRequest httpRequest) {
-		
+	public Response savePhysicalBlock(@PathParam("token") String token, @PathParam("objectId") Long objectId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
 		SvReader svr = null;
 		SvGeometry svg = null;
 		DbDataObject pb = null;
-		
+
 		try {
 			svr = new SvReader(token);
 			svr.setIncludeGeometries(true);
@@ -70,7 +79,7 @@ public class ApplicationServices {
 			DbDataArray fieldSet = SvCore.getFields(typeId);
 			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
 			JsonObject metadata = Util.dataToJson(formVals);
-			
+
 			if (isUpdate) {
 				pb = svr.getObjectById(objectId, typeId, null);
 			} else {
@@ -81,12 +90,11 @@ public class ApplicationServices {
 			// Map form values to dbo fields
 			for (DbDataObject field : fieldSet.getItems()) {
 				String fieldName = field.getVal("FIELD_NAME").toString();
-				if (Util.excludeField(fieldName)
-						&& !"".equalsIgnoreCase(field.getVal("FIELD_TYPE").toString())) {
+				if (Util.excludeField(fieldName) && !"".equalsIgnoreCase(field.getVal("FIELD_TYPE").toString())) {
 					pb = Util.addValueToDataObject(pb, fieldName, field, metadata);
 				}
 			}
-			
+
 			SvGeometry.setGeometry(pb, Util.jsonToGeometry(metadata.get("GEOM")));
 			Util.calculateGeometryDerivatives(pb);
 			svg.saveGeometry(pb);
@@ -102,24 +110,21 @@ public class ApplicationServices {
 			if (svg != null)
 				svg.close();
 		}
-		
+
 		return Response.status(200).entity(pb.toSimpleJson().toString()).build();
 	}
-	
+
 	@Path("/save/agriParcel/{token}/{objectId}/{opType}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/pbf")
-	public StreamingOutput saveAgriParcel(
-			@PathParam("token") String token,
-			@PathParam("objectId") Long objectId,
-			@PathParam("opType") Long opType,
-			MultivaluedMap<String, String> formVals,
+	public StreamingOutput saveAgriParcel(@PathParam("token") String token, @PathParam("objectId") Long objectId,
+			@PathParam("opType") Long opType, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
-		
+
 		return new StreamingOutput() {
 			public void write(OutputStream stream) throws IOException {
-				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				SvReader svr = null;
 				SvGeometry svg = null;
 				DbDataObject ap = null;
@@ -136,7 +141,7 @@ public class ApplicationServices {
 					DbDataArray fieldSet = SvCore.getFields(typeId);
 					boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
 					metadata = Util.dataToJson(formVals);
-					
+
 					if (isUpdate) {
 						ap = svr.getObjectById(objectId, typeId, null);
 					} else {
@@ -152,7 +157,7 @@ public class ApplicationServices {
 							ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
 						}
 					}
-					
+
 					// Run cut operations with neighbour agri parcels.
 					geom = Util.jsonToGeometry(metadata.get("GEOM"));
 					if (opType > 0) {
@@ -166,34 +171,34 @@ public class ApplicationServices {
 							Collection<Geometry> apCol = svg.cutGeomFromLayer(geom, typeId);
 							Iterator<Geometry> it = apCol.iterator();
 							while (it.hasNext()) {
- 								Geometry g = it.next();
- 								DbDataObject dbo = (DbDataObject) g.getUserData();
-							
- 								if ("Polygon".equalsIgnoreCase(g.getGeometryType()))
- 									g = SvUtil.sdiFactory.createMultiPolygon(new Polygon[] { (Polygon) g });
- 								SvGeometry.setGeometry(dbo, g);
- 								
- 								Util.calculateGeometryDerivatives(dbo);
- 								intersectArr.addDataItem(dbo);
- 								resultArr.addDataItem(dbo);
+								Geometry g = it.next();
+								DbDataObject dbo = (DbDataObject) g.getUserData();
+
+								if ("Polygon".equalsIgnoreCase(g.getGeometryType()))
+									g = SvUtil.sdiFactory.createMultiPolygon(new Polygon[] { (Polygon) g });
+								SvGeometry.setGeometry(dbo, g);
+
+								Util.calculateGeometryDerivatives(dbo);
+								intersectArr.addDataItem(dbo);
+								resultArr.addDataItem(dbo);
 							}
-							
+
 							svg.saveGeometry(intersectArr);
 						}
 					} else {
 						SvGeometry.setGeometry(ap, geom);
 					}
-					
+
 					Util.calculateGeometryDerivatives(ap);
 					resultArr.addDataItem(ap);
-					
-					svg.saveGeometry(ap);	
+
+					svg.saveGeometry(ap);
 					enc.writeDbDataArray(resultArr);
 				} catch (Exception e) {
 					String errMsg = "Failed saving agri parcel. Please see server logs";
 					if (e instanceof SvException)
 						log.error("Failed saving agri parcel. " + ((SvException) e).getFormattedMessage(), e);
-						errMsg = ((SvException) e).getJsonMessage();
+					errMsg = ((SvException) e).getJsonMessage();
 					try {
 						stream.write(errMsg.getBytes(StandardCharsets.UTF_8));
 					} catch (IOException ioe) {
@@ -211,78 +216,88 @@ public class ApplicationServices {
 			};
 		};
 	}
-	
+
 	@Path("/check/PBContainsAP/{token}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response checkPBContainsAP(
-			@PathParam("token") String token,
-			MultivaluedMap<String, String> formVals,
+	public Response checkPBContainsAP(@PathParam("token") String token, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
-		
+
 		Boolean result = false;
 		SvGeometry svg = null;
 		JsonObject json = null;
-		
+
 		try {
 			svg = new SvGeometry(token);
 			json = Util.dataToJson(formVals);
-			
-			Set<Geometry> geoms = new HashSet<Geometry>();
-			geoms = svg.getRelatedGeometries(
-					Util.jsonToGeometry(json.get("GEOM")),
-					SvCore.getTypeIdByName("PHYSICAL_BLOCK"),
-					SDIRelation.COVERS,
-					null,
-					null,
-					true);
 
-			result = geoms.size() == 1;	
+			Set<Geometry> geoms = new HashSet<Geometry>();
+			geoms = svg.getRelatedGeometries(Util.jsonToGeometry(json.get("GEOM")),
+					SvCore.getTypeIdByName("PHYSICAL_BLOCK"), SDIRelation.COVERS, null, null, true);
+
+			result = geoms.size() == 1;
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 
 		return Response.status(200).entity(result.toString()).build();
 	}
-	
+
+	@Path("/get/cropList/{token}/{objectId}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCropList(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
+			@Context HttpServletRequest httpRequest) {
+
+		JsonObject json = null;
+
+		try (SvReader svr = new SvReader(token); SvExecManager svm = new SvExecManager(svr)) {
+
+			DbDataObject ap = svr.getObjectById(objectId, SvCore.getTypeIdByName("AGRI_PARCEL"), null);
+
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("LAND_COVER", (String) ap.getVal("LAND_COVER_CODE"));
+			params.put("FIELD_TYPE", "NUMERIC");
+			json = (JsonObject) svm.execute("EDBAR_UTIL.CROPS_BY_COVER", params, null);
+
+		} catch (Exception e) {
+			log.error("Cant get crops by land cover code.");
+		}
+
+		return Response.status(200).entity(json.toString()).build();
+	}
+
 	@Path("/check/APIntersectsAP/{token}/{isContained}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response checkAPIntersectsAP(
-			@PathParam("token") String token,
-			@PathParam("isContained") Boolean isContained,
-			MultivaluedMap<String, String> formVals,
-			@Context HttpServletRequest httpRequest) {
-		
+	public Response checkAPIntersectsAP(@PathParam("token") String token, @PathParam("isContained") Boolean isContained,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
 		JsonObject result = null;
 		JsonObject json = null;
 		SvGeometry svg = null;
 		Geometry geom = null;
 		Geometry containedAP = null;
-		
+
 		try {
 			svg = new SvGeometry(token);
 			json = Util.dataToJson(formVals);
 			geom = Util.jsonToGeometry(json.get("GEOM"));
-			
+
 			// Perform cut of agri parcel against a container physical block.
-			// In case of multiple blocks, use the block that lends maximum size to the parcel
+			// In case of multiple blocks, use the block that lends maximum size to the
+			// parcel
 			if (!isContained) {
 				Set<Geometry> blocks = new HashSet<Geometry>();
-				blocks = svg.getRelatedGeometries(
-						geom,
-						SvCore.getTypeIdByName("PHYSICAL_BLOCK"),
-						SDIRelation.INTERSECTS,
-						null,
-						null,
-						true);
-			
+				blocks = svg.getRelatedGeometries(geom, SvCore.getTypeIdByName("PHYSICAL_BLOCK"),
+						SDIRelation.INTERSECTS, null, null, true);
+
 				if (blocks.size() == 0) // Fix this abuse, eventually.
 					return Response.status(401).entity("AP must be covered by PB.").build();
-				
-				for (Geometry block: blocks) {
+
+				for (Geometry block : blocks) {
 					if (containedAP == null) {
 						containedAP = block.intersection(geom);
 					} else {
@@ -295,7 +310,7 @@ public class ApplicationServices {
 			} else {
 				containedAP = geom;
 			}
-			
+
 			// Apply user data to containedAP
 			DbDataObject userData = new DbDataObject();
 			Long oid = json.get("OBJECT_ID").getAsLong();
@@ -303,16 +318,11 @@ public class ApplicationServices {
 				userData.setObjectId(oid);
 				containedAP.setUserData(userData);
 			}
-			
-			// Perform check if our parcel crosses with neighbouring parcels. 
+
+			// Perform check if our parcel crosses with neighbouring parcels.
 			Set<Geometry> neighbourAP = new HashSet<>();
-			neighbourAP = svg.getRelatedGeometries(
-					containedAP,
-					SvCore.getTypeIdByName("AGRI_PARCEL"),
-					SDIRelation.INTERSECTS,
-					null,
-					null,
-					true);
+			neighbourAP = svg.getRelatedGeometries(containedAP, SvCore.getTypeIdByName("AGRI_PARCEL"),
+					SDIRelation.INTERSECTS, null, null, true);
 
 			// revert user data, do not return as part of json.
 			containedAP.setUserData(null);
@@ -330,33 +340,31 @@ public class ApplicationServices {
 
 		return Response.status(200).entity(result.toString()).build();
 	}
-	
+
 	@Path("/get/farmerAssets/{token}/{objectId}/{typeName}")
 	@GET
 	@Produces("application/pbf")
-	public StreamingOutput getFarmerAssets(
-			@PathParam("token") final String token,
-			@PathParam("objectId") final Long objectId,
-			@PathParam("typeName") final String typeName,
+	public StreamingOutput getFarmerAssets(@PathParam("token") final String token,
+			@PathParam("objectId") final Long objectId, @PathParam("typeName") final String typeName,
 			@Context HttpServletRequest httpRequest) {
-		
+
 		return new StreamingOutput() {
 			public void write(OutputStream stream) {
-				GeobufEncoder enc = new GeobufEncoder(stream, 10);
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				DbDataArray dbArr = new DbDataArray();
 				DbDataArray assets = new DbDataArray();
 
 				try (SvReader svr = new SvReader(token)) {
 					svr.setIncludeGeometries(true);
 					dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
-					
+
 					// Filter for campaign year and geometry not null, when cp is requested.
-					if(typeName.equalsIgnoreCase("LAND_USE_PLAN")) {
+					if (typeName.equalsIgnoreCase("LAND_USE_PLAN")) {
 						for (DbDataObject dbo : dbArr.getItems()) {
 							String cYear = (String) dbo.getVal("CAMPAIGN_YEAR");
 							String now = String.valueOf(new DateTime().year().get());
 							Geometry g = SvGeometry.getGeometry(dbo);
-							
+
 							if (cYear != null && cYear.equals(now) && g != null) {
 								assets.addDataItem(dbo);
 							}
