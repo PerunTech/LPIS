@@ -211,6 +211,17 @@ public class DbInit implements IDbInit {
 		dbf5.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 		
+		/* C5 [read-write, not null, form-hidden], derivative of geometry. */
+		DbDataField dbf29 = new DbDataField();
+		dbf29.setDbFieldName("ALLOWED_AREA");
+		dbf29.setDbFieldType(DbFieldType.NUMERIC);
+		dbf29.setDbFieldSize(18);
+		dbf29.setDbFieldScale(4);
+		dbf29.setIsNull(true);
+		dbf29.setLabel_code("allowed.area");
+		dbf29.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+		
 		/**
 		 * Primary data
 		 */
@@ -409,7 +420,7 @@ public class DbInit implements IDbInit {
 		dbf28.setLabel_code("agri_parcel.parcel_intersect");
 		
 		
-		DbDataField[] fieldList = new DbDataField[28];
+		DbDataField[] fieldList = new DbDataField[29];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
@@ -443,6 +454,7 @@ public class DbInit implements IDbInit {
 		fieldList[25] = dbf26;
 		fieldList[26] = dbf27;
 		fieldList[27] = dbf28;
+		fieldList[28] = dbf29;
 
 		dbt.setDbTableFields(fieldList);
 		
