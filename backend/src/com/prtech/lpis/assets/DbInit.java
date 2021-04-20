@@ -217,7 +217,7 @@ public class DbInit implements IDbInit {
 		dbf29.setDbFieldType(DbFieldType.NUMERIC);
 		dbf29.setDbFieldSize(18);
 		dbf29.setDbFieldScale(4);
-		dbf29.setIsNull(false);
+		dbf29.setIsNull(true);
 		dbf29.setLabel_code("allowed.area");
 		dbf29.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
