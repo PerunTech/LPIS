@@ -4,7 +4,7 @@
 
 <groupId>perun</groupId>
 <artifactId>lpis</artifactId>
-<version>1.1.22</version>
+<version>1.1.23</version>
 <packaging>bundle</packaging>
 <name>Land Parcel Identification System</name>
 <properties>
@@ -96,14 +96,8 @@
 	<!-- https://mvnrepository.com/artifact/javax.ws.rs/jsr311-api -->
 	<dependency>
 		<groupId>svarog</groupId>
-		<artifactId>svarog-interfaces</artifactId>
-		<version>[3.2.0,3.3.0)</version>
-		<scope>provided</scope>
-	</dependency>
-	<dependency>
-		<groupId>svarog</groupId>
 		<artifactId>svarog</artifactId>
-		<version>[3.2.0,)</version>
+		<version>[3.2.4,)</version>
 		<scope>provided</scope>
 	</dependency>
 	<dependency>

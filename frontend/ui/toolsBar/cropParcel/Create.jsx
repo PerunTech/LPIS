@@ -16,9 +16,9 @@ const _id = 'createCP';
  * Create a crop parcel by selecting a single point.
  */
 export const Create = ({ processID, farmerId }) => {
-    const [{layer, data, isGuided}, setState] = useReducer((currState, update) => 
+    const [{layer, data, X, Y, isGuided}, setState] = useReducer((currState, update) => 
         ({...currState, ...update}), 
-        { layer: {}, data: {}, isGuided: false });
+        { layer: {}, data: {}, X: 0, Y: 0, isGuided: false });
 
     const enable = () => {
         store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
@@ -27,6 +27,8 @@ export const Create = ({ processID, farmerId }) => {
         // Click handler for selection of location and creation of crop parcel geometry.
         Map.on('click', e => {
             const p = Map.transform(e.latlng);
+            setState({ X: p.x, Y: p.y });
+
             http.call('create_ap', {
                 url: '/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/' +p.x + '/' + p.y})
             .then(response => {
@@ -59,7 +61,7 @@ export const Create = ({ processID, farmerId }) => {
     const disable = () => {
         Map.off('click');
         // Reset state, internal and application-wide.
-        setState({ layer: {}, data: {}, isGuided: false });
+        setState({ layer: {}, data: {}, X: 0, Y: 0, isGuided: false });
         store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
@@ -72,7 +74,9 @@ export const Create = ({ processID, farmerId }) => {
         saveCP(JSON.stringify({ 
             ...data, 
             ...formData,
-            GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
+            GEOM: factory.GeoJSON.fromLayer(layer),
+            X: X,
+            Y: Y }), disable);
 
     return <Button id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
         <Icon name={_id} size='30px' />
