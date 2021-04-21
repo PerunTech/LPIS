@@ -253,9 +253,7 @@ public class ApplicationServices {
 			@Context HttpServletRequest httpRequest) {
 
 		JsonObject json = null;
-
 		try (SvReader svr = new SvReader(token); SvExecManager svm = new SvExecManager(svr)) {
-
 
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("FORM_VALS", formVals);
@@ -263,7 +261,7 @@ public class ApplicationServices {
 			json = (JsonObject) svm.execute("EDBAR_UTIL.CROPS_BY_COVER", params, null);
 
 		} catch (Exception e) {
-			log.error("Cant get crops by land cover code.");
+			log.error("Cant get crops by land cover code.", e);
 		}
 
 		return Response.status(200).entity(json.toString()).build();
