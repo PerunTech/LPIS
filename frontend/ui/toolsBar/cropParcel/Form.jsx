@@ -4,7 +4,18 @@ import { metadata } from './Config';
 
 const { Button, Modal } = ui;
 
-export function Form ({formData, onSubmit, onChange, children }) {
+export function Form ({formData, onSubmit, onChange, children, enumIdx, enumNames }) {
+    const getSchema = () => {
+        const cfg = metadata.schema
+        const cropCode = { ...cfg.properties.CROP_CODE }
+        cropCode.enum = enumIdx;
+        cropCode.enumNames = enumNames;
+        cropCode.default = enumIdx[0] || 0
+        cfg.properties.CROP_CODE = cropCode
+        
+        return { ...cfg  }
+    }
+    
     return <Modal id='measure-dialog'
         show 
         backdrop={false}
@@ -16,7 +27,7 @@ export function Form ({formData, onSubmit, onChange, children }) {
         </Modal.Title>
         <Modal.Body className='ap-modal-body' >
             <ui.Form
-                schema={metadata.schema}
+                schema={getSchema()}
                 uiSchema={metadata.uiSchema}
                 formData={formData} 
                 onSubmit={onSubmit}
@@ -33,6 +44,8 @@ Form.propTypes = {
     formData: PropTypes.object.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
-    children: PropTypes.node
+    children: PropTypes.node,
+    enumIdx: PropTypes.array,
+    enumNames:PropTypes.array,
 }
 

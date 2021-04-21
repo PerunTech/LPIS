@@ -17,9 +17,9 @@ const _id = 'editCP';
  * Create an agri parcel by selecting a single point.
  */
 export const Edit = ({ processID, farmerId }) => {
-    const [{layer, data, isGuided}, setState] = useReducer((currState, update) => 
+    const [{layer, data, enumIdx, enumNames, isGuided}, setState] = useReducer((currState, update) => 
         ({...currState, ...update}), 
-        { layer: {}, data: {}, isGuided: false });
+        { layer: {}, data: {}, enumIdx: [], enumNames: [], isGuided: false });
 
     const enable = () => {
         //const currZoom = Map.getZoom();
@@ -51,7 +51,7 @@ export const Edit = ({ processID, farmerId }) => {
     };
 
     const disable = () => {
-        setState({layer: {}, data: {}, isGuided: false})
+        setState({layer: {}, data: {}, enumIdx: [], enumNames: [], isGuided: false})
         // _layerGroup.clearLayers().removeFrom(Map);
         // store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
         loadFarmerAssets(store.getState().gsaa.token, farmerId);
@@ -83,7 +83,23 @@ export const Edit = ({ processID, farmerId }) => {
 
         // Activate edit handler on selected polygon
         edit.polygon.enable(layer, config);
-        setState({layer: layer, data: layer.feature.properties, isGuided: false});
+        setState({layer: layer, data: layer.feature.properties});
+
+        core.http.call('get_code_list', {
+            method: 'post',
+            url: '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}',
+            data: JSON.stringify({ 
+                ...data, 
+                GEOM: factory.GeoJSON.fromLayer(layer) }),
+        })
+        .then(response => {
+            setState({enumIdx: response.data.enum, enumNames: response.data.enumNames})
+            setState({isGuided: false})
+        })
+        .catch(err => {
+            console.log(err);
+            disable();
+        })
 
         // Activate edit event listeners on layer.
         layer.on('pm:edit', e => setState({ layer: e.target }));
@@ -123,7 +139,7 @@ export const Edit = ({ processID, farmerId }) => {
         {processID === _id
             && (isGuided
                 ? <Guidance id={_id} disable={disable} msg={editCPMsg} title='Промени производна парцела' />
-                : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
+                : <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
                     <DrawActions cancel={disable} />
                 </Form>)}
     </Button>;

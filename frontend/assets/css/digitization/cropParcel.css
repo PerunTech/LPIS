@@ -71,9 +71,14 @@
 #measure-dialog .modal-body #deleteCP div:nth-last-child() {
     margin-bottom: 10px;
 }
-#measure-dialog .modal-body .help {
-    display: flex;
-    font-size: 14px;
-    color: #3399ff;
-    float: right;
+#gsaa-map #measure-dialog .modal-title .help {
+    border-radius: 50%;
+    padding: 0.5rem;
+    margin-right: 20px;
+}
+#gsaa-map #measure-dialog .modal-title .as-label {
+    margin-right: 0px;
+}
+#gsaa-map #measure-dialog .modal-body .form-group {
+    min-width: 300px;
 }

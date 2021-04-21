@@ -5,7 +5,7 @@ import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
 
-const { Map, store, factory } = core;
+const { Map, store, factory, http } = core;
 const { draw: { polygon } } = tools;
 const { Button, Icon, DrawActions } = ui;
 const { useReducer } = React;
@@ -15,13 +15,31 @@ const _id = 'drawCP';
  * Draw crop parcel.
  */
 export const Draw = ({ processID, farmerId }) => {
-    const [{layer, data, isGuided}, setState] = useReducer((currState, update) => 
-        ({...currState, ...update}), { layer: {}, data: {}, isGuided: false });
+    const [{layer, data, enumIdx, enumNames, isGuided}, setState] = useReducer((currState, update) => 
+        ({...currState, ...update}), { layer: {}, data: {}, enumIdx: [], enumNames: [], isGuided: false });
 
     const enable = () => {
         Map.on('new_shape', e => {
-            (e && e.layer) 
-                && (setState({layer: e.layer, isGuided: false}), e.layer.addTo(Map));
+            if (e && e.layer) {
+                setState({layer: e.layer})
+                e.layer.addTo(Map)
+
+                http.call('get_code_list', {
+                    method: 'post',
+                    url: '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}',
+                    data: JSON.stringify({ 
+                        ...data, 
+                        GEOM: factory.GeoJSON.fromLayer(e.layer) }),
+                })
+                .then(response => {
+                    setState({enumIdx: response.data.enum, enumNames: response.data.enumNames})
+                    setState({isGuided: false})
+                })
+                .catch(err => {
+                    console.log(err);
+                    disable();
+                })
+            } 
             Map.off('new_shape');
         });
 
@@ -32,7 +50,7 @@ export const Draw = ({ processID, farmerId }) => {
 
     const disable = () => {
         // Reset state, internal and application-wide.
-        setState({ layer: {}, data: {} });
+        setState({ layer: {}, data: {}, enumIdx: [], enumNames: [] });
         store.dispatch({processID: ''});
 
         // We remove the working geometry, save process will add the result.
@@ -60,7 +78,7 @@ export const Draw = ({ processID, farmerId }) => {
                 disable={disable} 
                 msg={drawCPMsg} 
                 title='Нацртај производна парцела' />
-            : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
+            : <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
                 <DrawActions 
                     cancel={disable} />
             </Form>;

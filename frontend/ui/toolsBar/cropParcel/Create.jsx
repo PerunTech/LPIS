@@ -16,9 +16,9 @@ const _id = 'createCP';
  * Create a crop parcel by selecting a single point.
  */
 export const Create = ({ processID, farmerId }) => {
-    const [{layer, data, X, Y, isGuided}, setState] = useReducer((currState, update) => 
+    const [{layer, data, X, Y, enumIdx, enumNames, isGuided}, setState] = useReducer((currState, update) => 
         ({...currState, ...update}), 
-        { layer: {}, data: {}, X: 0, Y: 0, isGuided: false });
+        { layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false });
 
     const enable = () => {
         store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
@@ -44,7 +44,23 @@ export const Create = ({ processID, farmerId }) => {
                     layer.feature.properties = { parent_id: farmerId }
 
                     layer.addTo(Map);
-                    setState({data: layer.feature.properties, layer: layer, isGuided: false})
+                    setState({data: layer.feature.properties, layer: layer})
+
+                    http.call('get_code_list', {
+                        method: 'post',
+                        url: '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}',
+                        data: JSON.stringify({ 
+                            ...data, 
+                            GEOM: factory.GeoJSON.fromLayer(layer) }),
+                    })
+                    .then(response => {
+                        setState({enumIdx: response.data.enum, enumNames: response.data.enumNames})
+                        setState({isGuided: false})
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        disable();
+                    })
                 })
             })
             .catch(err => {
@@ -59,7 +75,7 @@ export const Create = ({ processID, farmerId }) => {
     const disable = () => {
         Map.off('click');
         // Reset state, internal and application-wide.
-        setState({ layer: {}, data: {}, X: 0, Y: 0, isGuided: false });
+        setState({ layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false });
         store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
@@ -82,7 +98,7 @@ export const Create = ({ processID, farmerId }) => {
         {processID === _id 
             && (isGuided
                 ? <Guidance id={_id} disable={disable} msg={createCPMsg} title='Додади производна парцела' />
-                : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
+                : <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
                     <DrawActions cancel={disable} />
                 </Form>)}
     </Button>;
