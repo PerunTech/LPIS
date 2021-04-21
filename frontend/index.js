@@ -16,8 +16,8 @@ export const lpis = {
     }, {
         name: 'lpis',
         path: '/main/lpis',
-        //render: ui.lpis,
-        render: ui.gsaa,
+        render: ui.lpis,
+        // render: ui.gsaa,
         isExact: true
     }],
     ui
