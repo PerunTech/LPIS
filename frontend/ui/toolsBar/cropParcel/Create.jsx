@@ -34,7 +34,7 @@ export const Create = ({ processID, farmerId }) => {
             .then(response => {
                 const data = geobuf.decode(protobuf(response));
                 const geojson = factory.geoJSON(data, config.pathOptions);
-
+                
                 geojson.getLayers().forEach(layer => {
                     // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
                     layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
@@ -42,8 +42,6 @@ export const Create = ({ processID, farmerId }) => {
                     // assign metadata
                     layer.feature.id = 0
                     layer.feature.properties = { parent_id: farmerId }
-
-                    console.log(layer)
 
                     layer.addTo(Map);
                     setState({data: layer.feature.properties, layer: layer, isGuided: false})

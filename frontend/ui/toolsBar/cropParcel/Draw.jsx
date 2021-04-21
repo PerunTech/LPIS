@@ -51,8 +51,7 @@ export const Draw = ({ processID, farmerId }) => {
             parent_id: farmerId,
             GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
     }
-
-
+    
     const renderForm = () =>
         isGuided
             ? <Guidance id={_id}

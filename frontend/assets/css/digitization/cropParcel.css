@@ -71,3 +71,9 @@
 #measure-dialog .modal-body #deleteCP div:nth-last-child() {
     margin-bottom: 10px;
 }
+#measure-dialog .modal-body .help {
+    display: flex;
+    font-size: 14px;
+    color: #3399ff;
+    float: right;
+}
