@@ -244,21 +244,21 @@ public class ApplicationServices {
 		return Response.status(200).entity(result.toString()).build();
 	}
 
-	@Path("/get/cropList/{token}/{objectId}")
+	@Path("/get/cropList/{token}/{farmObjectId}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getCropList(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
+	public Response getCropList(@PathParam("token") final String token,
+			@PathParam("farmObjectId") final Long farmObjectId, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
 
 		JsonObject json = null;
 
 		try (SvReader svr = new SvReader(token); SvExecManager svm = new SvExecManager(svr)) {
 
-			DbDataObject ap = svr.getObjectById(objectId, SvCore.getTypeIdByName("AGRI_PARCEL"), null);
 
 			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("LAND_COVER", (String) ap.getVal("LAND_COVER_CODE"));
-			params.put("FIELD_TYPE", "NUMERIC");
+			params.put("FORM_VALS", formVals);
+			params.put("FARM_OBJECT_ID", farmObjectId);
 			json = (JsonObject) svm.execute("EDBAR_UTIL.CROPS_BY_COVER", params, null);
 
 		} catch (Exception e) {
