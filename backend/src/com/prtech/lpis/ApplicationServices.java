@@ -245,7 +245,8 @@ public class ApplicationServices {
 	}
 
 	@Path("/get/cropList/{token}/{farmObjectId}")
-	@GET
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCropList(@PathParam("token") final String token,
 			@PathParam("farmObjectId") final Long farmObjectId, MultivaluedMap<String, String> formVals,
