@@ -49,11 +49,11 @@ import com.vividsolutions.jts.geom.Polygon;
 
 @Path("/lpis")
 public class ApplicationServices {
-	private static int precisionScale = 2;
+	static int precisionScale = 2;
 
 	static {
-		Float d = new Float(Math.round(SvConf.getSDIPrecision() / 10));
-		String s = d.toString();
+		int i = (int) (SvConf.getSDIPrecision() / 10);
+		String s = Integer.toString(i);
 		precisionScale = s.length();
 	}
 
