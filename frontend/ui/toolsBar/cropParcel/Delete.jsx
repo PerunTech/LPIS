@@ -3,6 +3,7 @@ import { ui, core } from '../../../Spatial';
 import { Guidance } from './Guidance';
 import { deleteCPMsg } from './Config';
 import { loadFarmerAssets } from '../..'
+import { ProcessButton } from '../..';
 
 const { Map, store } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
@@ -78,13 +79,6 @@ export const Delete = ({ processID, farmerId }) => {
                 'Не се пронајдени производни парцели.', 
                 'Додадете производни парцели со просторна определба пред да ја користите алатката за бришење.');
         }
-        /*
-        Map.eachLayer(function(layer) {
-            console.log(layer.getMetadata().type)
-            if (layer.toGeoJSON && layer.getMetadata().type === 'land_use_plan') {
-                layer.on('click', getLayer)
-            }
-        });*/
     }
 
     const disable = () => {
@@ -92,19 +86,13 @@ export const Delete = ({ processID, farmerId }) => {
         const cps = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
 
         cps.forEach(cp => cp.off('click'))
-/*
-        Map.eachLayer(function(layer) {
-            if (layer.toGeoJSON && layer.getMetadata().type === 'land_use_plan') {
-                layer.off('click')
-            }
-        });*/
 
         // Reset state, internal and application-wide.
         store.dispatch({processID: ''});
         setState({ isGuided: false, layer: {} });
     }
 
-    return <Button id={_id} onClick={() => enable()} className={processID === _id ? 'active' : ''} >
+    return <ProcessButton id={_id} onClick={() => enable()} >
         <Icon name={_id} size='30px' />
         <span style={{display: 'block', marginTop: '2px' }}>Избриши производна парцела</span>
         {processID === _id 
@@ -125,7 +113,7 @@ export const Delete = ({ processID, farmerId }) => {
                         <Button onClick={() => { deleteLayer() }} size='' className='cancel' > Избриши </Button>
                     </Modal.Body>
                 </Modal>)}
-    </Button>;
+    </ProcessButton>;
 };
 
 Delete.propTypes = {

@@ -4,11 +4,12 @@ import { config, createCPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
+import { ProcessButton } from '../..';
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory, http, util } = core;
 const { geobuf, protobuf } = data;
-const { Button, Icon, DrawActions } = ui;
+const { Icon, DrawActions } = ui;
 const { useReducer } = React;
 const _id = 'createCP';
 
@@ -92,7 +93,7 @@ export const Create = ({ processID, farmerId }) => {
             X: X,
             Y: Y }), disable);
 
-    return <Button id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
+    return <ProcessButton id={_id} onClick={enable} >
         <Icon name={_id} size='30px' />
         <span style={{display: 'block', marginTop: '2px' }}>Додади производна парцела</span>
         {processID === _id 
@@ -101,7 +102,7 @@ export const Create = ({ processID, farmerId }) => {
                 : <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
                     <DrawActions cancel={disable} />
                 </Form>)}
-    </Button>;
+    </ProcessButton>;
 };
 
 Create.propTypes = {

@@ -1,5 +1,7 @@
 export { readCookie, loadFarmerAssets } from './Util';
 
+export { ProcessButton } from './toolsBar/ProcessButton';
+
 /* physical block  */
 export { PhysicalBlock } from './toolsBar/physicalBlock/PhysicalBlock';
 

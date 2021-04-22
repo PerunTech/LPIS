@@ -111,7 +111,6 @@ const _AgriParcel = ({processID}) => {
         edit.polygon.disable();
     }
     const _fetchBlocks = id => {
-        console.log(id)
         http.call('render_pb', {
             url: '/spatial/geometry/get/bbox/{init.token}/AGRI_PARCEL/' + Map.getBBox(),
         })

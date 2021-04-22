@@ -35,7 +35,6 @@ export const saveCP = (data, callback) => {
             const id = layer.feature.id
             stateData[id] && stateData[id].removeFrom(Map);
 
-            console.log(layer)
             layer && layer.addTo(Map);
 
             elements.alertUser(true, 

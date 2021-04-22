@@ -4,10 +4,11 @@ import { config, drawCPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
+import { ProcessButton } from '../..';
 
 const { Map, store, factory, http } = core;
 const { draw: { polygon } } = tools;
-const { Button, Icon, DrawActions } = ui;
+const { Icon, DrawActions } = ui;
 const { useReducer } = React;
 const _id = 'drawCP';
 
@@ -83,11 +84,11 @@ export const Draw = ({ processID, farmerId }) => {
                     cancel={disable} />
             </Form>;
 
-    return <Button id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
+    return <ProcessButton id={_id} onClick={enable} >
         <Icon name={_id} size='32px' />
         <span style={{display: 'block', marginTop: '2px' }}>Нацртај производна парцела</span>
         {processID === _id && renderForm()}
-    </Button>;
+    </ProcessButton>;
 };
 
 Draw.propTypes = {
