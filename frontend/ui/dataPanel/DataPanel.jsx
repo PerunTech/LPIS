@@ -2,7 +2,7 @@ import { React, PropTypes } from 'perun-core';
 import { ui, core } from '../../Spatial';
 import { DataList, DataListUtils } from '..';
 
-const { Button, Divider } = ui;
+// const { Button, Divider } = ui;
 
 /* Root nodes in the data panel tree. */
 const dataCategories = (function () {
@@ -29,24 +29,6 @@ const dataCategories = (function () {
  */
 const _DataPanel = ({categories}) => {
     const [data, setData] = React.useState(categories);
-
-/*
-    React.useEffect(() => {
-        const left = document.getElementsByClassName('control-left')[0];
-        const center = document.getElementsByClassName('control-map')[0];
-        const right = document.getElementsByClassName('control-right')[0];
-        const addClass = core.factory.DomUtil.addClass;
-        const removeClass = core.factory.DomUtil.removeClass;
-        
-        processID.length > 1 
-            ? (addClass(left, 'hide-data-panel'),
-                addClass(right, 'hide-layer-panel'),
-                setTimeout(() => addClass(center, 'expand-center-map'), 2010)) 
-            : (removeClass(left, 'hide-data-panel'),
-                removeClass(right, 'hide-layer-panel'),
-                removeClass(center, 'expand-center-map'))
-    }, [processID])
-*/
 
     return <div id='data-panel' >
         {/* Data list title */}

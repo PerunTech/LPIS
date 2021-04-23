@@ -1,5 +1,7 @@
 #dataList {
     background-color: #fff;
+    max-height: calc(100vh - 150px);
+    overflow: auto;
 }
 #dataList .tree-node-label {
     font-weight: bold;

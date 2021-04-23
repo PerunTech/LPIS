@@ -10,7 +10,7 @@ export const metadata = {
                 enumNames: crop_codes_desc,
                 title: 'Земјоделска култура',
                 type: 'number',
-                default: 1,
+                default: -1
             },
             AREA: {
                 title: 'Површина',
@@ -20,7 +20,6 @@ export const metadata = {
             NUMBER_PLANTS: {
                 title: 'Број на насади',
                 type: 'number',
-                default: 0
             },
             IS_ORGANIC: {
                 title: 'Органско производство',
@@ -82,7 +81,7 @@ export const config = {
         fillColor: '#00E334',
         opacity: 0.9,
         fillOpacity: 0.25,
-        showMeasurements: true,
+        // showMeasurements: true,
         metadata: metadata
     }
 };

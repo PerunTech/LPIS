@@ -2,6 +2,7 @@ import { elements } from 'perun-core';
 import { core, data } from '../Spatial';
 import { config as apConfig } from './toolsBar/agriParcel/Config';
 import { config as cpConfig } from './toolsBar/cropParcel/Config';
+import { crop_codes_desc, crop_codes_idx } from './toolsBar/cropParcel/Crop_Codes';
 
 const { http, factory, store, Map } = core;
 const { geobuf, protobuf } = data;
@@ -20,6 +21,18 @@ export function readCookie(name) {
 }
 
 export function loadFarmerAssets (token, id, zoom = false, msg = false) {
+    // remove all layers
+    const layers = store.getState().data.layers;
+    Object.values(layers).forEach(layer => layer.removeFrom(Map));
+
+    const getCropLabel = idx => {
+        const str = String(crop_codes_desc[crop_codes_idx.findIndex(val => val === idx)]);
+        const getLastIdx = (char) => str.indexOf(char) > 0 ? str.indexOf(char) : false;
+        
+        return str.substring(0, getLastIdx('(') || getLastIdx('-') || getLastIdx('–') || str.length);
+    }
+
+
     http.call('getFarmerAssets', {
         url: window.server + '/lpis/get/farmerAssets/' + String(token) + '/' + Number(id)+ '/AGRI_PARCEL',
         method: 'get',
@@ -29,20 +42,16 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
         const data = geobuf.decode(protobuf(response))
         const geojson = factory.geoJSON(data, apConfig.pathOptions);
         const layers = geojson.getLayers();
-        const stateData = store.getState().data.layers;
 
-        layers.forEach(layer => {
-            const id = layer.feature.id
-            // remove old app layers entries, will update with the new geojson set.
-            stateData[id] && stateData[id].removeFrom(Map);
-            // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
-            // layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
-
-            layer.addTo(Map);
-        })
+        layers.forEach(layer => layer.addTo(Map));
 
         // If init calls us and agri data is found, zoom to the first parcel.
         zoom && layers.length > 0 &&  Map.fitBounds(layers[0].getBounds());
+
+        layers.forEach(layer => {
+            layer.bindTooltip(String(layer.feature.properties.OLD_ID), { direction: 'center', permanent: true })
+            layer.openTooltip();
+        });
     })
     .catch(err => console.log(err))
 
@@ -54,20 +63,21 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
     .then(response => {
         const data = geobuf.decode(protobuf(response))
         const geojson = factory.geoJSON(data, cpConfig.pathOptions);
-        const stateData = store.getState().data.layers;
+        const layers = geojson.getLayers();
 
-        geojson.getLayers().forEach(layer => {
-            const id = layer.feature.id
-            // remove old app layers entries, will update with the new geojson set.
-            stateData[id] && stateData[id].removeFrom(Map);
-            // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
-            // layer.setLatLngs([ ...util.flattenDeep(layer.getLatLngs()) ])
-
+        layers.forEach(layer => {
             layer.addTo(Map);
             layer.bringToFront()
-        })
+
+            // add tooltip
+            layer.bindTooltip( getCropLabel(layer.feature.properties.CROP_CODE), {
+                direction: 'bottom', 
+                offset: [0, 10],
+                permanent: true })
+            layer.openTooltip();
+        });
 
         msg && elements.alertUser(true, 'success', 'Парцелите се успешно освежени.')
     })
     .catch(err => console.log(err))
-} 
+}
