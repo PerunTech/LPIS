@@ -25,6 +25,8 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
     const layers = store.getState().data.layers;
     Object.values(layers).forEach(layer => layer.removeFrom(Map));
 
+    store.dispatch({pauseGrid: true})
+
     const getCropLabel = idx => {
         const str = String(crop_codes_desc[crop_codes_idx.findIndex(val => val === idx)]);
         const getLastIdx = (char) => str.indexOf(char) > 0 ? str.indexOf(char) : false;
@@ -78,6 +80,12 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
         });
 
         msg && elements.alertUser(true, 'success', 'Парцелите се успешно освежени.')
+        store.dispatch({pauseGrid: false})
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+        console.log(err);
+        store.dispatch({pauseGrid: false})
+    })
 }
+
+store.addState('gsaa', { pauseGrid: false})

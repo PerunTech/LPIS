@@ -2,9 +2,9 @@ import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { DataGrid } from '..';
 
-export const _DataList = ({data, setData, layers}) => {
+export const _DataList = ({data, setData, layers, pauseGrid}) => {
     return <div id='dataList' >
-        {data.map((el, idx) => 
+        {!pauseGrid && data.map((el, idx) => 
             <ui.TreeNode 
                 id={idx} 
                 key={el.id} 
@@ -23,8 +23,12 @@ export const _DataList = ({data, setData, layers}) => {
 _DataList.propTypes = {
     data: PropTypes.object,
     setData: PropTypes.func,
-    layers: PropTypes.obj
+    layers: PropTypes.obj,
+    pauseGrid: PropTypes.bool
 };
 
 export const DataList = core.connect(state => 
-    ({layers: state.data.layers}))(_DataList);
+    ({
+        layers: state.data.layers,
+        pauseGrid: state.gsaa.pauseGrid
+    }))(_DataList);
