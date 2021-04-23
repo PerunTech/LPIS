@@ -2,8 +2,8 @@ import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { DataGrid } from '..';
 
-export const _DataList = ({data, setData, layers}) => 
-    <div id='dataList' >
+export const _DataList = ({data, setData, layers}) => {
+    return <div id='dataList' >
         {data.map((el, idx) => 
             <ui.TreeNode 
                 id={idx} 
@@ -18,6 +18,7 @@ export const _DataList = ({data, setData, layers}) =>
                         layer.getMetadata().type === el.id)} />}
             </ui.TreeNode> )}
     </div>
+}
 
 _DataList.propTypes = {
     data: PropTypes.object,

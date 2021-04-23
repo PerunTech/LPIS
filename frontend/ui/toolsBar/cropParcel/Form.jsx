@@ -8,9 +8,9 @@ export function Form ({formData, onSubmit, onChange, children, enumIdx, enumName
     const getSchema = () => {
         const cfg = metadata.schema
         const cropCode = { ...cfg.properties.CROP_CODE }
-        cropCode.enum = enumIdx;
-        cropCode.enumNames = enumNames;
-        cropCode.default = enumIdx[0] || 0
+        cropCode.enum = [-1, ...enumIdx];
+        cropCode.enumNames = ['Одбери...', ...enumNames];
+        cropCode.default = -1// enumIdx[0] || 0
         cfg.properties.CROP_CODE = cropCode
         
         return { ...cfg  }
