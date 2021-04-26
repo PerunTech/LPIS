@@ -35,6 +35,10 @@
     flex: 0 0 78px;
     text-align: start;
     opacity: 1;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 .data-grid-row:hover .data-grid-index,
 .data-grid-row:hover .data-grid-column,
