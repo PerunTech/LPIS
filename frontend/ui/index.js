@@ -1,4 +1,5 @@
-export { readCookie, loadFarmerAssets } from './Util';
+export { readCookie } from './Util';
+export { loadFarmerAssets, getCropLabel, setAPLabel, setCPLabel } from './toolsBar/cropParcel/Util';
 
 export { ProcessButton } from './toolsBar/ProcessButton';
 

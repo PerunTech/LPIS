@@ -1,6 +1,7 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
-import { crop_codes_idx, crop_codes_desc } from '../toolsBar/cropParcel/Crop_Codes';
+import { getCropLabel } from '..'
+
 
 const { factory, Map, store } = core;
 const { ButtonGroup, Button, Icon } = ui;
@@ -157,7 +158,7 @@ const _GSAARows = ({rows}) => {
             if (props.AGRI_PARCEL_ID === undefined) return null; // if crop parcel is not a db row, exit.
 
             const id = getAgriNum(props.AGRI_PARCEL_ID),  
-                code = crop_codes_desc[crop_codes_idx.findIndex(val => val === props.CROP_CODE)],
+                code = getCropLabel(props.CROP_CODE), // crop_codes_desc[crop_codes_idx.findIndex(val => val === props.CROP_CODE)],
                 measurement = Math.round(props.AREA),
                 unit = 'm²',
                 nPlants = props.NUMBER_PLANTS;

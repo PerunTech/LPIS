@@ -1,4 +1,4 @@
-import { React, PropTypes, redux } from 'perun-core';
+import { React, PropTypes } from 'perun-core';
 import { ui, core } from '../../../Spatial';
 import { loadFarmerAssets } from '../..'
 

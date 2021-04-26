@@ -1,6 +1,7 @@
 import { elements } from 'perun-core';
 import { core } from '../../../Spatial';
 import {config} from './Config'
+import { setCPLabel } from '../..';
 
 const { http, factory, Map, store } = core;
 
@@ -36,6 +37,8 @@ export const saveCP = (data, callback) => {
             stateData[id] && stateData[id].removeFrom(Map);
 
             layer && layer.addTo(Map);
+
+            setCPLabel(layer)
 
             elements.alertUser(true, 
                 'success', 
