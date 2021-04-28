@@ -1,39 +1,12 @@
-import { elements } from 'perun-core';
-import { core, data } from '../../../Spatial';
+import { React, PropTypes, elements } from 'perun-core';
+import { core, data, config as spatialConfig } from '../../../Spatial';
 import { config as apConfig } from '../agriParcel/Config';
 import { config as cpConfig } from './Config';
 import { crop_codes_desc, crop_codes_idx } from './Crop_Codes';
 
 const { http, factory, store, Map } = core;
 const { geobuf, protobuf } = data;
-
-export const getCropLabel = idx => {
-    const str = String(crop_codes_desc[crop_codes_idx.findIndex(val => val === idx)]);
-    const getLastIdx = (char) => str.indexOf(char) > 0 ? str.indexOf(char) : false;
-    
-    return str.substring(0, getLastIdx('(') || getLastIdx('-') || getLastIdx('–') || str.length);
-}
-
-export const setCPLabel = cp => {
-    // add tooltip
-    cp.bindTooltip( getCropLabel(cp.feature.properties.CROP_CODE), {
-        direction: 'bottom', 
-        offset: [0, 10],
-        permanent: true })
-    cp.openTooltip();
-
-    return cp;
-}
-
-export const setAPLabel = ap => {
-    const oldId = ap.feature.properties.OLD_ID;
-    const loc = ap.feature.properties.HOME_NAME;
-
-    ap.bindTooltip(String(oldId + ' ' + loc), { direction: 'center', permanent: true });
-    ap.openTooltip();
-
-    return ap;
-}
+const { MIN_DIGI_SCALE } = spatialConfig;
 
 export function loadFarmerAssets (token, id, zoom = false, msg = false) {
     // remove all layers
@@ -57,7 +30,12 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
         // If init calls us and agri data is found, zoom to the first parcel.
         zoom && layers.length > 0 &&  Map.fitBounds(layers[0].getBounds());
 
-        layers.forEach(layer => setAPLabel(layer));
+        layers.forEach(layer => {
+            setAPLabel(layer)
+            layer.on('click', (e) => {
+                // console.log(e) add popup with cad parcels
+            })
+        });
     })
     .catch(err => console.log(err))
 
@@ -72,7 +50,6 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
         const layers = geojson.getLayers();
 
         layers.forEach(layer => {
-            console.log(layer)
             layer.addTo(Map);
             layer.bringToFront();
             setCPLabel(layer);
@@ -86,5 +63,71 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
         store.dispatch({pauseGrid: false});
     })
 }
+
+export const getCropLabel = idx => {
+    const str = String(crop_codes_desc[crop_codes_idx.findIndex(val => val === idx)]),
+        getLastIdx = (char, pos) => {
+            const idx = str.indexOf(char, pos)
+            return idx < 0 ? false : idx + 1;
+        },
+        isLatin = str.match(/[a-z]/i),
+        startIdx = isLatin 
+            ? getLastIdx('–') || getLastIdx('-') || 0
+            : 0,
+        endIdx = isLatin 
+            ? getLastIdx('(', startIdx + 1) || getLastIdx('-', startIdx + 1) || getLastIdx('–', startIdx + 1) || str.length
+            : getLastIdx('(') || getLastIdx('-') || getLastIdx('–') || str.length;
+    
+    return str.substring(startIdx, endIdx);
+}
+
+export const setCPLabel = cp => {
+    const cnt = cp.feature.properties.CENTROID;
+    const latLng = cnt 
+        ? Map.untransform(cnt.substring(cnt.indexOf('(') + 1, cnt.indexOf(')')).split(' ').map(s => Number(s)))
+        : null;
+
+    // add tooltip
+    cp.bindTooltip( getCropLabel(cp.feature.properties.CROP_CODE), {
+        direction: 'bottom', 
+        offset: [0, 10],
+        permanent: true })
+    cp.openTooltip(latLng);
+
+    return cp;
+}
+
+export const setAPLabel = ap => {
+    const oldId = ap.feature.properties.OLD_ID;
+    const loc = ap.feature.properties.HOME_NAME
+    const cnt = String(ap.feature.properties.CENTROID);
+    const latLng = Map.untransform(cnt.substring(cnt.indexOf('(') + 1, cnt.indexOf(')')).split(' ').map(s => Number(s)))
+
+    ap.bindTooltip(String(oldId + ' ' + loc), { direction: 'center', permanent: true });
+    ap.openTooltip(latLng);
+
+    return ap;
+}
+
+/* Map event listener for label render */
+let lastZoom = MIN_DIGI_SCALE;
+Map.on('zoomend', ({target}) => {
+    // Moved inside in zoom range, show label
+    (target.getZoom() >= MIN_DIGI_SCALE && lastZoom < MIN_DIGI_SCALE) 
+        && target.eachLayer(layer => {
+            if (layer.feature && layer.feature.properties) {
+                const props = layer.feature.properties;
+
+                props.DESCRIPTOR === 'AGRI_PARCEL' && setAPLabel(layer);
+                props.DESCRIPTOR === 'LAND_USE_PLAN' && setCPLabel(layer);
+            }
+        });
+
+    // Moved outside of zoom range, hide label
+    (target.getZoom() < MIN_DIGI_SCALE && lastZoom >= MIN_DIGI_SCALE) 
+        && target.eachLayer(layer => layer.unbindTooltip());
+
+    lastZoom = target.getZoom();
+}) 
 
 store.addState('gsaa', { pauseGrid: false})

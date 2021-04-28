@@ -37,7 +37,6 @@ export const saveCP = (data, callback) => {
             stateData[id] && stateData[id].removeFrom(Map);
 
             layer && layer.addTo(Map);
-
             setCPLabel(layer)
 
             elements.alertUser(true, 
