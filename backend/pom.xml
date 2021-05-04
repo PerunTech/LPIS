@@ -67,10 +67,11 @@
 					<Bundle-Vendor>Perun.Tech</Bundle-Vendor>
 					<Bundle-Description>${project.description}</Bundle-Description>
 					<Bundle-Activator>com.prtech.lpis.Activator</Bundle-Activator>
-					<Export-Package>com.prtech.lpis</Export-Package>
-					<Export-Package>com.prtech.lpis.assets</Export-Package>
-					<Import-Package>com.eclipsesource.jaxrs.publisher;version=!,*</Import-Package>
-					<Import-Package>com.prtech.spatial.geobuf;version=!,*</Import-Package>
+					<Import-Package>
+						com.eclipsesource.jaxrs.publisher;version=!,
+						com.prtech.spatial.geobuf;version=!,
+						*
+					</Import-Package>
 				</instructions>
 			</configuration>
 		</plugin>
