@@ -33,24 +33,7 @@ mvn_test:
     - mvn clean
     - mvn test
     
-dev_install:
-  stage: install
-  script:  
-    - pwd
-    - cd $CI_PROJECT_DIR/
-    - git reset --hard HEAD
-    - rm -rf node_modules
-    - npm install
-    - npm run build-dev
-    - cd backend
-    - pwd
-    - mvn clean deploy -DskipTests
-  except:
-    - dev
-    - staging
-    - master
-
-prod_install:
+install:
   stage: install
   script:  
     - pwd
@@ -64,7 +47,6 @@ prod_install:
     - mvn clean deploy -DskipTests
   only:
     - master
-    - staging
     - dev
 
 sonarqube_backend:

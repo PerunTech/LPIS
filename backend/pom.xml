@@ -4,7 +4,7 @@
 
 <groupId>perun</groupId>
 <artifactId>lpis</artifactId>
-<version>1.1.38</version>
+<version>1.1.39</version>
 <packaging>bundle</packaging>
 <name>Land Parcel Identification System</name>
 <properties>
@@ -67,6 +67,10 @@
 					<Bundle-Vendor>Perun.Tech</Bundle-Vendor>
 					<Bundle-Description>${project.description}</Bundle-Description>
 					<Bundle-Activator>com.prtech.lpis.Activator</Bundle-Activator>
+					<Export-Package>com.prtech.lpis</Export-Package>
+					<Export-Package>com.prtech.lpis.assets</Export-Package>
+					<Import-Package>com.eclipsesource.jaxrs.publisher;version=!,*</Import-Package>
+					<Import-Package>com.prtech.spatial.geobuf;version=!,*</Import-Package>
 				</instructions>
 			</configuration>
 		</plugin>
