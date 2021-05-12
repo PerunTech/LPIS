@@ -61,7 +61,7 @@ class Config {
 	}
 
 	static String getPermissionCode () {
-		return properties.getProperty("permissionCode", "");
+		return properties.getProperty("permissionCode", "yes");
 	}
 	
 	static String getCardIcon () {
