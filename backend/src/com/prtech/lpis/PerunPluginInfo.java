@@ -29,7 +29,10 @@ public class PerunPluginInfo implements IPerunPlugin {
 		int i = 1; // default
 		
 		try {
-			i = Integer.parseInt(Config.getProjectVersion().substring(0, 1));
+			String[] vArr = Config.getProjectVersion().split("\\.");
+			
+			if (vArr.length > 1)
+				i = Integer.parseInt(vArr[1]);
 		} catch (NumberFormatException e) {
 			log.error("Failed to parse project version: " + e);
 		}
