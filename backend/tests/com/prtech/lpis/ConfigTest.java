@@ -1,9 +1,17 @@
 package com.prtech.lpis;
 
 import org.junit.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 
 public class ConfigTest {
+	private static final Logger log = LogManager.getLogger(Config.class.getName());
 	
 	@Test
 	public void testProjectInfo () {
@@ -39,5 +47,44 @@ public class ConfigTest {
 				"Frontend js script path is not set, check configuration.\n"
 				+ "Without a registered script name, the user will not be able to access the plugin.", 
 				url != null && url.substring(urlLen -3, urlLen).equals(".js"));
+	}
+	
+	@Test
+	public void testGetVersion () {
+		Properties properties = new Properties();
+		InputStream is = Config.class.getClassLoader().getResourceAsStream("lpis.properties");
+	
+		
+		try {
+			properties.load(is);
+		} catch (IOException e) {
+			log.error("Failed loading configuration.");
+			log.error(e);
+		} finally {
+			try {
+				if (is != null) 
+					is.close();
+			} catch (IOException ioe) {
+				log.error(ioe);
+			}
+		}
+		System.out.println(properties);
+		System.out.println("-----------------------------------------");
+		
+		String v = properties.getProperty("version", "1");
+		String[] vArr = v.split("\\.");
+        for (String s: vArr) {
+            System.out.println(s);
+    	}
+
+		Assert.assertTrue("Pom version property read succesfully ",  vArr.length > 1);
+		
+		int i = 1;
+		if (vArr.length > 1) {
+			i = Integer.parseInt(vArr[1]);
+		}
+		System.out.println(i);
+		
+		// Assert.assertTrue("version number have not changed based on pom v second digit ",  i > 1);
 	}
 }
