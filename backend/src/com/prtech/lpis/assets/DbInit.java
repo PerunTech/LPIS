@@ -416,7 +416,7 @@ public class DbInit implements IDbInit {
 		DbDataField dbf28 = new DbDataField();
 		dbf28.setDbFieldName("PARCEL_INTERSECT");
 		dbf28.setDbFieldType(DbFieldType.NVARCHAR);
-		dbf28.setDbFieldSize(1000);
+		dbf28.setDbFieldSize(2000);
 		dbf28.setIsNull(true);
 		dbf28.setLabel_code("agri_parcel.parcel_intersect");
 		

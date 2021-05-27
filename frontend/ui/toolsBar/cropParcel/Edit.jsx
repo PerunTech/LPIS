@@ -4,8 +4,7 @@ import { config, editCPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
-import { loadFarmerAssets } from '../..';
-import { ProcessButton } from '../..';
+import { loadFarmerAssets, ProcessButton } from '../..';
 
 const { Map, store, factory } = core;
 const { edit } = tools;

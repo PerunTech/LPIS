@@ -23,7 +23,7 @@ export const saveCP = (data, callback) => {
         }  else {
             const geojsonTemplate = {
                 type: 'Feature',
-                id: data.object_id, 
+                id: data.object_id,
                 geometry: data.GEOM,
                 properties: data
             }

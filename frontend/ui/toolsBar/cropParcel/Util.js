@@ -1,4 +1,4 @@
-import { React, PropTypes, elements } from 'perun-core';
+import { elements } from 'perun-core';
 import { core, data, config as spatialConfig } from '../../../Spatial';
 import { config as apConfig } from '../agriParcel/Config';
 import { config as cpConfig } from './Config';
@@ -16,8 +16,12 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
     store.dispatch({pauseGrid: true})
 
     http.call('getFarmerAssets', {
-        url: window.server + '/lpis/get/farmerAssets/' + String(token) + '/' + Number(id)+ '/AGRI_PARCEL',
+        url: '/lpis/get/farmerAssets/' 
+            + (token ? String(token) : '{gsaa.token}') + '/' 
+            + (id ? Number(id) : '{gsaa.farmerId}') 
+            + '/AGRI_PARCEL',
         method: 'get',
+        baseURL: window.server,
         responseType: 'arraybuffer'
     })
     .then(response => {
@@ -32,7 +36,7 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
 
         layers.forEach(layer => {
             setAPLabel(layer)
-            layer.on('click', (e) => {
+            layer.on('click', () => {
                 // console.log(e) add popup with cad parcels
             })
         });
@@ -40,8 +44,12 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
     .catch(err => console.log(err))
 
     http.call('getFarmerAssets', {
-        url: window.server + '/lpis/get/farmerAssets/' + String(token) + '/' + Number(id) + '/LAND_USE_PLAN',
+        url: '/lpis/get/farmerAssets/' 
+            + (token ? String(token) : '{gsaa.token}') + '/' 
+            + (id ? Number(id) : '{gsaa.farmerId}') 
+            + '/LAND_USE_PLAN',
         method: 'get',
+        baseURL: window.server,
         responseType: 'arraybuffer'
     })
     .then(response => {

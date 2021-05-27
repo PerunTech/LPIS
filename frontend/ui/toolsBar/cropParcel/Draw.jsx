@@ -4,7 +4,7 @@ import { config, drawCPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
-import { ProcessButton } from '../..';
+import { ProcessButton, loadFarmerAssets } from '../..';
 
 const { Map, store, factory, http } = core;
 const { draw: { polygon } } = tools;
@@ -58,6 +58,8 @@ export const Draw = ({ processID, farmerId }) => {
         layer.removeFrom && layer.removeFrom(Map);
         // Disable draw handler.
         polygon.disable('force');
+        // add refresh assets
+        loadFarmerAssets();
     }
 
     const onChange = ({ formData }) => 

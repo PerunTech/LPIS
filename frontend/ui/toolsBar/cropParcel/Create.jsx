@@ -4,7 +4,8 @@ import { config, createCPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
-import { ProcessButton } from '../..';
+import { ProcessButton, loadFarmerAssets } from '../..';
+
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory, http, util } = core;
@@ -80,6 +81,8 @@ export const Create = ({ processID, farmerId }) => {
         store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
+        // add refresh assets
+        loadFarmerAssets();
     }
 
     const onChange = ({ formData }) => 
