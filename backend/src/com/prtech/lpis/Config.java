@@ -46,7 +46,7 @@ class Config {
 	}
 	
 	static String getProjectVersion () {
-		return properties.getProperty("version", "1");
+		return properties.getProperty("version", "2");
 	}
 	
 	static String getDescription () {
