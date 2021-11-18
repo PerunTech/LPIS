@@ -55,7 +55,7 @@ public class PerunPluginInfo implements IPerunPlugin {
 	/** @return Name of the image asset to be used for icon. */
 	@Override
 	public String getIconPath() {
-		return "/perun/assets/img/modulecards/lpis.jpg";
+		return "/perun/assets/img/modulecards/lpis.svg";
 	}
 
 	/**
