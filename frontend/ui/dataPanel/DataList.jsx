@@ -21,9 +21,9 @@ export const _DataList = ({data, setData, layers, pauseGrid}) => {
 }
 
 _DataList.propTypes = {
-    data: PropTypes.object,
+    data: PropTypes.array,
     setData: PropTypes.func,
-    layers: PropTypes.obj,
+    layers: PropTypes.object,
     pauseGrid: PropTypes.bool
 };
 

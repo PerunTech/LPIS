@@ -46,7 +46,7 @@ _DataPanel.defaultProps = {
 }
 
 _DataPanel.propTypes = {
-    categories: PropTypes.obj,
+    categories: PropTypes.array,
     processID: PropTypes.string
 }
 
