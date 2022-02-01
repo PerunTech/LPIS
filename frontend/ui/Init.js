@@ -1,5 +1,6 @@
 import { redux } from 'perun-core';
 import { ui, core } from '../Spatial';
+import { layerList } from '../config/layerList';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets  } from '.';
 
 let _isLoaded = false;
@@ -44,7 +45,8 @@ export const lpis = () => {
         .addControl(LayerPanel, {}, { position: 'right' })
         .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
         .withNavigationControl()
+        .addRasterLayers(layerList[0], layerList[1], { collapsed: false, position: 'right' })
         .withWindRose()
-        .render('');
+        .render('lpis-map');
         // .render('gsaa-map');
 }
