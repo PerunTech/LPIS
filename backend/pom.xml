@@ -4,7 +4,7 @@
 
 <groupId>perun</groupId>
 <artifactId>lpis</artifactId>
-<version>1.2.5-SNAPSHOT</version>
+<version>1.2.6-SNAPSHOT</version>
 <packaging>bundle</packaging>
 <name>Land Parcel Identification System</name>
 <properties>
@@ -102,7 +102,7 @@
 	<dependency>
 		<groupId>svarog</groupId>
 		<artifactId>svarog</artifactId>
-		<version>[3.2.4,)</version>
+		<version>[3.2.6,3.2.99]</version>
 		<scope>provided</scope>
 	</dependency>
 	<dependency>
