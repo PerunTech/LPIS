@@ -113,6 +113,109 @@ public class ApplicationServices {
 
 		return Response.status(200).entity(pb.toSimpleJson().toString()).build();
 	}
+	@Path("/save/agriParcel/{token}/{objectId}/{parentId}/{opType}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/pbf")
+	public StreamingOutput saveAgriParcelToFarm(@PathParam("token") String token, @PathParam("objectId") Long objectId,@PathParam("parentId") Long parentId,
+			@PathParam("opType") Long opType, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
+
+		return new StreamingOutput() {
+			public void write(OutputStream stream) throws IOException {
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+				SvReader svr = null;
+				SvGeometry svg = null;
+				DbDataObject ap = null;
+				JsonObject metadata = new JsonObject();
+				try {
+					svr = new SvReader(token);
+					svr.setIncludeGeometries(true);
+					svg = new SvGeometry(svr);
+					ap = new DbDataObject();
+					DbDataArray intersectArr = new DbDataArray();
+					DbDataArray resultArr = new DbDataArray();
+					Geometry geom = null;
+					Long typeId = SvCore.getTypeIdByName("AGRI_PARCEL");
+					DbDataArray fieldSet = SvCore.getFields(typeId);
+					boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
+					metadata = Util.dataToJson(formVals);
+
+					if (isUpdate) {
+						ap = svr.getObjectById(objectId, typeId, null);
+					} else {
+						ap.setObjectId(0L);
+						ap.setObjectType(typeId);
+						ap.setParentId(parentId);
+					}
+
+					// Map form values to dbo fields
+					for (DbDataObject field : fieldSet.getItems()) {
+						String fieldName = field.getVal("FIELD_NAME").toString();
+						if (Util.excludeField(fieldName)
+								&& !"".equalsIgnoreCase(field.getVal("FIELD_TYPE").toString())) {
+							ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
+						}
+					}
+
+					// Run cut operations with neighbour agri parcels.
+					geom = Util.jsonToGeometry(metadata.get("GEOM"));
+					if (opType > 0) {
+						if (opType.equals(1L)) {
+							geom = svg.cutLayerFromGeom(geom, typeId);
+							if ("Polygon".equalsIgnoreCase(geom.getGeometryType()))
+								geom = SvUtil.sdiFactory.createMultiPolygon(new Polygon[] { (Polygon) geom });
+							SvGeometry.setGeometry(ap, geom);
+						} else if (opType.equals(2L)) {
+							SvGeometry.setGeometry(ap, geom);
+							Collection<Geometry> apCol = svg.cutGeomFromLayer(geom, typeId);
+							Iterator<Geometry> it = apCol.iterator();
+							while (it.hasNext()) {
+								Geometry g = it.next();
+								DbDataObject dbo = (DbDataObject) g.getUserData();
+
+								if ("Polygon".equalsIgnoreCase(g.getGeometryType()))
+									g = SvUtil.sdiFactory.createMultiPolygon(new Polygon[] { (Polygon) g });
+								SvGeometry.setGeometry(dbo, g);
+
+								Util.calculateGeometryDerivatives(dbo);
+								intersectArr.addDataItem(dbo);
+								resultArr.addDataItem(dbo);
+							}
+
+							svg.saveGeometry(intersectArr);
+						}
+					} else {
+						SvGeometry.setGeometry(ap, geom);
+					}
+
+					Util.calculateGeometryDerivatives(ap);
+					resultArr.addDataItem(ap);
+
+					svg.saveGeometry(ap);
+					enc.writeDbDataArray(resultArr);
+				} catch (Exception e) {
+					String errMsg = "Failed saving agri parcel. Please see server logs";
+					if (e instanceof SvException)
+						log.error("Failed saving agri parcel. " + ((SvException) e).getFormattedMessage(), e);
+					errMsg = ((SvException) e).getJsonMessage();
+					try {
+						stream.write(errMsg.getBytes(StandardCharsets.UTF_8));
+					} catch (IOException ioe) {
+						log.error("Stream closed, can't write error", ioe);
+					}
+					log.error(errMsg, e);
+				} finally {
+					if (svg != null)
+						svg.close();
+					if (enc != null)
+						enc.close();
+					if (svr != null)
+						svr.close();
+				}
+			};
+		};
+	}
 
 	@Path("/save/agriParcel/{token}/{objectId}/{opType}")
 	@POST
