@@ -22,7 +22,7 @@ export function readCookie (name) {
 
 export const getFarmMapAssets = (fitBounds = false, token) => {
     const farmObjId = perunStore.getState().frmapData?.farmData?.["FARM.OBJECT_ID"]
-    const url = `${window.server}/spatial/geometry/get/byparent/'${token}'/AGRI_PARCEL/'${farmObjId}`
+    const url = `${window.server}/spatial/geometry/get/byparent/${token}/AGRI_PARCEL/${farmObjId}`
 
     http.call('getFarmMapAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
         const data = geobuf.decode(protobuf(response));
