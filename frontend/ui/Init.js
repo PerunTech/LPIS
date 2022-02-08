@@ -2,6 +2,7 @@ import { redux } from 'perun-core';
 import { ui, core } from '../Spatial';
 import { layerList } from '../config/layerList';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets  } from '.';
+import { getFarmMapAssets } from './Util';
 
 let _isLoaded = false;
 const _gsaa = (_token) => {
@@ -49,4 +50,19 @@ export const lpis = () => {
         .withWindRose()
         .render('lpis-map');
         // .render('gsaa-map');
+}
+
+export const farmRegLpis = () => {
+    const _token = redux.store.getState().security.svSession;
+    getFarmMapAssets(Boolean('zoom in', _token))
+
+    return ui.init(_token)
+        .addControl(ToolsBar, {}, { position: 'top' })
+        .addControl(DataPanel, {}, { position: 'left' })
+        .addControl(LayerPanel, {}, { position: 'right' })
+        .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
+        .withNavigationControl()
+        .addRasterLayers(layerList[0], layerList[1], { collapsed: false, position: 'right' })
+        .withWindRose()
+        .render('farm-registry-map');
 }

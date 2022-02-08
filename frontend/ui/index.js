@@ -32,4 +32,4 @@ export { StatusBar } from './statusBar/StatusBar';
 export { ToolsBar } from './toolsBar/ToolsBar';
 export { MiniBar } from './toolsBar/MiniBar';
 
-export { lpis, gsaa } from './Init';
+export { lpis, gsaa, farmRegLpis } from './Init';
