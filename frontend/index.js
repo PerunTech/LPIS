@@ -5,8 +5,8 @@ import './assets';
 import * as ui from './ui';
 
 export const lpis = {
-    name, 
-    version, 
+    name,
+    version,
     description,
     routes: [{
         name: 'gsaa',
@@ -17,7 +17,11 @@ export const lpis = {
         name: 'lpis',
         path: '/main/lpis',
         render: ui.lpis,
-        // render: ui.gsaa,
+        isExact: true
+    }, {
+        name: 'lpis_farm_registry',
+        path: '/main/farm-registry/map',
+        render: ui.farmRegLpis,
         isExact: true
     }],
     ui
