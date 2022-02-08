@@ -1,14 +1,13 @@
-import { React, redux, createHashHistory } from 'perun-core';
+import { React, PropTypes, redux, createHashHistory } from 'perun-core';
 import { ui, core } from '../../Spatial';
 import { PhysicalBlock, AgriParcel, CropParcel, IO } from '..';
 
 const { Tab, Tabs, Button, Icon, Selection, Measurement } = ui;
 const { store, logoutUser } = redux;
 const history = createHashHistory();
-const mapId = core.store.getState().map.id;
 
-export const ToolsBar = () => 
-    <div id='toolsbar' >
+const _ToolsBar = ({ mapId }) => {
+    return <div id='toolsbar' >
         <Button disabled className='left-corner-filler' />
         <Button 
             onClick={() => history.push('/')} 
@@ -46,3 +45,11 @@ export const ToolsBar = () =>
                 <Icon name='logout' size='20px' />
         </Button>
     </div>;
+}
+
+_ToolsBar.propTypes = {
+    mapId: PropTypes.string
+}
+
+export const ToolsBar = core.connect(state => 
+    ({mapId: state.map.id}))(_ToolsBar);
