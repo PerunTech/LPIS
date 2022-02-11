@@ -4,6 +4,8 @@ import { layerList } from '../config/layerList';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets  } from '.';
 import { getFarmMapAssets } from './Util';
 
+const { store } = core;
+
 let _isLoaded = false;
 const _gsaa = (_token) => {
     // Prevent multiple initializations.
@@ -53,6 +55,7 @@ export const lpis = () => {
 }
 
 export const farmRegLpis = () => {
+    store.addState('farmRegistry', { 'agriParcels': {} })
     const _token = redux.store.getState().security.svSession;
     getFarmMapAssets(Boolean('zoom in'),  _token)
 
