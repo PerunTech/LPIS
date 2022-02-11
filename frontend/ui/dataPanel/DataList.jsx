@@ -1,10 +1,11 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { DataGrid } from '..';
+import { FarmDataGrid } from './FarmDataGrid';
 
-export const _DataList = ({data, setData, layers, pauseGrid}) => {
+export const _DataList = ({data, setData, mapId, farmData, layers, pauseGrid}) => {
     return <div id='dataList' >
-        {!pauseGrid && data.map((el, idx) => 
+        {!pauseGrid && mapId !== 'farm-registry-map' && data.map((el, idx) => 
             <ui.TreeNode 
                 id={idx} 
                 key={el.id} 
@@ -17,6 +18,7 @@ export const _DataList = ({data, setData, layers, pauseGrid}) => {
                     rows={Object.values(layers).filter(layer => 
                         layer.getMetadata().type === el.id)} />}
             </ui.TreeNode> )}
+        {mapId === 'farm-registry-map' && <FarmDataGrid type='agri_parcel' rows={farmData} />}
     </div>
 }
 
@@ -24,11 +26,15 @@ _DataList.propTypes = {
     data: PropTypes.array,
     setData: PropTypes.func,
     layers: PropTypes.object,
-    pauseGrid: PropTypes.bool
+    pauseGrid: PropTypes.bool,
+    mapId: PropTypes.string,
+    farmData: PropTypes.array,
 };
 
 export const DataList = core.connect(state => 
     ({
         layers: state.data.layers,
-        pauseGrid: state.gsaa.pauseGrid
+        pauseGrid: state.gsaa.pauseGrid,
+        mapId: state.map.id,
+        farmData: state.farmRegistry?.agriParcels,
     }))(_DataList);
