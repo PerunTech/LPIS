@@ -31,8 +31,8 @@ export const getFarmMapAssets = (fitBounds = false, token) => {
         const layers = geojson.getLayers();
 
         //clear map of all vectors, reset state.
-        // const prevAgriParcels = store.getState().farmRegistry.agriParcels;
-        // Object.values(prevAgriParcels).forEach(v => v.removeFrom && v.removeFrom(Map));
+        const prevAgriParcels = store.getState().farmRegistry.agriParcels;
+        Object.values(prevAgriParcels).forEach(v => v.removeFrom && v.removeFrom(Map));
 
         // send geojson to factory, visualize
         layers.forEach(layer => layer.addTo(Map));
@@ -45,7 +45,7 @@ export const getFarmMapAssets = (fitBounds = false, token) => {
         });
 
         // register in app state
-        // store.dispatch({ 'agriParcels': layers })
+        store.dispatch({ 'agriParcels': layers })
         fitBounds && Map.fitBounds(geojson.getBounds(), { padding: [100, 100] });
     }).catch(err => console.log(err));
 };
