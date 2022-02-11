@@ -16,7 +16,7 @@ const _layerGroup = factory.layerGroup();
 const _id = ['createAP', 'drawAP', 'editAP', 'splitAP', 'mergeAP', 'cutAP', 'fillAP', 'assignAP', 'deleteAP'];
 const _style = { color: '#eed000', fillColor: '#FFFFFF' };
 
-const _AgriParcel = ({processID}) => {
+const _AgriParcel = ({processID, farmObjId}) => {
     const [{layer, data, isGuided}, setState] = useReducer((currState, update) => 
         ({...currState, ...update}), 
         { layer: {}, data: {}, isGuided: false });
@@ -39,12 +39,14 @@ const _AgriParcel = ({processID}) => {
     const onChange = ({ formData }) => 
         setState({data: { ...data, ...formData }});
 
-    const onSubmit = ({ formData }) => 
+    const onSubmit = ({ formData }) => {
         saveAP(JSON.stringify({ 
             ...data, 
             ...formData,
             OBJECT_ID: (layer.feature && layer.feature.id && Number(layer.feature.id)) || 0,
+            PARENT_ID: farmObjId || 0,
             GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
+    }
 
     const _createAP = () => {
         // Click handler for selection of location and creation of agri parcel geometry.
@@ -480,9 +482,11 @@ const _AgriParcel = ({processID}) => {
 
 _AgriParcel.propTypes = {
     processID: PropTypes.string,
+    mapId: PropTypes.string,
+    farmObjId: PropTypes.number,
 }
 
 export const AgriParcel = core.connect(state => 
-    ({ processID: state.app.processID }))(_AgriParcel);
+    ({ processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId }))(_AgriParcel);
 
 core.store.addState('http', restAP);

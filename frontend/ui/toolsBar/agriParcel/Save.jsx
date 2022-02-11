@@ -75,10 +75,11 @@ export const saveAP = (layer, callback) => {
         // Unmount user prompt from check 2 manually
         ReactDOM.unmountComponentAtNode(container);
 
+        const parentId = layer.PARENT_ID || 0
         // Make the call for the final save, with results from prompt 2.
         http.call('save_ap', { 
                 data: JSON.stringify({ ...layer, GEOM: JSON.parse(layer.GEOM)}),
-                url: '/lpis/save/agriParcel/{init.token}/' + layer.OBJECT_ID + '/' + action,
+                url: '/lpis/save/agriParcel/{init.token}/' + layer.OBJECT_ID + '/' + parentId + '/' + action,
             })
             .then(response => _succeed(geobuf.decode(protobuf(response))))
             .catch(() => _fail());
