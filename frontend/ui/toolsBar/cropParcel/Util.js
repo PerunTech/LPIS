@@ -106,8 +106,8 @@ export const setCPLabel = cp => {
 }
 
 export const setAPLabel = ap => {
-    const oldId = ap.feature.properties.OLD_ID;
-    const loc = ap.feature.properties.HOME_NAME
+    const oldId = ap.feature.properties.OLD_ID || '';
+    const loc = ap.feature.properties.HOME_NAME || '';
     const cnt = String(ap.feature.properties.CENTROID);
     const latLng = Map.untransform(cnt.substring(cnt.indexOf('(') + 1, cnt.indexOf(')')).split(' ').map(s => Number(s)))
 
