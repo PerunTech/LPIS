@@ -1,9 +1,10 @@
-import { React, PropTypes, elements } from 'perun-core';
+import { React, PropTypes, elements, redux } from 'perun-core';
 import { core,  data, tools, ui, config as cfg } from '../../../Spatial';
 import { config, createAPMsg, drawAPMsg, cutAPMsg, cutConfig, restAP, deleteAPMsg, fillConfig } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveAP } from './Save';
+import { getFarmMapAssets } from '../../Util';
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory, http, util } = core;
@@ -16,7 +17,7 @@ const _layerGroup = factory.layerGroup();
 const _id = ['createAP', 'drawAP', 'editAP', 'splitAP', 'mergeAP', 'cutAP', 'fillAP', 'assignAP', 'deleteAP'];
 const _style = { color: '#eed000', fillColor: '#FFFFFF' };
 
-const _AgriParcel = ({processID, farmObjId}) => {
+const _AgriParcel = ({processID, mapId, farmObjId}) => {
     const [{layer, data, isGuided}, setState] = useReducer((currState, update) => 
         ({...currState, ...update}), 
         { layer: {}, data: {}, isGuided: false });
@@ -33,6 +34,10 @@ const _AgriParcel = ({processID, farmObjId}) => {
         store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
+        if (mapId === 'farm-registry-map') {
+            const session = redux.store.getState().security.svSession
+            getFarmMapAssets(false, session)
+        }
         fn && fn();
     }
 
