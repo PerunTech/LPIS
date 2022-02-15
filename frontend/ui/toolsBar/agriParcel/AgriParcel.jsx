@@ -29,6 +29,7 @@ const _AgriParcel = ({processID, mapId, farmObjId}) => {
     };
 
     const disable = (fn) => {
+        Map.off('click');
         // Reset state, internal and application-wide.
         setState({ layer: {}, data: {}, isGuided: false });
         store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
