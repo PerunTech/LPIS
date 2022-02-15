@@ -36,7 +36,7 @@ const _AgriParcel = ({processID, mapId, farmObjId}) => {
         layer.removeFrom && layer.removeFrom(Map);
         if (mapId === 'farm-registry-map') {
             const session = redux.store.getState().security.svSession
-            getFarmMapAssets(false, session)
+            getFarmMapAssets(session)
         }
         fn && fn();
     }

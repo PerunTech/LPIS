@@ -57,7 +57,7 @@ export const lpis = () => {
 export const farmRegLpis = () => {
     store.addState('farmRegistry', { 'agriParcels': {}, 'farmObjId': '' })
     const _token = redux.store.getState().security.svSession;
-    getFarmMapAssets(Boolean('zoom in'),  _token)
+    getFarmMapAssets(_token, true)
 
     return ui.init(_token)
         .addControl(ToolsBar, {}, { position: 'top' })
