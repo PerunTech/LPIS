@@ -29,6 +29,7 @@ const _AgriParcel = ({processID, mapId, farmObjId}) => {
     };
 
     const disable = (fn) => {
+        Map.off('click');
         // Reset state, internal and application-wide.
         setState({ layer: {}, data: {}, isGuided: false });
         store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
@@ -36,7 +37,7 @@ const _AgriParcel = ({processID, mapId, farmObjId}) => {
         layer.removeFrom && layer.removeFrom(Map);
         if (mapId === 'farm-registry-map') {
             const session = redux.store.getState().security.svSession
-            getFarmMapAssets(false, session)
+            getFarmMapAssets(session)
         }
         fn && fn();
     }
