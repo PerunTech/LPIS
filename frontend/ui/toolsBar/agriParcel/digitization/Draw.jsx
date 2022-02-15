@@ -1,11 +1,12 @@
 import { React, Loading, redux } from 'perun-core';
-import { core, ui } from '../../../../Spatial';
+import { core, ui, config as cfg } from '../../../../Spatial';
 import { getFarmMapAssets } from '../../../Util';
 import { ProcessButton } from '../../ProcessButton';
 import { Guidance } from './Guidance';
 import { Form } from '../Form';
 import { saveAP } from '../Save';
 
+const { MAP_CONFIG } = cfg;
 const { Map, store, factory } = core;
 const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;

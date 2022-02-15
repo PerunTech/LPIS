@@ -1,11 +1,12 @@
 import { React, Loading, redux } from 'perun-core';
-import { core, ui } from '../../../../Spatial';
+import { core, ui, config as cfg } from '../../../../Spatial';
 import { getFarmMapAssets } from '../../../Util';
 import { ProcessButton } from '../../ProcessButton';
 import { Guidance } from './Guidance';
 import { Form } from '../Form';
 import { saveAP } from '../Save';
 
+const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory } = core;
 const { edit } = tools;
 const { Icon, DrawActions } = ui;
@@ -55,7 +56,7 @@ const _Edit = ({ processID, mapId, farmObjId }) => {
       X: X,
       Y: Y,
       parent_id: farmObjId,
-      OBJECT_ID: 0
+      OBJECT_ID: (layer.feature && layer.feature.id && Number(layer.feature.id)) || 0
     }, disable);
 
   const renderForm = () =>

@@ -1,5 +1,5 @@
 import { React, Loading, redux } from 'perun-core';
-import { core, ui, data } from '../../../../Spatial';
+import { core, ui, data, config as cfg } from '../../../../Spatial';
 import { getFarmMapAssets } from '../../../Util';
 import { ProcessButton } from '../../ProcessButton';
 import { Guidance } from './Guidance';
@@ -7,6 +7,7 @@ import { Form } from '../Form';
 import { createAPMsg } from '../Config';
 import { saveAP } from '../Save';
 
+const { MAP_CONFIG } = cfg;
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { Icon, DrawActions } = ui;
