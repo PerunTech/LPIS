@@ -4,6 +4,7 @@ import { Copy } from './Copy';
 import { Cut } from './Cut';
 import { DeleteControl } from './DeleteControl';
 import { DrawControl } from './DrawControl';
+import { Fill } from './Fill';
 import { Merge } from './Merge';
 import { Split } from './Split';
 
@@ -17,5 +18,7 @@ export const Digitization = () =>
         <Cut />
         <Split />
         <Merge />
+        <Fill />
+        <Divider />
         <DeleteControl />
     </ButtonGroup>;
