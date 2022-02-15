@@ -32,14 +32,14 @@ const _DeleteControl = ({ processID, farmObjId }) => {
                 elements.alertUser(true,
                     'success',
                     'Успешно бришење',
-                    'Просторната контрола е избришана од базата на податоци.');
+                    'Парцелата е избришана од базата на податоци.');
                 disable()
             })
             .catch(() => {
                 elements.alertUser(true,
                     'error',
                     'Грешка при бришење',
-                    'Просторната контрола не е избришана од базата на податоци.');
+                    'Парцелата не е избришана од базата на податоци.');
                 disable()
             })
     }
@@ -60,8 +60,8 @@ const _DeleteControl = ({ processID, farmObjId }) => {
         } else {
             elements.alertUser(true,
                 'warning',
-                'Не се пронајдени просторни контроли.',
-                'Додадете контроли со просторна определба пред да ја користите алатката за бришење.');
+                'Не се пронајдени парцели.',
+                'Додадете парцели пред да ја користите алатката за бришење.');
         }
     }
 
@@ -95,7 +95,7 @@ const _DeleteControl = ({ processID, farmObjId }) => {
                         <DrawActions cancel={disable} />
                     </Modal.Title>
                     <Modal.Body className='ap-modal-body' >
-                        <div id={_id} >{'Ја избравте контролата со ид. број '
+                        <div id={_id} >{'Ја избравте парцелата со СИЗП број '
                             + layer.feature.id + ' и површина ' + Math.round(layer.getMeasurement()) + ' m². Дали сте сигурни дека сакате да ја избришете?'}</div>
                         <Button onClick={() => { deleteLayer() }} size='' className='cancel' > Избриши</Button>
                     </Modal.Body>

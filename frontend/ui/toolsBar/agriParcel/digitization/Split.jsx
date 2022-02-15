@@ -1,17 +1,21 @@
-import { React, PropTypes, elements, redux } from 'perun-core';
-import { core, tools, ui, data, cntConfig, ProcessButton, GuideForm, saveControl, getSpatialResults } from '../../..';
+import { React, elements } from 'perun-core';
+import { core, ui, data, tools } from '../../../../Spatial';
+import { config } from '../Config';
+import { getFarmMapAssets } from '../../../Util';
+import { Guidance } from '../Guidance';
+import { ProcessButton } from '../../ProcessButton';
 
-const { Map, store, factory, http, util } = core;
+const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
-const { draw: { line } } = tools;
-const { Button, Icon, DrawActions } = ui;
+const { draw: { polygon, line } } = tools;
+const { Icon } = ui;
 const { useReducer } = React;
 const _id = 'split-control';
 
 /**
  * Split spatial control.
  */
-export const Split = ({ processID }) => {
+const _Split = ({ processID, farmObjId }) => {
     const [{ layer, data }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }), { layer: {}, data: {} });
 
@@ -32,8 +36,8 @@ export const Split = ({ processID }) => {
             if (e && e.layer) {
                 elements.alertUser(true,
                     'warning',
-                    'Дали сакате да го поделите резултатот од контрола',
-                    'Дали сакате да го поделите резултатот од контрола на повеќе резултати',
+                    'Дали сакате да ја поделите парцелата',
+                    'Дали сакате да ја поделите парцелата на повеќе помали парцели',
                     splitParcel.bind(null, e.layer),
                     cleanup.bind(null, e.layer),
                     true,
@@ -47,38 +51,31 @@ export const Split = ({ processID }) => {
 
         });
         store.dispatch({ processID: _id });
-        line.enable(cntConfig);
+        line.enable(config);
     };
 
     const splitParcel = (lineLayer) => {
 
         http.call(_id, {
-            url: '/WsOtscmIacs/SpatialControl/split/{init.token}/SPATIAL_CONTROL/' + redux.store.getState().mapData.cid,
+            url: '/spatial/geometry/split/preview/{init.token}/AGRI_PARCEL/' + farmObjId,
             method: 'post',
             responseType: 'arraybuffer',
             data: JSON.stringify(factory.GeoJSON.fromLayer(lineLayer))
         })
             .then(response => {
-                const geojson = factory.geoJSON(geobuf.decode(protobuf(response)), cntConfig.pathOptions);
+                const geojson = factory.geoJSON(geobuf.decode(protobuf(response)), config.pathOptions);
                 const stateData = store.getState().data.layers;
 
                 geojson.getLayers().forEach(layer => {
                     const id = layer.feature.id
-
                     // remove old app layers entries, will update with the new geojson set.
                     stateData[id] && stateData[id].removeFrom(Map);
-
-                    // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
-                    // Revise this
-                    // layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
-                    // layer.addTo(Map);
-
                 })
                 elements.alertUser(true,
                     'success',
                     'Успешно поделена просторна контрола',
                     'Добиени се ' + geojson.getLayers().length + ' нови парцели.',
-                    getSpatialResults
+                    getFarmMapAssets
                 )
             })
             .catch(error => {
@@ -89,7 +86,7 @@ export const Split = ({ processID }) => {
                     'error',
                     'Грешка при поделба просторна контрола',
                     errmsg,
-                    getSpatialResults
+                    getFarmMapAssets
                 );
 
             })
@@ -97,8 +94,6 @@ export const Split = ({ processID }) => {
         //remove line   
         cleanup(lineLayer);
     }
-
-
 
     const disable = () => {
         // Reset state, internal and application-wide.
@@ -111,17 +106,11 @@ export const Split = ({ processID }) => {
         line.disable('force');
     }
 
-    const onChange = ({ formData }) =>
-        setState({ data: { ...data, ...formData } });
-
-    const onSubmit = ({ formData }) =>
-        saveControl(JSON.stringify({ ...data, ...formData, GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
-
     return <ProcessButton id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
         <Icon name={_id} size='28px' style={{ marginTop: '2px' }} />
         <span style={{ display: 'block', marginTop: '5px' }}>Подели парцела</span>
         {processID === _id
-            && <GuideForm id={_id}
+            && <Guidance id={_id}
                 finish={() => polygon._finishShape()}
                 undo={() => polygon._removeLastVertex()}
                 disable={disable}
@@ -130,6 +119,6 @@ export const Split = ({ processID }) => {
     </ProcessButton>;
 };
 
-Split.propTypes = {
-    processID: PropTypes.string,
-}
+export const Split = core.connect(state => ({
+    processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
+}))(_Split)

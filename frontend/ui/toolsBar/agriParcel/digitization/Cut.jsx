@@ -1,6 +1,6 @@
 import { React, Loading, elements, redux } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
-import { config } from '../Config';
+import { config, drawAPMsg } from '../Config';
 import { decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
 import { saveAP } from '../Save';
 import { Guidance } from '../Guidance';
@@ -58,7 +58,7 @@ const _Cut = ({ processID, farmObjId }) => {
     const cutParcel = e => {
         if (e && e.layer) {
             http.call(_id, {
-                url: '/spatial/geometry/hole/{init.token}/SPATIAL_CONTROL/' + farmObjId,
+                url: '/spatial/geometry/hole/{init.token}/AGRI_PARCEL/' + farmObjId,
                 method: 'post',
                 responseType: 'arraybuffer',
                 data: JSON.stringify(factory.GeoJSON.fromLayer(e.layer))
@@ -120,12 +120,12 @@ const _Cut = ({ processID, farmObjId }) => {
         ? <Guidance id={_id}
             finish={() => polygon._finishShape()}
             undo={() => polygon._removeLastVertex()}
-            disable={() => disable(_stopDrawAP)}
+            disable={() => disable()}
             msg={drawAPMsg}
             title='Нацртај земјоделска парцела' />
         : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
             <DrawActions
-                cancel={() => disable(_stopDrawAP)} />
+                cancel={() => disable()} />
         </Form>)
 
 

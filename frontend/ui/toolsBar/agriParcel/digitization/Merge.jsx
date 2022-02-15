@@ -1,17 +1,21 @@
-import { React, PropTypes, elements, redux } from 'perun-core';
-import { core, tools, ui, data, cntConfig, ProcessButton, GuideForm, saveControl, getSpatialResults } from '../../..';
+import { React, elements } from 'perun-core';
+import { core, ui, data, tools } from '../../../../Spatial';
+import { config } from '../Config';
+import { getFarmMapAssets } from '../../../Util';
+import { Guidance } from '../Guidance';
+import { ProcessButton } from '../../ProcessButton';
 
-const { Map, store, factory, http, util } = core;
+const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
-const { draw: { line } } = tools;
-const { Button, Icon, DrawActions } = ui;
+const { draw: { polygon, line } } = tools;
+const { Icon } = ui;
 const { useReducer } = React;
 const _id = 'merge-control';
 
 /**
  * Merge spatial control.
  */
-export const Merge = ({ processID }) => {
+const _Merge = ({ processID, farmObjId }) => {
     const [{ layer, data }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }), { layer: {}, data: {} });
 
@@ -29,8 +33,8 @@ export const Merge = ({ processID }) => {
             if (e && e.layer) {
                 elements.alertUser(true,
                     'warning',
-                    'Спојување на резултати',
-                    'Дали сакате да ги споите избраните резултати од контрола во еден резултати. Крајниот резултат ќе ги наследи својствата од првиот избран резултат.',
+                    'Спојување на парцели',
+                    'Дали сакате да ги споите избраните парцели во една парцела?',
                     mergeParcel.bind(null, e.layer),
                     cleanup.bind(null, e.layer),
                     true,
@@ -44,19 +48,19 @@ export const Merge = ({ processID }) => {
 
         });
         store.dispatch({ processID: _id });
-        line.enable(cntConfig);
+        line.enable(config);
     };
 
     const mergeParcel = (lineLayer) => {
 
         http.call(_id, {
-            url: '/WsOtscmIacs/SpatialControl/merge/{init.token}/SPATIAL_CONTROL/' + redux.store.getState().mapData.cid,
+            url: '/spatial/geometry/merge/confirm/{init.token}/AGRI_PARCEL/' + farmObjId,
             method: 'post',
             responseType: 'arraybuffer',
             data: JSON.stringify(factory.GeoJSON.fromLayer(lineLayer))
         })
             .then(response => {
-                const geojson = factory.geoJSON(geobuf.decode(protobuf(response)), cntConfig.pathOptions);
+                const geojson = factory.geoJSON(geobuf.decode(protobuf(response)), config.pathOptions);
                 const stateData = store.getState().data.layers;
 
                 geojson.getLayers().forEach(layer => {
@@ -73,9 +77,9 @@ export const Merge = ({ processID }) => {
                 })
                 elements.alertUser(true,
                     'success',
-                    'Успешно споена просторна контрола',
+                    'Успешно споени парцели',
                     'Добиени се ' + geojson.getLayers().length + ' нови парцели.',
-                    getSpatialResults
+                    getFarmMapAssets
                 )
             })
             .catch(error => {
@@ -83,9 +87,9 @@ export const Merge = ({ processID }) => {
                 let errmsg = enc.decode(error.response.data);
                 elements.alertUser(true,
                     'error',
-                    'Грешка при спојување на просторни контроли',
+                    'Грешка при спојување на парцели',
                     errmsg,
-                    getSpatialResults
+                    getFarmMapAssets
                 );
 
             })
@@ -107,17 +111,11 @@ export const Merge = ({ processID }) => {
         line.disable('force');
     }
 
-    const onChange = ({ formData }) =>
-        setState({ data: { ...data, ...formData } });
-
-    const onSubmit = ({ formData }) =>
-        saveControl(JSON.stringify({ ...data, ...formData, GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
-
     return <ProcessButton id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
         <Icon name={_id} size='28px' style={{ marginTop: '2px' }} />
         <span style={{ display: 'block', marginTop: '5px' }}>Спои парцела</span>
         {processID === _id
-            && <GuideForm id={_id}
+            && <Guidance id={_id}
                 finish={() => polygon._finishShape()}
                 undo={() => polygon._removeLastVertex()}
                 disable={disable}
@@ -126,6 +124,6 @@ export const Merge = ({ processID }) => {
     </ProcessButton>;
 };
 
-Merge.propTypes = {
-    processID: PropTypes.string,
-}
+export const Merge = core.connect(state => ({
+    processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
+}))(_Merge)
