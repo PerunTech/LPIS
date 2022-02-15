@@ -1,123 +1,131 @@
-import { React, Loading, redux } from 'perun-core';
-import { core, ui, data, config as cfg } from '../../../../Spatial';
-import { getFarmMapAssets } from '../../../Util';
-import { ProcessButton } from '../../ProcessButton';
-import { config } from '../Config';
-import { Form } from '../Form';
-import { saveAP } from '../Save';
+import { React, PropTypes, elements, redux } from 'perun-core';
+import { core, tools, ui, data, cntConfig, ProcessButton, GuideForm, saveControl, getSpatialResults } from '../../..';
 
-const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
-const { Map, store, factory, http } = core;
-const { draw: { line } } = tools;
+const { Map, store, factory, http, util } = core;
 const { geobuf, protobuf } = data;
-const { Icon, DrawActions } = ui;
+const { draw: { line } } = tools;
+const { Button, Icon, DrawActions } = ui;
 const { useReducer } = React;
-const _id = 'mergeAP';
+const _id = 'merge-control';
 
-const _Merge = ({ processID, mapId, farmObjId }) => {
-  const [{ layer, data, X, Y, loading }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }),
-    { layer: {}, data: {}, X: 0, Y: 0, loading: false });
+/**
+ * Merge spatial control.
+ */
+export const Merge = ({ processID }) => {
+    const [{ layer, data }, setState] = useReducer((currState, update) =>
+        ({ ...currState, ...update }), { layer: {}, data: {} });
 
-  const enable = (id, fn) => {
-    store.dispatch({ processID: id, minZoom: MIN_DIGI_SCALE });
-    setState({ isGuided: true })
-    fn && fn();
-  };
+    const cleanup = (lineLayer) => {
+        disable()
+        Map.off('new_shape');
+        //remove line
+        if (lineLayer)
+            lineLayer.removeFrom(Map);
 
-  const disable = (fn) => {
-    Map.off('click');
-    // Reset state, internal and application-wide.
-    setState({ layer: {}, data: {}, isGuided: false });
-    store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
-    // We remove the working geometry, save process will add the result.
-    layer.removeFrom && layer.removeFrom(Map);
-    if (mapId === 'farm-registry-map') {
-      const session = redux.store.getState().security.svSession
-      getFarmMapAssets(session)
     }
-    fn && fn();
-  }
 
-  const _mergeAP = () => {
-    Map.on('new_shape', e => {
-      if (e && e.layer) {
-        http.call(_id, { data: JSON.stringify(factory.GeoJSON.fromLayer(e.layer)) })
-          .then(response => {
-            const geojson = factory.geoJSON(geobuf.decode(protobuf(response)), config.pathOptions);
+    const enable = () => {
+        Map.on('new_shape', e => {
+            if (e && e.layer) {
+                elements.alertUser(true,
+                    'warning',
+                    'Спојување на резултати',
+                    'Дали сакате да ги споите избраните резултати од контрола во еден резултати. Крајниот резултат ќе ги наследи својствата од првиот избран резултат.',
+                    mergeParcel.bind(null, e.layer),
+                    cleanup.bind(null, e.layer),
+                    true,
+                    'confirm',
+                    'cancel'
+                )
 
-            Map.eachLayer(function (layer) {
-              if (layer.toGeoJSON) {
-                Map.removeLayer(layer);
-              }
-            });
+            } else
+                cleanup();
 
-            geojson.getLayers().forEach(layer => {
-              // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
-              layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
-              layer.addTo(Map);
-              e.layer.removeFrom(Map);
+
+        });
+        store.dispatch({ processID: _id });
+        line.enable(cntConfig);
+    };
+
+    const mergeParcel = (lineLayer) => {
+
+        http.call(_id, {
+            url: '/WsOtscmIacs/SpatialControl/merge/{init.token}/SPATIAL_CONTROL/' + redux.store.getState().mapData.cid,
+            method: 'post',
+            responseType: 'arraybuffer',
+            data: JSON.stringify(factory.GeoJSON.fromLayer(lineLayer))
+        })
+            .then(response => {
+                const geojson = factory.geoJSON(geobuf.decode(protobuf(response)), cntConfig.pathOptions);
+                const stateData = store.getState().data.layers;
+
+                geojson.getLayers().forEach(layer => {
+                    const id = layer.feature.id
+
+                    // remove old app layers entries, will update with the new geojson set.
+                    stateData[id] && stateData[id].removeFrom(Map);
+
+                    // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
+                    // Revise this
+                    // layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
+                    // layer.addTo(Map);
+
+                })
+                elements.alertUser(true,
+                    'success',
+                    'Успешно споена просторна контрола',
+                    'Добиени се ' + geojson.getLayers().length + ' нови парцели.',
+                    getSpatialResults
+                )
+            })
+            .catch(error => {
+                let enc = new TextDecoder("utf-8");
+                let errmsg = enc.decode(error.response.data);
+                elements.alertUser(true,
+                    'error',
+                    'Грешка при спојување на просторни контроли',
+                    errmsg,
+                    getSpatialResults
+                );
+
             })
 
-            elements.alertUser(true, 'success', 'Успешно приспоени земјоделски парцели')
-          })
-          .catch(error => console.log(error))
-      }
-
-      disable()
-      Map.off('new_shape');
-    });
-    line.enable(config);
-  }
-
-  const _stopLineAP = () => line.disable('force');
-
-
-  const disable = (fn) => {
-    // Reset state, internal and application-wide.
-    setState({ layer: {}, data: {}, isGuided: false });
-    store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
-    // We remove the working geometry, save process will add the result.
-    layer.removeFrom && layer.removeFrom(Map);
-    if (mapId === 'farm-registry-map') {
-      const session = redux.store.getState().security.svSession
-      getFarmMapAssets(session)
+        //remove line   
+        cleanup(lineLayer);
     }
-    fn && fn();
-  }
-
-  const onChange = ({ formData }) =>
-    setState({ data: { ...data, ...formData } });
-
-  const onSubmit = ({ formData }) =>
-    saveAP({
-      ...data,
-      ...formData,
-      GEOM: factory.GeoJSON.fromLayer(layer),
-      X: X,
-      Y: Y,
-      parent_id: farmObjId,
-      OBJECT_ID: (layer.feature && layer.feature.id && Number(layer.feature.id)) || 0
-    }, disable);
-
-  const renderForm = () =>
-    <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
-      <DrawActions
-        finish={() => line._finishShape()}
-        undo={() => line._removeLastVertex()}
-        cancel={() => disable(_stopLineAP)} />
-    </Form>
 
 
-  return <ProcessButton id={_id} onClick={() => enable(_id, _mergeAP)} >
-    <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Приспои парцели</span>
-    {processID === _id
-      && renderForm()}
-    {loading && <Loading />}
-  </ProcessButton>;
+
+    const disable = () => {
+        // Reset state, internal and application-wide.
+        setState({ layer: {}, data: {} });
+        store.dispatch({ processID: '' });
+
+        // We remove the working geometry, save process will add the result.
+        layer.removeFrom && layer.removeFrom(Map);
+        // Disable Split handler.
+        line.disable('force');
+    }
+
+    const onChange = ({ formData }) =>
+        setState({ data: { ...data, ...formData } });
+
+    const onSubmit = ({ formData }) =>
+        saveControl(JSON.stringify({ ...data, ...formData, GEOM: factory.GeoJSON.fromLayer(layer) }), disable);
+
+    return <ProcessButton id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
+        <Icon name={_id} size='28px' style={{ marginTop: '2px' }} />
+        <span style={{ display: 'block', marginTop: '5px' }}>Спои парцела</span>
+        {processID === _id
+            && <GuideForm id={_id}
+                finish={() => polygon._finishShape()}
+                undo={() => polygon._removeLastVertex()}
+                disable={disable}
+                msg={['', '']}
+                title='Спои парцела' />}
+    </ProcessButton>;
 };
 
-export const Merge = core.connect(state => ({
-  processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
-}))(_Merge)
+Merge.propTypes = {
+    processID: PropTypes.string,
+}

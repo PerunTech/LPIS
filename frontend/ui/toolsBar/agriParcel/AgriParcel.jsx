@@ -36,8 +36,7 @@ const _AgriParcel = ({processID, mapId, farmObjId}) => {
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
         if (mapId === 'farm-registry-map') {
-            const session = redux.store.getState().security.svSession
-            getFarmMapAssets(session)
+            getFarmMapAssets()
         }
         fn && fn();
     }

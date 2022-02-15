@@ -57,7 +57,7 @@ export const lpis = () => {
 export const farmRegLpis = () => {
     store.addState('farmRegistry', { 'agriParcels': {}, 'farmObjId': '' })
     const _token = redux.store.getState().security.svSession;
-    getFarmMapAssets(_token, true)
+    getFarmMapAssets(true)
 
     return ui.init(_token)
         .addControl(ToolsBar, {}, { position: 'top' })
