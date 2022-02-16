@@ -7,7 +7,56 @@ const { store: perunStore } = redux;
 const { factory, store, http, Map } = core;
 const { geobuf, protobuf } = data;
 
-export function readCookie (name) {
+export const decodeResponse = (response) => {
+    let errorMsg = 'Просторната контрола не е запишана во базата на податоци.'
+    const decoder = new TextDecoder()
+    const decoded = decoder.decode(response.data)
+    if (isJSON(decoded)) {
+        const decodedJSON = JSON.parse(decoder.decode(response.data))
+        if (decodedJSON && Object.keys(decodedJSON).length > 0) {
+            if (decodedJSON.Label_Code) {
+                errorMsg = decodedJSON.Label_Code
+            }
+        }
+    }
+    return errorMsg
+}
+
+export function isJSON(value) {
+    value = !strcmp(typeof value, 'string') ? JSON.stringify(value) : value
+    try {
+        value = JSON.parse(value);
+    } catch (e) {
+        return false
+    }
+
+    if (strcmp(typeof value, 'object') && value !== null) {
+        return true
+    }
+
+    return false
+}
+
+/**
+ * Check if two values are strings & have the same value (i.e. compare them)
+ * 
+ * The `localeCompare` method on the `String` interface returns `0` if the values are equal &
+ * a negative (`-1` for example) or a positive number (`1` for example) if the first value is shorter or longer than the second one, respectively
+ * 
+ * @param {any} firstValue The first value to be checked & compared
+ * @param {any} secondValue The second value lpisto be checked & compared
+ */
+export function strcmp(firstValue, secondValue) {
+    // First, check if both of the values are strings
+    if ((typeof firstValue === 'string' && typeof secondValue === 'string') || (firstValue instanceof String && secondValue instanceof String)) {
+        // If both of the values are strings, compare them & return the result as a boolean value
+        return firstValue.localeCompare(secondValue, undefined, { sensitivity: 'base' }) === 0 ? true : false
+    } else {
+        return false
+    }
+}
+
+export function readCookie(name) {
     var nameEQ = name + "=";
     // String("farmerObj=20348156; token=92b39ce8-e7e2-4b12-bf6b-bbd31dd04b91; _ga=GA1.1.536760576.1612264197; _gid=GA1.1.1645977351.1615282019; _gat=1"
     var ca = window.parent.document.cookie.split(';');
@@ -20,8 +69,11 @@ export function readCookie (name) {
     return null;
 }
 
-export const getFarmMapAssets = (token, fitBounds = false) => {
-    const farmObjId = perunStore.getState().frmapData?.farmData || 0
+export const getFarmMapAssets = (fitBounds = false) => {
+    const token = perunStore.getState().security.svSession
+    //const farmObjId = perunStore.getState().frmapData?.farmData || 0
+    const farmObjId = perunStore.getState().frmapData?.farmData?.['FARM.OBJECT_ID'] || 37048
+    // const farmObjId = perunStore.getState().frmapData?.farmData?.['FARM.OBJECT_ID'] || 23207820
     store.dispatch({ farmObjId })
     const url = `${window.server}/spatial/geometry/get/byparent/${token}/AGRI_PARCEL/${farmObjId}`
 

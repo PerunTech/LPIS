@@ -43,13 +43,13 @@ export const metadataMain = {
     schema: {
         properties: {
             LAND_COVER_CODE: {
-                enum: [ '200', '210', '300', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500',
-                    '600', '900' ],
+                enum: ['200', '210', '300', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500',
+                    '600', '900'],
                 enumNames: ['Нива (обработливо земјиште)', 'Оранжерии и пластеници на обработливо земјиште',
                     'Постојан тревник', 'Ливада', 'Пасиште', 'Долгогодишни култури (траен насад)', 'Лозов насад',
                     'Овоштарник', 'Маслинов насад', 'Овошен насад', 'Јаткасто овошје', 'Растенија со брзо растечка маса',
                     'Мешани трајни насади', 'Различна искористеност на земјиштето', 'Матични насади',
-                    'Останати типови на употреба на земјиштето' ],
+                    'Останати типови на употреба на земјиштето'],
                 maxLength: 50,
                 title: 'Употреба на земјиште',
                 type: 'string',
@@ -84,7 +84,7 @@ export const metadataMain = {
         'type': 'object',
     },
     uiSchema: {
-        LAND_COVER_CODE: { },
+        LAND_COVER_CODE: {},
         /*HOME_NAME: { 'ui:widget': 'textarea' },*/
         NOTE_INSERT: { 'ui:widget': 'textarea' },
         NOTE_FARMER: { 'ui:widget': 'textarea' },
@@ -99,13 +99,13 @@ export const metadataAux = {
     schema: {
         properties: {
             LAND_COVER_CODE_2: {
-                enum: [ ' ', '200', '210', '300', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500',
-                    '600', '900' ],
+                enum: [' ', '200', '210', '300', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500',
+                    '600', '900'],
                 enumNames: [' ', 'Нива (обработливо земјиште)', 'Оранжерии и пластеници на обработливо земјиште',
                     'Постојан тревник', 'Ливада', 'Пасиште', 'Долгогодишни култури (траен насад)', 'Лозов насад',
                     'Овоштарник', 'Маслинов насад', 'Овошен насад', 'Јаткасто овошје', 'Растенија со брзо растечка маса',
                     'Мешани трајни насади', 'Различна искористеност на земјиштето', 'Матични насади',
-                    'Останати типови на употреба на земјиштето' ],
+                    'Останати типови на употреба на земјиштето'],
                 maxLength: 50,
                 title: 'Секундарна употреба на земјиште',
                 type: 'string',
@@ -158,7 +158,7 @@ export const metadataAux = {
         'type': 'object',
     },
     uiSchema: {
-        LAND_COVER_CODE_2: { },
+        LAND_COVER_CODE_2: {},
         EXPOSITION_AVG: { 'ui:widget': 'range' },
         INVISIBLE_BORDER: { 'ui:disabled': true },
         CHANGED_BORDER: { 'ui:disabled': true },
@@ -258,6 +258,16 @@ export const config = {
         fillColor: '#F6D800',
         opacity: 0.9,
         fillOpacity: 0.25,
+        repeatable: false,
+        // snapping
+        snappable: true,
+        snapDistance: 20,
+        // show tooltips
+        tooltips: true,
+        // allow snapping to the middle of segments
+        snapMiddle: false,
+        // self intersection
+        allowSelfIntersection: true,
         /* showMeasurements: true, */
         metadata: {
             type: 'agri_parcel',
@@ -265,14 +275,14 @@ export const config = {
             schema: {
                 'type': 'object',
                 'properties': {
-                    ...metadataMain.schema.properties, 
-                    ...metadataAux.schema.properties, 
+                    ...metadataMain.schema.properties,
+                    ...metadataAux.schema.properties,
                     ...metadataAdmin.schema.properties
                 }
             },
             uiSchema: {
-                ...metadataMain.uiSchema, 
-                ...metadataAux.uiSchema, 
+                ...metadataMain.uiSchema,
+                ...metadataAux.uiSchema,
                 ...metadataAdmin.uiSchema
             }
         }
@@ -314,14 +324,14 @@ export const cutConfig = {
             schema: {
                 'type': 'object',
                 'properties': {
-                    ...metadataMain.schema.properties, 
-                    ...metadataAux.schema.properties, 
+                    ...metadataMain.schema.properties,
+                    ...metadataAux.schema.properties,
                     ...metadataAdmin.schema.properties
                 }
             },
             uiSchema: {
-                ...metadataMain.uiSchema, 
-                ...metadataAux.uiSchema, 
+                ...metadataMain.uiSchema,
+                ...metadataAux.uiSchema,
                 ...metadataAdmin.uiSchema
             }
         }
@@ -363,14 +373,14 @@ export const fillConfig = {
             schema: {
                 'type': 'object',
                 'properties': {
-                    ...metadataMain.schema.properties, 
-                    ...metadataAux.schema.properties, 
+                    ...metadataMain.schema.properties,
+                    ...metadataAux.schema.properties,
                     ...metadataAdmin.schema.properties
                 }
             },
             uiSchema: {
-                ...metadataMain.uiSchema, 
-                ...metadataAux.uiSchema, 
+                ...metadataMain.uiSchema,
+                ...metadataAux.uiSchema,
                 ...metadataAdmin.uiSchema
             }
         }

@@ -1,0 +1,35 @@
+import { React, elements } from 'perun-core';
+import { ui } from '../../../../Spatial';
+import { getFarmMapAssets } from '../../../Util';
+import { Copy } from './Copy';
+import { Cut } from './Cut';
+import { DeleteControl } from './DeleteControl';
+import { DrawControl } from './DrawControl';
+import { Fill } from './Fill';
+import { Merge } from './Merge';
+import { Split } from './Split';
+
+const { Button, ButtonGroup, Icon, Divider } = ui;
+
+export const Digitization = () =>
+    <ButtonGroup>
+        <Copy />
+        <DrawControl />
+        <Divider />
+        <Cut />
+        <Split />
+        <Merge />
+        <Fill />
+        <Divider />
+        <Button
+            onClick={() => {
+                getFarmMapAssets()
+                elements.alertUser(true, 'success', 'Податоците се успешно освежени.')
+            }}
+            title='Освежи податоци'>
+            <Icon name='refresh-control' size='30px' />
+            <span style={{ display: 'block', marginTop: '5px' }}>Освежи податоци</span>
+        </Button>
+        <Divider />
+        <DeleteControl />
+    </ButtonGroup>;

@@ -1,6 +1,7 @@
 import { React, PropTypes, redux, createHashHistory } from 'perun-core';
 import { ui, core } from '../../Spatial';
 import { PhysicalBlock, AgriParcel, CropParcel, IO } from '..';
+import { Digitization } from './agriParcel/digitization/Digitization';
 
 const { Tab, Tabs, Button, Icon, Selection, Measurement } = ui;
 const { store, logoutUser } = redux;
@@ -19,7 +20,9 @@ const _ToolsBar = ({ mapId }) => {
             <Tab eventKey='physical-block' title='Физички блокови' {...mapId === 'farm-registry-map' && { disabled: true }} >
                 <PhysicalBlock />
             </Tab> 
-            <Tab eventKey='agri-parcel' title='Земјоделски Парцели' ><AgriParcel /></Tab> 
+            <Tab eventKey='agri-parcel' title='Земјоделски Парцели' >
+                {mapId === 'farm-registry-map' ? <Digitization /> : <AgriParcel />}
+            </Tab> 
             <Tab eventKey='crop-parcel' title='Производни парцели' ><CropParcel /></Tab>
             <Tab eventKey='selection' title='Селекција' ><Selection /></Tab>
             <Tab eventKey='measurement' title='Мерења' ><Measurement /></Tab>

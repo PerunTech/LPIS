@@ -31,14 +31,17 @@ import org.joda.time.DateTime;
 
 import com.google.gson.JsonObject;
 import com.prtech.spatial.geobuf.GeobufEncoder;
+import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvExecManager;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvReader;
+import com.prtech.svarog.SvSDITile;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog.SvUtil;
+import com.prtech.svarog.SvWriter;
 import com.prtech.svarog.svCONST;
 import com.prtech.svarog.DbCacheTable.DboComparator;
 import com.prtech.svarog_common.DbDataArray;
@@ -217,6 +220,52 @@ public class ApplicationServices {
 		};
 	}
 
+	@POST
+	@Path("/remove/farm/{token}/{objectId}/{objectType}")
+	@Produces("application/pbf")
+	public Response deleteGeometry(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
+			@PathParam("objectType") final Long objectType, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
+
+		String errMsg = "";
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try (SvReader svr = new SvReader(token);
+				SvWriter svw = new SvWriter(svr);
+				SvGeometry svg = new SvGeometry(svr)) {
+			svr.setIncludeGeometries(true);
+			DbDataObject dbo = svr.getObjectById(objectId, objectType, null);
+			if (dbo == null)
+				throw (new SvException(Sv.Exceptions.NULL_OBJECT, svr.getInstanceUser()));
+			else {
+				Geometry gTile = SvGeometry.getTileGeometry(SvGeometry.getCentroid(dbo));
+				SvSDITile svTile = SvGeometry.getTile(objectType, (String) gTile.getUserData(), null);
+				dbo.setParentId(0L);
+				svw.saveObject(dbo,false);
+				svTile.setIsTileDirty(true);
+				svw.dbCommit();
+			}
+
+		} catch (SvException e) {
+			errMsg = e.getJsonMessage();
+		} catch (Exception e) {
+			errMsg = e.getMessage();
+		}
+		if (errMsg.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+					enc.writeSvGeometry(result);
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+
+//		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
+
+	}
+	
+		
 	@Path("/save/agriParcel/{token}/{objectId}/{opType}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
