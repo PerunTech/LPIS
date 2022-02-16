@@ -62,7 +62,7 @@ const _Edit = ({ processID, farmObjId }) => {
 
   const _renderBlocks = (id, jsonArr) => {
     // filter layers, remove old app layers entries, will update with the new geojson set.
-    const mapLayers = store.getState().data.layers;
+    const mapLayers = store.getState().farmRegistry?.agriParcels;
 
     jsonArr.features.map(feature => {
       mapLayers[feature.id] && mapLayers[feature.id].removeFrom(Map);
@@ -131,7 +131,7 @@ const _Edit = ({ processID, farmObjId }) => {
 
   return <ProcessButton id={_id} onClick={() => {
     _editAP()
-    enable(_id, _fetchBlocks.bind(_id))
+    enable(_id, _fetchBlocks(_id))
   }} >
     <Icon name={_id} size='30px' />
     <span style={{ display: 'block', marginTop: '5px' }}>Промени парцела</span>
