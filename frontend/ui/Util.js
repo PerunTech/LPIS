@@ -75,7 +75,7 @@ export function readCookie (name) {
 
 export const getFarmMapAssets = (fitBounds = false) => {
     const token = perunStore.getState().security.svSession
-    const farmObjId = perunStore.getState().frmapData?.farmData || 685240955
+    const farmObjId = perunStore.getState().frmapData?.farmData || 0
     store.dispatch({ farmObjId })
     const url = `${window.server}/spatial/geometry/get/byparent/${token}/AGRI_PARCEL/${farmObjId}`
 
