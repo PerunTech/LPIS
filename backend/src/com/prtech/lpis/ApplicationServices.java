@@ -47,7 +47,9 @@ import com.prtech.svarog.DbCacheTable.DboComparator;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_common.SvCharId;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 @Path("/lpis")
@@ -116,13 +118,14 @@ public class ApplicationServices {
 
 		return Response.status(200).entity(pb.toSimpleJson().toString()).build();
 	}
+
 	@Path("/save/agriParcel/{token}/{objectId}/{parentId}/{opType}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/pbf")
-	public StreamingOutput saveAgriParcelToFarm(@PathParam("token") String token, @PathParam("objectId") Long objectId,@PathParam("parentId") Long parentId,
-			@PathParam("opType") Long opType, MultivaluedMap<String, String> formVals,
-			@Context HttpServletRequest httpRequest) {
+	public StreamingOutput saveAgriParcelToFarm(@PathParam("token") String token, @PathParam("objectId") Long objectId,
+			@PathParam("parentId") Long parentId, @PathParam("opType") Long opType,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) throws IOException {
@@ -221,6 +224,55 @@ public class ApplicationServices {
 	}
 
 	@POST
+	@Path("/add/farm/{token}/{farmId}/{objectName}/{x}/{y}")
+	@Produces("application/pbf")
+	public Response addToFarm(@PathParam("token") final String token, @PathParam("farmId") final Long farmId,
+			@PathParam("objectName") final String objectName, @PathParam("x") final Double x,
+			@PathParam("y") final Double y, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
+
+		String errMsg = "";
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try (SvReader svr = new SvReader(token);
+				SvWriter svw = new SvWriter(svr);
+				SvGeometry svg = new SvGeometry(svr)) {
+			svr.setIncludeGeometries(true);
+			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
+			Long layerTypeId = SvCore.getTypeIdByName(objectName);
+			Collection<Geometry> geomArr = svg.getRelatedGeometries(point, layerTypeId, SDIRelation.INTERSECTS, null,
+					null, false);
+			if (geomArr.size() == 1) {
+				DbDataObject dbo = (DbDataObject) geomArr.iterator().next().getUserData();
+				if (dbo.getParentId().equals(0L)) {
+					dbo.setParentId(farmId);
+					svw.saveObject(dbo, true);
+					result.add(SvGeometry.getGeometry(dbo));
+				} else
+					errMsg = "err.parcel_has_farm";
+			} else
+				errMsg = "err.no_parcel.selected";
+		} catch (SvException e) {
+			errMsg = e.getJsonMessage();
+		} catch (Exception e) {
+			errMsg = e.getMessage();
+		}
+
+		if (errMsg.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+					enc.writeSvGeometry(result);
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+
+//		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
+
+	}
+
+	@POST
 	@Path("/remove/farm/{token}/{objectId}/{objectType}")
 	@Produces("application/pbf")
 	public Response deleteGeometry(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
@@ -240,7 +292,7 @@ public class ApplicationServices {
 				Geometry gTile = SvGeometry.getTileGeometry(SvGeometry.getCentroid(dbo));
 				SvSDITile svTile = SvGeometry.getTile(objectType, (String) gTile.getUserData(), null);
 				dbo.setParentId(0L);
-				svw.saveObject(dbo,false);
+				svw.saveObject(dbo, false);
 				svTile.setIsTileDirty(true);
 				svw.dbCommit();
 			}
@@ -264,8 +316,7 @@ public class ApplicationServices {
 //		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
 
 	}
-	
-		
+
 	@Path("/save/agriParcel/{token}/{objectId}/{opType}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)

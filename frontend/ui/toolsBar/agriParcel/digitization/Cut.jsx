@@ -2,7 +2,7 @@ import { React, Loading, elements, redux } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
 import { config, drawAPMsg } from '../Config';
 import { decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
-import { saveAP } from '../Save';
+import { saveParcel } from '../Save';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
@@ -104,7 +104,7 @@ const _Cut = ({ processID, farmObjId }) => {
     }
 
     const onSubmit = ({ formData }) => {
-        saveAP({
+        saveParcel({
             ...data,
             ...formData,
             GEOM: factory.GeoJSON.fromLayer(layer)
