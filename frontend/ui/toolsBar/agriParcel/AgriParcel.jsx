@@ -3,7 +3,7 @@ import { core,  data, tools, ui, config as cfg } from '../../../Spatial';
 import { config, createAPMsg, drawAPMsg, cutAPMsg, cutConfig, restAP, deleteAPMsg, fillConfig } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
-import { saveAP } from './Save';
+import { saveAP } from './SaveAP';
 import { getFarmMapAssets } from '../../Util';
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
