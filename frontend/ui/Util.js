@@ -7,6 +7,10 @@ const { store: perunStore } = redux;
 const { factory, store, http, Map } = core;
 const { geobuf, protobuf } = data;
 
+export const bufferToString = buffer => {
+    return String.fromCharCode.apply(null, new Uint8Array(buffer));
+}
+
 export const decodeResponse = (response) => {
     let errorMsg = 'Просторната контрола не е запишана во базата на податоци.'
     const decoder = new TextDecoder()
@@ -71,7 +75,7 @@ export function readCookie (name) {
 
 export const getFarmMapAssets = (fitBounds = false) => {
     const token = perunStore.getState().security.svSession
-    const farmObjId = perunStore.getState().frmapData?.farmData || 0
+    const farmObjId = perunStore.getState().frmapData?.farmData || 685240955
     store.dispatch({ farmObjId })
     const url = `${window.server}/spatial/geometry/get/byparent/${token}/AGRI_PARCEL/${farmObjId}`
 
