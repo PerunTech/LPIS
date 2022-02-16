@@ -1,6 +1,7 @@
 import { React, elements } from 'perun-core';
 import { ui } from '../../../../Spatial';
 import { getFarmMapAssets } from '../../../Util';
+import { Assign } from './Assign';
 import { Copy } from './Copy';
 import { Cut } from './Cut';
 import { DeleteControl } from './DeleteControl';
@@ -33,5 +34,6 @@ export const Digitization = () =>
             <span style={{ display: 'block', marginTop: '5px' }}>Освежи податоци</span>
         </Button>
         <Divider />
+        <Assign />
         <DeleteControl />
     </ButtonGroup>;

@@ -148,14 +148,14 @@ const _Rows = ({ rows }) => {
     }
   };
 
-  return rows.map((el) => {
+  return rows.map((el, i) => {
     const rowData = el.feature && el.feature.properties;
     if (!rowData) return null;
 
     const id = el.feature.id;
     const unit = el instanceof factory.Polygon ? 'm²' : 'm';
     return (
-      <div className='container'>
+      <div className='container' key={`${id}_${i}`}>
         <ButtonGroup className='fr-data-grid-row' key={id} onClick={() => onRowClick(id)}
         >
           <Button className='fr-data-grid-column'>{rowData.OLD_ID}</Button>

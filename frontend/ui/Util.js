@@ -7,6 +7,10 @@ const { store: perunStore } = redux;
 const { factory, store, http, Map } = core;
 const { geobuf, protobuf } = data;
 
+export const bufferToString = buffer => {
+    return String.fromCharCode.apply(null, new Uint8Array(buffer));
+}
+
 export const decodeResponse = (response) => {
     let errorMsg = 'Просторната контрола не е запишана во базата на податоци.'
     const decoder = new TextDecoder()
