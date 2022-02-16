@@ -71,7 +71,7 @@ export function readCookie(name) {
 
 export const getFarmMapAssets = (fitBounds = false) => {
     const token = perunStore.getState().security.svSession
-    const farmObjId = perunStore.getState().frmapData?.farmData || 0
+    //const farmObjId = perunStore.getState().frmapData?.farmData || 0
     const farmObjId = perunStore.getState().frmapData?.farmData?.['FARM.OBJECT_ID'] || 37048
     // const farmObjId = perunStore.getState().frmapData?.farmData?.['FARM.OBJECT_ID'] || 23207820
     store.dispatch({ farmObjId })
