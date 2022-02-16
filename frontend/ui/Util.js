@@ -22,7 +22,7 @@ export const decodeResponse = (response) => {
     return errorMsg
 }
 
-export function isJSON (value) {
+export function isJSON(value) {
     value = !strcmp(typeof value, 'string') ? JSON.stringify(value) : value
     try {
         value = JSON.parse(value);
@@ -44,9 +44,9 @@ export function isJSON (value) {
  * a negative (`-1` for example) or a positive number (`1` for example) if the first value is shorter or longer than the second one, respectively
  * 
  * @param {any} firstValue The first value to be checked & compared
- * @param {any} secondValue The second value to be checked & compared
+ * @param {any} secondValue The second value lpisto be checked & compared
  */
-export function strcmp (firstValue, secondValue) {
+export function strcmp(firstValue, secondValue) {
     // First, check if both of the values are strings
     if ((typeof firstValue === 'string' && typeof secondValue === 'string') || (firstValue instanceof String && secondValue instanceof String)) {
         // If both of the values are strings, compare them & return the result as a boolean value
@@ -56,7 +56,7 @@ export function strcmp (firstValue, secondValue) {
     }
 }
 
-export function readCookie (name) {
+export function readCookie(name) {
     var nameEQ = name + "=";
     // String("farmerObj=20348156; token=92b39ce8-e7e2-4b12-bf6b-bbd31dd04b91; _ga=GA1.1.536760576.1612264197; _gid=GA1.1.1645977351.1615282019; _gat=1"
     var ca = window.parent.document.cookie.split(';');
@@ -72,6 +72,8 @@ export function readCookie (name) {
 export const getFarmMapAssets = (fitBounds = false) => {
     const token = perunStore.getState().security.svSession
     const farmObjId = perunStore.getState().frmapData?.farmData || 0
+    const farmObjId = perunStore.getState().frmapData?.farmData?.['FARM.OBJECT_ID'] || 37048
+    // const farmObjId = perunStore.getState().frmapData?.farmData?.['FARM.OBJECT_ID'] || 23207820
     store.dispatch({ farmObjId })
     const url = `${window.server}/spatial/geometry/get/byparent/${token}/AGRI_PARCEL/${farmObjId}`
 

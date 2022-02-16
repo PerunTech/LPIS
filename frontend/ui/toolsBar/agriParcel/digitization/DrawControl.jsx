@@ -2,8 +2,8 @@ import { React, Loading, elements, redux } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
 import { config } from '../Config';
 import { decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
-import { saveAP } from '../Save';
-import { Guidance } from '../Guidance';
+import { saveParcel } from '../Save.js';
+import { GuideForm } from '../GuideForm';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
 
@@ -29,7 +29,7 @@ const _DrawControl = ({ processID, farmObjId }) => {
 
         setState({ isGuided: true });
         store.dispatch({ processID: _id });
-        polygon.enable(cntConfig);
+        polygon.enable(config.pathOptions);
     };
 
     const disable = (responseType, response, isLoading) => {
@@ -61,7 +61,7 @@ const _DrawControl = ({ processID, farmObjId }) => {
     }
 
     const onSubmit = ({ formData }) => {
-        saveControl({
+        saveParcel({
             ...data,
             ...formData,
             OBJECT_ID: 0,
@@ -76,7 +76,7 @@ const _DrawControl = ({ processID, farmObjId }) => {
         <span style={{ display: 'block', marginTop: '5px' }}>Нацртај парцела</span>
         {processID === _id
             && (isGuided
-                ? <Guidance id={_id}
+                ? <GuideForm id={_id}
                     finish={() => polygon._finishShape()}
                     undo={() => polygon._removeLastVertex()}
                     disable={disable}

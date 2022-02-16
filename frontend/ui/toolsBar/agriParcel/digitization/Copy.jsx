@@ -31,13 +31,14 @@ const _Copy = ({ processID, farmObjId }) => {
             setState({ X: p.x, Y: p.y, loading: true });
 
             http.call('copy-agri', {
-                url: '/WsOtscmIacs/SpatialControl/layer/cutoff/{init.token}/AGRI_PARCEL/SPATIAL_CONTROL/' + p.x + '/' + p.y + '/' + farmObjId,
+                url: '/spatial/geometry/layer/cutoff/{init.token}/PHYSICAL_BLOCK/AGRI_PARCEL/' + p.x + '/' + p.y,
                 method: 'get',
                 responseType: 'arraybuffer',
             })
                 .then(response => {
                     setState({ loading: false })
-                    const buff = geobuf.decode(protobuf(response));
+                    const proto = protobuf(response);
+                    const buff = geobuf.decode(proto);
                     const geojson = factory.geoJSON(buff, config.pathOptions);
 
                     geojson.getLayers().forEach(layer => {
