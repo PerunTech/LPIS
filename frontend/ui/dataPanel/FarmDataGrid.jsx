@@ -78,7 +78,7 @@ FarmDataGrid.propTypes = {
 /*        NO DATA FOUND          */
 /* ----------------------------- */
 const _NoData = () => (
-  <div className='data-grid-empty-rows'>
+  <div className='fr-data-grid-empty-rows'>
     <ButtonGroup>
       <Button disabled style={{ opacity: 1 }}>
         <Icon name='empty-grid' size='18px' />
@@ -92,7 +92,7 @@ const _NoData = () => (
 /*      HEADERS      */
 /* ---------------- */
 const colEnum = {
-  agri_parcel: ['СИЗП Број', 'Класа', 'Површина', 'Право на корист.', 'Заедничка употр.'],
+  agri_parcel: ['СИЗП Број', 'Класа', 'Површина', 'Право на корист.', 'Заедничка употр.', ''],
   agri_parcel_secondary: ['Сменета гран.', 'Експозиција', 'Локалитет', 'Невидлива гран.'],
   agri_parcel_booleans: ['Органско', 'Наводнување', 'Пејсаж. карактер.', 'Тераси']
 };
@@ -101,9 +101,9 @@ const colEnum = {
 const _Header = () => {
   const columns = colEnum['agri_parcel'];
   return (
-    <ButtonGroup className='data-grid-header' id='grid-header'>
+    <ButtonGroup className='fr-data-grid-header' id='grid-header'>
       {columns.map((c, i) => {
-        return <Button key={i} disabled className='data-grid-column'>{c}</Button>
+        return <Button key={i} disabled className='fr-data-grid-column'>{c}</Button>
       })}
     </ButtonGroup>
   );
@@ -112,9 +112,9 @@ const _Header = () => {
 const _SecondHeader = () => {
   const secondColumns = colEnum['agri_parcel_secondary'];
   return (
-    <ButtonGroup className='data-grid-header' id='grid-header'>
+    <ButtonGroup className='fr-data-grid-header' id='grid-header'>
       {secondColumns.map((c, i) => {
-        return <Button key={i} disabled className='data-grid-column'>{c}</Button>
+        return <Button key={i} disabled className='fr-data-grid-column'>{c}</Button>
       })}
     </ButtonGroup>
   );
@@ -123,9 +123,9 @@ const _SecondHeader = () => {
 const _BooleanHeader = () => {
   const booleanColumns = colEnum['agri_parcel_booleans'];
   return (
-    <ButtonGroup className='data-grid-header' id='grid-header'>
+    <ButtonGroup className='fr-data-grid-header' id='grid-header'>
       {booleanColumns.map((c, i) => {
-        return <Button key={i} disabled className='data-grid-column'>{c}</Button>
+        return <Button key={i} disabled className='fr-data-grid-column'>{c}</Button>
       })}
     </ButtonGroup>
   );
@@ -155,14 +155,14 @@ const _Rows = ({ rows }) => {
     const id = el.feature.id;
     const unit = el instanceof factory.Polygon ? 'm²' : 'm';
     return (
-      <>
-        <ButtonGroup className='data-grid-row' key={id} onClick={() => onRowClick(id)}
+      <div className='container'>
+        <ButtonGroup className='fr-data-grid-row' key={id} onClick={() => onRowClick(id)}
         >
-          <Button className='data-grid-column'>{rowData.OLD_ID}</Button>
-          <Button className='data-grid-column'>{rowData.LAND_COVER_CODE}</Button>
-          <Button className='data-grid-column'>{Math.round(Number(rowData.AREA)) + ` ${unit}`}</Button>
-          <Button className='data-grid-column'>{translateBooleanValue(rowData.CERTIFICATE_OF_USE)}</Button>
-          <Button className='data-grid-column'>{translateBooleanValue(rowData.COMMON_USE)}</Button>
+          <Button className='fr-data-grid-column'>{rowData.OLD_ID}</Button>
+          <Button className='fr-data-grid-column'>{rowData.LAND_COVER_CODE}</Button>
+          <Button className='fr-data-grid-column'>{Math.round(Number(rowData.AREA)) + ` ${unit}`}</Button>
+          <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.CERTIFICATE_OF_USE)}</Button>
+          <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.COMMON_USE)}</Button>
           <Button
             className='data-grid-util'
             onClick={(event) => {
@@ -186,22 +186,22 @@ const _Rows = ({ rows }) => {
         {rowIsExpanded && selectedRowId === id && (
           <div className='data-grid-expanded-row'>
             <_SecondHeader />
-            <ButtonGroup className='data-grid-row' key={id}>
-              <Button className='data-grid-column'>{translateBooleanValue(rowData.CHANGED_BORDER)}</Button>
-              <Button className='data-grid-column'>{rowData.EXPOSITION_AVG}</Button>
-              <Button className='data-grid-column'>{rowData.HOME_NAME}</Button>
-              <Button className='data-grid-column'>{translateBooleanValue(rowData.INVISIBLE_BORDER)}</Button>
+            <ButtonGroup className='fr-data-grid-row' key={id}>
+              <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.CHANGED_BORDER)}</Button>
+              <Button className='fr-data-grid-column'>{rowData.EXPOSITION_AVG}</Button>
+              <Button className='fr-data-grid-column'>{rowData.HOME_NAME}</Button>
+              <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.INVISIBLE_BORDER)}</Button>
             </ButtonGroup>
             <_BooleanHeader />
-            <ButtonGroup className='data-grid-row' key={id}>
-              <Button className='data-grid-column'>{translateBooleanValue(rowData.ORGANIC)}</Button>
-              <Button className='data-grid-column'>{translateBooleanValue(rowData.IRRIGATION)}</Button>
-              <Button className='data-grid-column'>{translateBooleanValue(rowData.LANDSCAPE_FEATURES)}</Button>
-              <Button className='data-grid-column'>{translateBooleanValue(rowData.TERRACE)}</Button>
+            <ButtonGroup className='fr-data-grid-row' key={id}>
+              <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.ORGANIC)}</Button>
+              <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.IRRIGATION)}</Button>
+              <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.LANDSCAPE_FEATURES)}</Button>
+              <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.TERRACE)}</Button>
             </ButtonGroup>
           </div>
         )}
-      </>
+      </div>
     );
   });
 };
