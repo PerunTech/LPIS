@@ -8,7 +8,7 @@ import { ProcessButton } from '../../ProcessButton';
 const { Map, store, http } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
 const { useReducer } = React;
-const _id = 'delete-control';
+const _id = 'deleteAP';
 
 /**
  * Delete an agri parcel.

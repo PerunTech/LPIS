@@ -11,8 +11,7 @@ const { geobuf, protobuf } = data;
 const { draw: { polygon } } = tools
 const { Icon, DrawActions } = ui;
 const { useReducer } = React;
-
-const _id = 'fill-control';
+const _id = 'fillAP';
 
 const _Fill = ({ processID, farmObjId }) => {
     const [{ layer, data, isGuided }, setState] = useReducer((currState, update) =>
@@ -110,8 +109,8 @@ const _Fill = ({ processID, farmObjId }) => {
             finish={() => polygon._finishShape()}
             undo={() => polygon._removeLastVertex()}
             disable={() => disable()}
-            msg={cutAPMsg}
-            title='Пресечи земјоделска парцела' />
+            msg={['', '']}
+            title='Пополни земјоделска парцела' />
         : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
             <DrawActions
                 cancel={() => disable()} />

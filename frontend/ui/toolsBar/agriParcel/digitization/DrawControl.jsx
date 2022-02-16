@@ -12,7 +12,7 @@ const { geobuf, protobuf } = data;
 const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
 const { useReducer } = React;
-const _id = 'draw-control';
+const _id = 'drawAP';
 
 const _DrawControl = ({ processID, farmObjId }) => {
     const [{ layer, data, loading, isGuided }, setState] = useReducer((currState, update) =>

@@ -10,7 +10,7 @@ const { geobuf, protobuf } = data;
 const { draw: { polygon, line } } = tools;
 const { Icon } = ui;
 const { useReducer } = React;
-const _id = 'merge-control';
+const _id = 'mergeAP';
 
 /**
  * Merge spatial control.
