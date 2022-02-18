@@ -153,6 +153,7 @@ public class DbInit implements IDbInit {
 		dbt.setIsConfigTable(false);
 		dbt.setLabel_code("agri_parcel.general");
 		dbt.setUse_cache(true);
+		dbt.setParentName("FARMER");
 		
 		/* C1N, [system, form-hidden] */
 		DbDataField dbf1 = new DbDataField();
