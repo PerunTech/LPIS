@@ -277,7 +277,7 @@ public class ApplicationServices {
 	@GET
 	@Path("/remove/farm/{token}/{objectId}/{objectType}")
 	@Produces("application/pbf")
-	public Response deleteGeometry(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
+	public Response deleteParcel(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
 			@PathParam("objectType") final Long objectType, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
 

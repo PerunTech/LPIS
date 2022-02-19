@@ -134,8 +134,8 @@ public class Util {
 			geom = gjr.read(el.toString());
 			
 			String polyType = geom.getGeometryType();
-			if ("Polygon".equalsIgnoreCase(polyType))
-				geom = gf.createMultiPolygon(new Polygon[] { (Polygon) geom });
+			//if ("Polygon".equalsIgnoreCase(polyType))
+			//	geom = gf.createMultiPolygon(new Polygon[] { (Polygon) geom });
 		} catch (Exception e) {
 			log.error("Failed parsing geometry. " + e);
 		}
