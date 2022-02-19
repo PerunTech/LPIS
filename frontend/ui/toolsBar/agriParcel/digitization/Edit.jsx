@@ -36,6 +36,7 @@ const _Edit = ({ processID, farmObjId }) => {
     // We remove the working geometry, save process will add the result.
     layer.removeFrom && layer.removeFrom(Map);
     getFarmMapAssets()
+    _stopEditAP()
     fn && fn();
   }
 
