@@ -8,6 +8,7 @@ import { DeleteControl } from './DeleteControl';
 import { DrawControl } from './DrawControl';
 import { Edit } from './Edit';
 import { Fill } from './Fill';
+import { GetParcelInfo } from './GetParcelInfo';
 import { Merge } from './Merge';
 import { Split } from './Split';
 
@@ -16,6 +17,7 @@ const { Button, ButtonGroup, Icon, Divider } = ui;
 export const Digitization = () =>
     <ButtonGroup>
         <Copy />
+        <GetParcelInfo />
         <DrawControl />
         <Edit />
         <Divider />
