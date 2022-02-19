@@ -46,6 +46,8 @@ import com.prtech.svarog.svCONST;
 import com.prtech.svarog.DbCacheTable.DboComparator;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
+import com.prtech.svarog_common.ResponseHandler;
+import com.prtech.svarog_common.ResponseHandler.MessageType;
 import com.prtech.svarog_common.SvCharId;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -272,7 +274,7 @@ public class ApplicationServices {
 
 	}
 
-	@POST
+	@GET
 	@Path("/remove/farm/{token}/{objectId}/{objectType}")
 	@Produces("application/pbf")
 	public Response deleteGeometry(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
@@ -303,13 +305,8 @@ public class ApplicationServices {
 			errMsg = e.getMessage();
 		}
 		if (errMsg.isEmpty()) {
-			StreamingOutput pbfStream = new StreamingOutput() {
-				public void write(OutputStream stream) throws IOException {
-					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
-					enc.writeSvGeometry(result);
-				};
-			};
-			return Response.ok(pbfStream, "application/pbf").build();
+			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, "parcel.detached.from.farm");
+			return Response.status(200).entity(rr.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 		} else
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 
