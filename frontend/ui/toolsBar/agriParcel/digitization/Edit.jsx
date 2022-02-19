@@ -1,6 +1,6 @@
-import { React, Loading } from 'perun-core';
+import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools, config as cfg } from '../../../../Spatial';
-import { config, createAPMsg } from '../Config';
+import { config, editAPMsg } from '../Config';
 import { getFarmMapAssets } from '../../../Util';
 import { saveParcel } from '../Save.js';
 import { GuideForm } from '../GuideForm';
@@ -18,14 +18,26 @@ const _id = 'editAP';
 const _layerGroup = factory.layerGroup();
 const _style = { color: '#eed000', fillColor: '#FFFFFF' };
 
-const _Edit = ({ processID, farmObjId }) => {
+const _Edit = ({ processID, farmObjId, agriParcels }) => {
   const [{ layer, data, loading, isGuided }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }), { layer: {}, data: {}, loading: false, isGuided: false });
 
-  const enable = (id, fn) => {
+  const enable = (id) => {
     store.dispatch({ processID: id, minZoom: MIN_DIGI_SCALE });
+    if (agriParcels.length > 0) {
+        agriParcels.forEach(sc => _setBlockEvents(sc, agriParcels))
+        _editAP()
+        store.dispatch({ processID: _id })
+        setState({ isGuided: true })
+    } else {
+        disable();
+        elements.alertUser(true,
+            'warning',
+            'Не се пронајдени земјоделски парцели.',
+            'Додадете земјоделски парцели пред да ја користите алатката за менување.');
+    }
+
     setState({ isGuided: true })
-    fn && fn();
   };
 
   const disable = (fn) => {
@@ -123,22 +135,18 @@ const _Edit = ({ processID, farmObjId }) => {
     saveParcel({
       ...data,
       ...formData,
-      OBJECT_ID: 0,
+      OBJECT_ID: Number(layer.feature.id),
       parent_id: farmObjId,
       GEOM: factory.GeoJSON.fromLayer(layer)
     }, disable);
   }
 
-
-  return <ProcessButton id={_id} onClick={() => {
-    _editAP()
-    enable(_id, _fetchBlocks(_id))
-  }} >
+  return <ProcessButton id={_id} onClick={() => enable(_id)} >
     <Icon name={_id} size='30px' />
     <span style={{ display: 'block', marginTop: '5px' }}>Промени парцела</span>
     {processID === _id
       && (isGuided
-        ? <GuideForm id={_id} disable={() => disable(_stopEditAP)} msg={createAPMsg} title='Промени земјоделска парцела' />
+        ? <GuideForm id={_id} disable={() => disable(_stopEditAP)} msg={editAPMsg} title='Промени земјоделска парцела' />
         : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
           <DrawActions cancel={() => disable(_stopEditAP)} />
         </Form>)}
@@ -147,5 +155,5 @@ const _Edit = ({ processID, farmObjId }) => {
 }
 
 export const Edit = core.connect(state => ({
-  processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
+  processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId, agriParcels: state.farmRegistry?.agriParcels
 }))(_Edit)
