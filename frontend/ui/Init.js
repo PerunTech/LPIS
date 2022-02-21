@@ -1,7 +1,7 @@
 import { redux } from 'perun-core';
 import { ui, core } from '../Spatial';
-import { layerList } from '../config/layerList';
-import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets  } from '.';
+import { layerList, parcelLayersList } from '../config/layerList';
+import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets } from '.';
 import { getFarmMapAssets } from './Util';
 
 const { store } = core;
@@ -10,18 +10,20 @@ let _isLoaded = false;
 const _gsaa = (_token) => {
     // Prevent multiple initializations.
     return !_isLoaded
-        ? ( _isLoaded = true, ui.init(_token)
-            .addControl(MiniBar, {}, { position: 'topleft'})
-            .addControl(DataPanel, {categories: [
-                { id: 'agri_parcel', label: 'Земјоделски парцели', isOpen: true },
-                { id: 'land_use_plan', label: 'Производни парцели', isOpen: true }
-            ]}, { position: 'left' })
+        ? (_isLoaded = true, ui.init(_token)
+            .addControl(MiniBar, {}, { position: 'topleft' })
+            .addControl(DataPanel, {
+                categories: [
+                    { id: 'agri_parcel', label: 'Земјоделски парцели', isOpen: true },
+                    { id: 'land_use_plan', label: 'Производни парцели', isOpen: true }
+                ]
+            }, { position: 'left' })
             .addControl(LayerPanel, {}, { position: 'right' })
             .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
             .withNavigationControl()
             .withWindRose()
             .render('gsaa-map'))
-        : null 
+        : null
 }
 
 export const gsaa = () => {
@@ -35,7 +37,7 @@ export const gsaa = () => {
 
     core.store.addState('gsaa', { farmerId: _farmerId, token: _token });
     loadFarmerAssets(_token, _farmerId, true);
-    
+
     return _gsaa(_token);
 }
 
@@ -49,9 +51,10 @@ export const lpis = () => {
         .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
         .withNavigationControl()
         .addRasterLayers(layerList[0], layerList[1], { collapsed: false, position: 'right' })
+        //.addRasterLayers( { collapsed: false, position: 'right' })
         .withWindRose()
         .render('lpis-map');
-        // .render('gsaa-map');
+    // .render('gsaa-map');
 }
 
 export const farmRegLpis = () => {
@@ -66,6 +69,7 @@ export const farmRegLpis = () => {
         .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
         .withNavigationControl()
         .addRasterLayers(layerList[0], layerList[1], { collapsed: false, position: 'right' })
+        //.addRasterLayers(parcelLayersList[0], { collapsed: false, position: 'right' })
         .withWindRose()
         .render('farm-registry-map');
 }

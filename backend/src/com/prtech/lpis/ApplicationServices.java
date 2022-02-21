@@ -363,8 +363,6 @@ public class ApplicationServices {
 					if (opType > 0) {
 						if (opType.equals(1L)) {
 							geom = svg.cutLayerFromGeom(geom, typeId);
-							if ("Polygon".equalsIgnoreCase(geom.getGeometryType()))
-								geom = SvUtil.sdiFactory.createMultiPolygon(new Polygon[] { (Polygon) geom });
 							SvGeometry.setGeometry(ap, geom);
 						} else if (opType.equals(2L)) {
 							SvGeometry.setGeometry(ap, geom);
@@ -374,8 +372,6 @@ public class ApplicationServices {
 								Geometry g = it.next();
 								DbDataObject dbo = (DbDataObject) g.getUserData();
 
-								if ("Polygon".equalsIgnoreCase(g.getGeometryType()))
-									g = SvUtil.sdiFactory.createMultiPolygon(new Polygon[] { (Polygon) g });
 								SvGeometry.setGeometry(dbo, g);
 
 								Util.calculateGeometryDerivatives(dbo);
