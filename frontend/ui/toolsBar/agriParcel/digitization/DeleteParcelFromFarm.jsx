@@ -1,18 +1,15 @@
-import { React, elements, redux } from "perun-core";
+import { React, elements } from "perun-core";
 import { core, ui } from "../../../../Spatial";
-import { deleteAPMsg } from "../Config";
+import { deleteAPFromFarmMsg } from "../Config";
 import { getFarmMapAssets } from "../../../Util";
 import { Guidance } from "../Guidance";
 import { ProcessButton } from "../../ProcessButton";
 
-const { Map, store, http } = core;
+const { store, http } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
 const { useReducer } = React;
 const _id = "deleteAP";
-
-/**
- * Delete an agri parcel.
- */
+const _processID = "deleteAPFromFarm"
 
 const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
   const [{ isGuided, layer }, setState] = useReducer(
@@ -21,17 +18,12 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
   );
 
   const deleteLayer = () => {
-    // const hardCodededURL = `/lpis/remove/farm/{init.token}/279474/20591996`,
-
-    http
-      .call("delete-farm", {
+    http.call("delete-farm", {
         url: `/lpis/remove/farm/{init.token}/${farmObjId}/${farmObjectTypeId}`,
         method: "get",
       })
       .then(() => {
         console.log(response);
-        // layer.removeFrom(Map);
-        // console.log(farmObjId)
         elements.alertUser(
           true,
           "success",
@@ -56,7 +48,7 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
     const layers = Object.values(store.getState().farmRegistry?.agriParcels);
 
     if (layers.length > 0) {
-      store.dispatch({ processID: _id });
+      store.dispatch({ processID: _processID });
       setState({ isGuided: true });
 
       layers.forEach((sc) => {
@@ -76,12 +68,6 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
   };
 
   const disable = () => {
-    /*
-        const layers = store.getState().data.layers;
-        const cps = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
-
-        cps.forEach(cp => cp.off('click'))*/
-
     // Reset state, internal and application-wide.
     store.dispatch({ processID: "" });
     setState({ isGuided: false, layer: {} });
@@ -89,18 +75,18 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
   };
 
   return (
-    <ProcessButton id={_id} onClick={() => enable()}>
+    <ProcessButton id={_processID} onClick={() => enable()}>
       <Icon name={_id} size="30px" />
       <span style={{ display: "block", marginTop: "5px" }}>
-        Земјоделски Парцели
+        Отстрани парцела од фарма
       </span>
-      {processID === _id &&
+      {processID === _processID &&
         (isGuided ? (
           <Guidance
-            id={_id}
+            id={_processID}
             disable={disable}
-            msg={deleteAPMsg}
-            title="Земјоделски Парцели"
+            msg={deleteAPFromFarmMsg}
+            title="Отстрани парцела од фарма"
           />
         ) : (
           <Modal
@@ -113,7 +99,7 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
           >
             <Modal.Title>
               <Button disabled className="as-label ap-modal-title">
-                Земјоделски Парцели
+                Отстрани парцела од фарма
               </Button>
               <DrawActions cancel={disable} />
             </Modal.Title>
@@ -123,7 +109,7 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
                   layer.feature.id +
                   " и површина " +
                   Math.round(layer.getMeasurement()) +
-                  " m². Дали сте сигурни дека сакате да ја избришете?"}
+                  " m². Дали сте сигурни дека сакате да ја отстраните од фармата?"}
               </div>
               <Button
                 onClick={() => {
@@ -133,7 +119,7 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
                 className="cancel"
               >
                 {" "}
-                Избриши
+                Отстрани
               </Button>
             </Modal.Body>
           </Modal>

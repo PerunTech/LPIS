@@ -39,6 +39,6 @@ export const Digitization = () =>
         </Button>
         <Divider />
         <Assign />
-        <DeleteControl />
         <DeleteParcelFromFarm />
+        <DeleteControl />
     </ButtonGroup>;
