@@ -1,0 +1,150 @@
+import { React, elements, redux } from "perun-core";
+import { core, ui } from "../../../../Spatial";
+import { deleteAPMsg } from "../Config";
+import { getFarmMapAssets } from "../../../Util";
+import { Guidance } from "../Guidance";
+import { ProcessButton } from "../../ProcessButton";
+
+const { Map, store, http } = core;
+const { Button, Icon, DrawActions, Modal } = ui;
+const { useReducer } = React;
+const _id = "deleteAP";
+
+/**
+ * Delete an agri parcel.
+ */
+
+const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
+  const [{ isGuided, layer }, setState] = useReducer(
+    (currState, update) => ({ ...currState, ...update }),
+    { isGuided: false, layer: {} }
+  );
+
+  const deleteLayer = () => {
+    // const hardCodededURL = `/lpis/remove/farm/{init.token}/279474/20591996`,
+
+    http
+      .call("delete-farm", {
+        url: `/lpis/remove/farm/{init.token}/${farmObjId}/${farmObjectTypeId}`,
+        method: "get",
+      })
+      .then(() => {
+        console.log(response);
+        // layer.removeFrom(Map);
+        // console.log(farmObjId)
+        elements.alertUser(
+          true,
+          "success",
+          "Успешно бришење",
+          "Парцелата е отстранета од фармата."
+        );
+        disable();
+      })
+      .catch((err) => {
+        console.log(err);
+        elements.alertUser(
+          true,
+          "error",
+          "Грешка при бришење",
+          "Парцелата не е избришана од базата на податоци."
+        );
+        disable();
+      });
+  };
+
+  const enable = () => {
+    const layers = Object.values(store.getState().farmRegistry?.agriParcels);
+
+    if (layers.length > 0) {
+      store.dispatch({ processID: _id });
+      setState({ isGuided: true });
+
+      layers.forEach((sc) => {
+        sc.bringToFront();
+        sc.on("click", function (e) {
+          setState({ layer: e.target, isGuided: false });
+        });
+      });
+    } else {
+      elements.alertUser(
+        true,
+        "warning",
+        "Не се пронајдени парцели.",
+        "Додадете парцели пред да ја користите алатката за бришење."
+      );
+    }
+  };
+
+  const disable = () => {
+    /*
+        const layers = store.getState().data.layers;
+        const cps = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
+
+        cps.forEach(cp => cp.off('click'))*/
+
+    // Reset state, internal and application-wide.
+    store.dispatch({ processID: "" });
+    setState({ isGuided: false, layer: {} });
+    getFarmMapAssets();
+  };
+
+  return (
+    <ProcessButton id={_id} onClick={() => enable()}>
+      <Icon name={_id} size="30px" />
+      <span style={{ display: "block", marginTop: "5px" }}>
+        Земјоделски Парцели
+      </span>
+      {processID === _id &&
+        (isGuided ? (
+          <Guidance
+            id={_id}
+            disable={disable}
+            msg={deleteAPMsg}
+            title="Земјоделски Парцели"
+          />
+        ) : (
+          <Modal
+            id="measure-dialog"
+            className="delete-control-dialog"
+            show
+            backdrop={false}
+            enforceFocus={false}
+            container={document.getElementsByClassName("control-map")[0]}
+          >
+            <Modal.Title>
+              <Button disabled className="as-label ap-modal-title">
+                Земјоделски Парцели
+              </Button>
+              <DrawActions cancel={disable} />
+            </Modal.Title>
+            <Modal.Body className="ap-modal-body">
+              <div id={_id}>
+                {"Ја избравте парцелата со СИЗП број " +
+                  layer.feature.id +
+                  " и површина " +
+                  Math.round(layer.getMeasurement()) +
+                  " m². Дали сте сигурни дека сакате да ја избришете?"}
+              </div>
+              <Button
+                onClick={() => {
+                  deleteLayer();
+                }}
+                size=""
+                className="cancel"
+              >
+                {" "}
+                Избриши
+              </Button>
+            </Modal.Body>
+          </Modal>
+        ))}
+    </ProcessButton>
+  );
+};
+
+export const DeleteParcelFromFarm = core.connect((state) => ({
+  processID: state.app.processID,
+  mapId: state.map.id,
+  farmObjId: state.farmRegistry?.objectId,
+  farmObjectTypeId: state.farmRegistry?.objectTypeId,
+}))(_DeleteParcelFromFarm);
