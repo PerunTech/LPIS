@@ -186,14 +186,14 @@ const _Rows = ({ rows }) => {
         {rowIsExpanded && selectedRowId === id && (
           <div className='data-grid-expanded-row'>
             <_SecondHeader />
-            <ButtonGroup className='fr-data-grid-row' key={id}>
+            <ButtonGroup className='fr-data-grid-row' key={`${id}_${i + 1}`}>
               <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.CHANGED_BORDER)}</Button>
               <Button className='fr-data-grid-column'>{rowData.EXPOSITION_AVG}</Button>
               <Button className='fr-data-grid-column'>{rowData.HOME_NAME}</Button>
               <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.INVISIBLE_BORDER)}</Button>
             </ButtonGroup>
             <_BooleanHeader />
-            <ButtonGroup className='fr-data-grid-row' key={id}>
+            <ButtonGroup className='fr-data-grid-row' key={`${id}_${i + 2}`}>
               <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.ORGANIC)}</Button>
               <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.IRRIGATION)}</Button>
               <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.LANDSCAPE_FEATURES)}</Button>
