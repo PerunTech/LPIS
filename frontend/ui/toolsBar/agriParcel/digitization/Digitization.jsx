@@ -1,10 +1,12 @@
 import { React, elements } from 'perun-core';
 import { ui } from '../../../../Spatial';
+// Components
 import { getFarmMapAssets } from '../../../Util';
 import { Assign } from './Assign';
 import { Copy } from './Copy';
 import { Cut } from './Cut';
 import { DeleteControl } from './DeleteControl';
+import { DeleteParcelFromFarm } from './DeleteParcelFromFarm';
 import { DrawControl } from './DrawControl';
 import { Edit } from './Edit';
 import { Fill } from './Fill';
@@ -37,5 +39,6 @@ export const Digitization = () =>
         </Button>
         <Divider />
         <Assign />
+        <DeleteParcelFromFarm />
         <DeleteControl />
     </ButtonGroup>;
