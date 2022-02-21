@@ -2,7 +2,7 @@ import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools, config as cfg } from '../../../../Spatial';
 import { config, editAPMsg } from '../Config';
 import { getFarmMapAssets } from '../../../Util';
-import { saveParcel } from '../Save.js';
+import { saveAP } from '../SaveAP';
 import { GuideForm } from '../GuideForm';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
@@ -36,20 +36,17 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
             'Не се пронајдени земјоделски парцели.',
             'Додадете земјоделски парцели пред да ја користите алатката за менување.');
     }
-
-    setState({ isGuided: true })
   };
 
-  const disable = (fn) => {
+  const disable = () => {
     Map.off('click');
     // Reset state, internal and application-wide.
-    setState({ layer: {}, data: {}, isGuided: false });
+    setState({ layer: {}, data: {}, isGuided: false, loading: false });
     store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
     // We remove the working geometry, save process will add the result.
     layer.removeFrom && layer.removeFrom(Map);
     getFarmMapAssets()
     _stopEditAP()
-    fn && fn();
   }
 
   const _editAP = () => {
@@ -132,13 +129,13 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
   }
 
   const onSubmit = ({ formData }) => {
-    saveParcel({
+    saveAP(JSON.stringify({
       ...data,
       ...formData,
       OBJECT_ID: Number(layer.feature.id),
       parent_id: farmObjId,
       GEOM: factory.GeoJSON.fromLayer(layer)
-    }, disable);
+    }), disable);
   }
 
   return <ProcessButton id={_id} onClick={() => enable(_id)} >
@@ -146,9 +143,9 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
     <span style={{ display: 'block', marginTop: '5px' }}>Промени парцела</span>
     {processID === _id
       && (isGuided
-        ? <GuideForm id={_id} disable={() => disable(_stopEditAP)} msg={editAPMsg} title='Промени земјоделска парцела' />
+        ? <GuideForm id={_id} disable={() => disable()} msg={editAPMsg} title='Промени земјоделска парцела' />
         : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
-          <DrawActions cancel={() => disable(_stopEditAP)} />
+          <DrawActions cancel={() => disable()} />
         </Form>)}
     {loading && <Loading />}
   </ProcessButton>;

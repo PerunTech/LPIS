@@ -1,14 +1,13 @@
-import { React, Loading, elements, redux } from 'perun-core';
-import { core, ui, data, tools } from '../../../../Spatial';
+import { React, Loading, elements } from 'perun-core';
+import { core, ui, tools } from '../../../../Spatial';
 import { config } from '../Config';
 import { decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
-import { saveParcel } from '../Save.js';
+import { saveAP } from '../SaveAP';
 import { GuideForm } from '../GuideForm';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
 
-const { Map, store, factory, http } = core;
-const { geobuf, protobuf } = data;
+const { Map, store, factory } = core;
 const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
 const { useReducer } = React;
@@ -27,7 +26,7 @@ const _DrawControl = ({ processID, farmObjId }) => {
             Map.off('new_shape');
         });
 
-        setState({ isGuided: true });
+        setState({ isGuided: true, data: {} });
         store.dispatch({ processID: _id });
         polygon.enable(config.pathOptions);
     };
@@ -61,13 +60,13 @@ const _DrawControl = ({ processID, farmObjId }) => {
     }
 
     const onSubmit = ({ formData }) => {
-        saveParcel({
+        saveAP(JSON.stringify({
             ...data,
             ...formData,
             OBJECT_ID: 0,
             parent_id: farmObjId,
             GEOM: factory.GeoJSON.fromLayer(layer)
-        }, disable);
+        }), disable);
     }
 
 
