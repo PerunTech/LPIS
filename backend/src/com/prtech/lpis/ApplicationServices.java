@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,6 +31,8 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.google.gson.JsonObject;
+import com.prtech.spatial.SC;
+import com.prtech.spatial.Util;
 import com.prtech.spatial.geobuf.GeobufEncoder;
 import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
@@ -51,6 +54,8 @@ import com.prtech.svarog_common.ResponseHandler.MessageType;
 import com.prtech.svarog_common.SvCharId;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -121,6 +126,46 @@ public class ApplicationServices {
 		return Response.status(200).entity(pb.toSimpleJson().toString()).build();
 	}
 
+
+	@Path("/split/agriParcel/{token}/{objectName}/{parentId}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/pbf")
+	public Response splitSpatialControl(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
+			final MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
+		String errMsg = "";
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try (SvReader svr = new SvReader(token); SvGeometry svg = new SvGeometry(svr)) {
+			Geometry geom = Util.getInputGeometry(formVals, null);
+			Long layerTypeId = SvCore.getTypeIdByName(objectName);
+			List<DbDataObject> toBeDeleted = new ArrayList<DbDataObject>();
+			Set<Geometry> split = svg.splitGeometries((LineString) geom, layerTypeId, toBeDeleted, false, SC.PARENT_ID,
+					parentId, false);
+
+			// TODO add calculus of overlaps
+			svg.splitMergeGeometryDbUpdate(split, toBeDeleted, true);
+			result.addAll(split);
+
+			svg.dbCommit();
+		} catch (SvException e) {
+			errMsg = e.getJsonMessage();
+		} catch (Exception e) {
+			errMsg = e.getMessage();
+		}
+		if (errMsg.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+					enc.writeSvGeometry(result);
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+	}
+	
 	@Path("/save/agriParcel/{token}/{objectId}/{parentId}/{opType}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
