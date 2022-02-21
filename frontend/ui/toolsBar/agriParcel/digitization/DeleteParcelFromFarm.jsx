@@ -19,9 +19,9 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
 
   const deleteLayer = () => {
     http.call("delete-farm", {
-        url: `/lpis/remove/farm/{init.token}/${farmObjId}/${farmObjectTypeId}`,
-        method: "get",
-      })
+      url: `/lpis/remove/farm/{init.token}/${farmObjId}/${farmObjectTypeId}`,
+      method: "get",
+    })
       .then(() => {
         console.log(response);
         elements.alertUser(
@@ -131,6 +131,6 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
 export const DeleteParcelFromFarm = core.connect((state) => ({
   processID: state.app.processID,
   mapId: state.map.id,
-  farmObjId: state.farmRegistry?.objectId,
-  farmObjectTypeId: state.farmRegistry?.objectTypeId,
+  farmObjId: state.farmRegistry?.farmObjId,
+  farmObjectTypeId: state.farmRegistry?.farmObjTypeId,
 }))(_DeleteParcelFromFarm);

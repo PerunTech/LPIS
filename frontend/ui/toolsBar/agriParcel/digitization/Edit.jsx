@@ -87,31 +87,25 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
     })
   }
 
-  const _setBlockEvents = layer => {
+  const _setBlockEvents = (layer, agriParcels) => {
     layer.on('mouseover', function () { this.setStyle({ color: '#eed000', fillColor: '#000000' }) })
-      .on('mouseout', function () { this.setStyle(_style) })
-      .on('click', function () { initEdit(layer); })
+      .on('mouseout', function () { this.setStyle(config.pathOptions) })
+      .on('click', function () {
+        initEdit(this);
+        agriParcels.forEach(ap => ap.off('mouseover mouseout click'))
+      }).bringToFront();
   }
 
   const initEdit = layer => {
-    layer.setStyle(_style)
-    // disable all selection events on group. Remove edited layer from group.
-    _layerGroup.eachLayer(el => el.off('mouseover mouseout click'));
-    _layerGroup.removeLayer(layer);
-    // re-add layer as standalone.
-    //layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())]);
-    layer.options.metadata = config.pathOptions.metadata;
-    layer.addTo(Map);
-
     // Move map view on top of selected polygon.
     Map.fitBounds(layer.getBounds());
 
     // Activate edit handler on selected polygon
-    edit.polygon.enable(_simplifyMultipolygon(layer), config);
+    edit.polygon.enable(layer, config);
     setState({ layer: layer, data: layer.feature.properties, isGuided: false });
 
     // Activate edit event listeners on layer.
-    layer.on('pm:edit', e => setState({ layer: e.target, data: e.target.feature.properties }));
+    layer.on('pm:edit', e => setState({ layer: e.target }));
   }
 
   const _simplifyMultipolygon = layer => {
