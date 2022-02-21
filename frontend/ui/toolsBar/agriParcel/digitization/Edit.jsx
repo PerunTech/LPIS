@@ -8,7 +8,7 @@ import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
-const { Map, store, factory, http } = core;
+const { Map, store, factory, http, util } = core;
 const { geobuf, protobuf } = data;
 const { edit } = tools;
 const { Icon, DrawActions } = ui;
@@ -25,16 +25,16 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
   const enable = (id) => {
     store.dispatch({ processID: id, minZoom: MIN_DIGI_SCALE });
     if (agriParcels.length > 0) {
-        agriParcels.forEach(sc => _setBlockEvents(sc, agriParcels))
-        _editAP()
-        store.dispatch({ processID: _id })
-        setState({ isGuided: true })
+      agriParcels.forEach(sc => _setBlockEvents(sc, agriParcels))
+      _editAP()
+      store.dispatch({ processID: _id })
+      setState({ isGuided: true })
     } else {
-        disable();
-        elements.alertUser(true,
-            'warning',
-            'Не се пронајдени земјоделски парцели.',
-            'Додадете земјоделски парцели пред да ја користите алатката за менување.');
+      disable();
+      elements.alertUser(true,
+        'warning',
+        'Не се пронајдени земјоделски парцели.',
+        'Додадете земјоделски парцели пред да ја користите алатката за менување.');
     }
   };
 
@@ -99,6 +99,7 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
     _layerGroup.eachLayer(el => el.off('mouseover mouseout click'));
     _layerGroup.removeLayer(layer);
     // re-add layer as standalone.
+    //layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())]);
     layer.options.metadata = config.pathOptions.metadata;
     layer.addTo(Map);
 
