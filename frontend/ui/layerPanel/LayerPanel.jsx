@@ -8,7 +8,7 @@ export const LayerPanel = () => {
     const [isOpen, open] = useState(true);
 
     useEffect(() => {
-        isOpen ? data.layerList.expand() : data.layerList.collapse();
+        isOpen ? data.layerList?.expand() : data.layerList?.collapse();
     }, [isOpen])
 
     return <div id='layer-panel' >

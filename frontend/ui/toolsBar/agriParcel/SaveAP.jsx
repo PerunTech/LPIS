@@ -123,7 +123,7 @@ export const saveAP = (layer, callback) => {
             </Modal.Body>
         </Modal>;
     APModal.propTypes = {
-        layer: PropTypes.obj
+        layer: PropTypes.object
     };
 
     // Begin workflow
