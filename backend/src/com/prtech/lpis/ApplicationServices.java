@@ -214,7 +214,7 @@ public class ApplicationServices {
 					}
 
 					if (opType.equals(CC.CUTOFF)) {
-						geom = svg.cutLayerFromGeom(geom, typeId, CC.PARENT_ID, parentId);
+						geom = svg.cutLayerFromGeom(geom, typeId);
 						SvGeometry.setGeometry(ap, geom);
 					} else {
 						SvGeometry.setGeometry(ap, geom);
