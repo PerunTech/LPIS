@@ -11,7 +11,7 @@ const _ToolsBar = ({ mapId }) => {
     return <div id='toolsbar' >
         <Button disabled className='left-corner-filler' />
         <Button 
-            onClick={() => history.push('/')} 
+            onClick={() => history.goBack()} 
             className='toolbar-home'
             title='Кон почетна'>
                 <Icon name='home' size='18px' style={{fill: '#3a3a3a'}} />
