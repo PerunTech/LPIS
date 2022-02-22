@@ -16,15 +16,15 @@ after_script:
   - git stash
   - git pull origin $CI_BUILD_REF_NAME
 
-npm_test:
+pnpm_test:
   stage: test
   script:
     - pwd
     - git reset --hard HEAD
     - rm -rf node_modules
-    - npm install
-    - npm run test
-    - npm run build
+    - pnpm install
+    - pnpm run test
+    - pnpm run build
 
 mvn_test:
   stage: test
@@ -40,8 +40,8 @@ install:
     - cd $CI_PROJECT_DIR/
     - git reset --hard HEAD
     - rm -rf node_modules
-    - npm install
-    - npm run build
+    - pnpm install
+    - pnpm run build
     - cd backend
     - pwd
     - mvn clean deploy -DskipTests
@@ -76,4 +76,3 @@ sonarqube_frontend:
     - sonar-scanner -Dsonar.sources=. -Dsonar.projectKey=$CI_PROJECT_NAME -Dsonar.analysis.mode=preview -Dsonar.login=a02003f1f8f90382d7570b57a85c00c38132f85f -Dsonar.branch=$CI_BUILD_REF_NAME -Dsonar.projectName=$CI_PROJECT_NAME -Dsonar.gitlab.commit_sha=$CI_BUILD_REF -Dsonar.gitlab.ref_name=$CI_BUILD_REF_NAME -Dsonar.gitlab.project_id=$CI_PROJECT_ID
     - sonar-scanner -Dsonar.sources=. -Dsonar.projectKey=$CI_PROJECT_NAME -Dsonar.analysis.mode=publish -Dsonar.login=a02003f1f8f90382d7570b57a85c00c38132f85f -Dsonar.branch=$CI_BUILD_REF_NAME -Dsonar.projectName=$CI_PROJECT_NAME
   when: manual
-
