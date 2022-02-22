@@ -85,8 +85,8 @@ export const getFarmMapAssets = (fitBounds = false) => {
     const farmObjTypeId = perunStore.getState().frmapData?.farmData?.objectTypeId || 0
     const tableName = perunStore.getState().frmapData?.farmData?.tableName
     const data = perunStore.getState().frmapData?.farmData?.rowsData
-    const FIC = data[`${tableName}.FIC`]
-    const fullName = data[`${tableName}.FULL_NAME`]
+    const FIC = data[`${tableName}.FIC`] || 0
+    const fullName = data[`${tableName}.FULL_NAME`] || ""
 
     store.dispatch({ farmObjId, farmObjTypeId, FIC, fullName, tableName })
     const url = `${window.server}/spatial/geometry/get/byparent/${token}/AGRI_PARCEL/${farmObjId}`
