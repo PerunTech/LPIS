@@ -195,14 +195,13 @@ public class ApplicationServices {
 					
 					if (isUpdate) {
 						ap = svr.getObjectById(objectId, typeId, null);
-						isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(geom, ap, svg, false);
-						geom = SvGeometry.getGeometry(ap);
-
 					} else {
 						ap.setObjectId(0L);
 						ap.setObjectType(typeId);
 						ap.setParentId(parentId);
 					}
+					isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(geom, ap, svg, false);
+					geom = SvGeometry.getGeometry(ap);
 
 					// Map form values to dbo fields
 					for (DbDataObject field : fieldSet.getItems()) {
@@ -294,10 +293,10 @@ public class ApplicationServices {
 	}
 
 	@GET
-	@Path("/remove/farm/{token}/{objectId}/{objectType}")
+	@Path("/remove/farm/{token}/{objectId}/{objectName}")
 	@Produces("application/pbf")
 	public Response deleteParcel(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
-			@PathParam("objectType") final Long objectType, MultivaluedMap<String, String> formVals,
+			@PathParam("objectType") final String objectName, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
 
 		String errMsg = "";
@@ -306,12 +305,12 @@ public class ApplicationServices {
 				SvWriter svw = new SvWriter(svr);
 				SvGeometry svg = new SvGeometry(svr)) {
 			svr.setIncludeGeometries(true);
-			DbDataObject dbo = svr.getObjectById(objectId, objectType, null);
+			DbDataObject dbo = svr.getObjectById(objectId, SvCore.getTypeIdByName(objectName), null);
 			if (dbo == null)
 				throw (new SvException(Sv.Exceptions.NULL_OBJECT, svr.getInstanceUser()));
 			else {
 				Geometry gTile = SvGeometry.getTileGeometry(SvGeometry.getCentroid(dbo));
-				SvSDITile svTile = SvGeometry.getTile(objectType, (String) gTile.getUserData(), null);
+				SvSDITile svTile = SvGeometry.getTile(SvCore.getTypeIdByName(objectName), (String) gTile.getUserData(), null);
 				dbo.setParentId(0L);
 				svw.saveObject(dbo, false);
 				svTile.setIsTileDirty(true);
