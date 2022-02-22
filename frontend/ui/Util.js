@@ -83,12 +83,12 @@ export const getFarmMapAssets = (fitBounds = false) => {
     const token = perunStore.getState().security.svSession
     const farmObjId = perunStore.getState().frmapData?.farmData?.objectId || 0
     const farmObjTypeId = perunStore.getState().frmapData?.farmData?.objectTypeId || 0
-    const tableName = perunStore.getState().frmapData?.farmData?.tableName
+    const tableName = perunStore.getState().frmapData?.farmData?.tableName || ""
     const data = perunStore.getState().frmapData?.farmData?.rowsData
-    const FIC = data[`${tableName}.FIC`] || 0
-    const fullName = data[`${tableName}.FULL_NAME`] || ""
+    const fic = data?.[`${tableName}.FIC`] || 0
+    const fullName = data?.[`${tableName}.FULL_NAME`] || ""
 
-    store.dispatch({ farmObjId, farmObjTypeId, FIC, fullName, tableName })
+    store.dispatch({ farmObjId, farmObjTypeId, fic, fullName, tableName})
     const url = `${window.server}/spatial/geometry/get/byparent/${token}/AGRI_PARCEL/${farmObjId}`
     http.call('getFarmMapAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
         const data = geobuf.decode(protobuf(response));

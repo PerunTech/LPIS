@@ -58,7 +58,7 @@ export const lpis = () => {
 }
 
 export const farmRegLpis = () => {
-    store.addState('farmRegistry', { 'agriParcels': {}, 'farmObjId': '', 'farmObjTypeId': '' })
+    store.addState('farmRegistry', { 'agriParcels': {}, 'farmObjId': '', 'farmObjTypeId': '', 'fic': '', 'fullName': '', 'tableName': '' })
     const _token = redux.store.getState().security.svSession;
     getFarmMapAssets(true)
 
