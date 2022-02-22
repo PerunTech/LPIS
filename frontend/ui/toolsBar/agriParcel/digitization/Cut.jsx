@@ -1,4 +1,4 @@
-import { React, Loading, elements, redux } from 'perun-core';
+import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
 import { config, drawAPMsg } from '../Config';
 import { decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
@@ -15,9 +15,9 @@ const { useReducer } = React;
 const _id = 'cut-control';
 
 const _Cut = ({ processID, farmObjId }) => {
-    const [{ layer, data, X, Y, loading, isGuided }, setState] = useReducer((currState, update) =>
+    const [{ layer, data, loading, isGuided }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
-        { layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false });
+        { layer: {}, data: {}, loading: false, isGuided: false });
 
     const enable = () => {
         Map.on('new_shape', e => cutParcel(e));

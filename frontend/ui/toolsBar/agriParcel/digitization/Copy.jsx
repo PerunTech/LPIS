@@ -1,6 +1,6 @@
-import { React, Loading, elements, redux } from 'perun-core';
+import { React, Loading, elements } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
-import { config } from '../Config';
+import { config, createAPMsg } from '../Config';
 import { decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
