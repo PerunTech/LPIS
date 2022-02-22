@@ -92,11 +92,11 @@ const _Fill = ({ processID, farmObjId }) => {
     }
 
     const onSubmit = ({ formData }) => {
-        saveAP({
+        saveAP(JSON.stringify({
             ...data,
             ...formData,
             GEOM: factory.GeoJSON.fromLayer(layer)
-        }, disable);
+        }), disable);
     }
 
     const onChange = ({ formData }) => {

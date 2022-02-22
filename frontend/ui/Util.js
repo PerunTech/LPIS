@@ -88,7 +88,7 @@ export const getFarmMapAssets = (fitBounds = false) => {
     const fic = data?.[`${tableName}.FIC`] || 0
     const fullName = data?.[`${tableName}.FULL_NAME`] || ""
 
-    store.dispatch({ farmObjId, farmObjTypeId, fic, fullName, tableName})
+    store.dispatch({ farmObjId, farmObjTypeId, fic, fullName, tableName })
     const url = `${window.server}/spatial/geometry/get/byparent/${token}/AGRI_PARCEL/${farmObjId}`
     http.call('getFarmMapAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
         const data = geobuf.decode(protobuf(response));
