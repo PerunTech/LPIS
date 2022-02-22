@@ -19,29 +19,28 @@ const _layerGroup = factory.layerGroup();
 const _style = { color: '#eed000', fillColor: '#FFFFFF' };
 
 const _Edit = ({ processID, farmObjId, agriParcels }) => {
-  const [{ layer, data, loading, isGuided }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { layer: {}, data: {}, loading: false, isGuided: false });
+  const [{ layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
 
-  const enable = (id) => {
-    store.dispatch({ processID: id, minZoom: MIN_DIGI_SCALE });
+  const enable = () => {
     if (agriParcels.length > 0) {
       agriParcels.forEach(sc => _setBlockEvents(sc, agriParcels))
+      store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
+      setState({ isGuided: true, showForm: false, data: {}, layer: {} })
       _editAP()
-      store.dispatch({ processID: _id })
-      setState({ isGuided: true })
     } else {
-      disable();
       elements.alertUser(true,
         'warning',
         'Не се пронајдени земјоделски парцели.',
-        'Додадете земјоделски парцели пред да ја користите алатката за менување.');
+        'Додадете земјоделски парцели пред да ја користите алатката за менување.',
+        () => disable());
     }
   };
 
   const disable = () => {
     Map.off('click');
     // Reset state, internal and application-wide.
-    setState({ layer: {}, data: {}, isGuided: false, loading: false });
+    setState({ layer: {}, data: {}, isGuided: false, showForm: false, loading: false });
     store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
     // We remove the working geometry, save process will add the result.
     layer.removeFrom && layer.removeFrom(Map);
@@ -89,7 +88,7 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
 
   const _setBlockEvents = (layer, agriParcels) => {
     layer.on('mouseover', function () { this.setStyle({ color: '#eed000', fillColor: '#000000' }) })
-      .on('mouseout', function () { this.setStyle(config.pathOptions) })
+      .on('mouseout', function () { this.setStyle({ color: '#3399ff', fillColor: '#3388ff' }) })
       .on('click', function () {
         initEdit(this);
         agriParcels.forEach(ap => ap.off('mouseover mouseout click'))
@@ -102,7 +101,7 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
 
     // Activate edit handler on selected polygon
     edit.polygon.enable(layer, config);
-    setState({ layer: layer, data: layer.feature.properties, isGuided: false });
+    setState({ layer: layer, data: layer.feature.properties, isGuided: false, showForm: true });
 
     // Activate edit event listeners on layer.
     layer.on('pm:edit', e => setState({ layer: e.target }));
@@ -133,15 +132,34 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
     }), disable);
   }
 
-  return <ProcessButton id={_id} onClick={() => enable(_id)} >
+  const renderGuideForm = () => {
+    return <GuideForm id={_id} disable={() => disable()} msg={editAPMsg} title='Промени земјоделска парцела' />
+  }
+
+  const renderForm = () => {
+    return (
+      <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
+        <DrawActions cancel={() => disable()} />
+      </Form>
+    )
+  }
+
+  const renderComponent = () => {
+    let componentToRender = null
+
+    if (isGuided && !showForm) {
+      componentToRender = renderGuideForm()
+    } else if (showForm && !isGuided) {
+      componentToRender = renderForm()
+    }
+
+    return componentToRender
+  }
+
+  return <ProcessButton id={_id} onClick={enable} >
     <Icon name={_id} size='30px' />
     <span style={{ display: 'block', marginTop: '5px' }}>Промени парцела</span>
-    {processID === _id
-      && (isGuided
-        ? <GuideForm id={_id} disable={() => disable()} msg={editAPMsg} title='Промени земјоделска парцела' />
-        : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
-          <DrawActions cancel={() => disable()} />
-        </Form>)}
+    {processID === _id && renderComponent()}
     {loading && <Loading />}
   </ProcessButton>;
 }
