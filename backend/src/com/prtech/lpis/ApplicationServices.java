@@ -195,13 +195,14 @@ public class ApplicationServices {
 					
 					if (isUpdate) {
 						ap = svr.getObjectById(objectId, typeId, null);
-						isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(geom, ap, svg, false);						
+						isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(geom, ap, svg, false);
+						geom = SvGeometry.getGeometry(ap);
+
 					} else {
 						ap.setObjectId(0L);
 						ap.setObjectType(typeId);
 						ap.setParentId(parentId);
 					}
-					geom = SvGeometry.getGeometry(ap);
 
 					// Map form values to dbo fields
 					for (DbDataObject field : fieldSet.getItems()) {
