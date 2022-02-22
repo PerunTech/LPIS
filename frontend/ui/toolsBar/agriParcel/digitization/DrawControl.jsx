@@ -14,19 +14,19 @@ const { useReducer } = React;
 const _id = 'drawAP';
 
 const _DrawControl = ({ processID, farmObjId }) => {
-    const [{ layer, data, loading, isGuided }, setState] = useReducer((currState, update) =>
-        ({ ...currState, ...update }), { layer: {}, data: {}, loading: false, isGuided: false });
+    const [{ layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
+        ({ ...currState, ...update }), { layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
 
     const enable = () => {
         Map.on('new_shape', e => {
             if (e && e.layer) {
-                setState({ layer: e.layer, isGuided: false })
+                setState({ layer: e.layer, isGuided: false, showForm: true })
                 e.layer.addTo(Map)
             }
             Map.off('new_shape');
         });
 
-        setState({ isGuided: true, data: {} });
+        setState({ isGuided: true, showForm: false, data: {}, layer: {} });
         store.dispatch({ processID: _id });
         polygon.enable(config.pathOptions);
     };
@@ -41,15 +41,14 @@ const _DrawControl = ({ processID, farmObjId }) => {
                 elements.alertUser(true, 'error', 'Грешка при зачувување', errorMsg);
             } else {
                 // Reset state, internal and application-wide.
-                setState({ layer: {}, data: {}, isGuided: false });
+                setState({ layer: {}, data: {}, isGuided: false, showForm: false });
                 store.dispatch({ processID: '' });
 
                 // We remove the working geometry, save process will add the result.
                 layer.removeFrom && layer.removeFrom(Map);
                 // Disable draw handler.
                 polygon.disable('force');
-
-                // refresh spatial controls
+                // Refresh the data
                 getFarmMapAssets();
             }
         }
@@ -69,21 +68,40 @@ const _DrawControl = ({ processID, farmObjId }) => {
         }), disable);
     }
 
+    const renderGuideForm = () => {
+        return <GuideForm id={_id}
+            finish={() => polygon._finishShape()}
+            undo={() => polygon._removeLastVertex()}
+            disable={disable}
+            title='Нацртај парцела'
+        />
+    }
+
+    const renderForm = () => {
+        return (
+            <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
+                <DrawActions cancel={disable} />
+            </Form>
+        )
+    }
+
+    const renderComponent = () => {
+        let componentToRender = null
+
+        if (isGuided && !showForm) {
+            componentToRender = renderGuideForm()
+        } else if (showForm && !isGuided) {
+            componentToRender = renderForm()
+        }
+
+        return componentToRender
+    }
+
 
     return <ProcessButton id={_id} onClick={enable} >
         <Icon name={_id} size='30px' />
         <span style={{ display: 'block', marginTop: '5px' }}>Нацртај парцела</span>
-        {processID === _id
-            && (isGuided
-                ? <GuideForm id={_id}
-                    finish={() => polygon._finishShape()}
-                    undo={() => polygon._removeLastVertex()}
-                    disable={disable}
-                    title='Нацртај просторна контрола' />
-                : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
-                    <DrawActions
-                        cancel={disable} />
-                </Form>)}
+        {processID === _id && renderComponent()}
         {loading && <Loading />}
     </ProcessButton>;
 }
