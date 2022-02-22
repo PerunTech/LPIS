@@ -87,7 +87,7 @@ const _Copy = ({ processID, farmObjId }) => {
     }
 
     const onSubmit = ({ formData }) =>
-        saveAP({
+        saveAP(JSON.stringify({
             ...data,
             ...formData,
             GEOM: factory.GeoJSON.fromLayer(layer),
@@ -95,7 +95,7 @@ const _Copy = ({ processID, farmObjId }) => {
             Y: Y,
             parent_id: farmObjId,
             OBJECT_ID: 0
-        }, disable);
+        }), disable);
 
     const renderForm = () =>
     (isGuided

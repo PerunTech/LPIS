@@ -57,7 +57,7 @@ const _Split = ({ processID, farmObjId }) => {
     const splitParcel = (lineLayer) => {
 
         http.call(_id, {
-            url: '/spatial/geometry/split/preview/{init.token}/AGRI_PARCEL/' + farmObjId,
+            url: '/spatial/geometry/split/confirm/{init.token}/AGRI_PARCEL/' + farmObjId,
             method: 'post',
             responseType: 'arraybuffer',
             data: JSON.stringify(factory.GeoJSON.fromLayer(lineLayer))

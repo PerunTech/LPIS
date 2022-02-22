@@ -70,3 +70,29 @@
     border-bottom: 1px solid #999;
     text-align: center;
   }
+
+  .fr-info-header {
+    margin: 5px;
+    padding: 10px;
+    background-color: #d3d3d3;
+    border-radius: 5px;
+  }
+
+  .header-info-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    border-bottom: 1px solid gray;
+    margin: 5px;
+  }
+
+  .info-header-title {
+    font-size: 15px;
+    font-weight: bold;
+  }
+
+  .info-header-span {
+    font-size: 15px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+  }
