@@ -61,6 +61,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 @Path("/lpis")
 public class ApplicationServices {
+	
 	static int precisionScale = 2;
 
 	static {
@@ -171,20 +172,17 @@ public class ApplicationServices {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/pbf")
 	public StreamingOutput saveAgriParcelToFarm(@PathParam("token") String token, @PathParam("objectId") Long objectId,
-			@PathParam("parentId") Long parentId, @PathParam("opType") Long opType,
+			@PathParam("parentId") Long parentId, @PathParam("opType") String opType,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		return new StreamingOutput() {
 			public void write(OutputStream stream) throws IOException {
 				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
-				SvReader svr = null;
-				SvGeometry svg = null;
 				DbDataObject ap = null;
 				JsonObject metadata = new JsonObject();
-				try {
-					svr = new SvReader(token);
+				try (SvReader svr = new SvReader(token);SvGeometry svg = new SvGeometry(svr);){
+					
 					svr.setIncludeGeometries(true);
-					svg = new SvGeometry(svr);
 					ap = new DbDataObject();
 					DbDataArray intersectArr = new DbDataArray();
 					DbDataArray resultArr = new DbDataArray();
@@ -193,14 +191,17 @@ public class ApplicationServices {
 					DbDataArray fieldSet = SvCore.getFields(typeId);
 					boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
 					metadata = Util.dataToJson(formVals);
-
+					geom = Util.jsonToGeometry(metadata.get(Sv.GEOM));
+					
 					if (isUpdate) {
 						ap = svr.getObjectById(objectId, typeId, null);
+						isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(geom, ap, svg, false);						
 					} else {
 						ap.setObjectId(0L);
 						ap.setObjectType(typeId);
 						ap.setParentId(parentId);
 					}
+					geom = SvGeometry.getGeometry(ap);
 
 					// Map form values to dbo fields
 					for (DbDataObject field : fieldSet.getItems()) {
@@ -211,33 +212,9 @@ public class ApplicationServices {
 						}
 					}
 
-					// Run cut operations with neighbour agri parcels.
-					geom = Util.jsonToGeometry(metadata.get("GEOM"));
-					if (opType > 0) {
-						if (opType.equals(1L)) {
-							geom = svg.cutLayerFromGeom(geom, typeId);
-//							if ("Polygon".equalsIgnoreCase(geom.getGeometryType()))
-//								geom = SvUtil.sdiFactory.createMultiPolygon(new Polygon[] { (Polygon) geom });
-							SvGeometry.setGeometry(ap, geom);
-						} else if (opType.equals(2L)) {
-							SvGeometry.setGeometry(ap, geom);
-							Collection<Geometry> apCol = svg.cutGeomFromLayer(geom, typeId);
-							Iterator<Geometry> it = apCol.iterator();
-							while (it.hasNext()) {
-								Geometry g = it.next();
-								DbDataObject dbo = (DbDataObject) g.getUserData();
-
-//								if ("Polygon".equalsIgnoreCase(g.getGeometryType()))
-//									g = SvUtil.sdiFactory.createMultiPolygon(new Polygon[] { (Polygon) g });
-								SvGeometry.setGeometry(dbo, g);
-
-								Util.calculateGeometryDerivatives(dbo);
-								intersectArr.addDataItem(dbo);
-								resultArr.addDataItem(dbo);
-							}
-
-							svg.saveGeometry(intersectArr);
-						}
+					if (opType.equals(CC.CUTOFF)) {
+						geom = svg.cutLayerFromGeom(geom, typeId, CC.PARENT_ID, parentId);
+						SvGeometry.setGeometry(ap, geom);
 					} else {
 						SvGeometry.setGeometry(ap, geom);
 					}
@@ -259,12 +236,8 @@ public class ApplicationServices {
 					}
 					log.error(errMsg, e);
 				} finally {
-					if (svg != null)
-						svg.close();
 					if (enc != null)
 						enc.close();
-					if (svr != null)
-						svr.close();
 				}
 			};
 		};
