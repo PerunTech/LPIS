@@ -65,7 +65,7 @@ export const saveAP = (layer, callback) => {
         }).then(response =>
             response.data.check
                 ? ReactDOM.render(<APModal layer={response.data.layer} />, container)
-                : _saveAP(response.data.layer, 0)
+                : _saveAP(response.data.layer, 'IGNORE')
         ).catch(() => _fail);
     };
 
@@ -110,16 +110,16 @@ export const saveAP = (layer, callback) => {
                 <span style={{ display: 'block', marginTop: '10px' }}>Земјоделската парцела се пресекува со соседните земјоделски парцели</span>
             </Modal.Title>
             <Modal.Body >
-                <Button block onClick={() => _saveAP(layer, 0)} >
+                <Button block onClick={() => _saveAP(layer, 'IGNORE')} >
                     <div>Задржи ја просторната определба</div>
                     <div>(системот ќе покрене барање за контрола на терен)</div>
                 </Button>
-                <Button block onClick={() => _saveAP(layer, 1)}>
+                <Button block onClick={() => _saveAP(layer, 'CUTOFF')}>
                     Отсечи ја работната земјоделската парцела според границите на соседните земјоделски парцели
                 </Button>
-                <Button block onClick={() => _saveAP(layer, 2)}>
+                {/* <Button block onClick={() => _saveAP(layer, 2)}>
                     Отсечи ги соседните земјоделски парцели под лична сопственост, според границите на работната земјоделска парцела
-                </Button>
+                </Button> */}
             </Modal.Body>
         </Modal>;
     APModal.propTypes = {
