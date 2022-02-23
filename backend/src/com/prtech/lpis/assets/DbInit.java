@@ -463,19 +463,89 @@ public class DbInit implements IDbInit {
 		return dbt;	
 	}
 
+	public static DbDataTable createCommonUse() {
+		DbDataTable dbt = new DbDataTable();
+		dbt.setDbTableName("COMMON_USE");
+		dbt.setDbRepoName(CONST_MASTER_REPO);
+		dbt.setDbSchema(CONST_DEFAULT_SCHEMA);
+		dbt.setIsSystemTable(false);
+		dbt.setIsRepoTable(false);
+		dbt.setIsConfigTable(false);
+		dbt.setLabel_code("common_use.general");
+		dbt.setUse_cache(true);
+		dbt.setParentName("FARMER");
+
+		DbDataField dbf1 = new DbDataField();
+		dbf1.setDbFieldName("PKID");
+		dbf1.setDbFieldType(DbFieldType.NUMERIC);
+		dbf1.setIsPrimaryKey(true);
+		dbf1.setDbFieldSize(18);
+		dbf1.setDbFieldScale(0);
+		dbf1.setIsNull(false);
+		dbf1.setLabel_code("common_use.pkid");
+		dbf1.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+
+		DbDataField dbf2 = new DbDataField();
+		dbf2.setDbFieldName("PARCEL_ID");
+		dbf2.setDbFieldType(DbFieldType.NUMERIC);
+		dbf1.setDbFieldSize(18);
+		dbf2.setIndexName("PARCEL_ID_IDX");
+		dbf2.setLabel_code("common_use.parcel_id");
+		dbf2.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+
+		DbDataField dbf3 = new DbDataField();
+		dbf3.setDbFieldName("OWN_PARCEL");
+		dbf3.setDbFieldType(DbFieldType.NUMERIC);
+		dbf1.setDbFieldSize(18);
+		dbf3.setLabel_code("common_use.own_parcel");
+		dbf3.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf4 = new DbDataField();
+		dbf4.setDbFieldName("TOTAL_PARCEL");
+		dbf4.setDbFieldType(DbFieldType.NUMERIC);
+		dbf4.setDbFieldSize(18);
+		dbf4.setLabel_code("common_use.total_parcel");
+		dbf4.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf5 = new DbDataField();
+		dbf5.setDbFieldName("ALLOWED_AREA");
+		dbf5.setDbFieldType(DbFieldType.NUMERIC);
+		dbf5.setDbFieldSize(18);
+		dbf5.setLabel_code("common_use.allowed_area");
+		dbf5.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+		dbf5.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField[] fieldList = new DbDataField[5];
+		fieldList[0] = dbf1;
+		fieldList[1] = dbf2;
+		fieldList[2] = dbf3;
+		fieldList[3] = dbf4;
+		fieldList[4] = dbf5;
+
+		dbt.setDbTableFields(fieldList);
+		return dbt;
+	}
+	
+	
 	@Override
 	public ArrayList<DbDataTable> getCustomObjectTypes() {
 		ArrayList<DbDataTable> dbtList = new ArrayList<DbDataTable>();
 		dbtList.add(addSortOrder(DbInit.createPhysicalBlock()));
 		dbtList.add(addSortOrder(DbInit.createAgriParcel()));
-		
+		dbtList.add(addSortOrder(DbInit.createCommonUse()));
+
 		return dbtList;
 	}
 
 	@Override
 	public ArrayList<DbDataObject> getCustomObjectInstances() {
 		ArrayList<DbDataObject> dbtList = new ArrayList<DbDataObject>();
-		
+
 		return dbtList;
 	}
 }
