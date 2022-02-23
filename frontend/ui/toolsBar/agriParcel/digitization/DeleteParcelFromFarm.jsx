@@ -19,11 +19,11 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
 
   const deleteLayer = () => {
     http.call("delete-farm", {
-      url: `/lpis/remove/farm/{init.token}/${farmObjId}/${farmObjectTypeId}`,
+      url: '/lpis/remove/farm/{init.token}/' + layer.feature.id + '/AGRI_PARCEL',
       method: "get",
     })
       .then(() => {
-        console.log(response);
+        //console.log(response);
         elements.alertUser(
           true,
           "success",
@@ -33,7 +33,7 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
         disable();
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
         elements.alertUser(
           true,
           "error",
