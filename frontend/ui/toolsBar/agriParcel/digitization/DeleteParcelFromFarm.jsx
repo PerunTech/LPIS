@@ -8,7 +8,7 @@ import { ProcessButton } from "../../ProcessButton";
 const { store, http } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
 const { useReducer } = React;
-const _id = "deleteAP";
+const _id = "cropDelete";
 const _processID = "deleteAPFromFarm"
 
 const _DeleteParcelFromFarm = ({ processID, farmObjId, farmObjectTypeId }) => {
