@@ -2,6 +2,7 @@ import { React, elements } from 'perun-core';
 import { ui } from '../../../../Spatial';
 // Components
 import { getFarmMapAssets } from '../../../Util';
+import { AddEditCommonUse } from './AddEditCommonUse';
 import { Assign } from './Assign';
 import { Copy } from './Copy';
 import { Cut } from './Cut';
@@ -41,4 +42,5 @@ export const Digitization = () =>
         <Assign />
         <DeleteParcelFromFarm />
         <DeleteControl />
+        <AddEditCommonUse />
     </ButtonGroup>;
