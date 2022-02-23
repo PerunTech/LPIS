@@ -94,7 +94,7 @@ const _Cut = ({ processID, farmObjId }) => {
                     let errmsg = enc.decode(error.response.data);
                     elements.alertUser(true,
                         'error',
-                        'Грешка при отсекување просторна контрола',
+                        'Грешка при отсекување земјоделска парцела',
                         errmsg
                     );
                 })

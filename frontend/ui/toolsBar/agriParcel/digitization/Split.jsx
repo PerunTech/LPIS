@@ -73,7 +73,7 @@ const _Split = ({ processID, farmObjId }) => {
                 })
                 elements.alertUser(true,
                     'success',
-                    'Успешно поделена просторна контрола',
+                    'Успешно поделена земјоделска парцела',
                     'Добиени се ' + geojson.getLayers().length + ' нови парцели.',
                     getFarmMapAssets
                 )
@@ -84,7 +84,7 @@ const _Split = ({ processID, farmObjId }) => {
                 console.log();
                 elements.alertUser(true,
                     'error',
-                    'Грешка при поделба просторна контрола',
+                    'Грешка при поделба земјоделска парцела',
                     errmsg,
                     getFarmMapAssets
                 );

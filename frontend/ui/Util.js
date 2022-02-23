@@ -12,7 +12,7 @@ export const bufferToString = buffer => {
 }
 
 export const decodeResponse = (response) => {
-    let errorMsg = 'Просторната контрола не е запишана во базата на податоци.'
+    let errorMsg = 'Земјоделската парцела не е запишана во базата на податоци.'
     const decoder = new TextDecoder()
     const decoded = decoder.decode(response.data)
     if (isJSON(decoded)) {
