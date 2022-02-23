@@ -81,7 +81,7 @@ export const getFarmMapAssets = (fitBounds = false) => {
     });
 
     const token = perunStore.getState().security.svSession
-    const farmObjId = perunStore.getState().frmapData?.farmData?.objectId || 673582072
+    const farmObjId = perunStore.getState().frmapData?.farmData?.objectId || 0
     const farmObjTypeId = perunStore.getState().frmapData?.farmData?.objectTypeId || 0
     const tableName = perunStore.getState().frmapData?.farmData?.tableName || ""
     const data = perunStore.getState().frmapData?.farmData?.rowsData
