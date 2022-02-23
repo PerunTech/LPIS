@@ -497,7 +497,7 @@ public class DbInit implements IDbInit {
 		DbDataField dbf3 = new DbDataField();
 		dbf3.setDbFieldName("OWN_PARCEL");
 		dbf3.setDbFieldType(DbFieldType.NUMERIC);
-		dbf1.setDbFieldSize(18);
+		dbf3.setDbFieldSize(18);
 		dbf3.setLabel_code("common_use.own_parcel");
 		dbf3.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
