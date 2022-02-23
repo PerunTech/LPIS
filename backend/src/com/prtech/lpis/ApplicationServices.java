@@ -296,7 +296,7 @@ public class ApplicationServices {
 	@Path("/remove/farm/{token}/{objectId}/{objectName}")
 	@Produces("application/pbf")
 	public Response deleteParcel(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
-			@PathParam("objectType") final String objectName, MultivaluedMap<String, String> formVals,
+			@PathParam("objectName") final String objectName, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
 
 		String errMsg = "";
