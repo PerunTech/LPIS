@@ -81,7 +81,7 @@ export const getFarmMapAssets = (fitBounds = false) => {
     });
 
     const token = perunStore.getState().security.svSession
-    const farmObjId = perunStore.getState().frmapData?.farmData?.objectId || 0
+    const farmObjId = perunStore.getState().frmapData?.farmData?.objectId || 673582072
     const farmObjTypeId = perunStore.getState().frmapData?.farmData?.objectTypeId || 0
     const tableName = perunStore.getState().frmapData?.farmData?.tableName || ""
     const data = perunStore.getState().frmapData?.farmData?.rowsData
@@ -101,13 +101,9 @@ export const getFarmMapAssets = (fitBounds = false) => {
         Object.values(prevAgriParcels).forEach(v => v.removeFrom && v.removeFrom(Map));
 
         // send geojson to factory, visualize
-        layers.forEach(layer => layer.addTo(Map));
-
         layers.forEach(layer => {
-            const isDbo = Object.values(layer.getMetadata()).length > 0;
-            if (isDbo && String(layer.getMetadata().type).toLowerCase() === 'agri_parcel') {
-                setAPLabel(layer)
-            }
+            layer.addTo(Map)
+            setAPLabel(layer)
         });
 
         // register in app state
