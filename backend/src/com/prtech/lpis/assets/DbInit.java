@@ -495,18 +495,18 @@ public class DbInit implements IDbInit {
 		dbf2.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 
 		DbDataField dbf3 = new DbDataField();
-		dbf3.setDbFieldName("OWN_PARCEL");
+		dbf3.setDbFieldName("OWN_PARCEL_PARTS");
 		dbf3.setDbFieldType(DbFieldType.NUMERIC);
 		dbf3.setDbFieldSize(18);
-		dbf3.setLabel_code("common_use.own_parcel");
+		dbf3.setLabel_code("common_use.own_parcel_parts");
 		dbf3.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 
 		DbDataField dbf4 = new DbDataField();
-		dbf4.setDbFieldName("TOTAL_PARCEL");
+		dbf4.setDbFieldName("TOTAL_PARCEL_PARTS");
 		dbf4.setDbFieldType(DbFieldType.NUMERIC);
 		dbf4.setDbFieldSize(18);
-		dbf4.setLabel_code("common_use.total_parcel");
+		dbf4.setLabel_code("common_use.total_parcel_parts");
 		dbf4.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
