@@ -221,8 +221,8 @@ public class ApplicationServices {
 
 					Util.calculateGeometryDerivatives(ap);
 					resultArr.addDataItem(ap);
-
 					svg.saveGeometry(ap);
+					
 					enc.writeDbDataArray(resultArr);
 				} catch (Exception e) {
 					String errMsg = "Failed saving agri parcel. Please see server logs";
@@ -324,6 +324,36 @@ public class ApplicationServices {
 		}
 		if (errMsg.isEmpty()) {
 			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, "parcel.detached.from.farm");
+			return Response.status(200).entity(rr.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
+		} else
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+
+//		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
+
+	}
+	
+	@GET
+	@Path("/save/commonUse/{token}/{objectId}/{objectName}/{parentId}")
+	@Produces("application/pbf")
+	public Response saveCommonUse(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
+			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
+
+		String errMsg = "";
+		JsonObject metadata = new JsonObject();
+		try (SvReader svr = new SvReader(token);
+				SvWriter svw = new SvWriter(svr);
+				SvGeometry svg = new SvGeometry(svr)) {
+			  	metadata = Util.dataToJson(formVals);
+
+
+		} catch (SvException e) {
+			errMsg = e.getJsonMessage();
+		} catch (Exception e) {
+			errMsg = e.getMessage();
+		}
+		if (errMsg.isEmpty()) {
+			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS,metadata.toString());
 			return Response.status(200).entity(rr.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 		} else
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
