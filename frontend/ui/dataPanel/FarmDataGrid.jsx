@@ -171,13 +171,13 @@ const _InfoHeader = ({ fic, fullName }) => {
     <div className="fr-info-header">
       {fic !== 0 && fic && (
         <div className="header-info-wrapper">
-          <h3 className="info-header-title">FIC:</h3>
+          <h3 className="info-header-title">ИДБР:</h3>
           <span className="info-header-span">{fic}</span>
         </div>
       )}
       {fullName !== "" && fullName && (
         <div className="header-info-wrapper">
-          <h3 className="info-header-title">Full Name:</h3>
+          <h3 className="info-header-title">Целосно име:</h3>
           <span className="info-header-span">{fullName}</span>
         </div>
       )}
