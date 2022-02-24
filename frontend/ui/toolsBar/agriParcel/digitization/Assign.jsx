@@ -52,7 +52,7 @@ const _Assign = ({ processID, farmObjId }) => {
         })
         .catch(err => {
           console.log(err.response)
-          setState({ loading: false, isGuided: false, X: p.x, Y: p.y })
+          setState({ loading: false, isGuided: false })
           // Get the stringified response from the array buffer
           const stringfiedResponse = bufferToString(err.response.data)
           // Temporary workaround for the issue with using the INTL context in spatial modules
