@@ -336,30 +336,51 @@ public class ApplicationServices {
 	@Path("/save/commonUse/{token}/{objectId}/{objectName}/{parentId}")
 	@Produces("application/pbf")
 	public Response saveCommonUse(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
-			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId, MultivaluedMap<String, String> formVals,
-			@Context HttpServletRequest httpRequest) {
+			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		String errMsg = "";
 		JsonObject metadata = new JsonObject();
+		DbDataObject commonUse = null;
 		try (SvReader svr = new SvReader(token);
 				SvWriter svw = new SvWriter(svr);
 				SvGeometry svg = new SvGeometry(svr)) {
-			  	metadata = Util.dataToJson(formVals);
 
+			metadata = Util.dataToJson(formVals);
+			commonUse = new DbDataObject();
+			Long typeId = SvCore.getTypeIdByName("COMMON_USE");
+			DbDataArray fieldSet = SvCore.getFields(typeId);
+			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
 
+			if (isUpdate) {
+				commonUse = svr.getObjectById(objectId, typeId, null);
+			} else {
+				commonUse.setObjectId(0L);
+				commonUse.setObjectType(objectId);
+				commonUse.setParentId(parentId);
+			}
+
+			// Map form values to dbo fields
+			for (DbDataObject field : fieldSet.getItems()) {
+				String fieldName = field.getVal("FIELD_NAME").toString();
+				if (Util.excludeField(fieldName) && !"".equalsIgnoreCase(field.getVal("FIELD_TYPE").toString())) {
+					commonUse = Util.addValueToDataObject(commonUse, fieldName, field, metadata);
+				}
+			}
+			svw.saveObject(commonUse);
 		} catch (SvException e) {
 			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
 			errMsg = e.getMessage();
 		}
 		if (errMsg.isEmpty()) {
-			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS,metadata.toString());
+			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, metadata.toString());
 			return Response.status(200).entity(rr.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 		} else
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 
-//		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
-
+		// return mergeGeometryImpl(token, objectName, false, lineStringWKT,
+		// formVals);
 	}
 
 	@Path("/save/agriParcel/{token}/{objectId}/{opType}")
