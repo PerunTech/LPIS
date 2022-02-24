@@ -5,9 +5,9 @@ import { ProcessButton } from "../../ProcessButton";
 
 const { Map, store, http, factory } = core;
 const { geobuf, protobuf } = data;
-const { Icon, Modal, Button, Form } = ui;
+const { Icon, Modal, Button, Form, SimpleForm } = ui;
 const { useReducer } = React;
-const _id = "help";
+const _id = "testIcon";
 const unit = factory.Polygon ? "m²" : "m";
 const {useState} = React
 
@@ -104,23 +104,42 @@ const _AddEditCommonUse = ({ processID, farmObjId }) => {
     }
   };
 
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+      console.log(e)
     disable();
   };
 
   const renderForm = () => {
+
     const jsonSchema = {
-      title: "Add Edit Common Use",
-      description: "Parcel Information.",
-      type: "object",
-      properties: {
-        telephone: {
-          type: "string",
-          title: "Telephone",
-          minLength: 10,
+        "definitions": {
+          "Color": {
+            "title": "Color",
+            "type": "string"
+          },
+          "Claimed": {
+            "title": "Claimed",
+            "type": "string",
+            "oneOf": [
+              {
+                "title": "ratio",
+                "const": "ratio"
+              },
+              {
+                "title": "area",
+                "const": "area"
+              }
+            ]
+          }
         },
-      },
-    };
+        "title": "Choose One",
+        "type": "object",
+        "properties": {
+          "toggleMask": {
+            "$ref": "#/definitions/Claimed"
+          }
+        }
+      }
 
     return (
       <Modal
@@ -137,14 +156,10 @@ const _AddEditCommonUse = ({ processID, farmObjId }) => {
           <Form
             schema={jsonSchema}
             // onChange={onChange}
-            onSubmit={() => onSubmit()}
-          >
-            <div id="ss">
-              <Button type="submit" size="" className="sss">
-                Следно
-              </Button>
-            </div>
-          </Form>
+            onSubmit={(e) => onSubmit(e)}
+            uiSchema={{}}
+            formData={{}}
+          />
         </Modal.Body>
       </Modal>
     );
