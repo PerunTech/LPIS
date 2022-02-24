@@ -8,9 +8,6 @@ const { Icon } = ui;
 const { useReducer } = React;
 const _id = "help";
 
-/**
- * Create a crop parcel by selecting a single point.
- */
 const _GetParcelInfo = ({ processID, farmObjId }) => {
   const [{ layer, data, X, Y, loading, isGuided }, setState] = useReducer(
     (currState, update) => ({ ...currState, ...update }),
@@ -91,10 +88,7 @@ const _GetParcelInfo = ({ processID, farmObjId }) => {
   return (
     <ProcessButton id={_id} onClick={enable}>
       <Icon name={_id} size="30px" />
-      <span style={{ display: "block", marginTop: "5px" }}>
-        Get Info Parcel
-      </span>
-      {/* {processID === _id && renderForm()} */}
+      <span style={{ display: "block", marginTop: "5px" }}>Информации за парцела</span>
       {loading && <Loading />}
     </ProcessButton>
   );
