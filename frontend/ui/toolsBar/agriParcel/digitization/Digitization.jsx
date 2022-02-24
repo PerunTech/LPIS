@@ -1,7 +1,6 @@
-import { React, elements } from 'perun-core';
+import { React } from 'perun-core';
 import { ui } from '../../../../Spatial';
 // Components
-import { getFarmMapAssets } from '../../../Util';
 import { AddEditCommonUse } from './AddEditCommonUse';
 import { Assign } from './Assign';
 import { Copy } from './Copy';
@@ -13,9 +12,10 @@ import { Edit } from './Edit';
 import { Fill } from './Fill';
 import { GetParcelInfo } from './GetParcelInfo';
 import { Merge } from './Merge';
+import { Refresh } from './Refresh';
 import { Split } from './Split';
 
-const { Button, ButtonGroup, Icon, Divider } = ui;
+const { ButtonGroup, Divider } = ui;
 
 export const Digitization = () =>
     <ButtonGroup>
@@ -29,15 +29,7 @@ export const Digitization = () =>
         <Merge />
         <Fill />
         <Divider />
-        <Button
-            onClick={() => {
-                getFarmMapAssets()
-                elements.alertUser(true, 'success', 'Податоците се успешно освежени.')
-            }}
-            title='Освежи податоци'>
-            <Icon name='refresh-control' size='30px' />
-            <span style={{ display: 'block', marginTop: '5px' }}>Освежи податоци</span>
-        </Button>
+        <Refresh />
         <Divider />
         <Assign />
         <DeleteParcelFromFarm />
