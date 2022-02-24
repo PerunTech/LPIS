@@ -2,7 +2,6 @@ import { React, Loading, elements } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
 import { assignAPMsg, config } from '../Config';
 import { bufferToString, decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
-import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
 
@@ -10,6 +9,7 @@ const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { Icon } = ui;
 const { useReducer } = React;
+const { alertUser } = elements;
 const _id = 'assignAP';
 
 const _Assign = ({ processID, farmObjId }) => {
@@ -61,17 +61,18 @@ const _Assign = ({ processID, farmObjId }) => {
             switch (stringfiedResponse) {
               case 'err.parcel_has_farm':
                 translatedError = 'Избраната парцела веќе има назначено стопанство'
+                handleOverlap(translatedError, p.x, p.y)
                 break;
               case 'err.no_parcel.selected':
                 translatedError = 'Не е избрана парцела од мапата'
+                alertUser(true, 'error', 'Настана грешка', translatedError, () => disable())
                 break;
               default:
                 translatedError = ''
+                alertUser(true, 'error', 'Настана грешка', translatedError, () => disable())
                 break;
             }
           }
-          elements.alertUser(true, 'error', 'Настана грешка', translatedError)
-          disable()
         });
 
       Map.off('click');
@@ -98,20 +99,22 @@ const _Assign = ({ processID, farmObjId }) => {
     }
   }
 
-  const onChange = ({ formData }) => {
-    setState({ data: { ...data, ...formData } });
+  const handleOverlap = (translatedError, x, y) => {
+    const msg = 'Доколку продолжите ќе биде регистриран целосен преклоп на двете стопанската и парцелата ќе биде оневозможена за понатамошна употреба.'
+    elements.alertUser(true, 'warning', translatedError, msg, () => confirmOverlap(x, y), () => disable(), true, 'Продолжи', 'Откажи')
   }
 
-  const onSubmit = ({ formData }) =>
-    saveAP({
-      ...data,
-      ...formData,
-      GEOM: factory.GeoJSON.fromLayer(layer),
-      X: X,
-      Y: Y,
-      parent_id: farmObjId,
-      OBJECT_ID: 0
-    }, disable);
+  const confirmOverlap = (x, y) => {
+    const url = `/lpis/overlap/farm/{init.token}/${farmObjId}/AGRI_PARCEL/${x}/${y}`
+    http.call('assign-agri', { url, method: 'post' }).then(response => {
+      if (response.data) {
+        alertUser(true, 'info', response.data || '')
+      }
+    }).catch(err => {
+      const { response } = err
+      alertUser(true, 'error', 'Настана грешка', response.data || '', () => disable())
+    })
+  }
 
   const renderForm = () =>
   (isGuided
