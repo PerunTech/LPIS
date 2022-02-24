@@ -100,16 +100,19 @@ const _Assign = ({ processID, farmObjId }) => {
   }
 
   const handleOverlap = (translatedError, x, y) => {
-    const msg = 'Доколку продолжите ќе биде регистриран целосен преклоп на двете стопанската и парцелата ќе биде онезвможена за понатамошна употреба.'
+    const msg = 'Доколку продолжите ќе биде регистриран целосен преклоп на двете стопанската и парцелата ќе биде оневозможена за понатамошна употреба.'
     elements.alertUser(true, 'warning', translatedError, msg, () => confirmOverlap(x, y), () => disable(), true, 'Продолжи', 'Откажи')
   }
 
   const confirmOverlap = (x, y) => {
     const url = `/lpis/overlap/farm/{init.token}/${farmObjId}/AGRI_PARCEL/${x}/${y}`
-    http.call('assign-agri', { url, method: 'post', }).then(response => {
-      console.log(response)
+    http.call('assign-agri', { url, method: 'post' }).then(response => {
+      if (response.data) {
+        alertUser(true, 'info', response.data || '')
+      }
     }).catch(err => {
-      console.error(err)
+      const { response } = err
+      alertUser(true, 'error', 'Настана грешка', response.data || '', () => disable())
     })
   }
 
