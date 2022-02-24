@@ -332,8 +332,9 @@ public class ApplicationServices {
 
 	}
 	
-	@GET
 	@Path("/save/commonUse/{token}/{objectId}/{objectName}/{parentId}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/pbf")
 	public Response saveCommonUse(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
 			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
