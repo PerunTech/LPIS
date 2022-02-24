@@ -12,7 +12,7 @@ const { geobuf, protobuf } = data;
 const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
 const { useReducer } = React;
-const _id = 'cut-control';
+const _id = 'cutAP';
 
 const _Cut = ({ processID, farmObjId }) => {
     const [{ layer, data, loading, isGuided }, setState] = useReducer((currState, update) =>
