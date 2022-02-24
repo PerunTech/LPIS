@@ -332,13 +332,13 @@ public class ApplicationServices {
 
 	}
 	
-	@Path("/save/commonUse/{token}/{objectId}/{objectName}/{parentId}")
+	@Path("/save/commonUse/{token}/{objectId}/{parentId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/pbf")
 	public Response saveCommonUse(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
-			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
-			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+			@PathParam("parentId") final Long parentId, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
 
 		String errMsg = "";
 		JsonObject metadata = new JsonObject();
