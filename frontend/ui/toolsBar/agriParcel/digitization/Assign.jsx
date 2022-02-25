@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
 import { assignAPMsg, config } from '../Config';
-import { bufferToString, decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
+import { bufferToString, decodeResponse, getFarmMapAssets, isJSON, strcmp } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
 
@@ -57,20 +57,24 @@ const _Assign = ({ processID, farmObjId }) => {
           const stringfiedResponse = bufferToString(err.response.data)
           // Temporary workaround for the issue with using the INTL context in spatial modules
           let translatedError = ''
-          if (strcmp(typeof stringfiedResponse, 'string')) {
-            switch (stringfiedResponse) {
-              case 'err.parcel_has_farm':
-                translatedError = 'Избраната парцела веќе има назначено стопанство'
-                handleOverlap(translatedError, p.x, p.y)
-                break;
-              case 'err.no_parcel.selected':
+          if (isJSON(stringfiedResponse) && Object.keys(JSON.parse(stringfiedResponse)).length > 1) {
+            const parsedResponse = JSON.parse(stringfiedResponse)
+            if (parsedResponse.parent_id && parsedResponse.parent_id !== farmObjId) {
+              translatedError = 'Избраната парцела веќе има назначено стопанство'
+              handleOverlap(translatedError, p.x, p.y)
+            } else {
+              alertUser(true, 'error', 'Избраната парцела веќе има назначено стопанство', '', () => disable())
+            }
+          } else {
+            if (strcmp(typeof stringfiedResponse, 'string')) {
+              if (strcmp(stringfiedResponse, 'err.no_parcel.selected')) {
                 translatedError = 'Не е избрана парцела од мапата'
                 alertUser(true, 'error', 'Настана грешка', translatedError, () => disable())
-                break;
-              default:
-                translatedError = ''
-                alertUser(true, 'error', 'Настана грешка', translatedError, () => disable())
-                break;
+              } else if (stringfiedResponse.includes('err.no_parcel.selected')) {
+                alertUser(true, 'error', 'Избраната парцела веќе има назначено стопанство', '', () => disable())
+              } else {
+                alertUser(true, 'error', 'Настана грешка', '', () => disable())
+              }
             }
           }
         });
