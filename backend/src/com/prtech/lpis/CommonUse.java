@@ -30,13 +30,25 @@ public class CommonUse {
 				dbo.setVal(CC.ALLOWED_AREA, Long.valueOf(claimedArea));
 			} else if (!claimedRatio.equals(CC.EMPTY_STRING) && !claimedRatio.trim().equals(CC.EMPTY_STRING)) {
 				String[] ratios = claimedRatio.split("/");
-				Long ownParcelArea = Long.valueOf(ratios[0]);
-				Long totalParcelArea = Long.valueOf(ratios[1]);
-				dbo.setVal(CC.OWN_PARCEL_PARTS, ownParcelArea);
-				dbo.setVal(CC.TOTAL_PARCEL_PARTS, totalParcelArea);
-				dbo.setVal(CC.PERCENTAGE, Double.valueOf(ratios[0]) / Double.valueOf(ratios[1]));
-				dbo.setVal(CC.ALLOWED_AREA, ownParcelArea / totalParcelArea);
+				if (isParsable(ratios[0]) && isParsable(ratios[1])) {
+					dbo.setVal(CC.OWN_PARCEL_PARTS, ratios[0]);
+					dbo.setVal(CC.TOTAL_PARCEL_PARTS, ratios[1]);
+					dbo.setVal(CC.PERCENTAGE, Double.valueOf(ratios[0]) / Double.valueOf(ratios[1]));
+					dbo.setVal(CC.ALLOWED_AREA, Long.valueOf(ratios[0]) / Long.valueOf(ratios[1]));
+				} else {
+					throw new SvException("lpis.error.not_parsable", svr.getInstanceUser());
+				}
+
 			}
+		}
+	}
+	
+	public static boolean isParsable(String input) {
+		try {
+			Double.parseDouble(input);
+			return true;
+		} catch (final NumberFormatException e) {
+			return false;
 		}
 	}
 	
