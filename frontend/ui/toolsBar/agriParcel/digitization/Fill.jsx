@@ -5,6 +5,7 @@ import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
+import { getFarmMapAssets } from '../../../Util'
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
@@ -41,7 +42,7 @@ const _Fill = ({ processID, farmObjId }) => {
         polygon.disable('force');
 
         // refresh work layer
-        getSpatialResults();
+        getFarmMapAssets()
     }
 
     const fillParcel = e => {
