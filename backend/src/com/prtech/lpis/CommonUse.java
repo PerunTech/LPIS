@@ -56,18 +56,24 @@ public class CommonUse {
 		Boolean canBeSaved = false;
 		Double sumOfParcels = 0.0;
 		DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName("AGRI_PARCEL"), null);
-		if (agriParcel != null) {
-			lock = SvLock.getLock(agriParcel.getObjectId().toString(), false, 0);
-			if (lock != null) {
-				DbDataArray commonsParcels = getCommonUseParcels(parentId, agriParcel.getObjectId(), svr);
-				if (commonsParcels != null && !commonsParcels.getItems().isEmpty()) {
-					for (DbDataObject dboCommonParcel : commonsParcels.getItems()) {
-						sumOfParcels += Double.valueOf((String) dboCommonParcel.getVal("PERCENTAGE"));
+		try {
+			if (agriParcel != null) {
+				lock = SvLock.getLock(agriParcel.getObjectId().toString(), false, 0);
+				if (lock != null) {
+					DbDataArray commonsParcels = getCommonUseParcels(parentId, agriParcel.getObjectId(), svr);
+					if (commonsParcels != null && !commonsParcels.getItems().isEmpty()) {
+						for (DbDataObject dboCommonParcel : commonsParcels.getItems()) {
+							sumOfParcels += Double.valueOf((String) dboCommonParcel.getVal("PERCENTAGE"));
+						}
+					}
+					if (sumOfParcels < Double.valueOf((String) agriParcel.getVal("AREA"))) {
+						canBeSaved = true;
 					}
 				}
-				if (sumOfParcels < Double.valueOf((String) agriParcel.getVal("AREA"))) {
-					canBeSaved = true;
-				}
+			}
+		} finally {
+			if (lock != null) {
+				SvLock.releaseLock(agriParcel.getObjectId().toString(), lock);
 			}
 		}
 		return canBeSaved;
