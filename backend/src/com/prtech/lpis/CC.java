@@ -7,5 +7,6 @@ public class CC {
 
 	protected static final String CUTOFF = "CUTOFF";
 	protected static final SvCharId PARENT_ID = new SvCharId(Sv.PARENT_ID);
+	public static final String OLD_ID = "OLD_ID";
 
 }

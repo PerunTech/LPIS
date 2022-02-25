@@ -61,7 +61,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 @Path("/lpis")
 public class ApplicationServices {
-	
+
 	static int precisionScale = 2;
 
 	static {
@@ -127,7 +127,6 @@ public class ApplicationServices {
 		return Response.status(200).entity(pb.toSimpleJson().toString()).build();
 	}
 
-
 	@Path("/split/agriParcel/{token}/{objectName}/{parentId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -166,7 +165,7 @@ public class ApplicationServices {
 		} else
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 	}
-	
+
 	@Path("/save/agriParcel/{token}/{objectId}/{parentId}/{opType}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -180,8 +179,8 @@ public class ApplicationServices {
 				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
 				DbDataObject ap = null;
 				JsonObject metadata = new JsonObject();
-				try (SvReader svr = new SvReader(token);SvGeometry svg = new SvGeometry(svr);){
-					
+				try (SvReader svr = new SvReader(token); SvGeometry svg = new SvGeometry(svr);) {
+
 					svr.setIncludeGeometries(true);
 					ap = new DbDataObject();
 					DbDataArray intersectArr = new DbDataArray();
@@ -192,7 +191,7 @@ public class ApplicationServices {
 					boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
 					metadata = Util.dataToJson(formVals);
 					geom = Util.jsonToGeometry(metadata.get(Sv.GEOM));
-					
+
 					if (isUpdate) {
 						ap = svr.getObjectById(objectId, typeId, null);
 					} else {
@@ -222,7 +221,7 @@ public class ApplicationServices {
 					Util.calculateGeometryDerivatives(ap);
 					resultArr.addDataItem(ap);
 					svg.saveGeometry(ap);
-					
+
 					enc.writeDbDataArray(resultArr);
 				} catch (Exception e) {
 					String errMsg = "Failed saving agri parcel. Please see server logs";
@@ -268,7 +267,7 @@ public class ApplicationServices {
 					svw.saveObject(dbo, true);
 					result.add(SvGeometry.getGeometry(dbo));
 				} else
-					errMsg = "{err.parcel_has_farm}";
+					errMsg = dbo.toSimpleJson().toString();
 			} else
 				errMsg = "err.no_parcel.selected";
 		} catch (SvException e) {
@@ -310,7 +309,8 @@ public class ApplicationServices {
 				throw (new SvException(Sv.Exceptions.NULL_OBJECT, svr.getInstanceUser()));
 			else {
 				Geometry gTile = SvGeometry.getTileGeometry(SvGeometry.getCentroid(dbo));
-				SvSDITile svTile = SvGeometry.getTile(SvCore.getTypeIdByName(objectName), (String) gTile.getUserData(), null);
+				SvSDITile svTile = SvGeometry.getTile(SvCore.getTypeIdByName(objectName), (String) gTile.getUserData(),
+						null);
 				dbo.setParentId(0L);
 				svg.saveObject(dbo, false);
 				svTile.setIsTileDirty(true);
@@ -351,7 +351,7 @@ public class ApplicationServices {
 			Collection<Geometry> geomArr = svg.getRelatedGeometries(point, layerTypeId, SDIRelation.INTERSECTS, null,
 					null, false);
 			if (geomArr.size() == 1) {
-					errMsg = "success.overlap_created";
+				errMsg = "success.overlap_created";
 			} else
 				errMsg = "err.no_parcel.selected";
 		} catch (SvException e) {
@@ -360,9 +360,6 @@ public class ApplicationServices {
 			errMsg = e.getMessage();
 		}
 
-		
-		
-		
 		if (errMsg.isEmpty()) {
 			StreamingOutput pbfStream = new StreamingOutput() {
 				public void write(OutputStream stream) throws IOException {
@@ -377,7 +374,7 @@ public class ApplicationServices {
 //		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
 
 	}
-	
+
 	@Path("/save/commonUse/{token}/{objectId}/{parentId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
