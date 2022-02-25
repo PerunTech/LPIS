@@ -211,6 +211,33 @@ export const metadataAdmin = {
     }
 };
 
+export const commonUseSchema = {
+    type: 'agri_parcel',
+    namePath: 'options.metadata.schema.properties.parent_id',
+    schema: {
+        properties: {
+            commonUseType: {
+                type: 'string',
+                title: 'Одбери тип на дел:',
+                enum: ['CLAIMED_AREA', 'CLAIMED_RATIO'],
+                enumNames: ['Површина', 'Идеален дел']
+            },
+            value: {
+                type: 'string',
+                title: 'Вредност'
+            }
+        },
+        type: 'object',
+        required: ['commonUseType', 'value']
+    },
+    uiSchema: {
+        commonUseType: {
+            'ui:widget': 'radio',
+            'ui:options': { inline: true }
+        }
+    }
+};
+
 /** @constant */
 export const config = {
     // allow multiple drawn shapes
@@ -428,6 +455,12 @@ export const drawAPMsg = [
     '5. Полигонот мора да биде затворен.',
     '6. Полигонот не смее да се сече сам со себе.',
 ];
+
+export const commonUseMsg = [
+    'Одберете земјоделска парцела на мапата за која сакате да додадете или промените заедничка употреба.',
+    '1. Притиснете на левото копче од глувчето врз земјоделската парцела за да направите избор.',
+    '2. Ќе добиете информации за избраната парцела.'
+]
 
 export const cutAPMsg = [
     'Во изработка',

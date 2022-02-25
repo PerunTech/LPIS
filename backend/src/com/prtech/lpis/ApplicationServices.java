@@ -374,22 +374,25 @@ public class ApplicationServices {
 //		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
 
 	}
-
-	@Path("/save/commonUse/{token}/{objectId}/{parentId}")
+	
+	@Path("/save/commonUse/{token}/{objectId}/{parentId}/{parcelId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/pbf")
 	public Response saveCommonUse(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
-			@PathParam("parentId") final Long parentId, MultivaluedMap<String, String> formVals,
+			@PathParam("parentId") final Long parentId,
+			@PathParam("parcelId") final Long parcelId, 
+			MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
 
 		String errMsg = "";
 		JsonObject metadata = new JsonObject();
 		DbDataObject commonUse = null;
+		CommonUse cu = null;
 		try (SvReader svr = new SvReader(token);
 				SvWriter svw = new SvWriter(svr);
 				SvGeometry svg = new SvGeometry(svr)) {
-
+			cu = new CommonUse();
 			metadata = Util.dataToJson(formVals);
 			commonUse = new DbDataObject();
 			Long typeId = SvCore.getTypeIdByName("COMMON_USE");
@@ -411,7 +414,7 @@ public class ApplicationServices {
 					commonUse = Util.addValueToDataObject(commonUse, fieldName, field, metadata);
 				}
 			}
-			svw.saveObject(commonUse);
+			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, svw, svr);
 		} catch (SvException e) {
 			errMsg = e.getJsonMessage();
 		} catch (Exception e) {

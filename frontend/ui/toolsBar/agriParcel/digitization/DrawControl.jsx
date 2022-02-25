@@ -28,7 +28,7 @@ const _DrawControl = ({ processID, farmObjId }) => {
 
         setState({ isGuided: true, showForm: false, data: {}, layer: {} });
         store.dispatch({ processID: _id });
-        polygon.enable(config.pathOptions);
+        polygon.enable(config.pathOptions, 14, 16);
     };
 
     const disable = (responseType, response, isLoading) => {
