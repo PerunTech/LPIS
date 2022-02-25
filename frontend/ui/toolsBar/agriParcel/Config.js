@@ -212,6 +212,8 @@ export const metadataAdmin = {
 };
 
 export const commonUseSchema = {
+    type: 'agri_parcel',
+    namePath: 'options.metadata.schema.properties.parent_id',
     schema: {
         properties: {
             commonUseType: {
