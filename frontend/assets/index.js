@@ -8,6 +8,7 @@ import './css/dataPanel/dataPanel.css';
 import './css/dataPanel/farmDataGrid.css'
 
 /* css.control */
+import './css/control/control.css';
 import './css/control/statusBar.css';
 import './css/control/toolsBar.css';
 import './css/control/miniBar.css';
