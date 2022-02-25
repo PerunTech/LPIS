@@ -13,9 +13,9 @@ const { useReducer } = React;
 const _id = 'commonUse';
 
 const _CommonUse = ({ processID, farmObjId }) => {
-  const [{ layer, data, X, Y, loading, isGuided, showForm, selectedParcel }, setState] = useReducer((currState, update) =>
+  const [{ data, loading, isGuided, showForm, selectedParcel }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false, selectedParcel: {} });
+    { data: {}, loading: false, isGuided: false, showForm: false, selectedParcel: {} });
 
   const enable = () => {
     store.dispatch({ processID: _id });
@@ -23,7 +23,7 @@ const _CommonUse = ({ processID, farmObjId }) => {
 
     Map.on('click', e => {
       const p = Map.transform(e.latlng);
-      setState({ X: p.x, Y: p.y, loading: true });
+      setState({ loading: true });
       const url = `/spatial/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
       http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
         const proto = protobuf(response);
@@ -41,24 +41,14 @@ const _CommonUse = ({ processID, farmObjId }) => {
     })
   };
 
-  const disable = (responseType, response, isLoading) => {
-    if (isLoading) {
-      setState({ loading: true });
-    } else {
-      setState({ loading: false });
-      if (strcmp(responseType, 'error')) {
-        const errorMsg = decodeResponse(response);
-        elements.alertUser(true, 'error', 'Грешка при зачувување', errorMsg);
-      } else {
-        Map.off('click');
-        // Reset state, internal and application-wide.
-        setState({ layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false, selectedParcel: {} });
-        store.dispatch({ processID: '' });
-        // We remove the working geometry and reload the data
-        layer.removeFrom && layer.removeFrom(Map);
-        getFarmMapAssets();
-      }
-    }
+  const disable = () => {
+    // Remove the Map click event listener
+    Map.off('click');
+    // Reset state, internal and application-wide.
+    setState({ layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false, selectedParcel: {} });
+    store.dispatch({ processID: '' });
+    // Reload the data
+    getFarmMapAssets();
   };
 
   const submitCommonUse = data => {
