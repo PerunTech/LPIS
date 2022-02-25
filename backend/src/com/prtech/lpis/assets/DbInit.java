@@ -507,7 +507,6 @@ public class DbInit implements IDbInit {
 		dbf4.setDbFieldType(DbFieldType.NUMERIC);
 		dbf4.setDbFieldSize(18);
 		dbf4.setLabel_code("common_use.total_parcel_parts");
-		dbf4.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 
@@ -516,16 +515,25 @@ public class DbInit implements IDbInit {
 		dbf5.setDbFieldType(DbFieldType.NUMERIC);
 		dbf5.setDbFieldSize(18);
 		dbf5.setLabel_code("common_use.allowed_area");
-		dbf5.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		dbf5.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 
-		DbDataField[] fieldList = new DbDataField[5];
+		DbDataField dbf6 = new DbDataField();
+		dbf6.setDbFieldName("PERCENTAGE");
+		dbf6.setDbFieldType(DbFieldType.NUMERIC);
+		dbf6.setDbFieldSize(18);
+		dbf6.setDbFieldScale(3);
+		dbf6.setLabel_code("common_use.percentage");
+		dbf6.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField[] fieldList = new DbDataField[6];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
 		fieldList[3] = dbf4;
 		fieldList[4] = dbf5;
+		fieldList[5] = dbf6;
 
 		dbt.setDbTableFields(fieldList);
 		return dbt;
