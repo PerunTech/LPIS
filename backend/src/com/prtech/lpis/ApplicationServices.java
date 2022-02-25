@@ -269,7 +269,7 @@ public class ApplicationServices {
 				} else
 					errMsg = dbo.toSimpleJson().toString();
 			} else
-				errMsg = "err.no_parcel.selected";
+				errMsg = "{error:'err.no_parcel.selected'}";
 		} catch (SvException e) {
 			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
