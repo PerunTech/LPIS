@@ -4,7 +4,7 @@ import { Main, Aux, Admin } from './Steps';
 
 const { Button, Modal, Wizard } = ui;
 
-export function Form({ formData, onSubmit, onChange, children, isSimple, schema, uiSchema }) {
+export function Form ({ formData, onSubmit, onChange, children, isSimple, formTitle, schema, uiSchema }) {
     if (!isSimple) {
         return <Modal id='measure-dialog'
             show
@@ -24,13 +24,14 @@ export function Form({ formData, onSubmit, onChange, children, isSimple, schema,
             </Modal.Body>
         </Modal>;
     } else {
+        const title = formTitle || 'Пополнете ја формата'
         return <Modal id='simple-form'
             show
             backdrop={false}
             enforceFocus={false}
             container={document.getElementsByClassName('control-map')[0]} >
             <Modal.Title>
-                <Button disabled className='as-label ap-modal-title' >{'Пополнете ја формата'}</Button>
+                <Button disabled className='as-label ap-modal-title' >{title}</Button>
                 {children}
             </Modal.Title>
             <Modal.Body className='ap-modal-body' >
@@ -53,5 +54,7 @@ Form.propTypes = {
     formData: PropTypes.object,
     onSubmit: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
+    isSimple: PropTypes.bool,
+    formTitle: PropTypes.string,
     children: PropTypes.node
 }
