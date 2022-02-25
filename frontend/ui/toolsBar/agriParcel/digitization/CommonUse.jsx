@@ -1,10 +1,10 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
-import { commonUseMsg, commonUseSchema, config } from '../Config';
+import { commonUseMsg, commonUseSchema } from '../Config';
 import { ProcessButton } from '../../ProcessButton';
 import { GuideForm } from '../GuideForm';
 import { Form } from '../Form';
-import { bufferToString, decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
+import { bufferToString, decodeResponse, getFarmMapAssets } from '../../../Util';
 
 const { Map, store, http } = core;
 const { geobuf, protobuf } = data;
