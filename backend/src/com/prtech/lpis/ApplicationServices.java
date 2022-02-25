@@ -417,9 +417,7 @@ public class ApplicationServices {
 					commonUse = Util.addValueToDataObject(commonUse, fieldName, field, metadata);
 				}
 			}
-			cu.calculateCommonUse(commonUse, parcelId, formVals, svr);
-			if (cu.checkIfCommonUseCanBeSaved(parentId, parcelId, svr))
-				svw.saveObject(commonUse);
+			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, svw, svr);
 		} catch (SvException e) {
 			errMsg = e.getJsonMessage();
 		} catch (Exception e) {

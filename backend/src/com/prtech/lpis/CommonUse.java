@@ -7,6 +7,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvLock;
 import com.prtech.svarog.SvReader;
+import com.prtech.svarog.SvWriter;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_common.DbSearchCriterion;
@@ -14,60 +15,56 @@ import com.prtech.svarog_common.DbSearchExpression;
 import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
 
 public class CommonUse {
-	public void calculateCommonUse(DbDataObject dbo, Long parcelId, MultivaluedMap<String, String> formVals,
+	public void createCommonUseObject(DbDataObject dbo, Long parcelId, MultivaluedMap<String, String> formVals,
 			SvReader svr) throws SvException {
 		if (parcelId != null) {
-			DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName("AGRI_PARCEL"), null);
-			dbo.setVal("PARCEL_ID", parcelId);
-			String claimedArea = formVals.get("CLAIMED_AREA").get(0);
-			String claimedRatio = formVals.get("CLAIMED_RATIO").get(0);
-
-			if (!claimedArea.equals("") && !claimedArea.trim().equals("")) {
+			DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
+			dbo.setVal(CC.PARCEL_ID, parcelId);
+			String claimedArea = formVals.get(CC.CLAIMED_AREA).get(0);
+			String claimedRatio = formVals.get(CC.CLAIMED_RATIO).get(0);
+			if (!claimedArea.equals(CC.EMPTY_STRING) && !claimedArea.trim().equals(CC.EMPTY_STRING)) {
 				Double convertedClaimedArea = Double.valueOf(claimedArea);
-				Double agriParcelArea = (Double) agriParcel.getVal("AREA");
-				Double allowedArea = convertedClaimedArea / agriParcelArea;
-				dbo.setVal("PERCENTAGE", allowedArea);
-				dbo.setVal("ALLOWED_AREA", Long.valueOf((long) (allowedArea * 100)));
-			} else if (!claimedRatio.equals("") && !claimedRatio.trim().equals("")) {
-				Double convertedRatio = Double.valueOf(claimedRatio);
-				dbo.setVal("PERCENTAGE", convertedRatio);
-				dbo.setVal("ALLOWED_AREA", convertedRatio * 100);
+				Double agriParcelArea = (Double) agriParcel.getVal(CC.AREA);
+				Double percentage = convertedClaimedArea / agriParcelArea;
+				dbo.setVal(CC.PERCENTAGE, percentage);
+				dbo.setVal(CC.ALLOWED_AREA, Long.valueOf(claimedArea));
+			} else if (!claimedRatio.equals(CC.EMPTY_STRING) && !claimedRatio.trim().equals(CC.EMPTY_STRING)) {
+				String[] ratios = claimedRatio.split("/");
+				Long ownParcelArea = Long.valueOf(ratios[0]);
+				Long totalParcelArea = Long.valueOf(ratios[1]);
+				dbo.setVal(CC.OWN_PARCEL_PARTS, ownParcelArea);
+				dbo.setVal(CC.TOTAL_PARCEL_PARTS, totalParcelArea);
+				dbo.setVal(CC.PERCENTAGE, Double.valueOf(ratios[0]) / Double.valueOf(ratios[1]));
+				dbo.setVal(CC.ALLOWED_AREA, ownParcelArea / totalParcelArea);
 			}
 		}
 	}
 	
-	public DbDataArray getCommonUseParcels(Long parentId, Long parcelId, SvReader svr) throws SvException {
-		DbDataArray finalArr = new DbDataArray();
-		DbSearchCriterion cr1 = new DbSearchCriterion("PARCEL_ID", DbCompareOperand.EQUAL, parcelId);
-		DbDataArray dbArr = svr.getObjects(new DbSearchExpression().addDbSearchItem(cr1),
-				SvReader.getTypeIdByName("COMMON_USE"), null, 0, 0);
-		if (dbArr != null && !dbArr.getItems().isEmpty()) {
-			for (DbDataObject dboTemp : dbArr.getItems()) {
-				if (dboTemp.getParentId().equals(parentId)) {
-					finalArr.addDataItem(dboTemp);
-				}
-			}
-		}
-		return finalArr;
+	public DbDataArray getCommonUseParcels(Long parcelId, SvReader svr) throws SvException {
+		DbSearchCriterion cr = new DbSearchCriterion(CC.PARCEL_ID, DbCompareOperand.EQUAL, parcelId);
+		return svr.getObjects(new DbSearchExpression().addDbSearchItem(cr), SvReader.getTypeIdByName(CC.COMMON_USE),
+				null, 0, 0);
 	}
 	
-	public boolean checkIfCommonUseCanBeSaved(Long parentId, Long parcelId, SvReader svr) throws SvException {
+	public boolean saveCommonUseObject(DbDataObject dbo, Long parentId, Long parcelId,
+			MultivaluedMap<String, String> formVals, SvWriter svw, SvReader svr) throws SvException {
 		ReentrantLock lock = null;
 		Boolean canBeSaved = false;
 		Double sumOfParcels = 0.0;
-		DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName("AGRI_PARCEL"), null);
+		DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 		try {
 			if (agriParcel != null) {
 				lock = SvLock.getLock(agriParcel.getObjectId().toString(), false, 0);
 				if (lock != null) {
-					DbDataArray commonsParcels = getCommonUseParcels(parentId, agriParcel.getObjectId(), svr);
+					createCommonUseObject(dbo, parcelId, formVals, svr);
+					DbDataArray commonsParcels = getCommonUseParcels(agriParcel.getObjectId(), svr);
 					if (commonsParcels != null && !commonsParcels.getItems().isEmpty()) {
-						for (DbDataObject dboCommonParcel : commonsParcels.getItems()) {
-							sumOfParcels += Double.valueOf((String) dboCommonParcel.getVal("PERCENTAGE"));
+						for (DbDataObject tempCommonUse : commonsParcels.getItems()) {
+							sumOfParcels += (Double) tempCommonUse.getVal(CC.PERCENTAGE);
 						}
-					}
-					if (sumOfParcels < Double.valueOf((String) agriParcel.getVal("AREA"))) {
-						canBeSaved = true;
+						if (sumOfParcels < 100) {
+							svw.saveObject(dbo);
+						}
 					}
 				}
 			}
