@@ -2,14 +2,49 @@ import { React, Loading, elements } from "perun-core";
 import { core, ui, data } from "../../../../Spatial";
 import { decodeResponse, getFarmMapAssets, strcmp } from "../../../Util";
 import { ProcessButton } from "../../ProcessButton";
-
+import { SimpleForm } from "./SimpleForm"
+import { GuideForm } from '../GuideForm';
+import { Form } from '../Form';
 const { Map, store, http, factory } = core;
 const { geobuf, protobuf } = data;
-const { Icon, Modal, Button, Form, SimpleForm } = ui;
+
+const { Icon, DrawActions } = ui;
 const { useReducer } = React;
-const _id = "testIcon";
+const _id = "common-use";
 const unit = factory.Polygon ? "m²" : "m";
-const {useState} = React
+const { useState } = React
+
+const jsonSchema =
+{
+  "type": "object",
+  "title": "Внеси заедничка употреба",
+  "properties": {
+    "numberEnumRadio": {
+      "type": "string",
+      "title": "Одбери тип на дел:",
+      "enum": [
+        "Површина",
+        "Идеален дел"
+      ]
+    },
+    "Area": {
+      "type": "string",
+      "title": "Вредност"
+    }
+  }
+
+};
+
+const uiSchema =
+{
+
+  "numberEnumRadio": {
+    "ui:widget": "radio",
+    "ui:options": {
+      "inline": true
+    }
+  },
+};
 
 /**
  * Create a crop parcel by selecting a single point.
@@ -20,12 +55,12 @@ const _AddEditCommonUse = ({ processID, farmObjId }) => {
     { layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false }
   );
 
-    const [stateArea, setStateArea] = useState("")
-    const [stateLand, setStateLand] = useState("")
+  const [stateArea, setStateArea] = useState("");
+  const [stateLand, setStateLand] = useState("");
 
   const enable = () => {
     store.dispatch({ processID: _id });
-    setState({ isGuided: false });
+    setState({ isGuided: true });
 
     // Click handler for selection of location and creation of crop parcel geometry.
     Map.on("click", (e) => {
@@ -40,7 +75,7 @@ const _AddEditCommonUse = ({ processID, farmObjId }) => {
         })
         .then((response) => {
           setState({ loading: false });
-          const data = geobuf.decode(protobuf(response));
+          //const data = geobuf.decode(protobuf(response));
           // filter data for type, set approp. config in factory.geoJSON
           const geojson = factory.geoJSON(data);
           const layers = geojson.getLayers();
@@ -49,15 +84,23 @@ const _AddEditCommonUse = ({ processID, farmObjId }) => {
           const area = `Површина: ${jsonData.AREA} ${unit}`;
           const land = `Класа: ${jsonData.LAND_COVER_CODE}`;
 
+          data = JSON.stringify({
+            ...layer.feature.properties,
+            OBJECT_ID: Number(layer.feature.id),
+            OBJECT_TYPE: Number(layer.feature.properties.type)
+          })
+
           setStateArea(area)
           setStateLand(land)
 
-        //   elements.alertUser(
-        //     true,
-        //     "info",
-        //     `Површина: ${jsonData.AREA} ${unit}`,
-        //     `Класа: ${jsonData.LAND_COVER_CODE}`
-        //   );
+          setState({
+            layer: {},
+            data: {},
+            X: 0,
+            Y: 0,
+            loading: false,
+            isGuided: false,
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -69,6 +112,8 @@ const _AddEditCommonUse = ({ processID, farmObjId }) => {
       Map.off("click");
     });
   };
+
+
 
   const errorHandler = () => {
     setState({ loading: true });
@@ -92,8 +137,6 @@ const _AddEditCommonUse = ({ processID, farmObjId }) => {
           X: 0,
           Y: 0,
           loading: false,
-          enumIdx: [],
-          enumNames: [],
           isGuided: false,
         });
         store.dispatch({ processID: "" });
@@ -104,66 +147,68 @@ const _AddEditCommonUse = ({ processID, farmObjId }) => {
     }
   };
 
-  const onSubmit = (e) => {
-      console.log(e)
+  const onSubmit = ({ formData }) => {
+    http
+      .call("submit-common-use", {
+        url: `/lpis/save/commonUse/{token}/{objectId}/{parentId}`,
+        method: "post",
+        data: JSON.stringify(formData),
+        responseType: "json",
+      })
+      .then((response) => {
+
+        setState({
+          layer: {},
+          data: {},
+          X: 0,
+          Y: 0,
+          loading: false,
+          isGuided: false,
+        });
+        elements.alertUser(
+          true,
+          "success",
+          "Успешно регистрирање заедничка употреба",
+          "Успешно регистрирање заедничка употреба"
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+        elements.alertUser(true, "error", "Настана грешка");
+
+        disable();
+      });
+
+    Map.off("click");
     disable();
   };
 
-  const renderForm = () => {
 
-    const jsonSchema = {
-        "definitions": {
-          "Color": {
-            "title": "Color",
-            "type": "string"
-          },
-          "Claimed": {
-            "title": "Claimed",
-            "type": "string",
-            "oneOf": [
-              {
-                "title": "ratio",
-                "const": "ratio"
-              },
-              {
-                "title": "area",
-                "const": "area"
-              }
-            ]
-          }
-        },
-        "title": "Choose One",
-        "type": "object",
-        "properties": {
-          "toggleMask": {
-            "$ref": "#/definitions/Claimed"
-          }
-        }
-      }
+  const onChange = ({ formData }) => {
+    setState({ data: { ...data, ...formData } });
+  }
 
-    return (
-      <Modal
-        id="measure-dialog"
-        show
-        backdrop={false}
-        enforceFocus={false}
-        container={document.getElementsByClassName("control-map")[0]}
-      >
-        <Modal.Title></Modal.Title>
-        <Modal.Body className="ap-modal-body">
-            <span>{stateArea}</span>
-            <span>{stateLand}</span>
-          <Form
-            schema={jsonSchema}
-            // onChange={onChange}
-            onSubmit={(e) => onSubmit(e)}
-            uiSchema={{}}
-            formData={{}}
-          />
-        </Modal.Body>
-      </Modal>
-    );
-  };
+
+  const renderGuideForm = () => {
+    return <GuideForm id={_id}
+      disable={disable}
+      title='Одбери парцела'
+    />
+  }
+
+  const renderForm2 = () => {
+    if (!isGuided)
+      return (
+        <Form onSubmit={onSubmit} formData={data} onChange={onChange} schema={jsonSchema} uiSchema={uiSchema} isSimple='true'>
+          <DrawActions cancel={disable} />
+        </Form>
+      )
+    else
+      return renderGuideForm();
+
+  }
+
+
 
   return (
     <ProcessButton id={_id} onClick={enable}>
@@ -171,7 +216,7 @@ const _AddEditCommonUse = ({ processID, farmObjId }) => {
       <span style={{ display: "block", marginTop: "5px" }}>
         Додади заедничка употреба
       </span>
-      {processID === _id && renderForm()}
+      {processID === _id && renderForm2()}
       {loading && <Loading />}
     </ProcessButton>
   );
