@@ -25,7 +25,7 @@ export function Form ({ formData, onSubmit, onChange, children, isSimple, formTi
         </Modal>;
     } else {
         const title = formTitle || 'Пополнете ја формата'
-        return <Modal id='simple-form'
+        return <Modal id='measure-dialog'
             show
             backdrop={false}
             enforceFocus={false}
@@ -41,7 +41,7 @@ export function Form ({ formData, onSubmit, onChange, children, isSimple, formTi
                     formData={{ ...formData }}
                     onSubmit={onSubmit}
                     onChange={onChange} >
-                    <Button type='submit' size=''>
+                    <Button type='submit' size='' className='next' >
                         Зачувај
                     </Button>
                 </ui.Form>
