@@ -312,9 +312,9 @@ public class ApplicationServices {
 				SvSDITile svTile = SvGeometry.getTile(SvCore.getTypeIdByName(objectName), (String) gTile.getUserData(),
 						null);
 				dbo.setParentId(0L);
-				svg.saveObject(dbo, false);
+				svg.saveGeometry(dbo);
 				svTile.setIsTileDirty(true);
-				svw.dbCommit();
+				//svw.dbCommit();
 			}
 
 		} catch (SvException e) {
