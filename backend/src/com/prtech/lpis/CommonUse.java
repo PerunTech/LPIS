@@ -46,10 +46,9 @@ public class CommonUse {
 				null, 0, 0);
 	}
 	
-	public boolean saveCommonUseObject(DbDataObject dbo, Long parentId, Long parcelId,
+	public void saveCommonUseObject(DbDataObject dbo, Long parentId, Long parcelId,
 			MultivaluedMap<String, String> formVals, SvWriter svw, SvReader svr) throws SvException {
 		ReentrantLock lock = null;
-		Boolean canBeSaved = false;
 		Double sumOfParcels = 0.0;
 		DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 		try {
@@ -73,6 +72,5 @@ public class CommonUse {
 				SvLock.releaseLock(agriParcel.getObjectId().toString(), lock);
 			}
 		}
-		return canBeSaved;
 	}
 }
