@@ -11,6 +11,7 @@ const { geobuf, protobuf } = data;
 const { Icon, DrawActions } = ui;
 const { useReducer } = React;
 const _id = 'commonUse';
+const _iconId = 'drawAP';
 
 const _CommonUse = ({ processID, farmObjId }) => {
   const [{ data, loading, isGuided, showForm, selectedParcel }, setState] = useReducer((currState, update) =>
@@ -107,7 +108,7 @@ const _CommonUse = ({ processID, farmObjId }) => {
 
   return (
     <ProcessButton id={_id} onClick={enable}>
-      <Icon name={_id} size='30px' />
+      <Icon name={_iconId} size='30px' />
       <span style={{ display: "block", marginTop: '5px' }}>Додади заедничка употреба</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
