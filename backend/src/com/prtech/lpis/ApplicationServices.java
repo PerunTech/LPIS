@@ -268,7 +268,7 @@ public class ApplicationServices {
 					svw.saveObject(dbo, true);
 					result.add(SvGeometry.getGeometry(dbo));
 				} else
-					errMsg = "err.parcel_has_farm";
+					errMsg = "{err.parcel_has_farm}";
 			} else
 				errMsg = "err.no_parcel.selected";
 		} catch (SvException e) {
@@ -312,7 +312,7 @@ public class ApplicationServices {
 				Geometry gTile = SvGeometry.getTileGeometry(SvGeometry.getCentroid(dbo));
 				SvSDITile svTile = SvGeometry.getTile(SvCore.getTypeIdByName(objectName), (String) gTile.getUserData(), null);
 				dbo.setParentId(0L);
-				svw.saveObject(dbo, false);
+				svg.saveObject(dbo, false);
 				svTile.setIsTileDirty(true);
 				svw.dbCommit();
 			}
