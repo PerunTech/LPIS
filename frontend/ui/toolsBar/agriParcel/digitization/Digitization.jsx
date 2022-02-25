@@ -1,7 +1,7 @@
 import { React } from 'perun-core';
 import { ui } from '../../../../Spatial';
 // Components
-import { AddEditCommonUse } from './AddEditCommonUse';
+import { CommonUse } from './CommonUse';
 import { Assign } from './Assign';
 import { Copy } from './Copy';
 import { Cut } from './Cut';
@@ -32,7 +32,7 @@ export const Digitization = () =>
         <Refresh />
         <Divider />
         <Assign />
+        <CommonUse />
         <DeleteParcelFromFarm />
         <DeleteControl />
-        <AddEditCommonUse />
     </ButtonGroup>;
