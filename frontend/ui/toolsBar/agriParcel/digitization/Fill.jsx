@@ -15,16 +15,16 @@ const { useReducer } = React;
 const _id = 'fillAP';
 
 const _Fill = ({ processID, farmObjId }) => {
-    const [{ layer, data, isGuided }, setState] = useReducer((currState, update) =>
+    const [{ layer, data, isGuided, showForm }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
-        { layer: {}, data: {}, isLoadingCrops: false, isGuided: {}, enumIdx: [], enumNames: [] });
+        { layer: {}, data: {}, isGuided: false, showForm: false });
 
     const enable = () => {
         Map.on('new_shape', e => fillParcel(e));
 
         // state setters
         store.dispatch({ processID: _id });
-        setState({ isGuided: true })
+        setState({ isGuided: true, showForm: false })
 
         // init draw handler
         polygon.enable(config);
@@ -33,7 +33,7 @@ const _Fill = ({ processID, farmObjId }) => {
     const disable = () => {
         // Reset state, internal and application-wide.
         Map.off('new_shape');
-        setState({ layer: {}, data: {}, isGuided: false });
+        setState({ layer: {}, data: {}, isGuided: false, showForm: false });
         store.dispatch({ processID: '' });
 
         // We remove the working geometry, save process will add the result, as well as additional vectors.
@@ -52,41 +52,40 @@ const _Fill = ({ processID, farmObjId }) => {
                 method: 'post',
                 responseType: 'arraybuffer',
                 data: JSON.stringify(factory.GeoJSON.fromLayer(e.layer))
-            })
-                .then(response => {
-                    const buff = geobuf.decode(protobuf(response));
-                    const geojson = factory.geoJSON(buff, config.pathOptions);
-                    const stateData = store.getState().data.layers;
+            }).then(response => {
+                const buff = geobuf.decode(protobuf(response));
+                const geojson = factory.geoJSON(buff, config.pathOptions);
+                const stateData = store.getState().data.layers;
 
-                    geojson.getLayers().forEach(layer => {
-                        const id = layer.feature.id
+                geojson.getLayers().forEach(layer => {
+                    const id = layer.feature.id
 
-                        // remove old app layers entries, will update with the new geojson set.
-                        stateData[id] && stateData[id].removeFrom(Map);
+                    // remove old app layers entries, will update with the new geojson set.
+                    stateData[id] && stateData[id].removeFrom(Map);
 
-                        layer.addTo(Map);
-                        e.layer.removeFrom(Map);
+                    layer.addTo(Map);
+                    e.layer.removeFrom(Map);
 
-                        setState({
-                            layer: layer,
-                            data: {
-                                ...layer.feature.properties,
-                                OBJECT_ID: Number(layer.feature.id)
-                            },
-                            isGuided: false
-                        })
+                    setState({
+                        layer: layer,
+                        data: {
+                            ...layer.feature.properties,
+                            OBJECT_ID: Number(layer.feature.id)
+                        },
+                        isGuided: false,
+                        showForm: true
                     })
                 })
-                .catch(error => {
-                    e.layer.removeFrom(Map);
-                    let enc = new TextDecoder("utf-8");
-                    let errmsg = enc.decode(error.response.data);
-                    elements.alertUser(true,
-                        'error',
-                        'Грешка при пополнување парцела',
-                        errmsg
-                    );
-                })
+            }).catch(error => {
+                e.layer.removeFrom(Map);
+                let enc = new TextDecoder("utf-8");
+                let errmsg = enc.decode(error.response.data);
+                elements.alertUser(true,
+                    'error',
+                    'Грешка при пополнување парцела',
+                    errmsg
+                );
+            })
         }
 
         Map.off('new_shape');
@@ -104,24 +103,38 @@ const _Fill = ({ processID, farmObjId }) => {
         setState({ data: { ...data, ...formData } });
     }
 
-    const renderForm = () =>
-    (isGuided
-        ? <Guidance id={_id}
+    const renderGuideForm = () => {
+        return <Guidance id={_id}
             finish={() => polygon._finishShape()}
             undo={() => polygon._removeLastVertex()}
             disable={() => disable()}
             msg={['', '']}
-            title='Пополни земјоделска парцела' />
-        : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
-            <DrawActions
-                cancel={() => disable()} />
-        </Form>);
+            title='Пополни земјоделска парцела'
+        />
+    }
 
+    const renderForm = () => {
+        return <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
+            <DrawActions cancel={() => disable()} />
+        </Form>
+    }
+
+    const renderComponent = () => {
+        let componentToRender = null
+
+        if (isGuided && !showForm) {
+            componentToRender = renderGuideForm()
+        } else if (showForm && !isGuided) {
+            componentToRender = renderForm()
+        }
+
+        return componentToRender
+    }
 
     return <ProcessButton id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
         <Icon name={_id} size='30px' />
         <span style={{ display: 'block', marginTop: '5px' }}>Пополни парцела</span>
-        {processID === _id && renderForm()}
+        {processID === _id && renderComponent()}
     </ProcessButton>
 }
 
