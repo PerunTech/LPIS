@@ -15,16 +15,16 @@ const { useReducer } = React;
 const _id = 'cutAP';
 
 const _Cut = ({ processID, farmObjId }) => {
-    const [{ layer, data, loading, isGuided }, setState] = useReducer((currState, update) =>
+    const [{ layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
-        { layer: {}, data: {}, loading: false, isGuided: false });
+        { layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
 
     const enable = () => {
         Map.on('new_shape', e => cutParcel(e));
 
         // state setters
         store.dispatch({ processID: _id });
-        setState({ isGuided: true })
+        setState({ isGuided: true, showForm: false })
 
         // init draw handler
         polygon.enable(config);
@@ -41,7 +41,7 @@ const _Cut = ({ processID, farmObjId }) => {
             } else {
                 // Reset state, internal and application-wide.
                 Map.off('new_shape');
-                setState({ layer: {}, data: {}, isGuided: false });
+                setState({ layer: {}, data: {}, isGuided: false, showForm: false });
                 store.dispatch({ processID: '' });
 
                 // We remove the working geometry, save process will add the result, as well as additional vectors.
@@ -84,7 +84,8 @@ const _Cut = ({ processID, farmObjId }) => {
                                 OBJECT_ID: Number(layer.feature.id),
                                 FORCE_CROP_REFRESH: true
                             },
-                            isGuided: false
+                            isGuided: false,
+                            showForm: true
                         })
                     })
                 })
@@ -115,24 +116,38 @@ const _Cut = ({ processID, farmObjId }) => {
         setState({ data: { ...data, ...formData } });
     }
 
-    const renderForm = () =>
-    (isGuided
-        ? <Guidance id={_id}
+    const renderGuideForm = () => {
+        return <Guidance id={_id}
             finish={() => polygon._finishShape()}
             undo={() => polygon._removeLastVertex()}
             disable={() => disable()}
             msg={drawAPMsg}
-            title='Нацртај земјоделска парцела' />
-        : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
-            <DrawActions
-                cancel={() => disable()} />
-        </Form>)
+            title='Нацртај земјоделска парцела'
+        />
+    }
 
+    const renderForm = () => {
+        return <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
+            <DrawActions cancel={() => disable()} />
+        </Form>
+    }
+
+    const renderComponent = () => {
+        let componentToRender = null
+
+        if (isGuided && !showForm) {
+            componentToRender = renderGuideForm()
+        } else if (showForm && !isGuided) {
+            componentToRender = renderForm()
+        }
+
+        return componentToRender
+    }
 
     return <ProcessButton id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
         <Icon name={_id} size='30px' />
         <span style={{ display: 'block', marginTop: '5px' }}>Отсечи парцела</span>
-        {processID === _id && renderForm()}
+        {processID === _id && renderComponent()}
         {loading && <Loading />}
     </ProcessButton>
 }
