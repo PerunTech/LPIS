@@ -264,7 +264,7 @@ public class ApplicationServices {
 				DbDataObject dbo = (DbDataObject) geomArr.iterator().next().getUserData();
 				if (dbo.getParentId().equals(0L)) {
 					dbo.setParentId(farmId);
-					svw.saveObject(dbo, true);
+					svg.saveGeometry(dbo);
 					result.add(SvGeometry.getGeometry(dbo));
 				} else
 					errMsg = dbo.toSimpleJson().toString();
