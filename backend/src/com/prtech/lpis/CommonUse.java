@@ -1,5 +1,6 @@
 package com.prtech.lpis;
 
+import java.math.BigDecimal;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -23,15 +24,24 @@ public class CommonUse {
 			DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 			dbo.setVal(CC.PARCEL_ID, parcelId);
 			JsonObject metadata = Util.dataToJson(formVals);
-			String claimedArea = metadata.get(CC.CLAIMED_AREA).getAsString();
-			String claimedRatio = metadata.get(CC.CLAIMED_RATIO).getAsString();
-			if (!claimedArea.equals(CC.EMPTY_STRING) && !claimedArea.trim().equals(CC.EMPTY_STRING)) {
+			String claimedArea = null;
+			String claimedRatio = null;
+			if (metadata.has(CC.CLAIMED_AREA)) {
+				claimedArea = metadata.get(CC.CLAIMED_AREA).getAsString();
+				if (!isParsable(claimedArea))
+					throw new SvException("lpis.error.not_parsable", svr.getInstanceUser());
+			}
+			if (metadata.has(CC.CLAIMED_RATIO))
+				claimedRatio = metadata.get(CC.CLAIMED_RATIO).getAsString();
+			if (claimedArea != null && !claimedArea.equals(CC.EMPTY_STRING)
+					&& !claimedArea.trim().equals(CC.EMPTY_STRING)) {
 				Double convertedClaimedArea = Double.valueOf(claimedArea);
-				Double agriParcelArea = (Double) agriParcel.getVal(CC.AREA);
-				Double percentage = convertedClaimedArea / agriParcelArea;
+				BigDecimal agriParcelArea = (BigDecimal) agriParcel.getVal(CC.AREA);
+				Double percentage = convertedClaimedArea / agriParcelArea.doubleValue();
 				dbo.setVal(CC.PERCENTAGE, percentage);
 				dbo.setVal(CC.ALLOWED_AREA, Long.valueOf(claimedArea));
-			} else if (!claimedRatio.equals(CC.EMPTY_STRING) && !claimedRatio.trim().equals(CC.EMPTY_STRING)) {
+			} else if (claimedRatio != null && !claimedRatio.equals(CC.EMPTY_STRING)
+					&& !claimedRatio.trim().equals(CC.EMPTY_STRING)) {
 				String[] ratios = claimedRatio.split("/");
 				if (isParsable(ratios[0]) && isParsable(ratios[1])) {
 					dbo.setVal(CC.OWN_PARCEL_PARTS, ratios[0]);
@@ -45,7 +55,7 @@ public class CommonUse {
 			}
 		}
 	}
-	
+
 	public static boolean isParsable(String input) {
 		try {
 			Double.parseDouble(input);
@@ -54,13 +64,13 @@ public class CommonUse {
 			return false;
 		}
 	}
-	
+
 	public DbDataArray getCommonUseParcels(Long parcelId, SvReader svr) throws SvException {
 		DbSearchCriterion cr = new DbSearchCriterion(CC.PARCEL_ID, DbCompareOperand.EQUAL, parcelId);
 		return svr.getObjects(new DbSearchExpression().addDbSearchItem(cr), SvReader.getTypeIdByName(CC.COMMON_USE),
 				null, 0, 0);
 	}
-	
+
 	public void saveCommonUseObject(DbDataObject dbo, Long parentId, Long parcelId,
 			MultivaluedMap<String, String> formVals, SvWriter svw, SvReader svr) throws SvException {
 		ReentrantLock lock = null;
