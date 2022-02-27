@@ -54,7 +54,7 @@ const _CommonUse = ({ processID, farmObjId }) => {
 
   const submitCommonUse = data => {
     const { parcelId } = selectedParcel
-    const url = `/lpis/save/commonUse/{init.token}/0/AGRI_PARCEL/${farmObjId}/${parcelId}`
+    const url = `/lpis/save/commonUse/{init.token}/0/${farmObjId}/${parcelId}`
     http.call(_id, { url, method: 'post', data, responseType: 'arraybuffer' }).then(res => {
       const decodedResponse = bufferToString(res.data)
       elements.alertUser(true, 'success', decodedResponse, '', () => disable())

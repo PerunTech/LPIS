@@ -4,6 +4,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.ws.rs.core.MultivaluedMap;
 
+import com.google.gson.JsonObject;
+import com.prtech.spatial.Util;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvLock;
 import com.prtech.svarog.SvReader;
@@ -20,8 +22,9 @@ public class CommonUse {
 		if (parcelId != null) {
 			DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 			dbo.setVal(CC.PARCEL_ID, parcelId);
-			String claimedArea = formVals.get(CC.CLAIMED_AREA).get(0);
-			String claimedRatio = formVals.get(CC.CLAIMED_RATIO).get(0);
+			JsonObject metadata = Util.dataToJson(formVals);
+			String claimedArea = metadata.get(CC.CLAIMED_AREA).getAsString();
+			String claimedRatio = metadata.get(CC.CLAIMED_RATIO).getAsString();
 			if (!claimedArea.equals(CC.EMPTY_STRING) && !claimedArea.trim().equals(CC.EMPTY_STRING)) {
 				Double convertedClaimedArea = Double.valueOf(claimedArea);
 				Double agriParcelArea = (Double) agriParcel.getVal(CC.AREA);
