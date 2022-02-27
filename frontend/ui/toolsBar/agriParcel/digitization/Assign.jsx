@@ -31,26 +31,20 @@ const _Assign = ({ processID, farmObjId }) => {
         method: 'post',
         responseType: 'arraybuffer',
         // data: JSON.stringify(factory.GeoJSON.fromLayer(e.layer)),
-      })
-        .then(response => {
+      }).then(response => {
           setState({ loading: false, isGuided: false })
+          alertUser(true, 'success', 'Успешно назначено стопанство', '', () => disable())
           const proto = protobuf(response);
           const buff = geobuf.decode(proto);
           const geojson = factory.geoJSON(buff, config.pathOptions);
 
           geojson.getLayers().forEach(layer => {
-            // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
-            //layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
-
             // assign metadata
             layer.feature.id = 0
             layer.feature.properties = { parent_id: farmObjId }
-
             layer.addTo(Map);
-            setState({ data: layer.feature.properties, layer: layer })
           })
-        })
-        .catch(err => {
+        }).catch(err => {
           console.log(err.response)
           setState({ loading: false, isGuided: false })
           // Get the stringified response from the array buffer
@@ -112,7 +106,7 @@ const _Assign = ({ processID, farmObjId }) => {
     const url = `/lpis/overlap/farm/{init.token}/${farmObjId}/AGRI_PARCEL/${x}/${y}`
     http.call('assign-agri', { url, method: 'post' }).then(response => {
       if (response.data) {
-        alertUser(true, 'info', response.data || '')
+        alertUser(true, 'info', response.data || '', '', () => disable())
       }
     }).catch(err => {
       const { response } = err
@@ -120,17 +114,12 @@ const _Assign = ({ processID, farmObjId }) => {
     })
   }
 
-  const renderForm = () =>
-  (isGuided
-    ? <Guidance id={_id} disable={disable} msg={assignAPMsg} title='Назначи стопанство' />
-    : <></>);
-
+  const renderForm = () =>  (isGuided ? <Guidance id={_id} disable={disable} msg={assignAPMsg} title='Назначи стопанство' /> : <></>);
 
   return <ProcessButton id={_id} onClick={enable} >
     <Icon name={_id} size='30px' />
     <span style={{ display: 'block', marginTop: '5px' }}>Назначи стопанство</span>
-    {processID === _id
-      && renderForm()}
+    {processID === _id  && renderForm()}
     {loading && <Loading />}
   </ProcessButton>;
 };
