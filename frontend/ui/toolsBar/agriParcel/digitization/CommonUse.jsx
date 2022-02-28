@@ -4,7 +4,7 @@ import { commonUseMsg, commonUseSchema } from '../Config';
 import { ProcessButton } from '../../ProcessButton';
 import { GuideForm } from '../GuideForm';
 import { Form } from '../Form';
-import { bufferToString, decodeResponse, getFarmMapAssets } from '../../../Util';
+import { getFarmMapAssets } from '../../../Util';
 
 const { Map, store, http } = core;
 const { geobuf, protobuf } = data;
@@ -54,14 +54,14 @@ const _CommonUse = ({ processID, farmObjId }) => {
 
   const submitCommonUse = data => {
     const { parcelId } = selectedParcel
-    const url = `/lpis/save/commonUse/{init.token}/0/${farmObjId}/${parcelId}`
-    http.call(_id, { url, method: 'post', data, responseType: 'arraybuffer' }).then(res => {
-      const decodedResponse = bufferToString(res.data)
-      elements.alertUser(true, 'success', decodedResponse, '', () => disable())
+    const url = `/lpis/save/commonUse/{init.token}a/0/${farmObjId}/${parcelId}`
+    http.call(_id, { url, method: 'post', data }).then(res => {
+      const responseType = res.data.type ||  'INFO'
+      const labelCode = res.data.label_code || 'Успешно додадена заедничка употреба'
+      elements.alertUser(true, responseType.toLowerCase(), labelCode, '', () => disable())
     }).catch(err => {
       const { response } = err
-      const errorMsg = decodeResponse(response);
-      elements.alertUser(true, 'error', 'Грешка при зачувување', errorMsg);
+      elements.alertUser(true, 'error', 'Грешка при зачувување', response.data.Label_Code || '');
     })
   }
 
