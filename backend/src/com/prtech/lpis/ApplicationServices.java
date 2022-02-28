@@ -705,7 +705,7 @@ public class ApplicationServices {
 			@PathParam("objectId") final Long objectId, @PathParam("parentId") final Long parentId,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
-		String errMsg = "";
+		String errMsg = CC.EMPTY_STRING;
 		JsonObject metadata = new JsonObject();
 		DbDataObject permanentCrop = null;
 		try (SvReader svr = new SvReader(token);
