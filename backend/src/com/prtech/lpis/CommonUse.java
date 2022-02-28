@@ -5,6 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.ws.rs.core.MultivaluedMap;
 
+import com.google.gson.JsonObject;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvLock;
 import com.prtech.svarog.SvReader;
@@ -17,18 +18,19 @@ import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
 
 public class CommonUse {
 	public void createCommonUseObject(DbDataObject dbo, Long parcelId, MultivaluedMap<String, String> formVals,
-			SvReader svr) throws SvException {
+			JsonObject metadata, SvReader svr) throws SvException {
 		if (parcelId != null) {
 			DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 			dbo.setVal(CC.PARCEL_ID, parcelId);
 			String claimedArea = null;
 			String claimedRatio = null;
-			if (formVals.get(CC.CLAIMED_AREA) != null) {
-				claimedArea = formVals.get(CC.CLAIMED_AREA).get(0);
+			if (metadata.has(CC.CLAIMED_AREA)) {
+				claimedArea = metadata.get(CC.CLAIMED_AREA).getAsString();
+				if (!isParsable(claimedArea))
+					throw new SvException("lpis.error.not_parsable", svr.getInstanceUser());
 			}
-			if (formVals.get(CC.CLAIMED_RATIO) != null) {
-				claimedRatio = formVals.get(CC.CLAIMED_RATIO).get(0);
-			}
+			if (metadata.has(CC.CLAIMED_RATIO))
+				claimedRatio = metadata.get(CC.CLAIMED_RATIO).getAsString();
 			if (claimedArea != null && !claimedArea.equals(CC.EMPTY_STRING)
 					&& !claimedArea.trim().equals(CC.EMPTY_STRING)) {
 				if (!isParsable(claimedArea))
@@ -70,15 +72,16 @@ public class CommonUse {
 	}
 
 	public void saveCommonUseObject(DbDataObject dbo, Long parentId, Long parcelId,
-			MultivaluedMap<String, String> formVals, SvWriter svw, SvReader svr) throws SvException {
-		int distributedLock = 0;
+			MultivaluedMap<String, String> formVals, JsonObject metadata, SvWriter svw, SvReader svr)
+			throws SvException {
+		Integer distributedLock = null;
 		Double sumOfParcels = 0.0;
 		DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 		try {
 			if (agriParcel != null) {
 				distributedLock = SvLock.getDistributedLock(agriParcel.getObjectId().toString());
-				if (distributedLock != 0) {
-					createCommonUseObject(dbo, parcelId, formVals, svr);
+				if (distributedLock != null) {
+					createCommonUseObject(dbo, parcelId, formVals, metadata, svr);
 					DbDataArray commonsParcels = getCommonUseParcels(agriParcel.getObjectId(), svr);
 					if (commonsParcels != null && !commonsParcels.getItems().isEmpty()) {
 						for (DbDataObject tempCommonUse : commonsParcels.getItems()) {
