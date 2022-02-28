@@ -34,6 +34,7 @@ import com.google.gson.JsonObject;
 import com.prtech.spatial.SC;
 import com.prtech.spatial.Util;
 import com.prtech.spatial.geobuf.GeobufEncoder;
+import com.prtech.svarog.I18n;
 import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
@@ -45,23 +46,19 @@ import com.prtech.svarog.SvSDITile;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
-import com.prtech.svarog.svCONST;
-import com.prtech.svarog.DbCacheTable.DboComparator;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_common.ResponseHandler;
 import com.prtech.svarog_common.ResponseHandler.MessageType;
-import com.prtech.svarog_common.SvCharId;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 
 @Path("/lpis")
 public class ApplicationServices {
 
+	static final Logger log4j = SvConf.getLogger(ApplicationServices.class);
 	static int precisionScale = 2;
 
 	static {
@@ -705,6 +702,7 @@ public class ApplicationServices {
 			@PathParam("objectId") final Long objectId, @PathParam("parentId") final Long parentId,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
+		ResponseHandler jrh = new ResponseHandler();
 		String errMsg = CC.EMPTY_STRING;
 		JsonObject metadata = new JsonObject();
 		DbDataObject permanentCrop = null;
@@ -734,18 +732,43 @@ public class ApplicationServices {
 				}
 			}
 			svw.saveObject(permanentCrop);
-		} catch (SvException e) {
-			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
-			errMsg = e.getMessage();
+			return handleException(e, jrh, "error.perun.failedToSaveObject");
 		}
 		if (errMsg.isEmpty()) {
-			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, metadata.toString());
-			return Response.status(200).entity(rr.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
+			jrh = new ResponseHandler(MessageType.SUCCESS, metadata.toString());
+			return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 		} else
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 
 		// return mergeGeometryImpl(token, objectName, false, lineStringWKT,
 		// formVals);
+	}
+	
+	/*
+	 *  catch (Exception e) {
+			return handleException(e, jrh, "error.perun.changedStatus");
+		}
+	 * 
+	 */
+
+	private Response handleException(Exception e, ResponseHandler jrh, String message) {
+		if (e instanceof SvException) {
+			SvException sve = (SvException) e;
+			log4j.error(sve.getFormattedMessage(), sve);
+			if (sve.getLabelCode().equals("error_invalid_session")) {
+				jrh.create(MessageType.ERROR, I18n.getText("error_invalid_session"),
+						I18n.getText("error_invalid_session"), new JsonObject());
+				return Response.status(401).entity(jrh.getAll().toString()).build();
+			} else if (sve.getLabelCode().equals("error_user_not_authorized")) {
+				jrh.create(MessageType.ERROR, I18n.getText("error_user_not_authorized"),
+						I18n.getText("error_user_not_authorized"), new JsonObject());
+				return Response.status(403).entity(jrh.getAll().toString()).build();
+			}
+		} else {
+			log4j.error(e.getMessage(), e);
+			jrh.create(MessageType.ERROR, I18n.getText(message), I18n.getText(message), new JsonObject());
+		}
+		return Response.status(200).entity(jrh.getAll().toString()).build();
 	}
 }
