@@ -54,7 +54,7 @@ const _CommonUse = ({ processID, farmObjId }) => {
 
   const submitCommonUse = data => {
     const { parcelId } = selectedParcel
-    const url = `/lpis/save/commonUse/{init.token}a/0/${farmObjId}/${parcelId}`
+    const url = `/lpis/save/commonUse/{init.token}/0/${farmObjId}/${parcelId}`
     http.call(_id, { url, method: 'post', data }).then(res => {
       const responseType = res.data.type ||  'INFO'
       const labelCode = res.data.label_code || 'Успешно додадена заедничка употреба'
