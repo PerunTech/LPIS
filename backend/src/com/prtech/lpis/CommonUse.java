@@ -5,8 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.ws.rs.core.MultivaluedMap;
 
-import com.google.gson.JsonObject;
-import com.prtech.spatial.Util;
+import org.joda.time.DateTime;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvLock;
 import com.prtech.svarog.SvReader;
@@ -23,18 +22,18 @@ public class CommonUse {
 		if (parcelId != null) {
 			DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 			dbo.setVal(CC.PARCEL_ID, parcelId);
-			JsonObject metadata = Util.dataToJson(formVals);
 			String claimedArea = null;
 			String claimedRatio = null;
-			if (metadata.has(CC.CLAIMED_AREA)) {
-				claimedArea = metadata.get(CC.CLAIMED_AREA).getAsString();
-				if (!isParsable(claimedArea))
-					throw new SvException("lpis.error.not_parsable", svr.getInstanceUser());
+			if(formVals.get(CC.CLAIMED_AREA)!=null){
+				claimedArea = formVals.get(CC.CLAIMED_AREA).get(0);
 			}
-			if (metadata.has(CC.CLAIMED_RATIO))
-				claimedRatio = metadata.get(CC.CLAIMED_RATIO).getAsString();
+			if(formVals.get(CC.CLAIMED_RATIO)!=null){
+				claimedRatio = formVals.get(CC.CLAIMED_RATIO).get(0);
+			}
 			if (claimedArea != null && !claimedArea.equals(CC.EMPTY_STRING)
 					&& !claimedArea.trim().equals(CC.EMPTY_STRING)) {
+				if (!isParsable(claimedArea))
+					throw new SvException("lpis.error.not_parsable", svr.getInstanceUser());
 				Double convertedClaimedArea = Double.valueOf(claimedArea);
 				BigDecimal agriParcelArea = (BigDecimal) agriParcel.getVal(CC.AREA);
 				Double percentage = convertedClaimedArea / agriParcelArea.doubleValue();
@@ -44,8 +43,8 @@ public class CommonUse {
 					&& !claimedRatio.trim().equals(CC.EMPTY_STRING)) {
 				String[] ratios = claimedRatio.split("/");
 				if (isParsable(ratios[0]) && isParsable(ratios[1])) {
-					dbo.setVal(CC.OWN_PARCEL_PARTS, ratios[0]);
-					dbo.setVal(CC.TOTAL_PARCEL_PARTS, ratios[1]);
+					dbo.setVal(CC.OWN_PARCEL_PARTS, Long.valueOf(ratios[0]));
+					dbo.setVal(CC.TOTAL_PARCEL_PARTS, Long.valueOf(ratios[1]));
 					dbo.setVal(CC.PERCENTAGE, Double.valueOf(ratios[0]) / Double.valueOf(ratios[1]));
 					dbo.setVal(CC.ALLOWED_AREA, Long.valueOf(ratios[0]) / Long.valueOf(ratios[1]));
 				} else {
@@ -89,6 +88,8 @@ public class CommonUse {
 						if (sumOfParcels < 100) {
 							svw.saveObject(dbo);
 						}
+					} else {
+						svw.saveObject(dbo);
 					}
 				}
 			}

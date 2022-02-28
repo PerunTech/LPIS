@@ -403,7 +403,7 @@ public class ApplicationServices {
 				commonUse = svr.getObjectById(objectId, typeId, null);
 			} else {
 				commonUse.setObjectId(0L);
-				commonUse.setObjectType(objectId);
+				commonUse.setObjectType(typeId);
 				commonUse.setParentId(parentId);
 			}
 
