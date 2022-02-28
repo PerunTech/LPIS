@@ -635,7 +635,7 @@ public class DbInit implements IDbInit {
 		dbf10.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 
-		DbDataField[] fieldList = new DbDataField[6];
+		DbDataField[] fieldList = new DbDataField[10];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
@@ -657,6 +657,7 @@ public class DbInit implements IDbInit {
 		dbtList.add(addSortOrder(DbInit.createPhysicalBlock()));
 		dbtList.add(addSortOrder(DbInit.createAgriParcel()));
 		dbtList.add(addSortOrder(DbInit.createCommonUse()));
+		dbtList.add(addSortOrder(DbInit.createPermanentCrop()));
 
 		return dbtList;
 	}
