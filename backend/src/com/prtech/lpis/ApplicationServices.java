@@ -696,4 +696,56 @@ public class ApplicationServices {
 			};
 		};
 	}
+
+	@Path("/save/permanentCrop/{token}/{objectId}/{parentId}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/pbf")
+	public Response savePermanentCrop(@PathParam("token") final String token,
+			@PathParam("objectId") final Long objectId, @PathParam("parentId") final Long parentId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
+		String errMsg = "";
+		JsonObject metadata = new JsonObject();
+		DbDataObject permanentCrop = null;
+		try (SvReader svr = new SvReader(token);
+				SvWriter svw = new SvWriter(svr);
+				SvGeometry svg = new SvGeometry(svr)) {
+			metadata = Util.dataToJson(formVals);
+			permanentCrop = new DbDataObject();
+			Long typeId = SvCore.getTypeIdByName(CC.PERMANENT_CROP);
+			DbDataArray fieldSet = SvCore.getFields(typeId);
+			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
+
+			if (isUpdate) {
+				permanentCrop = svr.getObjectById(objectId, typeId, null);
+			} else {
+				permanentCrop.setObjectId(0L);
+				permanentCrop.setObjectType(typeId);
+				permanentCrop.setParentId(parentId);
+			}
+
+			// Map form values to dbo fields
+			for (DbDataObject field : fieldSet.getItems()) {
+				String fieldName = field.getVal(CC.FIELD_NAME).toString();
+				if (Util.excludeField(fieldName)
+						&& !CC.EMPTY_STRING.equalsIgnoreCase(field.getVal(CC.FIELD_TYPE).toString())) {
+					permanentCrop = Util.addValueToDataObject(permanentCrop, fieldName, field, metadata);
+				}
+			}
+			svw.saveObject(permanentCrop);
+		} catch (SvException e) {
+			errMsg = e.getJsonMessage();
+		} catch (Exception e) {
+			errMsg = e.getMessage();
+		}
+		if (errMsg.isEmpty()) {
+			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, metadata.toString());
+			return Response.status(200).entity(rr.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
+		} else
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+
+		// return mergeGeometryImpl(token, objectName, false, lineStringWKT,
+		// formVals);
+	}
 }

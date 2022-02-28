@@ -19,5 +19,10 @@ public class CC {
 	public static final String OWN_PARCEL_PARTS = "OWN_PARCEL_PARTS";
 	public static final String AREA = "AREA";
 	public static final String EMPTY_STRING = "";
+	public static final String PERMANENT_CROP = "PERMANENT_CROP";
+	public static final String FIELD_NAME = "FIELD_NAME";
+	public static final String FIELD_TYPE = "FIELD_TYPE";
+	
+	
 
 }
