@@ -630,7 +630,6 @@ public class DbInit implements IDbInit {
 		dbf10.setDbFieldName("LPIS_PARCEL_ID");
 		dbf10.setDbFieldType(DbFieldType.NUMERIC);
 		dbf10.setDbFieldSize(18);
-		dbf10.setDbFieldScale(3);
 		dbf10.setLabel_code("common_use.lpis_parcel_id");
 		dbf10.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
