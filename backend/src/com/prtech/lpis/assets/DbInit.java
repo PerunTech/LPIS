@@ -615,6 +615,7 @@ public class DbInit implements IDbInit {
 		dbf8.setDbFieldType(DbFieldType.NUMERIC);
 		dbf8.setDbFieldSize(18);
 		dbf8.setLabel_code("permanent_crop.perm_crop_type_id");
+		dbf8.setIsNull(false);
 		dbf8.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 
