@@ -5,7 +5,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.joda.time.DateTime;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvLock;
 import com.prtech.svarog.SvReader;
@@ -24,10 +23,10 @@ public class CommonUse {
 			dbo.setVal(CC.PARCEL_ID, parcelId);
 			String claimedArea = null;
 			String claimedRatio = null;
-			if(formVals.get(CC.CLAIMED_AREA)!=null){
+			if (formVals.get(CC.CLAIMED_AREA) != null) {
 				claimedArea = formVals.get(CC.CLAIMED_AREA).get(0);
 			}
-			if(formVals.get(CC.CLAIMED_RATIO)!=null){
+			if (formVals.get(CC.CLAIMED_RATIO) != null) {
 				claimedRatio = formVals.get(CC.CLAIMED_RATIO).get(0);
 			}
 			if (claimedArea != null && !claimedArea.equals(CC.EMPTY_STRING)
