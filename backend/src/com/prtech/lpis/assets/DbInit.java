@@ -539,6 +539,117 @@ public class DbInit implements IDbInit {
 		return dbt;
 	}
 	
+	public static DbDataTable createPermanentCrop() {
+		DbDataTable dbt = new DbDataTable();
+		dbt.setDbTableName("PERMANENT_CROP");
+		dbt.setDbRepoName(CONST_MASTER_REPO);
+		dbt.setDbSchema(CONST_DEFAULT_SCHEMA);
+		dbt.setIsSystemTable(false);
+		dbt.setIsRepoTable(false);
+		dbt.setIsConfigTable(false);
+		dbt.setLabel_code("permanent_crop.general");
+		dbt.setUse_cache(true);
+		dbt.setParentName("FARMER");
+
+		DbDataField dbf1 = new DbDataField();
+		dbf1.setDbFieldName("PKID");
+		dbf1.setDbFieldType(DbFieldType.NUMERIC);
+		dbf1.setIsPrimaryKey(true);
+		dbf1.setDbFieldSize(18);
+		dbf1.setDbFieldScale(0);
+		dbf1.setIsNull(false);
+		dbf1.setLabel_code("permanent_crop.pkid");
+		dbf1.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+
+		DbDataField dbf2 = new DbDataField();
+		dbf2.setDbFieldName("PARCEL_ID");
+		dbf2.setDbFieldType(DbFieldType.NUMERIC);
+		dbf2.setDbFieldSize(18);
+		dbf2.setIndexName("PARCEL_ID_IDX");
+		dbf2.setLabel_code("permanent_crop.parcel_id");
+		dbf2.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+
+		DbDataField dbf3 = new DbDataField();
+		dbf3.setDbFieldName("ID");
+		dbf3.setDbFieldType(DbFieldType.NUMERIC);
+		dbf3.setDbFieldSize(18);
+		dbf3.setLabel_code("permanent_crop.id");
+		dbf3.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf4 = new DbDataField();
+		dbf4.setDbFieldName("NUMBER_OF_TREES");
+		dbf4.setDbFieldType(DbFieldType.NUMERIC);
+		dbf4.setDbFieldSize(18);
+		dbf4.setLabel_code("permanent_crop.number_of_trees");
+		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf5 = new DbDataField();
+		dbf5.setDbFieldName("PLANT_AREA");
+		dbf5.setDbFieldType(DbFieldType.NUMERIC);
+		dbf5.setDbFieldSize(18);
+		dbf5.setLabel_code("permanent_crop.plant_area");
+		dbf5.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf6 = new DbDataField();
+		dbf6.setDbFieldName("TREES_DISTANCE");
+		dbf6.setDbFieldType(DbFieldType.NUMERIC);
+		dbf6.setDbFieldSize(18);
+		dbf6.setLabel_code("permanent_crop.trees_distance");
+		dbf6.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf7 = new DbDataField();
+		dbf7.setDbFieldName("TREES_ROW_DISTANCE");
+		dbf7.setDbFieldType(DbFieldType.NUMERIC);
+		dbf7.setDbFieldSize(18);
+		dbf7.setLabel_code("permanent_crop.trees_row_distance");
+		dbf7.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf8 = new DbDataField();
+		dbf8.setDbFieldName("YEAR_OF_PLANTING_TREES");
+		dbf8.setDbFieldType(DbFieldType.NUMERIC);
+		dbf8.setDbFieldSize(18);
+		dbf8.setLabel_code("permanent_crop.year_of_planting_trees");
+		dbf8.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf9 = new DbDataField();
+		dbf9.setDbFieldName("PERM_CROP_TYPE_ID");
+		dbf9.setDbFieldType(DbFieldType.NUMERIC);
+		dbf9.setDbFieldSize(18);
+		dbf9.setLabel_code("permanent_crop.perm_crop_type_id");
+		dbf9.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf10 = new DbDataField();
+		dbf10.setDbFieldName("LPIS_PARCEL_ID");
+		dbf10.setDbFieldType(DbFieldType.NUMERIC);
+		dbf10.setDbFieldSize(18);
+		dbf10.setDbFieldScale(3);
+		dbf10.setLabel_code("common_use.lpis_parcel_id");
+		dbf10.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField[] fieldList = new DbDataField[6];
+		fieldList[0] = dbf1;
+		fieldList[1] = dbf2;
+		fieldList[2] = dbf3;
+		fieldList[3] = dbf4;
+		fieldList[4] = dbf5;
+		fieldList[5] = dbf6;
+		fieldList[6] = dbf7;
+		fieldList[7] = dbf8;
+		fieldList[8] = dbf9;
+		fieldList[9] = dbf10;
+
+		dbt.setDbTableFields(fieldList);
+		return dbt;
+	}
 	
 	@Override
 	public ArrayList<DbDataTable> getCustomObjectTypes() {
