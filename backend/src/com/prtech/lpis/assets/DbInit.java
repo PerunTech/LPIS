@@ -630,6 +630,7 @@ public class DbInit implements IDbInit {
 		DbDataField[] fieldList = new DbDataField[9];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
+		fieldList[2] = dbf3;
 		fieldList[3] = dbf4;
 		fieldList[4] = dbf5;
 		fieldList[5] = dbf6;
