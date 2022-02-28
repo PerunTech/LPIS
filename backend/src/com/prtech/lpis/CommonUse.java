@@ -74,13 +74,13 @@ public class CommonUse {
 	public void saveCommonUseObject(DbDataObject dbo, Long parentId, Long parcelId,
 			MultivaluedMap<String, String> formVals, JsonObject metadata, SvWriter svw, SvReader svr)
 			throws SvException {
-		Integer distributedLock = null;
+		Integer distributedLock = 0;
 		Double sumOfParcels = 0.0;
 		DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 		try {
 			if (agriParcel != null) {
 				distributedLock = SvLock.getDistributedLock(agriParcel.getObjectId().toString());
-				if (distributedLock != null) {
+				if (distributedLock != 0) {
 					createCommonUseObject(dbo, parcelId, formVals, metadata, svr);
 					DbDataArray commonsParcels = getCommonUseParcels(agriParcel.getObjectId(), svr);
 					if (commonsParcels != null && !commonsParcels.getItems().isEmpty()) {
