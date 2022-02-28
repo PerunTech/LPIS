@@ -88,8 +88,7 @@ public class CommonUse {
 							svw.saveObject(dbo);
 						}
 					} else {
-						svw.saveObject(dbo, false);
-						System.out.println(dbo.toSimpleJson());
+						svw.saveObject(dbo);
 					}
 				}
 			}
