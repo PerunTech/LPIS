@@ -380,10 +380,8 @@ public class ApplicationServices {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/pbf")
 	public Response saveCommonUse(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
-			@PathParam("parentId") final Long parentId,
-			@PathParam("parcelId") final Long parcelId, 
-			MultivaluedMap<String, String> formVals,
-			@Context HttpServletRequest httpRequest) {
+			@PathParam("parentId") final Long parentId, @PathParam("parcelId") final Long parcelId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		String errMsg = "";
 		JsonObject metadata = new JsonObject();
@@ -414,7 +412,7 @@ public class ApplicationServices {
 					commonUse = Util.addValueToDataObject(commonUse, fieldName, field, metadata);
 				}
 			}
-			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, svw, svr);
+			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svw, svr);
 		} catch (SvException e) {
 			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
