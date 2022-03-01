@@ -2,9 +2,20 @@ package com.prtech.lpis;
 
 import org.junit.Test;
 
+import com.prtech.svarog.SvConf;
+import com.prtech.svarog.SvException;
+import com.prtech.svarog.SvSecurity;
+import com.prtech.svarog.SvUtil;
+import com.prtech.svarog_common.DbDataArray;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +23,22 @@ import org.junit.Assert;
 
 public class ConfigTest {
 	private static final Logger log = LogManager.getLogger(Config.class.getName());
+	static String getUserSessionIdForTestPurpose() {
+		String sessionId = CC.EMPTY_STRING;
+		try (@SuppressWarnings("deprecation")
+		SvSecurity svc = new SvSecurity();) {
+			String userName = "ADMIN";
+			String password = "welcome";
+			if (SvConf.getParam("conn.string").equals("jdbc:oracle:thin:@192.168.9.60:1521:orclte19")) {
+				password = "welcome13";
+			}
+			sessionId = svc.logon(userName, SvUtil.getMD5(password));
+		} catch (Exception e) {
+			log.error(e);
+		}
+		return sessionId;
+	}
+
 	
 	@Test
 	public void testProjectInfo () {
@@ -48,7 +75,14 @@ public class ConfigTest {
 				+ "Without a registered script name, the user will not be able to access the plugin.", 
 				url != null && url.substring(urlLen -3, urlLen).equals(".js"));
 	}
-	
+	@Test 
+	public void getAssets() throws SvException
+	{
+		ApplicationServices as = new ApplicationServices();
+		
+		DbDataArray rs = as.getAssetsList(getUserSessionIdForTestPurpose(), 673774999L,CC.AGRI_PARCEL);
+		log.error(rs.toSimpleJson().toString());
+	}
 	@Test
 	public void testGetVersion () {
 		Properties properties = new Properties();

@@ -310,7 +310,7 @@ public class ApplicationServices {
 				dbo.setParentId(0L);
 				svg.saveGeometry(dbo);
 				svTile.setIsTileDirty(true);
-				//svw.dbCommit();
+				// svw.dbCommit();
 			}
 
 		} catch (SvException e) {
@@ -370,7 +370,7 @@ public class ApplicationServices {
 //		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
 
 	}
-	
+
 	@Path("/save/commonUse/{token}/{objectId}/{parentId}/{parcelId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -415,7 +415,7 @@ public class ApplicationServices {
 			errMsg = e.getMessage();
 		}
 		if (errMsg.isEmpty()) {
-			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, metadata.toString());
+			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, commonUse.toSimpleJson().toString());
 			return Response.status(200).entity(rr.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 		} else
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
@@ -646,51 +646,65 @@ public class ApplicationServices {
 		return Response.status(200).entity(result.toString()).build();
 	}
 
+	DbDataArray getAssetsList(String token, Long objectId, String typeName) throws SvException {
+		DbDataArray result = new DbDataArray();
+		try (SvReader svr = new SvReader(token);
+				SvWriter svw = new SvWriter(svr);
+				SvGeometry svg = new SvGeometry(svr)) {
+
+			svr.setIncludeGeometries(true);
+			DbDataArray dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
+
+			// Filter for campaign year and geometry not null, when cp is requested.
+			if (typeName.equalsIgnoreCase("LAND_USE_PLAN")) {
+				for (DbDataObject dbo : dbArr.getItems()) {
+					String cYear = (String) dbo.getVal("CAMPAIGN_YEAR");
+					String now = String.valueOf(new DateTime().year().get());
+					Geometry g = SvGeometry.getGeometry(dbo);
+
+					if (cYear != null && cYear.equals(now) && g != null) {
+						result.addDataItem(dbo);
+					}
+				}
+			} else if (typeName.equalsIgnoreCase(CC.AGRI_PARCEL)) {
+				result.setItems(dbArr.getItems());
+				DbDataArray dba = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(CC.COMMON_USE), null);
+				for (DbDataObject dbo : dba.getItems()) {
+					DbDataObject dbp = svr.getObjectById((Long) dbo.getVal(CC.PARCEL_ID),
+							SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
+					if (dbp != null)
+						result.addDataItem(dbp);
+				}
+
+			} 
+			
+		}
+		return result;
+
+	}
+
 	@Path("/get/farmerAssets/{token}/{objectId}/{typeName}")
 	@GET
 	@Produces("application/pbf")
-	public StreamingOutput getFarmerAssets(@PathParam("token") final String token,
-			@PathParam("objectId") final Long objectId, @PathParam("typeName") final String typeName,
-			@Context HttpServletRequest httpRequest) {
+	public Response getFarmerAssets(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
+			@PathParam("typeName") final String typeName, @Context HttpServletRequest httpRequest) {
 
-		return new StreamingOutput() {
-			public void write(OutputStream stream) {
+		final DbDataArray result = new DbDataArray();
+		try {
+			result.setItems(getAssetsList(token, objectId, typeName).getItems());
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+					"error.perun.failedToSaveObject");
+		}
+
+		StreamingOutput pbfStream = new StreamingOutput() {
+			public void write(OutputStream stream) throws IOException {
 				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
-				DbDataArray dbArr = new DbDataArray();
-				DbDataArray assets = new DbDataArray();
-
-				try (SvReader svr = new SvReader(token)) {
-					svr.setIncludeGeometries(true);
-					dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
-
-					// Filter for campaign year and geometry not null, when cp is requested.
-					if (typeName.equalsIgnoreCase("LAND_USE_PLAN")) {
-						for (DbDataObject dbo : dbArr.getItems()) {
-							String cYear = (String) dbo.getVal("CAMPAIGN_YEAR");
-							String now = String.valueOf(new DateTime().year().get());
-							Geometry g = SvGeometry.getGeometry(dbo);
-
-							if (cYear != null && cYear.equals(now) && g != null) {
-								assets.addDataItem(dbo);
-							}
-						}
-						enc.writeDbDataArray(assets);
-					} else {
-						enc.writeDbDataArray(dbArr);
-					}
-				} catch (Exception e) {
-					String errMsg = "Failed fetching geometry set. Please see server logs";
-					if (e instanceof SvException)
-						errMsg = ((SvException) e).getJsonMessage();
-					try {
-						stream.write(errMsg.getBytes(StandardCharsets.UTF_8));
-					} catch (IOException ioe) {
-						log.error("Stream closed, can't write error", ioe);
-					}
-					log.error(errMsg, e);
-				}
+				enc.writeDbDataArray(result);
 			};
 		};
+		return Response.ok(pbfStream, "application/pbf").build();
+
 	}
 
 	@Path("/save/permanentCrop/{token}/{objectId}/{parentId}")
@@ -733,7 +747,8 @@ public class ApplicationServices {
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");
 		}
-		jrh = new ResponseHandler(MessageType.SUCCESS, metadata.toString());
+		jrh.create(MessageType.SUCCESS, I18n.getText("success.perun.successfullySavedObject"),
+				I18n.getText("success.perun.successfullySavedObject"));
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 }
