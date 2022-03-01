@@ -88,7 +88,7 @@ public class CommonUse {
 					DbDataArray commonsParcels = getCommonUseParcels(agriParcel.getObjectId(), svr);
 					if (commonsParcels != null && !commonsParcels.getItems().isEmpty()) {
 						for (DbDataObject tempCommonUse : commonsParcels.getItems()) {
-							sumOfParcels += (Double) tempCommonUse.getVal(CC.PERCENTAGE);
+							((BigDecimal) tempCommonUse.getVal(CC.PERCENTAGE)).doubleValue();
 						}
 						if (sumOfParcels < 100) {
 							svw.saveObject(dbo);
