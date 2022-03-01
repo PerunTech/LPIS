@@ -733,7 +733,8 @@ public class ApplicationServices {
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");
 		}
-		jrh = new ResponseHandler(MessageType.SUCCESS, permanentCrop.toSimpleJson().toString());
+		jrh.create(MessageType.SUCCESS, I18n.getText("success.perun.successfullySavedObject"),
+				I18n.getText("success.perun.successfullySavedObject"));
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 }
