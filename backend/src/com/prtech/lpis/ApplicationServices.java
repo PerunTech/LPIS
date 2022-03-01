@@ -389,7 +389,7 @@ public class ApplicationServices {
 			cu = new CommonUse();
 			metadata = Util.dataToJson(formVals);
 			commonUse = new DbDataObject();
-			Long typeId = SvCore.getTypeIdByName("COMMON_USE");
+			Long typeId = SvCore.getTypeIdByName(CC.COMMON_USE);
 			DbDataArray fieldSet = SvCore.getFields(typeId);
 			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
 
@@ -409,6 +409,12 @@ public class ApplicationServices {
 				}
 			}
 			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svw, svr);
+			
+			DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
+			if (agriParcel != null) {
+				agriParcel.setVal(CC.COMMON_USE, true);
+				svg.saveGeometry(agriParcel);
+			}
 		} catch (SvException e) {
 			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
