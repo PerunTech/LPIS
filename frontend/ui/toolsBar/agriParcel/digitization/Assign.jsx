@@ -1,4 +1,4 @@
-import { React, Loading, elements } from 'perun-core';
+import { React, Loading, redux, elements, createHashHistory } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
 import { assignAPMsg, config } from '../Config';
 import { bufferToString, decodeResponse, getFarmMapAssets, isJSON, strcmp } from '../../../Util';
@@ -10,6 +10,8 @@ const { geobuf, protobuf } = data;
 const { Icon } = ui;
 const { useReducer } = React;
 const { alertUser } = elements;
+const { store: perunStore, logoutUser } = redux;
+const history = createHashHistory();
 const _id = 'assignAP';
 
 const _Assign = ({ processID, farmObjId }) => {
@@ -32,46 +34,60 @@ const _Assign = ({ processID, farmObjId }) => {
         responseType: 'arraybuffer',
         // data: JSON.stringify(factory.GeoJSON.fromLayer(e.layer)),
       }).then(response => {
-          setState({ loading: false, isGuided: false })
-          alertUser(true, 'success', 'Успешно назначено стопанство', '', () => disable())
-          const proto = protobuf(response);
-          const buff = geobuf.decode(proto);
-          const geojson = factory.geoJSON(buff, config.pathOptions);
+        setState({ loading: false, isGuided: false })
+        alertUser(true, 'success', 'Успешно назначено стопанство', '', () => disable())
+        const proto = protobuf(response);
+        const buff = geobuf.decode(proto);
+        const geojson = factory.geoJSON(buff, config.pathOptions);
 
-          geojson.getLayers().forEach(layer => {
-            // assign metadata
-            layer.feature.id = 0
-            layer.feature.properties = { parent_id: farmObjId }
-            layer.addTo(Map);
-          })
-        }).catch(err => {
-          console.log(err.response)
-          setState({ loading: false, isGuided: false })
-          // Get the stringified response from the array buffer
-          const stringfiedResponse = bufferToString(err.response.data)
-          // Temporary workaround for the issue with using the INTL context in spatial modules
-          let translatedError = ''
-          if (isJSON(stringfiedResponse) && Object.keys(JSON.parse(stringfiedResponse)).length > 1) {
-            const parsedResponse = JSON.parse(stringfiedResponse)
-            if (parsedResponse.parent_id && parsedResponse.parent_id !== farmObjId) {
-              translatedError = 'Избраната парцела веќе има назначено стопанство'
-              handleOverlap(translatedError, p.x, p.y)
-            } else {
-              alertUser(true, 'error', 'Избраната парцела веќе има назначено стопанство', '', () => disable())
-            }
+        geojson.getLayers().forEach(layer => {
+          // assign metadata
+          layer.feature.id = 0
+          layer.feature.properties = { parent_id: farmObjId }
+          layer.addTo(Map);
+        })
+      }).catch(err => {
+        console.log(err.response)
+        setState({ loading: false, isGuided: false })
+        // Get the stringified response from the array buffer
+        const stringfiedResponse = bufferToString(err.response.data)
+        // Temporary workaround for the issue with using the INTL context in spatial modules
+        let translatedError = ''
+        if (isJSON(stringfiedResponse) && Object.keys(JSON.parse(stringfiedResponse)).length > 1) {
+          const parsedResponse = JSON.parse(stringfiedResponse)
+          if (parsedResponse.parent_id && parsedResponse.parent_id !== farmObjId) {
+            translatedError = 'Избраната парцела веќе има назначено стопанство'
+            handleOverlap(translatedError, p.x, p.y)
           } else {
-            if (strcmp(typeof stringfiedResponse, 'string')) {
-              if (strcmp(stringfiedResponse, 'err.no_parcel.selected')) {
-                translatedError = 'Не е избрана парцела од мапата'
-                alertUser(true, 'error', 'Настана грешка', translatedError, () => disable())
-              } else if (stringfiedResponse.includes('err.no_parcel.selected')) {
-                alertUser(true, 'error', 'Избраната парцела веќе има назначено стопанство', '', () => disable())
+            translatedError = 'Избраната парцела веќе има назначено стопанство'
+            if (parsedResponse.Label_Code) {
+              translatedError = parsedResponse.Label_Code
+              if (strcmp(parsedResponse.Label_Code, 'error.invalid_session')) {
+                const url = `${window.server}/SvSecurity/logout/${perunStore.getState().security.svSession}`
+                disable();
+                const logout = () => {
+                  perunStore.dispatch(logoutUser(url));
+                  history.push('/');
+                }
+                alertUser(true, 'error', 'Невалидна сесија', '', () => logout())
               } else {
-                alertUser(true, 'error', 'Настана грешка', '', () => disable())
+                alertUser(true, 'error', translatedError, '', () => disable())
               }
+            } else {
+              alertUser(true, 'error', translatedError, '', () => disable())
             }
           }
-        });
+        } else {
+          if (strcmp(typeof stringfiedResponse, 'string')) {
+            if (stringfiedResponse.includes('err.no_parcel.selected')) {
+              translatedError = 'Не е избрана парцела од мапата'
+              alertUser(true, 'error', translatedError, '', () => disable())
+            } else {
+              alertUser(true, 'error', 'Настана грешка', '', () => disable())
+            }
+          }
+        }
+      });
 
       Map.off('click');
     });
@@ -114,12 +130,12 @@ const _Assign = ({ processID, farmObjId }) => {
     })
   }
 
-  const renderForm = () =>  (isGuided ? <Guidance id={_id} disable={disable} msg={assignAPMsg} title='Назначи стопанство' /> : <></>);
+  const renderForm = () => (isGuided ? <Guidance id={_id} disable={disable} msg={assignAPMsg} title='Назначи стопанство' /> : <></>);
 
   return <ProcessButton id={_id} onClick={enable} >
     <Icon name={_id} size='30px' />
     <span style={{ display: 'block', marginTop: '5px' }}>Назначи стопанство</span>
-    {processID === _id  && renderForm()}
+    {processID === _id && renderForm()}
     {loading && <Loading />}
   </ProcessButton>;
 };
