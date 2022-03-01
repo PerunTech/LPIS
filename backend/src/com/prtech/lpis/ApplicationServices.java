@@ -415,7 +415,7 @@ public class ApplicationServices {
 			errMsg = e.getMessage();
 		}
 		if (errMsg.isEmpty()) {
-			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, commonUse.toJson().toString());
+			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, commonUse.toSimpleJson().toString());
 			return Response.status(200).entity(rr.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 		} else
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
@@ -733,7 +733,7 @@ public class ApplicationServices {
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");
 		}
-		jrh = new ResponseHandler(MessageType.SUCCESS, permanentCrop.toJson().toString());
+		jrh = new ResponseHandler(MessageType.SUCCESS, permanentCrop.toSimpleJson().toString());
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 }
