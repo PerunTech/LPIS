@@ -667,7 +667,7 @@ public class ApplicationServices {
 					}
 				}
 			} else if (typeName.equalsIgnoreCase(CC.AGRI_PARCEL)) {
-				result.getItems().addAll(dbArr.getItems());
+				result.setItems(dbArr.getItems());
 				DbDataArray dba = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(CC.COMMON_USE), null);
 				for (DbDataObject dbo : dba.getItems()) {
 					DbDataObject dbp = svr.getObjectById((Long) dbo.getVal(CC.PARCEL_ID),
