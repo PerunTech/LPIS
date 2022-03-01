@@ -258,7 +258,9 @@ public class ApplicationServices {
 					null, false);
 			if (geomArr.size() == 1) {
 				DbDataObject dbo = (DbDataObject) geomArr.iterator().next().getUserData();
-				if (dbo.getParentId().equals(0L)) {
+				if((boolean)dbo.getVal(CC.COMMON_USE))
+					errMsg = "{error:'err.parcel_common_use'}";
+				else if (dbo.getParentId().equals(0L)) {
 					dbo.setParentId(farmId);
 					svg.saveGeometry(dbo);
 					result.add(SvGeometry.getGeometry(dbo));
@@ -309,7 +311,7 @@ public class ApplicationServices {
 						null);
 
 				if ((boolean) dbo.getVal(CC.COMMON_USE)) {
-					DbDataArray dba = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(CC.COMMON_USE), null);
+					DbDataArray dba = svr.getObjectsByParentId(dbo.getParentId(), SvCore.getTypeIdByName(CC.COMMON_USE), null);
 					for (DbDataObject cu : dba.getItems()) {
 						if (cu.getVal(CC.PARCEL_ID).equals(objectId)) {
 							svw.deleteObject(cu);

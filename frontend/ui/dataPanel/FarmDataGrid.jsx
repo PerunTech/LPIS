@@ -220,7 +220,7 @@ const _Rows = ({ rows }) => {
             {rowData.LAND_COVER_CODE}
           </Button>
           <Button className="fr-data-grid-column">
-            {Math.round(Number(rowData.AREA)) + ` ${unit}`}
+            {Math.round(Number(rowData.ALLOWED_AREA || rowData.AREA)) + ` ${unit}`}
           </Button>
           <Button className="fr-data-grid-column">
             {translateBooleanValue(rowData.CERTIFICATE_OF_USE)}

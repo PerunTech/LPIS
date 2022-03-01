@@ -86,7 +86,7 @@ const _GridRows = ({ rows }) => {
 }
 
 /* ----------------------------- */
-/*      NESSUN DATO TROVATO      */
+/*      NO DATA FOUND            */
 /* ----------------------------- */
 const _NoData = () =>
     <div className='data-grid-empty-rows' >
