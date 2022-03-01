@@ -13,7 +13,7 @@ const _id = 'deleteAP';
 /**
  * Delete an agri parcel.
  */
-const _DeleteControl = ({ processID, farmObjId }) => {
+const _Delete = ({ processID, farmObjId }) => {
     const [{ isGuided, layer }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }), { isGuided: false, layer: {} });
 
@@ -103,6 +103,6 @@ const _DeleteControl = ({ processID, farmObjId }) => {
     </ProcessButton>;
 };
 
-export const DeleteControl = core.connect(state => ({
+export const Delete = core.connect(state => ({
     processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
-}))(_DeleteControl)
+}))(_Delete)

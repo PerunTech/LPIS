@@ -5,9 +5,9 @@ import { CommonUse } from './CommonUse';
 import { Assign } from './Assign';
 import { Copy } from './Copy';
 import { Cut } from './Cut';
-import { DeleteControl } from './DeleteControl';
+import { Delete } from './Delete';
 import { DeleteParcelFromFarm } from './DeleteParcelFromFarm';
-import { DrawControl } from './DrawControl';
+import { Draw } from './Draw';
 import { Edit } from './Edit';
 import { Fill } from './Fill';
 import { GetParcelInfo } from './GetParcelInfo';
@@ -21,7 +21,7 @@ export const Digitization = () =>
     <ButtonGroup>
         <Copy />
         <GetParcelInfo />
-        <DrawControl />
+        <Draw />
         <Edit />
         <Divider />
         <Cut />
@@ -34,5 +34,5 @@ export const Digitization = () =>
         <Assign />
         <CommonUse />
         <DeleteParcelFromFarm />
-        <DeleteControl />
+        <Delete />
     </ButtonGroup>;

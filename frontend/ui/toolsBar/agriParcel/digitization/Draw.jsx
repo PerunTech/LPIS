@@ -14,7 +14,7 @@ const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'drawAP';
 
-const _DrawControl = ({ processID, farmObjId }) => {
+const _Draw = ({ processID, farmObjId }) => {
     const [{ layer, data, geojson, loading, isGuided, showForm, showPermanentCropForm, permanentCropData }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
         { layer: {}, data: {}, geojson: {}, loading: false, isGuided: false, showForm: false, showPermanentCropForm: false, permanentCropData: {} });
@@ -157,6 +157,6 @@ const _DrawControl = ({ processID, farmObjId }) => {
     </ProcessButton>;
 }
 
-export const DrawControl = core.connect(state => ({
+export const Draw = core.connect(state => ({
     processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
-}))(_DrawControl)
+}))(_Draw)
