@@ -7,6 +7,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import com.google.gson.JsonObject;
 import com.prtech.svarog.SvException;
+import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvLock;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvWriter;
@@ -72,11 +73,13 @@ public class CommonUse {
 	}
 
 	public void saveCommonUseObject(DbDataObject dbo, Long parentId, Long parcelId,
-			MultivaluedMap<String, String> formVals, JsonObject metadata, SvWriter svw, SvReader svr)
+			MultivaluedMap<String, String> formVals, JsonObject metadata, SvGeometry svg, SvWriter svw, SvReader svr)
 			throws SvException {
 		Integer distributedLock = 0;
 		Double sumOfParcels = 0.0;
 		DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
+		svw.setAutoCommit(false);
+		svg.setAutoCommit(false);
 		try {
 			if (agriParcel != null) {
 				distributedLock = SvLock.getDistributedLock(agriParcel.getObjectId().toString());
@@ -92,6 +95,11 @@ public class CommonUse {
 						}
 					} else {
 						svw.saveObject(dbo);
+					}
+					if (agriParcel != null && agriParcel.getVal(CC.COMMON_USE) != null
+							&& !(boolean) agriParcel.getVal(CC.COMMON_USE)) {
+						agriParcel.setVal(CC.COMMON_USE, true);
+						svg.saveGeometry(agriParcel);
 					}
 				}
 			}

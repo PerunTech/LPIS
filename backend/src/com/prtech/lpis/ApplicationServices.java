@@ -409,14 +409,9 @@ public class ApplicationServices {
 					commonUse = Util.addValueToDataObject(commonUse, fieldName, field, metadata);
 				}
 			}
-			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svw, svr);
-
-			DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
-			if (agriParcel != null && agriParcel.getVal(CC.COMMON_USE) != null
-					&& !(boolean) agriParcel.getVal(CC.COMMON_USE)) {
-				agriParcel.setVal(CC.COMMON_USE, true);
-				svg.saveGeometry(agriParcel);
-			}
+			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svg, svw, svr);
+			svw.dbCommit();
+			svg.dbCommit();
 		} catch (SvException e) {
 			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
