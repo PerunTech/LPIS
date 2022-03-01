@@ -691,7 +691,7 @@ public class ApplicationServices {
 
 		final DbDataArray result = new DbDataArray();
 		try {
-			result.addAll(getAssetsList(token, objectId, typeName));
+			result.setItems(getAssetsList(token, objectId, typeName).getItems());
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToSaveObject");
