@@ -238,6 +238,51 @@ export const commonUseSchema = {
     }
 };
 
+export const permanentCropSchema = {
+    namePath: 'options.metadata.schema.properties.parent_id',
+    schema: {
+        properties: {
+            PERM_CROP_TYPE_ID: {
+                enum: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10',],
+                enumNames: [
+                    'Лозје - Шардоне', 'Лозје - Жилавка', 'Лозје - Жупљанка', 'Лозје - Жупски бојадисер', 'Лозје - Афус али',
+                    'Лозје - Агадај', 'Лозје - Аликант буше', 'Лозје - Беглерка бела', 'Лозје - Беглерка црна', 'Лозје - Белан',
+                ],
+                title: 'Вид на земјоделска култура',
+                type: 'string',
+                default: ''
+            },
+            PLANT_AREA: {
+                title: 'Површина со засадена култура',
+                type: 'string',
+                default: ''
+            },
+            NUMBER_OF_TREES: {
+                title: 'Број на садници',
+                type: 'string',
+                default: ''
+            },
+            YEAR_OF_PLANTING_TREES: {
+                title: 'Година на садење',
+                type: 'string',
+                default: ''
+            },
+            TREES_DISTANCE: {
+                title: 'Растојание помеѓу садници (cm.)',
+                type: 'string',
+                default: ''
+            },
+            TREES_ROW_DISTANCE: {
+                title: 'Растојание помеѓу редови (cm.)',
+                type: 'string',
+                default: ''
+            }
+        },
+        type: 'object',
+        required: ['PERM_CROP_TYPE_ID']
+    }
+}
+
 /** @constant */
 export const config = {
     // allow multiple drawn shapes

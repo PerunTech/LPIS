@@ -20,7 +20,7 @@ export const saveAP = (layer, callback) => {
     };
 
     // Resolution operations on successful workflow.
-    const _succeed = data => {
+    const _succeed = (data, layer) => {
         // Create layer from geojson, operate on the individual layer, rather than the feature collection.
         const geojson = factory.geoJSON(data, config.pathOptions);
         const stateData = store.getState().data.layers;
@@ -36,11 +36,10 @@ export const saveAP = (layer, callback) => {
             layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
             layer.addTo(Map);
         })
-        callback();
         elements.alertUser(true,
             'success',
             'Успешно зачувување',
-            'Земјоделската парцела е запишана во базата на податоци.')
+            'Земјоделската парцела е запишана во базата на податоци.', () => callback(layer, geojson.getLayers()))
     };
 
     // Check 1, intersection with the underlining physical block.  
@@ -80,7 +79,7 @@ export const saveAP = (layer, callback) => {
             data: JSON.stringify({ ...layer, GEOM: JSON.parse(layer.GEOM) }),
             url: '/lpis/save/agriParcel/{init.token}/' + layer.OBJECT_ID + '/' + parentId + '/' + action,
         })
-            .then(response => _succeed(geobuf.decode(protobuf(response))))
+            .then(response => _succeed(geobuf.decode(protobuf(response)), layer))
             .catch(() => _fail());
     };
 
