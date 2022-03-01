@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +33,7 @@ import com.google.gson.JsonObject;
 import com.prtech.spatial.SC;
 import com.prtech.spatial.Util;
 import com.prtech.spatial.geobuf.GeobufEncoder;
+import com.prtech.svarog.I18n;
 import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
@@ -45,23 +45,19 @@ import com.prtech.svarog.SvSDITile;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
-import com.prtech.svarog.svCONST;
-import com.prtech.svarog.DbCacheTable.DboComparator;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_common.ResponseHandler;
 import com.prtech.svarog_common.ResponseHandler.MessageType;
-import com.prtech.svarog_common.SvCharId;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 
 @Path("/lpis")
 public class ApplicationServices {
 
+	static final Logger log4j = SvConf.getLogger(ApplicationServices.class);
 	static int precisionScale = 2;
 
 	static {
@@ -695,5 +691,49 @@ public class ApplicationServices {
 				}
 			};
 		};
+	}
+
+	@Path("/save/permanentCrop/{token}/{objectId}/{parentId}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/pbf")
+	public Response savePermanentCrop(@PathParam("token") final String token,
+			@PathParam("objectId") final Long objectId, @PathParam("parentId") final Long parentId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
+		ResponseHandler jrh = new ResponseHandler();
+		JsonObject metadata = new JsonObject();
+		DbDataObject permanentCrop = null;
+		try (SvReader svr = new SvReader(token);
+				SvWriter svw = new SvWriter(svr);
+				SvGeometry svg = new SvGeometry(svr)) {
+			metadata = Util.dataToJson(formVals);
+			permanentCrop = new DbDataObject();
+			Long typeId = SvCore.getTypeIdByName(CC.PERMANENT_CROP);
+			DbDataArray fieldSet = SvCore.getFields(typeId);
+			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
+
+			if (isUpdate) {
+				permanentCrop = svr.getObjectById(objectId, typeId, null);
+			} else {
+				permanentCrop.setObjectId(0L);
+				permanentCrop.setObjectType(typeId);
+				permanentCrop.setParentId(parentId);
+			}
+
+			// Map form values to dbo fields
+			for (DbDataObject field : fieldSet.getItems()) {
+				String fieldName = field.getVal(CC.FIELD_NAME).toString();
+				if (Util.excludeField(fieldName)
+						&& !CC.EMPTY_STRING.equalsIgnoreCase(field.getVal(CC.FIELD_TYPE).toString())) {
+					permanentCrop = Util.addValueToDataObject(permanentCrop, fieldName, field, metadata);
+				}
+			}
+			svw.saveObject(permanentCrop);
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");
+		}
+		jrh = new ResponseHandler(MessageType.SUCCESS, metadata.toString());
+		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 }
