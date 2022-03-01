@@ -386,10 +386,11 @@ public class ApplicationServices {
 		try (SvReader svr = new SvReader(token);
 				SvWriter svw = new SvWriter(svr);
 				SvGeometry svg = new SvGeometry(svr)) {
+			svr.setIncludeGeometries(true);
 			cu = new CommonUse();
 			metadata = Util.dataToJson(formVals);
 			commonUse = new DbDataObject();
-			Long typeId = SvCore.getTypeIdByName("COMMON_USE");
+			Long typeId = SvCore.getTypeIdByName(CC.COMMON_USE);
 			DbDataArray fieldSet = SvCore.getFields(typeId);
 			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
 
@@ -408,7 +409,8 @@ public class ApplicationServices {
 					commonUse = Util.addValueToDataObject(commonUse, fieldName, field, metadata);
 				}
 			}
-			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svw, svr);
+			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svg, svw, svr);
+			svw.dbCommit();
 		} catch (SvException e) {
 			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
