@@ -411,7 +411,6 @@ public class ApplicationServices {
 			}
 			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svg, svw, svr);
 			svw.dbCommit();
-			svg.dbCommit();
 		} catch (SvException e) {
 			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
