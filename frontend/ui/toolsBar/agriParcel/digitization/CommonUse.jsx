@@ -4,11 +4,12 @@ import { commonUseMsg, commonUseSchema } from '../Config';
 import { ProcessButton } from '../../ProcessButton';
 import { GuideForm } from '../GuideForm';
 import { Form } from '../Form';
-import { getFarmMapAssets } from '../../../Util';
+import { getFarmMapAssets, strcmp } from '../../../Util';
 
 const { Map, store, http } = core;
 const { geobuf, protobuf } = data;
 const { Icon, DrawActions } = ui;
+const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'commonUse';
 const _iconId = 'drawAP';
@@ -27,12 +28,22 @@ const _CommonUse = ({ processID, farmObjId }) => {
       setState({ loading: true });
       const url = `/spatial/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
       http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
-        const proto = protobuf(response);
-        const buff = geobuf.decode(proto);
+        setState({ loading: false })
+        const proto = protobuf(response)
+        const buff = geobuf.decode(proto)
         const parcelId = buff.features[0].id
         const area = Math.round(buff.features[0].properties.AREA)
         const landUseCode = buff.features[0].properties.LAND_COVER_CODE
-        setState({ loading: false, isGuided: false, showForm: true, selectedParcel: { parcelId, area, landUseCode } })
+        const parentId = buff.features[0].properties.parent_id
+        if (parentId && Number(parentId) !== 0) {
+          const title = 'Парцелата е веќе доделена на земјоделско стопанство и истата не може да се користи за Заедничка употреба'
+          alertUser(true, 'info', title, '', () => disable())
+        } else if (!strcmp(landUseCode, '200')) {
+          const title = 'Само парцели со код на употреба 200 може да се користат за заедничка употреба'
+          alertUser(true, 'warning', title, '', () => disable())
+        } else {
+          setState({ isGuided: false, showForm: true, selectedParcel: { parcelId, area, landUseCode } })
+        }
       }).catch(err => {
         console.error(err)
         setState({ loading: false, isGuided: false, showForm: false })
@@ -46,7 +57,7 @@ const _CommonUse = ({ processID, farmObjId }) => {
     // Remove the Map click event listener
     Map.off('click');
     // Reset state, internal and application-wide.
-    setState({ layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false, selectedParcel: {} });
+    setState({ data: {}, loading: false, isGuided: false, showForm: false, selectedParcel: {} });
     store.dispatch({ processID: '' });
     // Reload the data
     getFarmMapAssets();
@@ -56,12 +67,12 @@ const _CommonUse = ({ processID, farmObjId }) => {
     const { parcelId } = selectedParcel
     const url = `/lpis/save/commonUse/{init.token}/0/${farmObjId}/${parcelId}`
     http.call(_id, { url, method: 'post', data }).then(res => {
-      const responseType = res.data.type ||  'INFO'
+      const responseType = res.data.type || 'INFO'
       const labelCode = res.data.label_code || 'Успешно додадена заедничка употреба'
-      elements.alertUser(true, responseType.toLowerCase(), labelCode, '', () => disable())
+      alertUser(true, responseType.toLowerCase(), labelCode, '', () => disable())
     }).catch(err => {
       const { response } = err
-      elements.alertUser(true, 'error', 'Грешка при зачувување', response.data.Label_Code || '');
+      alertUser(true, 'error', 'Грешка при зачувување', response.data.Label_Code || '');
     })
   }
 
