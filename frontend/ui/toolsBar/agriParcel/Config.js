@@ -238,6 +238,40 @@ export const commonUseSchema = {
     }
 };
 
+export const permanentCropSchema = {
+    namePath: 'options.metadata.schema.properties.parent_id',
+    schema: {
+        properties: {
+            PLANT_AREA: {
+                title: 'Површина со засадена култура',
+                type: 'string',
+                default: ''
+            },
+            NUMBER_OF_TREES: {
+                title: 'Број на садници',
+                type: 'string',
+                default: ''
+            },
+            YEAR_OF_PLANTING_TREES: {
+                title: 'Година на садење',
+                type: 'string',
+                default: ''
+            },
+            TREES_DISTANCE: {
+                title: 'Растојание помеѓу садници (cm.)',
+                type: 'string',
+                default: ''
+            },
+            TREES_ROW_DISTANCE: {
+                title: 'Растојание помеѓу редови (cm.)',
+                type: 'string',
+                default: ''
+            }
+        },
+        type: 'object'
+    }
+}
+
 /** @constant */
 export const config = {
     // allow multiple drawn shapes
