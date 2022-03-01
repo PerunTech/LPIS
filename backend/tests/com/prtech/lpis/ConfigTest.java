@@ -77,7 +77,6 @@ public class ConfigTest {
 				url != null && url.substring(urlLen - 3, urlLen).equals(".js"));
 	}
 
-	@Test
 	public void getAssets() throws SvException {
 		ApplicationServices as = new ApplicationServices();
 
