@@ -673,7 +673,10 @@ public class ApplicationServices {
 					DbDataObject dbp = svr.getObjectById((Long) dbo.getVal(CC.PARCEL_ID),
 							SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
 					if (dbp != null)
+					{
+						dbp.setVal(CC.ALLOWED_AREA, dbo.getVal(CC.ALLOWED_AREA));
 						result.addDataItem(dbp);
+					}
 				}
 
 			} 
