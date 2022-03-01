@@ -242,6 +242,16 @@ export const permanentCropSchema = {
     namePath: 'options.metadata.schema.properties.parent_id',
     schema: {
         properties: {
+            PERM_CROP_TYPE_ID: {
+                enum: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10',],
+                enumNames: [
+                    'Лозје - Шардоне', 'Лозје - Жилавка', 'Лозје - Жупљанка', 'Лозје - Жупски бојадисер', 'Лозје - Афус али',
+                    'Лозје - Агадај', 'Лозје - Аликант буше', 'Лозје - Беглерка бела', 'Лозје - Беглерка црна', 'Лозје - Белан',
+                ],
+                title: 'Употреба на земјиште',
+                type: 'string',
+                default: ''
+            },
             PLANT_AREA: {
                 title: 'Површина со засадена култура',
                 type: 'string',
@@ -268,7 +278,8 @@ export const permanentCropSchema = {
                 default: ''
             }
         },
-        type: 'object'
+        type: 'object',
+        required: ['PERM_CROP_TYPE_ID']
     }
 }
 
