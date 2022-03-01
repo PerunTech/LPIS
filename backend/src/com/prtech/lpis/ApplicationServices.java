@@ -386,6 +386,7 @@ public class ApplicationServices {
 		try (SvReader svr = new SvReader(token);
 				SvWriter svw = new SvWriter(svr);
 				SvGeometry svg = new SvGeometry(svr)) {
+			svr.setIncludeGeometries(true);
 			cu = new CommonUse();
 			metadata = Util.dataToJson(formVals);
 			commonUse = new DbDataObject();
@@ -409,9 +410,10 @@ public class ApplicationServices {
 				}
 			}
 			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svw, svr);
-			
+
 			DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
-			if (agriParcel != null) {
+			if (agriParcel != null && agriParcel.getVal(CC.COMMON_USE) != null
+					&& !(boolean) agriParcel.getVal(CC.COMMON_USE)) {
 				agriParcel.setVal(CC.COMMON_USE, true);
 				svg.saveGeometry(agriParcel);
 			}
