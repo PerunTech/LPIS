@@ -290,7 +290,7 @@ public class ApplicationServices {
 	@GET
 	@Path("/remove/farm/{token}/{objectId}/{objectName}")
 	@Produces("application/pbf")
-	public Response deleteParcel(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
+	public Response removeParcel(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
 			@PathParam("objectName") final String objectName, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
 
@@ -307,10 +307,22 @@ public class ApplicationServices {
 				Geometry gTile = SvGeometry.getTileGeometry(SvGeometry.getCentroid(dbo));
 				SvSDITile svTile = SvGeometry.getTile(SvCore.getTypeIdByName(objectName), (String) gTile.getUserData(),
 						null);
-				dbo.setParentId(0L);
-				svg.saveGeometry(dbo);
+
+				if ((boolean) dbo.getVal(CC.COMMON_USE)) {
+					DbDataArray dba = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(CC.COMMON_USE), null);
+					for (DbDataObject cu : dba.getItems()) {
+						if (cu.getVal(CC.PARCEL_ID).equals(objectId)) {
+							svw.deleteObject(cu);
+							break;
+						}
+					}
+
+				} else {// not common use, just simple remove
+					dbo.setParentId(0L);
+					svg.saveGeometry(dbo);
+				}
 				svTile.setIsTileDirty(true);
-				// svw.dbCommit();
+
 			}
 
 		} catch (SvException e) {
@@ -389,19 +401,24 @@ public class ApplicationServices {
 			svr.setIncludeGeometries(true);
 			cu = new CommonUse();
 			metadata = Util.dataToJson(formVals);
-			commonUse = new DbDataObject();
 			Long typeId = SvCore.getTypeIdByName(CC.COMMON_USE);
 			DbDataArray fieldSet = SvCore.getFields(typeId);
 			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
-
 			if (isUpdate) {
 				commonUse = svr.getObjectById(objectId, typeId, null);
 			} else {
-				commonUse.setObjectId(0L);
-				commonUse.setObjectType(typeId);
+				DbDataArray dba = svr.getObjectsByParentId(parentId, SvCore.getTypeIdByName(CC.COMMON_USE), null);
+				for (DbDataObject tcu : dba.getItems()) {
+					if (tcu.getVal(CC.PARCEL_ID).equals(parcelId)) {
+						commonUse = tcu;
+						break;
+					}
+				}
+			}
+			if (commonUse == null) {
+				commonUse = new DbDataObject(typeId);
 				commonUse.setParentId(parentId);
 			}
-
 			// Map form values to dbo fields
 			for (DbDataObject field : fieldSet.getItems()) {
 				String fieldName = field.getVal("FIELD_NAME").toString();
@@ -674,15 +691,15 @@ public class ApplicationServices {
 				for (DbDataObject dbo : dba.getItems()) {
 					DbDataObject dbp = svr.getObjectById((Long) dbo.getVal(CC.PARCEL_ID),
 							SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
-					if (dbp != null)
-					{
+					if (dbp != null) {
 						dbp.setVal(CC.ALLOWED_AREA, dbo.getVal(CC.ALLOWED_AREA));
+						dbp.setVal(CC.COMMON_USE, true);
 						result.addDataItem(dbp);
 					}
 				}
 
-			} 
-			
+			}
+
 		}
 		return result;
 
