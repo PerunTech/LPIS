@@ -82,6 +82,9 @@ const _Assign = ({ processID, farmObjId }) => {
             if (stringfiedResponse.includes('err.no_parcel.selected')) {
               translatedError = 'Не е избрана парцела од мапата'
               alertUser(true, 'error', translatedError, '', () => disable())
+            } else if (stringfiedResponse.includes('err.parcel_common_use')) {
+              translatedError = 'Парцелата веќе се користи за заедничка употреба'
+              alertUser(true, 'error', translatedError, '', () => disable())
             } else {
               alertUser(true, 'error', 'Настана грешка', '', () => disable())
             }
