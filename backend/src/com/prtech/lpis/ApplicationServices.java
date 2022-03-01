@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -703,7 +702,6 @@ public class ApplicationServices {
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		ResponseHandler jrh = new ResponseHandler();
-		String errMsg = CC.EMPTY_STRING;
 		JsonObject metadata = new JsonObject();
 		DbDataObject permanentCrop = null;
 		try (SvReader svr = new SvReader(token);
@@ -733,42 +731,9 @@ public class ApplicationServices {
 			}
 			svw.saveObject(permanentCrop);
 		} catch (Exception e) {
-			return handleException(e, jrh, "error.perun.failedToSaveObject");
+			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");
 		}
-		if (errMsg.isEmpty()) {
-			jrh = new ResponseHandler(MessageType.SUCCESS, metadata.toString());
-			return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
-		} else
-			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
-
-		// return mergeGeometryImpl(token, objectName, false, lineStringWKT,
-		// formVals);
-	}
-	
-	/*
-	 *  catch (Exception e) {
-			return handleException(e, jrh, "error.perun.changedStatus");
-		}
-	 * 
-	 */
-
-	private Response handleException(Exception e, ResponseHandler jrh, String message) {
-		if (e instanceof SvException) {
-			SvException sve = (SvException) e;
-			log4j.error(sve.getFormattedMessage(), sve);
-			if (sve.getLabelCode().equals("error_invalid_session")) {
-				jrh.create(MessageType.ERROR, I18n.getText("error_invalid_session"),
-						I18n.getText("error_invalid_session"), new JsonObject());
-				return Response.status(401).entity(jrh.getAll().toString()).build();
-			} else if (sve.getLabelCode().equals("error_user_not_authorized")) {
-				jrh.create(MessageType.ERROR, I18n.getText("error_user_not_authorized"),
-						I18n.getText("error_user_not_authorized"), new JsonObject());
-				return Response.status(403).entity(jrh.getAll().toString()).build();
-			}
-		} else {
-			log4j.error(e.getMessage(), e);
-			jrh.create(MessageType.ERROR, I18n.getText(message), I18n.getText(message), new JsonObject());
-		}
-		return Response.status(200).entity(jrh.getAll().toString()).build();
+		jrh = new ResponseHandler(MessageType.SUCCESS, metadata.toString());
+		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 }
