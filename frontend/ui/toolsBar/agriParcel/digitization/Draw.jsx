@@ -30,7 +30,7 @@ const _Draw = ({ processID, farmObjId }) => {
 
         setState({ isGuided: true, showForm: false, data: {}, layer: {} });
         store.dispatch({ processID: _id });
-        polygon.enable(config.pathOptions, 14, 16, false);
+        polygon.enable(config.pathOptions, 12, 15, false);
     };
 
     const disable = (data, geojson) => {
