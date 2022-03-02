@@ -47,7 +47,12 @@ import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
+import com.prtech.svarog_common.DbSearchCriterion;
+import com.prtech.svarog_common.DbSearchExpression;
+import com.prtech.svarog_common.IDbFilter;
+import com.prtech.svarog_common.Jsonable;
 import com.prtech.svarog_common.ResponseHandler;
+import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
 import com.prtech.svarog_common.ResponseHandler.MessageType;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -258,7 +263,7 @@ public class ApplicationServices {
 					null, false);
 			if (geomArr.size() == 1) {
 				DbDataObject dbo = (DbDataObject) geomArr.iterator().next().getUserData();
-				if((boolean)dbo.getVal(CC.COMMON_USE))
+				if ((boolean) dbo.getVal(CC.COMMON_USE))
 					errMsg = "{error:'err.parcel_common_use'}";
 				else if (dbo.getParentId().equals(0L)) {
 					dbo.setParentId(farmId);
@@ -311,7 +316,8 @@ public class ApplicationServices {
 						null);
 
 				if ((boolean) dbo.getVal(CC.COMMON_USE)) {
-					DbDataArray dba = svr.getObjectsByParentId(dbo.getParentId(), SvCore.getTypeIdByName(CC.COMMON_USE), null);
+					DbDataArray dba = svr.getObjectsByParentId(dbo.getParentId(), SvCore.getTypeIdByName(CC.COMMON_USE),
+							null);
 					for (DbDataObject cu : dba.getItems()) {
 						if (cu.getVal(CC.PARCEL_ID).equals(objectId)) {
 							svw.deleteObject(cu);
@@ -382,6 +388,55 @@ public class ApplicationServices {
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 
 //		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
+
+	}
+
+	/**
+	 * parent filter class.
+	 * 
+	 * @author ristepejov
+	 *
+	 */
+	public class parentFilter implements IDbFilter {
+		Long parentId;
+
+		public parentFilter(Long parentId) {
+			this.parentId = parentId;
+		}
+
+		public boolean filterObject(DbDataObject dbo) {
+			return dbo.getParentId().equals(this.parentId);
+
+		}
+
+	}
+
+	@Path("/get/commonUse/{token}/{parentId}/{parcelId}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/pbf")
+	public Response getCommonUse(@PathParam("token") final String token, @PathParam("parentId") final Long parentId,
+			@PathParam("parcelId") final Long parcelId, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
+
+		String errMsg = "";
+		Jsonable commonUse = null;
+		try (SvReader svr = new SvReader(token)) {
+			DbDataArray result = new CommonUse().getCommonUseParcels(parcelId, svr);
+			if (parentId.equals(0L))
+				commonUse = result;
+			else
+			{
+				result = result.applyFilter(new parentFilter(parentId));
+				if(result.size()>0)
+					commonUse = result.get(0);
+			}
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+					"error.perun.failedToSaveObject");
+		}
+		ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, commonUse.toSimpleJson().toString());
+		return Response.status(200).entity(rr.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 
 	}
 
