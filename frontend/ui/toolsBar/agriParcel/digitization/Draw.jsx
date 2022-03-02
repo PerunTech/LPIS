@@ -1,5 +1,5 @@
 import { React, Loading, elements } from 'perun-core';
-import { core, ui, tools } from '../../../../Spatial';
+import { core, ui, tools, config as cfg } from '../../../../Spatial';
 import { config, permanentCropSchema } from '../Config';
 import { bufferToString, getFarmMapAssets, isJSON, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
@@ -10,6 +10,7 @@ import { ProcessButton } from '../../ProcessButton';
 const { Map, store, factory, http } = core;
 const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
+const { MAP_CONFIG } = cfg;
 const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'drawAP';
@@ -40,7 +41,7 @@ const _Draw = ({ processID, farmObjId }) => {
         } else {
             // Reset state, internal and application-wide.
             setState({ layer: {}, data: {}, geojson: {}, isGuided: false, showForm: false, showPermanentCropForm: false, permanentCropData: {} });
-            store.dispatch({ processID: '' });
+            store.dispatch({ processID: '', maxZoom: MAP_CONFIG.maxZoom });
             // We remove the working geometry, save process will add the result.
             layer.removeFrom && layer.removeFrom(Map);
             // Disable draw handler.
