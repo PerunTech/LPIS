@@ -412,9 +412,8 @@ public class ApplicationServices {
 	}
 
 	@Path("/get/commonUse/{token}/{parentId}/{parcelId}")
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces("application/pbf")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCommonUse(@PathParam("token") final String token, @PathParam("parentId") final Long parentId,
 			@PathParam("parcelId") final Long parcelId, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
