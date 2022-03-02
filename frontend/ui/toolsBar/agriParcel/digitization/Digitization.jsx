@@ -10,7 +10,7 @@ import { DeleteParcelFromFarm } from './DeleteParcelFromFarm';
 import { Draw } from './Draw';
 import { Edit } from './Edit';
 import { Fill } from './Fill';
-import { GetParcelInfo } from './GetParcelInfo';
+import { Info } from './Info';
 import { Merge } from './Merge';
 import { Refresh } from './Refresh';
 import { Split } from './Split';
@@ -20,7 +20,7 @@ const { ButtonGroup, Divider } = ui;
 export const Digitization = () =>
     <ButtonGroup>
         <Copy />
-        <GetParcelInfo />
+        <Info />
         <Draw />
         <Edit />
         <Divider />
