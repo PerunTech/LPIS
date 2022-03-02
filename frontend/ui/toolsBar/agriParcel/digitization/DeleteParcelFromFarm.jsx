@@ -1,4 +1,4 @@
-import { React, elements } from 'perun-core';
+import { React, Loading, elements } from 'perun-core';
 import { core, ui } from '../../../../Spatial';
 import { deleteAPFromFarmMsg } from '../Config';
 import { getFarmMapAssets } from '../../../Util';
@@ -10,43 +10,50 @@ const { Button, Icon, DrawActions, Modal } = ui;
 const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'cropDelete';
-const _processID = 'deleteAPFromFarm'
+const _processID = 'deleteAPFromFarm';
 
 const _DeleteParcelFromFarm = ({ processID }) => {
-  const [{ isGuided, layer }, setState] = useReducer(
-    (currState, update) => ({ ...currState, ...update }),
-    { isGuided: false, layer: {} }
+  const [{ isGuided, layer, loading }, setState] = useReducer(
+    (currState, update) => ({ ...currState, ...update }), { isGuided: false, layer: {}, loading: false }
   );
 
   const deleteLayer = () => {
-    http.call(_id, { url: `/lpis/remove/farm/{init.token}/${layer.feature.id}/AGRI_PARCEL`, method: 'get' }).then(() => {
-      alertUser(true, 'success', 'Успешно бришење', 'Парцелата е отстранета од фармата', disable);
-    }).catch((err) => {
-      alertUser(true, 'error', 'Грешка при бришење', 'Парцелата не е отстранета од фармата', disable);
+    disable()
+    setState({ loading: true })
+    const url = `/lpis/remove/farm/{init.token}/${layer.feature.id}/AGRI_PARCEL`
+    http.call(_id, { url }).then(res => {
+      setState({ loading: false })
+      const type = res.data.type?.toLowerCase() || 'success'
+      alertUser(true, type, 'Успешно бришење', 'Парцелата е отстранета од фармата');
+    }).catch(err => {
+      console.error(err)
+      setState({ loading: false })
+      alertUser(true, 'error', 'Грешка при бришење', 'Парцелата не е отстранета од фармата');
     });
   };
 
   const enable = () => {
-    const layers = Object.values(store.getState().farmRegistry?.agriParcels);
-
-    if (layers.length > 0) {
-      store.dispatch({ processID: _processID });
-      setState({ isGuided: true });
-      layers.forEach((sc) => {
-        sc.bringToFront();
-        sc.on('click', function (e) {
-          setState({ layer: e.target, isGuided: false });
+    if (!loading) {
+      const layers = Object.values(store.getState().farmRegistry?.agriParcels);
+      if (layers.length > 0) {
+        store.dispatch({ processID: _processID });
+        setState({ isGuided: true });
+        layers.forEach((sc) => {
+          sc.bringToFront();
+          sc.on('click', function (e) {
+            setState({ layer: e.target, isGuided: false });
+          });
         });
-      });
-    } else {
-      alertUser(true, 'warning', 'Не се пронајдени парцели', 'Додадете парцели пред да ја користите алатката за отстранување парцела од фарма');
+      } else {
+        alertUser(true, 'warning', 'Не се пронајдени парцели', 'Додадете парцели пред да ја користите алатката за отстранување парцела од фарма');
+      }
     }
   };
 
   const disable = () => {
     // Reset state, internal and application-wide.
     store.dispatch({ processID: '' });
-    setState({ isGuided: false, layer: {} });
+    setState({ isGuided: false, layer: {}, loading: false });
     getFarmMapAssets();
   };
 
@@ -91,6 +98,7 @@ const _DeleteParcelFromFarm = ({ processID }) => {
       <Icon name={_id} size='30px' />
       <span style={{ display: 'block', marginTop: '5px' }}>Отстрани парцела од фарма</span>
       {processID === _processID && renderComponent()}
+      {loading && <Loading />}
     </ProcessButton>
   );
 };
