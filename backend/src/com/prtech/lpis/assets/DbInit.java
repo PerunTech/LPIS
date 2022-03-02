@@ -2,6 +2,8 @@ package com.prtech.lpis.assets;
 
 import java.util.ArrayList;
 
+import com.prtech.lpis.CC;
+import com.prtech.svarog.svCONST;
 import com.prtech.svarog_common.DbDataField;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_common.DbDataTable;
@@ -26,6 +28,99 @@ public class DbInit implements IDbInit {
 		return dbtt;
 	}
 	
+	public static DbDataTable createAPOverlap () {
+		DbDataTable dbt = new DbDataTable();
+		dbt.setDbTableName("AGRI_PARCEL_OVERLAP");
+		dbt.setDbRepoName(CONST_MASTER_REPO);
+		dbt.setDbSchema(CONST_DEFAULT_SCHEMA);
+		dbt.setIsSystemTable(false);
+		dbt.setIsRepoTable(false);
+		dbt.setIsConfigTable(false);
+		dbt.setLabel_code("ap_overlap.general");
+		dbt.setUse_cache(true);
+		
+		/* C1N, [system, form-hidden] */
+		DbDataField dbf1 = new DbDataField();
+		dbf1.setDbFieldName("PKID");
+		dbf1.setDbFieldType(DbFieldType.NUMERIC);
+		dbf1.setIsPrimaryKey(true);
+		dbf1.setDbFieldSize(18);
+		dbf1.setDbFieldScale(0);
+		dbf1.setIsNull(false);
+		dbf1.setLabel_code("overlap.pkid");
+		dbf1.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+		
+		/*
+		 * C2, [read-write, not null, form-hidden]
+		 * 
+		 * Between all spatial columns specify geometry first, because GeoServer is silly like that.
+		 * It will read the first spatial column it can find and disregard others.
+		 */
+		DbDataField dbf2 = new DbDataField();
+		dbf2.setDbFieldName("GEOM");
+		dbf2.setDbFieldType(DbFieldType.GEOMETRY);
+		dbf2.setGeometryType("MULTIPOLYGON"); // allows holes, do not use Polygon.
+		dbf2.setGeometrySrid(SRID);
+		dbf2.setIndexName("GEOM_SIDX"); // name must be unique
+		dbf2.setIsNull(false);
+		dbf2.setLabel_code("common.geometry");
+		dbf2.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+
+		/* C3 [read-write, not null, form-hidden], derivative of geometry. */
+		DbDataField dbf3 = new DbDataField();
+		dbf3.setDbFieldName("CENTROID");
+		dbf3.setDbFieldType(DbFieldType.GEOMETRY);
+		dbf3.setGeometryType("POINT");
+		dbf3.setGeometrySrid(SRID);
+		dbf3.setIndexName("CNT_SIDX");
+		dbf3.setIsNull(false);
+		dbf3.setLabel_code("common.centroid");
+		dbf3.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+		
+		/* C4 [read-write, not null, form-hidden], derivative of geometry. */
+		DbDataField dbf4 = new DbDataField();
+		dbf4.setDbFieldName("PERIMETER");
+		dbf4.setDbFieldType(DbFieldType.NUMERIC);
+		dbf4.setDbFieldSize(18);
+		dbf4.setDbFieldScale(4);
+		dbf4.setIsNull(false);
+		dbf4.setLabel_code("common.perimeter");
+		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+		
+		/* C5 [read-write, not null, form-hidden], derivative of geometry. */
+		DbDataField dbf5 = new DbDataField();
+		dbf5.setDbFieldName("AREA");
+		dbf5.setDbFieldType(DbFieldType.NUMERIC);
+		dbf5.setDbFieldSize(18);
+		dbf5.setDbFieldScale(4);
+		dbf5.setIsNull(false);
+		dbf5.setLabel_code("common.area");
+		dbf5.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+		
+		/* C7 [read-write, can be null, form-visible] */
+		DbDataField dbf7 = new DbDataField();
+		dbf7.setDbFieldName("NOTE");
+		dbf7.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf7.setDbFieldSize(2000);
+		dbf7.setIsNull(true);
+		dbf7.setLabel_code("common.note");
+		dbf7.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":false,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":true}}");
+		
+		DbDataField[] fieldList = new DbDataField[7];
+		fieldList[0] = dbf1;
+		fieldList[1] = dbf2;
+		fieldList[2] = dbf3;
+		fieldList[3] = dbf4;
+		fieldList[4] = dbf5;
+		fieldList[5] = dbf7;
+		dbt.setDbTableFields(fieldList);
+		
+		return dbt;
+	}
 	public static DbDataTable createPhysicalBlock () {
 		DbDataTable dbt = new DbDataTable();
 		dbt.setDbTableName("PHYSICAL_BLOCK");
@@ -649,14 +744,30 @@ public class DbInit implements IDbInit {
 		dbtList.add(addSortOrder(DbInit.createAgriParcel()));
 		dbtList.add(addSortOrder(DbInit.createCommonUse()));
 		dbtList.add(addSortOrder(DbInit.createPermanentCrop()));
-
+		dbtList.add(addSortOrder(DbInit.createAPOverlap()));
 		return dbtList;
 	}
 
 	@Override
 	public ArrayList<DbDataObject> getCustomObjectInstances() {
-		ArrayList<DbDataObject> dbtList = new ArrayList<DbDataObject>();
+		ArrayList<DbDataObject> defaultObjests = new ArrayList<DbDataObject>();
 
-		return dbtList;
+		DbDataObject dbl = new DbDataObject();
+		dbl.setObjectType(svCONST.OBJECT_TYPE_LINK_TYPE);
+		dbl.setStatus(svCONST.STATUS_VALID);
+		dbl.setVal("LINK_TYPE", "AGRI_PARCEL_OVERLAP");
+		dbl.setVal("LINK_TYPE_DESCRIPTION", "Link between two overlapping parcels");
+		dbl.setVal("LINK_OBJ_TYPE_1", CC.AGRI_PARCEL);
+		dbl.setVal("LINK_OBJ_TYPE_2", CC.AGRI_PARCEL);
+		defaultObjests.add(dbl);
+		DbDataObject db2 = new DbDataObject();
+		db2.setObjectType(svCONST.OBJECT_TYPE_LINK_TYPE);
+		db2.setStatus(svCONST.STATUS_VALID);
+		db2.setVal("LINK_TYPE", "AGRI_PARCEL_FULL_OVERLAP");
+		db2.setVal("LINK_TYPE_DESCRIPTION", "Link between overlap object and agri parcel");
+		db2.setVal("LINK_OBJ_TYPE_1", "AGRI_PARCEL_OVERLAP");
+		db2.setVal("LINK_OBJ_TYPE_2", CC.AGRI_PARCEL);
+		defaultObjests.add(db2);
+		return defaultObjests;
 	}
 }
