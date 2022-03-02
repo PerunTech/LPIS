@@ -62,8 +62,7 @@ const _Cut = ({ processID, farmObjId }) => {
                 method: 'post',
                 responseType: 'arraybuffer',
                 data: JSON.stringify(factory.GeoJSON.fromLayer(e.layer))
-            })
-                .then(response => {
+            }).then(response => {
                     const buff = geobuf.decode(protobuf(response));
                     const geojson = factory.geoJSON(buff, config.pathOptions);
                     const stateData = store.getState().data.layers;
@@ -88,15 +87,14 @@ const _Cut = ({ processID, farmObjId }) => {
                             showForm: true
                         })
                     })
-                })
-                .catch(error => {
+                }).catch(error => {
                     e.layer.removeFrom(Map);
                     let enc = new TextDecoder("utf-8");
                     let errmsg = enc.decode(error.response.data);
                     elements.alertUser(true,
                         'error',
                         'Грешка при отсекување земјоделска парцела',
-                        errmsg
+                        errmsg, disable
                     );
                 })
         }
