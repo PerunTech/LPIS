@@ -12,6 +12,7 @@ const { Icon, DrawActions } = ui;
 const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'commonUse';
+const _secondaryId = 'getCommonUse';
 const _iconId = 'drawAP';
 
 const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
@@ -23,6 +24,21 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
     layer.on('click', function () {
       setState({ data: layer.feature.properties })
       agriParcels.forEach(ap => ap.off('mouseover mouseout click'))
+    })
+  }
+
+  const getCommonUse = (parcelId, selectedParcel) => {
+    const url = `/lpis/get/commonUse/{init.token}/${farmObjId}/${parcelId}`
+    http.call(_secondaryId, { url }).then(res => {
+      if (res.data && Object.keys(res.data).length > 0) {
+        if (res.data.ALLOWED_AREA) {
+          const formData = { commonUseType: 'CLAIMED_AREA', value: String(res.data.ALLOWED_AREA), objectId: res.data.object_id }
+          setState({ data: formData, isGuided: false, showForm: true, selectedParcel })
+        }
+      }
+    }).catch(err => {
+      console.error(err)
+      alertUser(true, 'error', 'Настана грешка', '', disable)
     })
   }
 
@@ -45,15 +61,19 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
         const parcelId = buff.features[0].id
         const area = Math.round(buff.features[0].properties.AREA)
         const landUseCode = buff.features[0].properties.LAND_COVER_CODE
+        const hasCommonUse = buff.features[0].properties.COMMON_USE
         const parentId = buff.features[0].properties.parent_id
+        const selectedParcel = { parcelId, area, landUseCode }
         if (parentId && Number(parentId) !== 0) {
           const title = 'Парцелата е веќе доделена на земјоделско стопанство и истата не може да се користи за Заедничка употреба'
           alertUser(true, 'info', title, '', () => disable())
         } else if (!strcmp(landUseCode, '200')) {
           const title = 'Само парцели со код на употреба 200 може да се користат за заедничка употреба'
           alertUser(true, 'warning', title, '', () => disable())
+        } else if (hasCommonUse) {
+          getCommonUse(parcelId, selectedParcel)
         } else {
-          setState({ isGuided: false, showForm: true, selectedParcel: { parcelId, area, landUseCode } })
+          setState({ isGuided: false, showForm: true, selectedParcel })
         }
       }).catch(err => {
         console.error(err)
@@ -74,10 +94,12 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
     getFarmMapAssets();
   };
 
-  const submitCommonUse = data => {
+  const submitCommonUse = formData => {
     const { parcelId } = selectedParcel
-    const url = `/lpis/save/commonUse/{init.token}/0/${farmObjId}/${parcelId}`
-    http.call(_id, { url, method: 'post', data }).then(res => {
+    const { objectId } = data
+    const commonUseObjId = objectId || 0
+    const url = `/lpis/save/commonUse/{init.token}/${commonUseObjId}/${farmObjId}/${parcelId}`
+    http.call(_id, { url, method: 'post', data: formData }).then(res => {
       const responseType = res.data.type || 'INFO'
       const labelCode = res.data.label_code || 'Успешно додадена заедничка употреба'
       alertUser(true, responseType.toLowerCase(), labelCode, '', () => disable())
