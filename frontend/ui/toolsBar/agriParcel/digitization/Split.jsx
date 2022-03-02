@@ -1,13 +1,13 @@
 import { React, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
 import { config } from '../Config';
-import { getFarmMapAssets } from '../../../Util';
+import { decodeResponse, getFarmMapAssets } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
-const { draw: { polygon } } = tools;
+const { draw: { line } } = tools;
 const { Icon } = ui;
 const { useReducer } = React;
 const { alertUser } = elements;
@@ -35,7 +35,7 @@ const _Split = ({ processID, farmObjId }) => {
       }
     });
     store.dispatch({ processID: _id });
-    polygon.enable(config);
+    line.enable(config);
   };
 
   const splitParcel = (lineLayer) => {
@@ -53,22 +53,11 @@ const _Split = ({ processID, farmObjId }) => {
         // remove old app layers entries, will update with the new geojson set.
         stateData[id] && stateData[id].removeFrom(Map);
       })
-      elements.alertUser(true,
-        'success',
-        'Успешно поделена земјоделска парцела',
-        'Добиени се ' + geojson.getLayers().length + ' нови парцели.',
-        getFarmMapAssets
-      )
+      alertUser(true, 'success', 'Успешно поделена земјоделска парцела', 'Добиени се ' + geojson.getLayers().length + ' нови парцели.', getFarmMapAssets)
     }).catch(error => {
-      let enc = new TextDecoder("utf-8");
-      let errmsg = enc.decode(error.response.data);
-      console.log();
-      elements.alertUser(true,
-        'error',
-        'Грешка при поделба земјоделска парцела',
-        errmsg,
-        getFarmMapAssets
-      );
+      const { response } = error
+      const errorMsg = decodeResponse(response)
+      alertUser(true, 'error', 'Грешка при поделба земјоделска парцела', errorMsg, getFarmMapAssets);
     })
 
     //remove line   
@@ -83,7 +72,7 @@ const _Split = ({ processID, farmObjId }) => {
     // We remove the working geometry, save process will add the result.
     layer.removeFrom && layer.removeFrom(Map);
     // Disable Split handler.
-    polygon.disable('force');
+    line.disable('force');
   }
 
   return <ProcessButton id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
@@ -91,8 +80,8 @@ const _Split = ({ processID, farmObjId }) => {
     <span style={{ display: 'block', marginTop: '5px' }}>Подели парцела</span>
     {processID === _id
       && <Guidance id={_id}
-        finish={() => polygon._finishShape()}
-        undo={() => polygon._removeLastVertex()}
+        finish={() => line._finishShape()}
+        undo={() => line._removeLastVertex()}
         disable={disable}
         msg={['', '']}
         title='Подели парцела' />}
