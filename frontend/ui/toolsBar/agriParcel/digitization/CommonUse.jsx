@@ -14,14 +14,25 @@ const { useReducer } = React;
 const _id = 'commonUse';
 const _iconId = 'drawAP';
 
-const _CommonUse = ({ processID, farmObjId }) => {
+const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
   const [{ data, loading, isGuided, showForm, selectedParcel }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
     { data: {}, loading: false, isGuided: false, showForm: false, selectedParcel: {} });
 
+  const setLayerEvents = (layer, agriParcels) => {
+    layer.on('click', function () {
+      setState({ data: layer.feature.properties })
+      agriParcels.forEach(ap => ap.off('mouseover mouseout click'))
+    })
+  }
+
   const enable = () => {
     store.dispatch({ processID: _id });
     setState({ isGuided: true });
+
+    if (agriParcels.length > 0) {
+      agriParcels.forEach(ap => setLayerEvents(ap, agriParcels))
+    }
 
     Map.on('click', e => {
       const p = Map.transform(e.latlng);
@@ -129,6 +140,6 @@ const _CommonUse = ({ processID, farmObjId }) => {
 
 export const CommonUse = core.connect((state) => ({
   processID: state.app.processID,
-  mapId: state.map.id,
   farmObjId: state.farmRegistry?.farmObjId,
+  agriParcels: state.farmRegistry?.agriParcels,
 }))(_CommonUse);
