@@ -1,6 +1,6 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
-import { config, drawAPMsg } from '../Config';
+import { config } from '../Config';
 import { decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
@@ -62,8 +62,7 @@ const _Cut = ({ processID, farmObjId }) => {
                 method: 'post',
                 responseType: 'arraybuffer',
                 data: JSON.stringify(factory.GeoJSON.fromLayer(e.layer))
-            })
-                .then(response => {
+            }).then(response => {
                     const buff = geobuf.decode(protobuf(response));
                     const geojson = factory.geoJSON(buff, config.pathOptions);
                     const stateData = store.getState().data.layers;
@@ -88,15 +87,14 @@ const _Cut = ({ processID, farmObjId }) => {
                             showForm: true
                         })
                     })
-                })
-                .catch(error => {
+                }).catch(error => {
                     e.layer.removeFrom(Map);
                     let enc = new TextDecoder("utf-8");
                     let errmsg = enc.decode(error.response.data);
                     elements.alertUser(true,
                         'error',
                         'Грешка при отсекување земјоделска парцела',
-                        errmsg
+                        errmsg, disable
                     );
                 })
         }
@@ -121,8 +119,8 @@ const _Cut = ({ processID, farmObjId }) => {
             finish={() => polygon._finishShape()}
             undo={() => polygon._removeLastVertex()}
             disable={() => disable()}
-            msg={drawAPMsg}
-            title='Нацртај земјоделска парцела'
+            msg={['', '']}
+            title='Отсечи земјоделска парцела'
         />
     }
 

@@ -9,7 +9,7 @@ const { Icon } = ui;
 const { useReducer } = React;
 const _id = 'help';
 
-const _GetParcelInfo = ({ processID }) => {
+const _Info = ({ processID }) => {
   const [{ loading }, setState] = useReducer((currState, update) => ({ ...currState, ...update }), { loading: false });
 
   const enable = () => {
@@ -51,4 +51,4 @@ const _GetParcelInfo = ({ processID }) => {
   );
 };
 
-export const GetParcelInfo = core.connect((state) => ({ processID: state.app.processID }))(_GetParcelInfo);
+export const Info = core.connect((state) => ({ processID: state.app.processID }))(_Info);

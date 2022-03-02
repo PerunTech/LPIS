@@ -1,4 +1,4 @@
-import { React, elements, redux } from 'perun-core';
+import { React, elements } from 'perun-core';
 import { core, ui } from '../../../../Spatial';
 import { deleteAPMsg } from '../Config';
 import { getFarmMapAssets } from '../../../Util';
@@ -7,18 +7,16 @@ import { ProcessButton } from '../../ProcessButton';
 
 const { Map, store, http } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
+const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'deleteAP';
 
-/**
- * Delete an agri parcel.
- */
-const _Delete = ({ processID, farmObjId }) => {
+const _Delete = ({ processID }) => {
     const [{ isGuided, layer }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }), { isGuided: false, layer: {} });
 
     const deleteLayer = () => {
-        http.call('deleteCP', {
+        http.call(_id, {
             url: '/spatial/geometry/delete/confirm/{init.token}/' + Number(layer.feature.id) + '/' + Number(layer.feature.properties.type),
             method: 'post',
             data: JSON.stringify({
@@ -26,27 +24,18 @@ const _Delete = ({ processID, farmObjId }) => {
                 OBJECT_ID: Number(layer.feature.id),
                 OBJECT_TYPE: Number(layer.feature.properties.type)
             })
+        }).then(() => {
+            layer.removeFrom(Map);
+            alertUser(true, 'success', 'Успешно бришење', 'Парцелата е избришана од базата на податоци.');
+            disable()
+        }).catch(() => {
+            alertUser(true, 'error', 'Грешка при бришење', 'Парцелата не е избришана од базата на податоци.');
+            disable()
         })
-            .then(() => {
-                layer.removeFrom(Map);
-                elements.alertUser(true,
-                    'success',
-                    'Успешно бришење',
-                    'Парцелата е избришана од базата на податоци.');
-                disable()
-            })
-            .catch(() => {
-                elements.alertUser(true,
-                    'error',
-                    'Грешка при бришење',
-                    'Парцелата не е избришана од базата на податоци.');
-                disable()
-            })
     }
 
     const enable = () => {
         const layers = Object.values(store.getState().farmRegistry?.agriParcels);
-
         if (layers.length > 0) {
             store.dispatch({ processID: _id });
             setState({ isGuided: true })
@@ -66,12 +55,6 @@ const _Delete = ({ processID, farmObjId }) => {
     }
 
     const disable = () => {
-        /*
-        const layers = store.getState().data.layers;
-        const cps = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
-
-        cps.forEach(cp => cp.off('click'))*/
-
         // Reset state, internal and application-wide.
         store.dispatch({ processID: '' });
         setState({ isGuided: false, layer: {} });
