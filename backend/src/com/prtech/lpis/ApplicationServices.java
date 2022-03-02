@@ -434,8 +434,8 @@ public class ApplicationServices {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToSaveObject");
 		}
-		ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, commonUse.toSimpleJson().toString());
-		return Response.status(200).entity(rr.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
+		//ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, );
+		return Response.status(200).entity(commonUse.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
 
 	}
 
