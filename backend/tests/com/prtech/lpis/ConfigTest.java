@@ -77,20 +77,20 @@ public class ConfigTest {
 						+ "Without a registered script name, the user will not be able to access the plugin.",
 				url != null && url.substring(urlLen - 3, urlLen).equals(".js"));
 	}
-
+/*
 	@Test
 	public void getAssets() throws SvException {
 		ApplicationServices as = new ApplicationServices();
 
-		/*String token = getUserSessionIdForTestPurpose();
+		String token = getUserSessionIdForTestPurpose();
 		if (!token.equals(CC.EMPTY_STRING)) {
 			try (SvReader svr = new SvReader(token)) {
 				DbDataArray rs = as.getAssetsList(svr, 673774999L, CC.AGRI_PARCEL);
 				log.error(rs.toSimpleJson().toString());
 			}
-		}*/
+		}
 	}
-
+*/
 	@Test
 	public void testGetVersion() {
 		Properties properties = new Properties();
