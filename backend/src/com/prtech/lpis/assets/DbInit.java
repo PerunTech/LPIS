@@ -3,6 +3,7 @@ package com.prtech.lpis.assets;
 import java.util.ArrayList;
 
 import com.prtech.lpis.CC;
+import com.prtech.svarog.Sv;
 import com.prtech.svarog.svCONST;
 import com.prtech.svarog_common.DbDataField;
 import com.prtech.svarog_common.DbDataObject;
@@ -30,7 +31,7 @@ public class DbInit implements IDbInit {
 	
 	public static DbDataTable createAPOverlap () {
 		DbDataTable dbt = new DbDataTable();
-		dbt.setDbTableName("AGRI_PARCEL_OVERLAP");
+		dbt.setDbTableName(CC.AGRI_PARCEL_OVERLAP);
 		dbt.setDbRepoName(CONST_MASTER_REPO);
 		dbt.setDbSchema(CONST_DEFAULT_SCHEMA);
 		dbt.setIsSystemTable(false);
@@ -515,6 +516,17 @@ public class DbInit implements IDbInit {
 		dbf28.setDbFieldSize(2000);
 		dbf28.setIsNull(true);
 		dbf28.setLabel_code("agri_parcel.parcel_intersect");
+		
+		DbDataField dbf30 = new DbDataField();
+		dbf30.setDbFieldName("OVERLAP_ID");
+		dbf30.setDbFieldType(DbFieldType.NUMERIC);
+		dbf30.setDbFieldSize(18);
+		dbf30.setDbFieldScale(0);
+		dbf30.setRefereftialField(Sv.OBJECT_ID);
+		dbf30.setReferentialTable(CC.AGRI_PARCEL_OVERLAP);
+		dbf30.setIsNull(true);
+		dbf30.setLabel_code("agri_parcel.overlap_id");
+		dbf30.setSort_order(120);
 		
 		
 		DbDataField[] fieldList = new DbDataField[29];
