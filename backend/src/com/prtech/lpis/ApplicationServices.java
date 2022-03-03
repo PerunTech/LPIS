@@ -233,13 +233,15 @@ public class ApplicationServices {
 		for (Geometry related : intersections) {
 			DbDataObject overlapDbo = updateOverlap(svg, agriParcel, related, existingOverlaps, overlapParcels);
 			overlapArea = +SvGeometry.getGeometry(overlapDbo).getArea();
+			overlapDbos.addDataItem(overlapDbo);
 		}
 		svg.setAutoCommit(false);
 		svg.saveGeometry(overlapDbos);
 		svg.saveGeometry(overlapParcels);
-		try (SvWriter svw = new SvWriter(svg)) {
-			svw.deleteObjects(existingOverlaps);
-		}
+		if (existingOverlaps.size() > 0)
+			try (SvWriter svw = new SvWriter(svg)) {
+				svw.deleteObjects(existingOverlaps);
+			}
 
 		if (overlapDbos.size() > 0) {
 			agriParcel.setVal(CC.HAS_OVERLAP, true);
@@ -267,8 +269,11 @@ public class ApplicationServices {
 	private void removeOverlaps(SvGeometry svg, DbDataObject ap) throws SvException {
 		try (SvWriter svw = new SvWriter(svg)) {
 			DbDataArray overlaps = getOverlaps(svg, ap);
-			svw.setAutoCommit(false);
-			svw.deleteObjects(overlaps);
+			if (overlaps.size() > 0) {
+				svw.setAutoCommit(false);
+				svw.deleteObjects(overlaps);
+			}
+			ap.setVal(CC.HAS_OVERLAP, false);
 		}
 	}
 
