@@ -117,7 +117,7 @@ public class CommonUse {
 				throw new SvException("lpis.error.agriParcelAlreadyBelongsToAgriculturalHolding",
 						svr.getInstanceUser());
 			}
-			if (!agriParcel.getVal("LAND_COVER_CODE").toString().equalsIgnoreCase("200")) {
+			if (!agriParcel.getVal(CC.LAND_COVER_CODE).toString().equalsIgnoreCase(CC.LAND_COVER_CODE_200)) {
 				throw new SvException("lpis.error.onlyAgriParcelWithCode200CanBeUsedForCommonUse",
 						svr.getInstanceUser());
 			}

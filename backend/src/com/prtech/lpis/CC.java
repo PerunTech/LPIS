@@ -23,7 +23,8 @@ public class CC {
 	public static final String FIELD_NAME = "FIELD_NAME";
 	public static final String FIELD_TYPE = "FIELD_TYPE";
 	public static final String AGRI_PARCEL_OVERLAP = "AGRI_PARCEL_OVERLAP";
-	
+	public static final String LAND_COVER_CODE = "LAND_COVER_CODE";
+	public static final String LAND_COVER_CODE_200 = "200";
 	
 
 }
