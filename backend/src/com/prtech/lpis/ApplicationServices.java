@@ -176,44 +176,101 @@ public class ApplicationServices {
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 	}
 
-	private void createOverlaps(SvGeometry svg, DbDataObject agriParcel, Long typeId) throws SvException {
-		DbDataArray overlapDbos = new DbDataArray();
-		DbDataArray overlapParcels = new DbDataArray();
-
-		Geometry geom = SvGeometry.getGeometry(agriParcel);
-		Collection<Geometry> intersections = svg.getRelatedGeometries(geom, typeId, SDIRelation.INTERSECTS,
-				CC.PARENT_ID, agriParcel.getParentId(), true, true, true);
-
-		double overlapArea = 0;
-		for (Geometry related : intersections) {
-			Geometry overlap = geom.intersection(related);
-			DbDataObject relatedParcel = (DbDataObject) related.getUserData();
-			if (overlap.getArea() < minimumAgriParcelSize)
-				throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), relatedParcel, overlap));
-
-			DbDataObject overlapDbo = new DbDataObject(SvCore.getTypeIdByName(CC.AGRI_PARCEL_OVERLAP));
-			SvGeometry.setGeometry(overlapDbo, overlap);
+	private DbDataObject getOverlapDbo(DbDataArray existingOverlaps, DbDataObject agriParcel,
+			DbDataObject relatedParcel) throws SvException {
+		DbDataObject overlapDbo = null;
+		Iterator<DbDataObject> it = existingOverlaps.getItems().iterator();
+		while (it.hasNext()) {
+			DbDataObject existingOvr = it.next();
+			if (existingOvr.getVal(CC.FARM_ID1).equals(relatedParcel.getParentId())
+					&& existingOvr.getVal(CC.PARCEL_ID1).equals(relatedParcel.getObjectId())) {
+				overlapDbo = existingOvr;
+				it.remove();
+				break;
+			}
+			if (existingOvr.getVal(CC.FARM_ID2).equals(relatedParcel.getParentId())
+					&& existingOvr.getVal(CC.PARCEL_ID2).equals(relatedParcel.getObjectId())) {
+				overlapDbo = existingOvr;
+				it.remove();
+				break;
+			}
+		}
+		if (overlapDbo == null) {
+			overlapDbo = new DbDataObject(SvCore.getTypeIdByName(CC.AGRI_PARCEL_OVERLAP));
 			overlapDbo.setVal(CC.FARM_ID1, agriParcel.getParentId());
 			overlapDbo.setVal(CC.PARCEL_ID1, agriParcel.getObjectId());
 			overlapDbo.setVal(CC.FARM_ID2, relatedParcel.getParentId());
 			overlapDbo.setVal(CC.PARCEL_ID2, relatedParcel.getObjectId());
-			Util.calculateGeometryDerivatives(overlapDbo);
-			overlapDbos.addDataItem(overlapDbo);
-			relatedParcel.setVal(CC.HAS_OVERLAP, true);
-			relatedParcel.setVal(CC.ALLOWED_AREA, related.getArea() - overlap.getArea());
-			overlapParcels.addDataItem(relatedParcel);
-			overlapArea =+  overlap.getArea();
+		}
+		return overlapDbo;
+	}
+
+	private DbDataObject updateOverlap(SvGeometry svg, DbDataObject agriParcel, Geometry related,
+			DbDataArray existingOverlaps, DbDataArray overlapParcels) throws SvException {
+		Geometry geom = SvGeometry.getGeometry(agriParcel);
+		Geometry overlap = geom.intersection(related);
+		DbDataObject relatedParcel = (DbDataObject) related.getUserData();
+		if (overlap.getArea() < minimumAgriParcelSize)
+			throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), relatedParcel, overlap));
+		DbDataObject overlapDbo = getOverlapDbo(existingOverlaps, agriParcel, relatedParcel);
+		SvGeometry.setGeometry(overlapDbo, overlap);
+		Util.calculateGeometryDerivatives(overlapDbo);
+		relatedParcel.setVal(CC.HAS_OVERLAP, true);
+		relatedParcel.setVal(CC.ALLOWED_AREA, related.getArea() - overlap.getArea());
+		overlapParcels.addDataItem(relatedParcel);
+		return overlapDbo;
+	}
+
+	private void createOverlaps(SvGeometry svg, DbDataObject agriParcel, Long typeId,
+			Collection<Geometry> intersections) throws SvException {
+		DbDataArray overlapDbos = new DbDataArray();
+		DbDataArray overlapParcels = new DbDataArray();
+		// get any existing overlaps we need to update
+		DbDataArray existingOverlaps = getOverlaps(svg, agriParcel);
+		Geometry geom = SvGeometry.getGeometry(agriParcel);
+
+		double overlapArea = 0;
+		for (Geometry related : intersections) {
+			DbDataObject overlapDbo = updateOverlap(svg, agriParcel, related, existingOverlaps, overlapParcels);
+			overlapArea = +SvGeometry.getGeometry(overlapDbo).getArea();
 		}
 		svg.setAutoCommit(false);
 		svg.saveGeometry(overlapDbos);
 		svg.saveGeometry(overlapParcels);
-		
+		try (SvWriter svw = new SvWriter(svg)) {
+			svw.deleteObjects(existingOverlaps);
+		}
+
 		if (overlapDbos.size() > 0) {
 			agriParcel.setVal(CC.HAS_OVERLAP, true);
 			agriParcel.setVal(CC.ALLOWED_AREA, geom.getArea() - overlapArea);
 		}
-		
+
 	};
+
+	private DbDataArray getOverlaps(SvGeometry svg, DbDataObject ap) throws SvException {
+		try (SvReader svr = new SvReader(svg);) {
+			DbSearchExpression dbs = new DbSearchExpression();
+			dbs.setNextCritOperand("OR");
+			dbs.addDbSearchItem(new DbSearchCriterion(CC.FARM_ID1, DbCompareOperand.EQUAL, ap.getParentId()));
+			dbs.addDbSearchItem(new DbSearchCriterion(CC.PARCEL_ID1, DbCompareOperand.EQUAL, ap.getObjectId()));
+			DbSearchExpression dbs2 = new DbSearchExpression();
+			dbs2.addDbSearchItem(new DbSearchCriterion(CC.FARM_ID2, DbCompareOperand.EQUAL, ap.getParentId()));
+			dbs2.addDbSearchItem(new DbSearchCriterion(CC.PARCEL_ID2, DbCompareOperand.EQUAL, ap.getObjectId()));
+			DbSearchExpression dbx = new DbSearchExpression();
+			dbx.addDbSearchItem(dbs);
+			dbx.addDbSearchItem(dbs2);
+			return svr.getObjects(dbx, SvCore.getTypeIdByName(CC.AGRI_PARCEL_OVERLAP), null, null, null);
+		}
+	}
+
+	private void removeOverlaps(SvGeometry svg, DbDataObject ap) throws SvException {
+		try (SvWriter svw = new SvWriter(svg)) {
+			DbDataArray overlaps = getOverlaps(svg, ap);
+			svw.setAutoCommit(false);
+			svw.deleteObjects(overlaps);
+		}
+	}
 
 	@Path("/save/agriParcel/{token}/{objectId}/{parentId}/{opType}")
 	@POST
@@ -259,16 +316,21 @@ public class ApplicationServices {
 						}
 					}
 
+					svg.setAutoCommit(false);
 					if (opType.equals(CC.CUTOFF)) {
 						geom = svg.cutLayerFromGeom(geom, typeId);
+						if ((boolean) ap.getVal(CC.HAS_OVERLAP))
+							removeOverlaps(svg, ap);
 						SvGeometry.setGeometry(ap, geom);
 					} else {
 						SvGeometry.setGeometry(ap, geom);
-						createOverlaps(svg, ap, typeId);
+						Collection<Geometry> intersections = svg.getRelatedGeometries(geom, typeId,
+								SDIRelation.INTERSECTS, CC.PARENT_ID, ap.getParentId(), true, true, true);
+						createOverlaps(svg, ap, typeId, intersections);
 					}
 					svg.setAutoCommit(false);
 					Util.calculateGeometryDerivatives(ap);
-					DbDataArray result= new DbDataArray();
+					DbDataArray result = new DbDataArray();
 					result.addDataItem(ap);
 					svg.saveGeometry(ap);
 					svg.dbCommit();
