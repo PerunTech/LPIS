@@ -39,6 +39,7 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
 
   const disable = (data, geojson) => {
     if (data && data.LAND_COVER_CODE) {
+      _stopEditAP()
       if (Number(data.LAND_COVER_CODE) >= 400 && Number(data.LAND_COVER_CODE) < 500) {
         store.dispatch({ processID: _id })
         setState({ data: {}, geojson, showPermanentCropForm: true, isGuided: false, showForm: false })
