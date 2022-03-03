@@ -816,15 +816,6 @@ public class DbInit implements IDbInit {
 	@Override
 	public ArrayList<DbDataObject> getCustomObjectInstances() {
 		ArrayList<DbDataObject> defaultObjests = new ArrayList<DbDataObject>();
-
-		DbDataObject dbl = new DbDataObject();
-		dbl.setObjectType(svCONST.OBJECT_TYPE_LINK_TYPE);
-		dbl.setStatus(svCONST.STATUS_VALID);
-		dbl.setVal("LINK_TYPE", "AGRI_PARCEL_OVERLAP");
-		dbl.setVal("LINK_TYPE_DESCRIPTION", "Link between two overlapping parcels");
-		dbl.setVal("LINK_OBJ_TYPE_1", CC.AGRI_PARCEL);
-		dbl.setVal("LINK_OBJ_TYPE_2", CC.AGRI_PARCEL);
-		defaultObjests.add(dbl);
 		return defaultObjests;
 	}
 }
