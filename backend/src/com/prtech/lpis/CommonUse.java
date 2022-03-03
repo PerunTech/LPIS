@@ -109,4 +109,18 @@ public class CommonUse {
 			}
 		}
 	}
+	
+	public void commonUseChecksBeforeSave(Long parcelId, SvReader svr) throws SvException {
+		DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
+		if (agriParcel != null) {
+			if (!agriParcel.getParentId().equals(0L)) {
+				throw new SvException("lpis.error.agriParcelAlreadyBelongsToAgriculturalHolding",
+						svr.getInstanceUser());
+			}
+			if (!agriParcel.getVal(CC.LAND_COVER_CODE).toString().equalsIgnoreCase(CC.LAND_COVER_CODE_200)) {
+				throw new SvException("lpis.error.onlyAgriParcelWithCode200CanBeUsedForCommonUse",
+						svr.getInstanceUser());
+			}
+		}
+	}
 }
