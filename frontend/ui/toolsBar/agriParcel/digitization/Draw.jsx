@@ -34,22 +34,28 @@ const _Draw = ({ processID, farmObjId }) => {
         polygon.enable(config.pathOptions, 12, 15, false);
     };
 
+    const reset = () => {
+        // Reset state, internal and application-wide.
+        setState({ layer: {}, data: {}, geojson: {}, isGuided: false, showForm: false, showPermanentCropForm: false, permanentCropData: {} });
+        store.dispatch({ processID: '', maxZoom: MAP_CONFIG.maxZoom });
+        // We remove the working geometry, save process will add the result.
+        layer.removeFrom && layer.removeFrom(Map);
+        // Disable draw handler.
+        polygon.disable('force');
+        // Refresh the data
+        getFarmMapAssets();
+    }
+
     const disable = (data, geojson) => {
         if (data && data.LAND_COVER_CODE) {
             if (Number(data.LAND_COVER_CODE) >= 400 && Number(data.LAND_COVER_CODE) < 500) {
                 store.dispatch({ processID: _id });
                 setState({ data: {}, geojson, showPermanentCropForm: true, isGuided: false, showForm: false })
+            } else {
+                reset()
             }
         } else {
-            // Reset state, internal and application-wide.
-            setState({ layer: {}, data: {}, geojson: {}, isGuided: false, showForm: false, showPermanentCropForm: false, permanentCropData: {} });
-            store.dispatch({ processID: '', maxZoom: MAP_CONFIG.maxZoom });
-            // We remove the working geometry, save process will add the result.
-            layer.removeFrom && layer.removeFrom(Map);
-            // Disable draw handler.
-            polygon.disable('force');
-            // Refresh the data
-            getFarmMapAssets();
+            reset()
         }
     };
 
