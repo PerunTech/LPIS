@@ -25,6 +25,7 @@ public class CC {
 	public static final String AGRI_PARCEL_OVERLAP = "AGRI_PARCEL_OVERLAP";
 	public static final String MINIMUM_AGRI_PARCEL_SIZE = "MINIMUM_AGRI_PARCEL_SIZE";
 	public static final String OVERLAP_LESS_THAN_MINIMUM = "error.overlap_less_then_minimum";
+	public static final String PARCEL_LESS_THAN_MINIMUM = "error.parcel_less_then_minimum";
 	public static final String LAND_COVER_CODE = "LAND_COVER_CODE";
 	public static final String LAND_COVER_CODE_200 = "200";
 	public static final String FIC = "FIC";
@@ -34,6 +35,7 @@ public class CC {
 	public static final String FARM_ID2 = "FARM_ID2";
 	public static final String PARCEL_ID2 = "PARCEL_ID2";
 	public static final String HAS_OVERLAP = "HAS_OVERLAP";
+	public static final String IGNORE = "IGNORE";
 
 	
 

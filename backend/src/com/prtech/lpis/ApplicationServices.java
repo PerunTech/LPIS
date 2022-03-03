@@ -277,6 +277,17 @@ public class ApplicationServices {
 		}
 	}
 
+	private Geometry preventFarmOverlap(SvReader svr, DbDataObject parcel) throws SvException {
+		DbDataArray assets = getAssetsList(svr, parcel.getParentId(), CC.AGRI_PARCEL);
+		Geometry g = SvGeometry.getGeometry(parcel);
+		for (DbDataObject dbo : assets.getItems()) {
+			Geometry other = SvGeometry.getGeometry(dbo);
+			if (g.intersects(other))
+				g = g.difference(other);
+		}
+		return g;
+	}
+
 	@Path("/save/agriParcel/{token}/{objectId}/{parentId}/{opType}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -309,7 +320,11 @@ public class ApplicationServices {
 						ap.setObjectType(typeId);
 						ap.setParentId(parentId);
 					}
-					isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(geom, ap, svg, false);
+					// prepare the geometry for further processing
+					isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(geom, ap, svg, true);
+					// prevent farm overlaps
+					geom = preventFarmOverlap(svr, ap);
+
 					geom = SvGeometry.getGeometry(ap);
 
 					// Map form values to dbo fields
@@ -321,18 +336,23 @@ public class ApplicationServices {
 						}
 					}
 
-					svg.setAutoCommit(false);
 					if (opType.equals(CC.CUTOFF)) {
 						geom = svg.cutLayerFromGeom(geom, typeId);
+						SvGeometry.setGeometry(ap, geom);
 						if ((boolean) ap.getVal(CC.HAS_OVERLAP))
 							removeOverlaps(svg, ap);
-						SvGeometry.setGeometry(ap, geom);
-					} else {
-						SvGeometry.setGeometry(ap, geom);
+					}
+					// check minimum parcel size
+					if (geom.getArea() < minimumAgriParcelSize)
+						throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), ap,
+								minimumAgriParcelSize));
+
+					if (opType.equals(CC.IGNORE)) {
 						Collection<Geometry> intersections = svg.getRelatedGeometries(geom, typeId,
 								SDIRelation.INTERSECTS, CC.PARENT_ID, ap.getParentId(), true, true, true);
 						createOverlaps(svg, ap, typeId, intersections);
 					}
+
 					svg.setAutoCommit(false);
 					Util.calculateGeometryDerivatives(ap);
 					DbDataArray result = new DbDataArray();
@@ -610,105 +630,6 @@ public class ApplicationServices {
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 
-	@Path("/save/agriParcel/{token}/{objectId}/{opType}")
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces("application/pbf")
-	public StreamingOutput saveAgriParcel(@PathParam("token") String token, @PathParam("objectId") Long objectId,
-			@PathParam("opType") Long opType, MultivaluedMap<String, String> formVals,
-			@Context HttpServletRequest httpRequest) {
-
-		return new StreamingOutput() {
-			public void write(OutputStream stream) throws IOException {
-				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
-				SvReader svr = null;
-				SvGeometry svg = null;
-				DbDataObject ap = null;
-				JsonObject metadata = new JsonObject();
-				try {
-					svr = new SvReader(token);
-					svr.setIncludeGeometries(true);
-					svg = new SvGeometry(svr);
-					ap = new DbDataObject();
-					DbDataArray intersectArr = new DbDataArray();
-					DbDataArray resultArr = new DbDataArray();
-					Geometry geom = null;
-					Long typeId = SvCore.getTypeIdByName("AGRI_PARCEL");
-					DbDataArray fieldSet = SvCore.getFields(typeId);
-					boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
-					metadata = Util.dataToJson(formVals);
-
-					if (isUpdate) {
-						ap = svr.getObjectById(objectId, typeId, null);
-					} else {
-						ap.setObjectId(0L);
-						ap.setObjectType(typeId);
-					}
-
-					// Map form values to dbo fields
-					for (DbDataObject field : fieldSet.getItems()) {
-						String fieldName = field.getVal("FIELD_NAME").toString();
-						if (Util.excludeField(fieldName)
-								&& !"".equalsIgnoreCase(field.getVal("FIELD_TYPE").toString())) {
-							ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
-						}
-					}
-
-					// Run cut operations with neighbour agri parcels.
-					geom = Util.jsonToGeometry(metadata.get("GEOM"));
-					if (opType > 0) {
-						if (opType.equals(1L)) {
-							geom = svg.cutLayerFromGeom(geom, typeId);
-							SvGeometry.setGeometry(ap, geom);
-						} else if (opType.equals(2L)) {
-							SvGeometry.setGeometry(ap, geom);
-							Collection<Geometry> apCol = svg.cutGeomFromLayer(geom, typeId);
-							Iterator<Geometry> it = apCol.iterator();
-							while (it.hasNext()) {
-								Geometry g = it.next();
-								DbDataObject dbo = (DbDataObject) g.getUserData();
-
-								SvGeometry.setGeometry(dbo, g);
-
-								Util.calculateGeometryDerivatives(dbo);
-								intersectArr.addDataItem(dbo);
-								resultArr.addDataItem(dbo);
-							}
-
-							svg.saveGeometry(intersectArr);
-						}
-					} else {
-						SvGeometry.setGeometry(ap, geom);
-					}
-
-					Util.calculateGeometryDerivatives(ap);
-					resultArr.addDataItem(ap);
-
-					svg.saveGeometry(ap);
-					enc.writeDbDataArray(resultArr);
-				} catch (Exception e) {
-					String errMsg = "Failed saving agri parcel. Please see server logs";
-					if (e instanceof SvException)
-						log.error("Failed saving agri parcel. " + ((SvException) e).getFormattedMessage(), e);
-					errMsg = ((SvException) e).getJsonMessage();
-					try {
-						stream.write(errMsg.getBytes(StandardCharsets.UTF_8));
-					} catch (IOException ioe) {
-						log.error("Stream closed, can't write error", ioe);
-					}
-					log.error(errMsg, e);
-				} finally {
-					if (svg != null)
-						svg.close();
-					if (enc != null)
-						enc.close();
-					if (svr != null)
-						svr.close();
-				}
-			};
-		};
-	}
-
 	@Path("/check/PBContainsAP/{token}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -832,42 +753,47 @@ public class ApplicationServices {
 		return Response.status(200).entity(result.toString()).build();
 	}
 
-	DbDataArray getAssetsList(String token, Long objectId, String typeName) throws SvException {
+	/**
+	 * Method to get all assets by parent/farm
+	 * 
+	 * @param svr      The reader which is used for the session
+	 * @param objectId The object id of the farm
+	 * @param typeName The type name of the assets
+	 * @return
+	 * @throws SvException
+	 */
+	DbDataArray getAssetsList(SvReader svr, Long objectId, String typeName) throws SvException {
 		DbDataArray result = new DbDataArray();
-		try (SvReader svr = new SvReader(token);
-				SvWriter svw = new SvWriter(svr);
-				SvGeometry svg = new SvGeometry(svr)) {
 
-			svr.setIncludeGeometries(true);
-			DbDataArray dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
+		svr.setIncludeGeometries(true);
+		DbDataArray dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
 
-			// Filter for campaign year and geometry not null, when cp is requested.
-			if (typeName.equalsIgnoreCase("LAND_USE_PLAN")) {
-				for (DbDataObject dbo : dbArr.getItems()) {
-					String cYear = (String) dbo.getVal("CAMPAIGN_YEAR");
-					String now = String.valueOf(new DateTime().year().get());
-					Geometry g = SvGeometry.getGeometry(dbo);
+		// Filter for campaign year and geometry not null, when cp is requested.
+		if (typeName.equalsIgnoreCase("LAND_USE_PLAN")) {
+			for (DbDataObject dbo : dbArr.getItems()) {
+				String cYear = (String) dbo.getVal("CAMPAIGN_YEAR");
+				String now = String.valueOf(new DateTime().year().get());
+				Geometry g = SvGeometry.getGeometry(dbo);
 
-					if (cYear != null && cYear.equals(now) && g != null) {
-						result.addDataItem(dbo);
-					}
+				if (cYear != null && cYear.equals(now) && g != null) {
+					result.addDataItem(dbo);
 				}
-			} else if (typeName.equalsIgnoreCase(CC.AGRI_PARCEL)) {
-				result.setItems(dbArr.getItems());
-				DbDataArray dba = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(CC.COMMON_USE), null);
-				for (DbDataObject dbo : dba.getItems()) {
-					DbDataObject dbp = svr.getObjectById((Long) dbo.getVal(CC.PARCEL_ID),
-							SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
-					if (dbp != null) {
-						dbp.setVal(CC.ALLOWED_AREA, dbo.getVal(CC.ALLOWED_AREA));
-						dbp.setVal(CC.COMMON_USE, true);
-						result.addDataItem(dbp);
-					}
+			}
+		} else if (typeName.equalsIgnoreCase(CC.AGRI_PARCEL)) {
+			result.setItems(dbArr.getItems());
+			DbDataArray dba = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(CC.COMMON_USE), null);
+			for (DbDataObject dbo : dba.getItems()) {
+				DbDataObject dbp = svr.getObjectById((Long) dbo.getVal(CC.PARCEL_ID),
+						SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
+				if (dbp != null) {
+					dbp.setVal(CC.ALLOWED_AREA, dbo.getVal(CC.ALLOWED_AREA));
+					dbp.setVal(CC.COMMON_USE, true);
+					result.addDataItem(dbp);
 				}
-
 			}
 
 		}
+
 		return result;
 
 	}
@@ -879,8 +805,9 @@ public class ApplicationServices {
 			@PathParam("typeName") final String typeName, @Context HttpServletRequest httpRequest) {
 
 		final DbDataArray result = new DbDataArray();
-		try {
-			result.setItems(getAssetsList(token, objectId, typeName).getItems());
+		try (SvReader svr = new SvReader(token)) {
+			result.setItems(getAssetsList(svr, objectId, typeName).getItems());
+
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToSaveObject");
