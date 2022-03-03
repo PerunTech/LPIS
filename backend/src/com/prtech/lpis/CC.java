@@ -33,6 +33,7 @@ public class CC {
 	public static final String PARCEL_ID1 = "PARCEL_ID1";
 	public static final String FARM_ID2 = "FARM_ID2";
 	public static final String PARCEL_ID2 = "PARCEL_ID2";
+	public static final String HAS_OVERLAP = "HAS_OVERLAP";
 
 	
 

@@ -574,7 +574,7 @@ public class DbInit implements IDbInit {
 		dbf28.setLabel_code("agri_parcel.parcel_intersect");
 		
 		DbDataField dbf30 = new DbDataField();
-		dbf30.setDbFieldName("HAS_OVERLAP");
+		dbf30.setDbFieldName(CC.HAS_OVERLAP);
 		dbf30.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf30.setIsNull(true);
 		dbf30.setLabel_code("agri_parcel.has_overlap");
