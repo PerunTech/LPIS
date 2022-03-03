@@ -57,8 +57,11 @@ import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
 import com.prtech.svarog_common.ResponseHandler.MessageType;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.util.GeometryExtracter;
 
 @Path("/lpis")
 public class ApplicationServices {
@@ -208,9 +211,14 @@ public class ApplicationServices {
 	private DbDataObject updateOverlap(SvGeometry svg, DbDataObject agriParcel, Geometry related,
 			DbDataArray existingOverlaps, DbDataArray overlapParcels) throws SvException {
 		Geometry geom = SvGeometry.getGeometry(agriParcel);
-		Geometry overlap = geom.intersection(related);
+
+		List gl = GeometryExtracter.extract(geom.intersection(related), Polygon.class);
+		Geometry overlap = null;
+		if (gl.size() > 0)
+			overlap = SvUtil.sdiFactory.buildGeometry(gl);
+
 		DbDataObject relatedParcel = (DbDataObject) related.getUserData();
-		if (overlap.getArea() < minimumAgriParcelSize)
+		if (overlap == null || overlap.getArea() < minimumAgriParcelSize)
 			throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), relatedParcel, overlap));
 		DbDataObject overlapDbo = getOverlapDbo(existingOverlaps, agriParcel, relatedParcel);
 		SvGeometry.setGeometry(overlapDbo, overlap);
@@ -266,15 +274,29 @@ public class ApplicationServices {
 		}
 	}
 
-	private void removeOverlaps(SvGeometry svg, DbDataObject ap) throws SvException {
-		try (SvWriter svw = new SvWriter(svg)) {
+	private DbDataArray removeOverlaps(SvGeometry svg, DbDataObject ap) throws SvException {
+		DbDataArray updatedParcels = new DbDataArray();
+		try (SvWriter svw = new SvWriter(svg); SvReader svr = new SvReader(svg)) {
 			DbDataArray overlaps = getOverlaps(svg, ap);
+
 			if (overlaps.size() > 0) {
 				svw.setAutoCommit(false);
 				svw.deleteObjects(overlaps);
+				for (DbDataObject ovr : overlaps.getItems()) {
+					Long otherParcelId;
+					if (ovr.getVal(CC.PARCEL_ID1).equals(ap.getObjectId()))
+						otherParcelId = (Long) ovr.getVal(CC.PARCEL_ID2);
+					else
+						otherParcelId = (Long) ovr.getVal(CC.PARCEL_ID1);
+					DbDataObject dbp = svr.getObjectById(otherParcelId, ap.getObjectType(), null);
+					dbp.setVal(CC.HAS_OVERLAP, false);
+					updatedParcels.addDataItem(dbp);
+				}
 			}
+
 			ap.setVal(CC.HAS_OVERLAP, false);
 		}
+		return updatedParcels;
 	}
 
 	private Geometry preventFarmOverlap(SvReader svr, DbDataObject parcel) throws SvException {
@@ -325,7 +347,7 @@ public class ApplicationServices {
 					// prevent farm overlaps
 					geom = preventFarmOverlap(svr, ap);
 
-					geom = SvGeometry.getGeometry(ap);
+					SvGeometry.setGeometry(ap, geom);
 
 					// Map form values to dbo fields
 					for (DbDataObject field : fieldSet.getItems()) {
@@ -336,11 +358,12 @@ public class ApplicationServices {
 						}
 					}
 
+					DbDataArray result = new DbDataArray();
 					if (opType.equals(CC.CUTOFF)) {
 						geom = svg.cutLayerFromGeom(geom, typeId);
 						SvGeometry.setGeometry(ap, geom);
 						if ((boolean) ap.getVal(CC.HAS_OVERLAP))
-							removeOverlaps(svg, ap);
+							result.setItems(removeOverlaps(svg, ap).getItems());
 					}
 					// check minimum parcel size
 					if (geom.getArea() < minimumAgriParcelSize)
@@ -355,7 +378,6 @@ public class ApplicationServices {
 
 					svg.setAutoCommit(false);
 					Util.calculateGeometryDerivatives(ap);
-					DbDataArray result = new DbDataArray();
 					result.addDataItem(ap);
 					svg.saveGeometry(ap);
 					svg.dbCommit();
