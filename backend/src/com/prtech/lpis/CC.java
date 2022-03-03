@@ -23,6 +23,8 @@ public class CC {
 	public static final String FIELD_NAME = "FIELD_NAME";
 	public static final String FIELD_TYPE = "FIELD_TYPE";
 	public static final String AGRI_PARCEL_OVERLAP = "AGRI_PARCEL_OVERLAP";
+	public static final String MINIMUM_AGRI_PARCEL_SIZE = "MINIMUM_AGRI_PARCEL_SIZE";
+	public static final String OVERLAP_LESS_THAN_MINIMUM = "error.overlap_less_then_minimum";
 	
 	
 

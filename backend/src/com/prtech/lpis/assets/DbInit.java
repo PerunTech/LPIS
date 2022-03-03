@@ -111,13 +111,69 @@ public class DbInit implements IDbInit {
 		dbf7.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":false,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":true}}");
 		
-		DbDataField[] fieldList = new DbDataField[7];
+		
+		/* C1N, [system, form-hidden] */
+		DbDataField dbf11 = new DbDataField();
+		dbf11.setDbFieldName("FARM_ID1");
+		dbf11.setDbFieldType(DbFieldType.NUMERIC);
+		dbf11.setIsPrimaryKey(true);
+		dbf11.setDbFieldSize(18);
+		dbf11.setDbFieldScale(0);
+		dbf11.setIndexName("FARM_ID1_IDX");
+		dbf11.setIsNull(false);
+		dbf11.setLabel_code("overlap.farm1");
+		dbf11.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+		
+		/* C1N, [system, form-hidden] */
+		DbDataField dbf12 = new DbDataField();
+		dbf12.setDbFieldName("PARCEL_ID1");
+		dbf12.setDbFieldType(DbFieldType.NUMERIC);
+		dbf12.setIsPrimaryKey(true);
+		dbf12.setDbFieldSize(18);
+		dbf12.setDbFieldScale(0);
+		dbf12.setIsNull(false);
+		dbf12.setLabel_code("overlap.parcel_id1");
+		dbf12.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+		
+		/* C1N, [system, form-hidden] */
+		DbDataField dbf13 = new DbDataField();
+		dbf13.setDbFieldName("FARM_ID2");
+		dbf13.setDbFieldType(DbFieldType.NUMERIC);
+		dbf13.setIsPrimaryKey(true);
+		dbf13.setDbFieldSize(18);
+		dbf13.setDbFieldScale(0);
+		dbf13.setIndexName("FARM_ID2_IDX");
+		dbf13.setIsNull(false);
+		dbf13.setLabel_code("overlap.farm1");
+		dbf13.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+		
+		/* C1N, [system, form-hidden] */
+		DbDataField dbf14 = new DbDataField();
+		dbf14.setDbFieldName("PARCEL_ID2");
+		dbf14.setDbFieldType(DbFieldType.NUMERIC);
+		dbf14.setIsPrimaryKey(true);
+		dbf14.setDbFieldSize(18);
+		dbf14.setDbFieldScale(0);
+		dbf14.setIsNull(false);
+		dbf14.setLabel_code("overlap.parcel_id1");
+		dbf14.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+		
+		DbDataField[] fieldList = new DbDataField[10];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
 		fieldList[3] = dbf4;
 		fieldList[4] = dbf5;
 		fieldList[5] = dbf7;
+		
+		fieldList[6] = dbf11;
+		fieldList[7] = dbf12;
+		fieldList[8] = dbf13;
+		fieldList[9] = dbf14;
 		dbt.setDbTableFields(fieldList);
 		
 		return dbt;
@@ -518,18 +574,14 @@ public class DbInit implements IDbInit {
 		dbf28.setLabel_code("agri_parcel.parcel_intersect");
 		
 		DbDataField dbf30 = new DbDataField();
-		dbf30.setDbFieldName("OVERLAP_ID");
-		dbf30.setDbFieldType(DbFieldType.NUMERIC);
-		dbf30.setDbFieldSize(18);
-		dbf30.setDbFieldScale(0);
-		dbf30.setRefereftialField(Sv.OBJECT_ID);
-		dbf30.setReferentialTable(CC.AGRI_PARCEL_OVERLAP);
+		dbf30.setDbFieldName("HAS_OVERLAP");
+		dbf30.setDbFieldType(DbFieldType.BOOLEAN);
 		dbf30.setIsNull(true);
-		dbf30.setLabel_code("agri_parcel.overlap_id");
+		dbf30.setLabel_code("agri_parcel.has_overlap");
 		dbf30.setSort_order(120);
 		
 		
-		DbDataField[] fieldList = new DbDataField[29];
+		DbDataField[] fieldList = new DbDataField[30];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
@@ -564,6 +616,7 @@ public class DbInit implements IDbInit {
 		fieldList[26] = dbf27;
 		fieldList[27] = dbf28;
 		fieldList[28] = dbf29;
+		fieldList[29] = dbf30;
 
 		dbt.setDbTableFields(fieldList);
 		

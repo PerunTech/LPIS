@@ -40,6 +40,7 @@ import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvExecManager;
 import com.prtech.svarog.SvGeometry;
+import com.prtech.svarog.SvParameter;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSDITile;
 import com.prtech.svarog.SvSDITile.SDIRelation;
@@ -62,6 +63,8 @@ import com.vividsolutions.jts.geom.Point;
 @Path("/lpis")
 public class ApplicationServices {
 
+	static int minimumAgriParcelSize;
+
 	static final Logger log4j = SvConf.getLogger(ApplicationServices.class);
 	static int precisionScale = 2;
 
@@ -69,6 +72,12 @@ public class ApplicationServices {
 		int i = (int) (SvConf.getSDIPrecision() / 10);
 		String s = Integer.toString(i);
 		precisionScale = s.length();
+		try {
+			SvParameter.getSysParam(CC.MINIMUM_AGRI_PARCEL_SIZE, 100);
+		} catch (SvException e) {
+			log4j.error("Minimum Agri parcel size not size, defaulting to 100 sqm", e);
+			minimumAgriParcelSize = 100;
+		}
 	}
 
 	private static final Logger log = LogManager.getLogger(ApplicationServices.class.getName());
@@ -167,6 +176,30 @@ public class ApplicationServices {
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 	}
 
+	private DbDataArray createOverlaps(SvGeometry svg, DbDataObject agriParcel, Long typeId) throws SvException {
+		DbDataArray overlapDbos = new DbDataArray();
+		Geometry geom = SvGeometry.getGeometry(agriParcel);
+		Collection<Geometry> intersections = svg.getRelatedGeometries(geom, typeId,
+				SDIRelation.INTERSECTS, CC.PARENT_ID, agriParcel.getParentId(), true, true, true);
+
+		for (Geometry related : intersections) {
+			Geometry overlap = geom.intersection(related);
+			DbDataObject relatedDbo = (DbDataObject)related.getUserData();
+			if(overlap.getArea()<minimumAgriParcelSize)
+				throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM,svg.getInstanceUser(),relatedDbo,overlap));
+			
+			DbDataObject overlapDbo = new DbDataObject(SvCore.getTypeIdByName(CC.AGRI_PARCEL_OVERLAP));
+			SvGeometry.setGeometry(overlapDbo, overlap);
+			overlapDbo.setVal("FARM_ID1", agriParcel.getParentId());
+			overlapDbo.setVal("FARM_PARCEL1", agriParcel.getObjectId());
+			overlapDbo.setVal("FARM_ID2", relatedDbo.getParentId());
+			overlapDbo.setVal("FARM_PARCEL2", relatedDbo.getObjectId());
+			overlapDbos.addDataItem(overlapDbo);
+		}
+		return overlapDbos;
+
+	};
+
 	@Path("/save/agriParcel/{token}/{objectId}/{parentId}/{opType}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -184,10 +217,9 @@ public class ApplicationServices {
 
 					svr.setIncludeGeometries(true);
 					ap = new DbDataObject();
-					DbDataArray intersectArr = new DbDataArray();
-					DbDataArray resultArr = new DbDataArray();
+					DbDataArray parcelsToSave = new DbDataArray();
 					Geometry geom = null;
-					Long typeId = SvCore.getTypeIdByName("AGRI_PARCEL");
+					Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 					DbDataArray fieldSet = SvCore.getFields(typeId);
 					boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
 					metadata = Util.dataToJson(formVals);
@@ -205,9 +237,9 @@ public class ApplicationServices {
 
 					// Map form values to dbo fields
 					for (DbDataObject field : fieldSet.getItems()) {
-						String fieldName = field.getVal("FIELD_NAME").toString();
+						String fieldName = field.getVal(Sv.FIELD_NAME).toString();
 						if (Util.excludeField(fieldName)
-								&& !"".equalsIgnoreCase(field.getVal("FIELD_TYPE").toString())) {
+								&& !"".equalsIgnoreCase(field.getVal(Sv.FIELD_TYPE).toString())) {
 							ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
 						}
 					}
@@ -217,13 +249,14 @@ public class ApplicationServices {
 						SvGeometry.setGeometry(ap, geom);
 					} else {
 						SvGeometry.setGeometry(ap, geom);
+						parcelsToSave.setItems(createOverlaps(svg, ap, typeId).getItems());
 					}
 
 					Util.calculateGeometryDerivatives(ap);
-					resultArr.addDataItem(ap);
-					svg.saveGeometry(ap);
+					parcelsToSave.addDataItem(ap);
+					svg.saveGeometry(parcelsToSave);
 
-					enc.writeDbDataArray(resultArr);
+					enc.writeDbDataArray(parcelsToSave);
 				} catch (Exception e) {
 					String errMsg = "Failed saving agri parcel. Please see server logs";
 					if (e instanceof SvException)
@@ -239,7 +272,8 @@ public class ApplicationServices {
 					if (enc != null)
 						enc.close();
 				}
-			};
+			}
+
 		};
 	}
 
@@ -424,18 +458,18 @@ public class ApplicationServices {
 			DbDataArray result = new CommonUse().getCommonUseParcels(parcelId, svr);
 			if (parentId.equals(0L))
 				commonUse = result;
-			else
-			{
+			else {
 				result = result.applyFilter(new parentFilter(parentId));
-				if(result.size()>0)
+				if (result.size() > 0)
 					commonUse = result.get(0);
 			}
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToSaveObject");
 		}
-		//ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, );
-		return Response.status(200).entity(commonUse.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
+		// ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, );
+		return Response.status(200).entity(commonUse.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON)
+				.build();
 
 	}
 
