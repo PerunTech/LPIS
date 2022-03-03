@@ -35,9 +35,11 @@ const _Draw = ({ processID, farmObjId }) => {
     };
 
     const disable = (data, geojson) => {
-        if (data && data.LAND_COVER_CODE && strcmp(data.LAND_COVER_CODE, '400')) {
-            store.dispatch({ processID: _id });
-            setState({ data: {}, geojson, showPermanentCropForm: true, isGuided: false, showForm: false })
+        if (data && data.LAND_COVER_CODE) {
+            if (Number(data.LAND_COVER_CODE) >= 400 && Number(data.LAND_COVER_CODE) < 500) {
+                store.dispatch({ processID: _id });
+                setState({ data: {}, geojson, showPermanentCropForm: true, isGuided: false, showForm: false })
+            }
         } else {
             // Reset state, internal and application-wide.
             setState({ layer: {}, data: {}, geojson: {}, isGuided: false, showForm: false, showPermanentCropForm: false, permanentCropData: {} });
