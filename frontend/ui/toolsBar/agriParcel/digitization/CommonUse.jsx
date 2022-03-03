@@ -34,6 +34,10 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
         if (res.data.ALLOWED_AREA) {
           const formData = { commonUseType: 'CLAIMED_AREA', value: String(res.data.ALLOWED_AREA), objectId: res.data.object_id }
           setState({ data: formData, isGuided: false, showForm: true, selectedParcel })
+        } else if (res.data.PERCENTAGE) {
+          const value = `${String(res.data.OWN_PARCEL_PARTS)}/${String(res.data.TOTAL_PARCEL_PARTS)}`
+          const formData = { commonUseType: 'CLAIMED_RATIO', value, objectId: res.data.object_id }
+          setState({ data: formData, isGuided: false, showForm: true, selectedParcel })
         }
       }
     }).catch(err => {
