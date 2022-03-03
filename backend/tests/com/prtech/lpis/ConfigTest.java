@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvException;
+import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSecurity;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog_common.DbDataArray;
@@ -77,13 +78,16 @@ public class ConfigTest {
 				url != null && url.substring(urlLen - 3, urlLen).equals(".js"));
 	}
 
+	@Test
 	public void getAssets() throws SvException {
 		ApplicationServices as = new ApplicationServices();
 
 		String token = getUserSessionIdForTestPurpose();
 		if (!token.equals(CC.EMPTY_STRING)) {
-			DbDataArray rs = as.getAssetsList(token, 673774999L, CC.AGRI_PARCEL);
-			log.error(rs.toSimpleJson().toString());
+			try (SvReader svr = new SvReader(token)) {
+				DbDataArray rs = as.getAssetsList(svr, 673774999L, CC.AGRI_PARCEL);
+				log.error(rs.toSimpleJson().toString());
+			}
 		}
 	}
 
