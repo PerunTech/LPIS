@@ -1,35 +1,35 @@
 import { React, Loading, elements } from 'perun-core';
-import { core, ui, data, tools, config as cfg } from '../../../../Spatial';
-import { config, editAPMsg } from '../Config';
-import { getFarmMapAssets } from '../../../Util';
+import { core, ui, tools, config as cfg } from '../../../../Spatial';
+import { config, editAPMsg, permanentCropSchema } from '../Config';
+import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { GuideForm } from '../GuideForm';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
-const { Map, store, factory, http, util } = core;
-const { geobuf, protobuf } = data;
+const { Map, store, factory, http } = core;
 const { edit } = tools;
 const { Icon, DrawActions } = ui;
+const { alertUser } = elements;
 const { useReducer } = React;
 
 const _id = 'editAP';
 const _layerGroup = factory.layerGroup();
-const _style = { color: '#eed000', fillColor: '#FFFFFF' };
 
 const _Edit = ({ processID, farmObjId, agriParcels }) => {
-  const [{ layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
+  const [{ layer, geojson, data, permanentCropData, loading, isGuided, showForm, showPermanentCropForm }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }),
+    { layer: {}, data: {}, geojson: {}, permanentCropData: {}, loading: false, isGuided: false, showForm: false, showPermanentCropForm: false });
 
   const enable = () => {
     if (agriParcels.length > 0) {
       agriParcels.forEach(sc => _setBlockEvents(sc, agriParcels))
       store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
-      setState({ isGuided: true, showForm: false, data: {}, layer: {} })
+      setState({ isGuided: true, showForm: false, showPermanentCropForm: false, data: {}, permanentCropData: {}, layer: {} })
       _editAP()
     } else {
-      elements.alertUser(true,
+      alertUser(true,
         'warning',
         'Не се пронајдени земјоделски парцели.',
         'Додадете земјоделски парцели пред да ја користите алатката за менување.',
@@ -37,15 +37,23 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
     }
   };
 
-  const disable = () => {
-    Map.off('click');
-    // Reset state, internal and application-wide.
-    setState({ layer: {}, data: {}, isGuided: false, showForm: false, loading: false });
-    store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
-    // We remove the working geometry, save process will add the result.
-    layer.removeFrom && layer.removeFrom(Map);
-    getFarmMapAssets()
-    _stopEditAP()
+  const disable = (data, geojson) => {
+    console.log(data)
+    if (data && data.LAND_COVER_CODE) {
+      if (Number(data.LAND_COVER_CODE) >= 400 && Number(data.LAND_COVER_CODE) < 500) {
+        store.dispatch({ processID: _id })
+        setState({ data: {}, geojson, showPermanentCropForm: true, isGuided: false, showForm: false })
+      }
+    } else {
+      Map.off('click');
+      // Reset state, internal and application-wide.
+      setState({ layer: {}, data: {}, geojson: {}, permanentCropData: {}, isGuided: false, showForm: false, showPermanentCropForm: false, loading: false });
+      store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
+      // We remove the working geometry, save process will add the result.
+      layer.removeFrom && layer.removeFrom(Map);
+      getFarmMapAssets()
+      _stopEditAP()
+    }
   }
 
   const _editAP = () => {
@@ -59,31 +67,6 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
   const _stopEditAP = () => {
     _layerGroup.clearLayers().removeFrom(Map);
     edit.polygon.disable();
-  }
-
-  const _fetchBlocks = id => {
-    http.call('render_pb', {
-      url: '/spatial/geometry/get/bbox/{init.token}/AGRI_PARCEL/' + Map.getBBox(),
-    })
-      .then(response => _renderBlocks(id, geobuf.decode(protobuf(response))))
-      .catch(err => console.log(err));
-  }
-
-  const _renderBlocks = (id, jsonArr) => {
-    // filter layers, remove old app layers entries, will update with the new geojson set.
-    const mapLayers = store.getState().farmRegistry?.agriParcels;
-
-    jsonArr.features.map(feature => {
-      mapLayers[feature.id] && mapLayers[feature.id].removeFrom(Map);
-
-      factory.geoJSON(feature, {
-        onEachFeature: function (feature, layer) {
-          id === _id && _setBlockEvents(layer);
-          _layerGroup.addLayer(layer);
-        },
-        style: _style
-      });
-    })
   }
 
   const _setBlockEvents = (layer, agriParcels) => {
@@ -107,19 +90,12 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
     layer.on('pm:edit', e => setState({ layer: e.target }));
   }
 
-  const _simplifyMultipolygon = layer => {
-    let latlngArr = layer._latlngs
-    let simpleLatlngArr = latlngArr[0];
-    latlngArr.length = 0
-
-    Object.keys(simpleLatlngArr).forEach(key =>
-      latlngArr.push(simpleLatlngArr[key]));
-
-    return layer;
-  }
-
   const onChange = ({ formData }) => {
     setState({ data: { ...data, ...formData } });
+  }
+
+  const onPermanentCropChange = ({ formData }) => {
+    setState({ permanentCropData: { ...permanentCropData, ...formData } });
   }
 
   const onSubmit = ({ formData }) => {
@@ -130,6 +106,48 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
       parent_id: farmObjId,
       GEOM: factory.GeoJSON.fromLayer(layer)
     }), disable);
+  }
+
+  const submitPermanentCrop = data => {
+    const url = `/lpis/save/permanentCrop/{init.token}/0/${farmObjId}`
+    http.call(_id, { url, method: 'post', data, responseType: 'arraybuffer' }).then(res => {
+      const parsedResponse = bufferToString(res.data)
+      let title = 'Успешно додадени информации за повеќегодишна култура'
+      if (isJSON(parsedResponse)) {
+        const jsonResponse = JSON.parse(parsedResponse)
+        alertUser(true, jsonResponse.type?.toLowerCase() || 'success', jsonResponse.label_code || title, '', () => disable())
+      } else {
+        alertUser(true, 'success', title, '', () => disable())
+      }
+    }).catch(err => {
+      const { response } = err
+      const parsedResponse = bufferToString(response)
+      console.error(parsedResponse)
+      alertUser(true, 'error', 'Настана грешка', '', () => disable())
+    })
+  }
+
+  const onPermanentCropSubmit = ({ formData }) => {
+    // Clone the object first, don't use it directly as a function argument
+    const data = formData
+    const parcelId = geojson[0].feature.id
+    const isEmpty = Object.values(data).every(v => v === null || v === undefined || v === '')
+    // If the object is empty, alert the user
+    if (isEmpty) {
+      alertUser(true, 'info', 'Внесете вредности и обидете се повторно')
+    } else {
+      // Parse every value as an integer and remove the empty ones
+      Object.keys(data).forEach(k => {
+        if (data[k]) {
+          data[k] = parseInt(data[k])
+        } else {
+          delete data[k]
+        }
+      })
+      // Append the parcel object ID to the form data object
+      Reflect.set(data, 'PARCEL_ID', Number(parcelId))
+      submitPermanentCrop(JSON.stringify(data))
+    }
   }
 
   const renderGuideForm = () => {
@@ -144,13 +162,26 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
     )
   }
 
+  const renderPermanentCropForm = () => {
+    const { schema } = permanentCropSchema
+    return <Form isSimple formTitle='Повеќегодишна култура'
+      onSubmit={onPermanentCropSubmit}
+      formData={permanentCropData}
+      onChange={onPermanentCropChange}
+      schema={schema}
+    ><DrawActions cancel={disable} />
+    </Form>
+  }
+
   const renderComponent = () => {
     let componentToRender = null
 
-    if (isGuided && !showForm) {
+    if (isGuided && !showForm && !showPermanentCropForm) {
       componentToRender = renderGuideForm()
-    } else if (showForm && !isGuided) {
+    } else if (showForm && !isGuided && !showPermanentCropForm) {
       componentToRender = renderForm()
+    } else if (showPermanentCropForm && !showForm && !isGuided) {
+      componentToRender = renderPermanentCropForm()
     }
 
     return componentToRender
