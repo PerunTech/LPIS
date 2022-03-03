@@ -38,7 +38,6 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
   };
 
   const disable = (data, geojson) => {
-    console.log(data)
     if (data && data.LAND_COVER_CODE) {
       if (Number(data.LAND_COVER_CODE) >= 400 && Number(data.LAND_COVER_CODE) < 500) {
         store.dispatch({ processID: _id })
@@ -131,6 +130,7 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
     // Clone the object first, don't use it directly as a function argument
     const data = formData
     const parcelId = geojson[0].feature.id
+    const oldId = geojson[0].feature.properties.OLD_ID || 0
     const isEmpty = Object.values(data).every(v => v === null || v === undefined || v === '')
     // If the object is empty, alert the user
     if (isEmpty) {
@@ -144,8 +144,9 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
           delete data[k]
         }
       })
-      // Append the parcel object ID to the form data object
+      // Append the parcel object ID & the OLD ID to the form data object
       Reflect.set(data, 'PARCEL_ID', Number(parcelId))
+      Reflect.set(data, 'LPIS_PARCEL_ID', Number(oldId))
       submitPermanentCrop(JSON.stringify(data))
     }
   }
