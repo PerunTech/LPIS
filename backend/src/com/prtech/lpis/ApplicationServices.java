@@ -449,10 +449,8 @@ public class ApplicationServices {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCommonUse(@PathParam("token") final String token, @PathParam("parentId") final Long parentId,
-			@PathParam("parcelId") final Long parcelId, MultivaluedMap<String, String> formVals,
-			@Context HttpServletRequest httpRequest) {
+			@PathParam("parcelId") final Long parcelId, @Context HttpServletRequest httpRequest) {
 
-		String errMsg = "";
 		Jsonable commonUse = null;
 		try (SvReader svr = new SvReader(token)) {
 			DbDataArray result = new CommonUse().getCommonUseParcels(parcelId, svr);
@@ -465,7 +463,7 @@ public class ApplicationServices {
 			}
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
-					"error.perun.failedToSaveObject");
+					"error.perun.failedToGetObject");
 		}
 		// ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, );
 		return Response.status(200).entity(commonUse.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON)
