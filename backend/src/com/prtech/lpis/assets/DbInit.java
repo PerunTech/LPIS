@@ -760,14 +760,6 @@ public class DbInit implements IDbInit {
 		dbl.setVal("LINK_OBJ_TYPE_1", CC.AGRI_PARCEL);
 		dbl.setVal("LINK_OBJ_TYPE_2", CC.AGRI_PARCEL);
 		defaultObjests.add(dbl);
-		DbDataObject db2 = new DbDataObject();
-		db2.setObjectType(svCONST.OBJECT_TYPE_LINK_TYPE);
-		db2.setStatus(svCONST.STATUS_VALID);
-		db2.setVal("LINK_TYPE", "AGRI_PARCEL_FULL_OVERLAP");
-		db2.setVal("LINK_TYPE_DESCRIPTION", "Link between overlap object and agri parcel");
-		db2.setVal("LINK_OBJ_TYPE_1", "AGRI_PARCEL_OVERLAP");
-		db2.setVal("LINK_OBJ_TYPE_2", CC.AGRI_PARCEL);
-		defaultObjests.add(db2);
 		return defaultObjests;
 	}
 }
