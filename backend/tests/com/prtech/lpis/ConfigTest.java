@@ -82,13 +82,13 @@ public class ConfigTest {
 	public void getAssets() throws SvException {
 		ApplicationServices as = new ApplicationServices();
 
-		String token = getUserSessionIdForTestPurpose();
+		/*String token = getUserSessionIdForTestPurpose();
 		if (!token.equals(CC.EMPTY_STRING)) {
 			try (SvReader svr = new SvReader(token)) {
 				DbDataArray rs = as.getAssetsList(svr, 673774999L, CC.AGRI_PARCEL);
 				log.error(rs.toSimpleJson().toString());
 			}
-		}
+		}*/
 	}
 
 	@Test
