@@ -27,7 +27,9 @@ public class CC {
 	public static final String OVERLAP_LESS_THAN_MINIMUM = "error.overlap_less_then_minimum";
 	public static final String LAND_COVER_CODE = "LAND_COVER_CODE";
 	public static final String LAND_COVER_CODE_200 = "200";
-	
+	public static final String FIC = "FIC";
+	public static final String FARM = "FARM";
+
 	
 
 }
