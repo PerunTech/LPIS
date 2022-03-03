@@ -114,7 +114,7 @@ public class DbInit implements IDbInit {
 		
 		/* C1N, [system, form-hidden] */
 		DbDataField dbf11 = new DbDataField();
-		dbf11.setDbFieldName("FARM_ID1");
+		dbf11.setDbFieldName(CC.FARM_ID1);
 		dbf11.setDbFieldType(DbFieldType.NUMERIC);
 		dbf11.setIsPrimaryKey(true);
 		dbf11.setDbFieldSize(18);
@@ -127,7 +127,7 @@ public class DbInit implements IDbInit {
 		
 		/* C1N, [system, form-hidden] */
 		DbDataField dbf12 = new DbDataField();
-		dbf12.setDbFieldName("PARCEL_ID1");
+		dbf12.setDbFieldName(CC.PARCEL_ID1);
 		dbf12.setDbFieldType(DbFieldType.NUMERIC);
 		dbf12.setIsPrimaryKey(true);
 		dbf12.setDbFieldSize(18);
@@ -139,7 +139,7 @@ public class DbInit implements IDbInit {
 		
 		/* C1N, [system, form-hidden] */
 		DbDataField dbf13 = new DbDataField();
-		dbf13.setDbFieldName("FARM_ID2");
+		dbf13.setDbFieldName(CC.FARM_ID2);
 		dbf13.setDbFieldType(DbFieldType.NUMERIC);
 		dbf13.setIsPrimaryKey(true);
 		dbf13.setDbFieldSize(18);
@@ -152,7 +152,7 @@ public class DbInit implements IDbInit {
 		
 		/* C1N, [system, form-hidden] */
 		DbDataField dbf14 = new DbDataField();
-		dbf14.setDbFieldName("PARCEL_ID2");
+		dbf14.setDbFieldName(CC.PARCEL_ID2);
 		dbf14.setDbFieldType(DbFieldType.NUMERIC);
 		dbf14.setIsPrimaryKey(true);
 		dbf14.setDbFieldSize(18);

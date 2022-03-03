@@ -29,6 +29,10 @@ public class CC {
 	public static final String LAND_COVER_CODE_200 = "200";
 	public static final String FIC = "FIC";
 	public static final String FARM = "FARM";
+	public static final String FARM_ID1 = "FARM_ID1";
+	public static final String PARCEL_ID1 = "PARCEL_ID1";
+	public static final String FARM_ID2 = "FARM_ID2";
+	public static final String PARCEL_ID2 = "PARCEL_ID2";
 
 	
 

@@ -190,10 +190,10 @@ public class ApplicationServices {
 
 			DbDataObject overlapDbo = new DbDataObject(SvCore.getTypeIdByName(CC.AGRI_PARCEL_OVERLAP));
 			SvGeometry.setGeometry(overlapDbo, overlap);
-			overlapDbo.setVal("FARM_ID1", agriParcel.getParentId());
-			overlapDbo.setVal("FARM_PARCEL1", agriParcel.getObjectId());
-			overlapDbo.setVal("FARM_ID2", relatedDbo.getParentId());
-			overlapDbo.setVal("FARM_PARCEL2", relatedDbo.getObjectId());
+			overlapDbo.setVal(CC.FARM_ID1, agriParcel.getParentId());
+			overlapDbo.setVal(CC.PARCEL_ID1, agriParcel.getObjectId());
+			overlapDbo.setVal(CC.FARM_ID2, relatedDbo.getParentId());
+			overlapDbo.setVal(CC.PARCEL_ID2, relatedDbo.getObjectId());
 			Util.calculateGeometryDerivatives(overlapDbo);
 			overlapDbos.addDataItem(overlapDbo);
 
