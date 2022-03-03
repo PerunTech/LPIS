@@ -6,6 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.ws.rs.core.MultivaluedMap;
 
 import com.google.gson.JsonObject;
+import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvLock;
@@ -68,8 +69,15 @@ public class CommonUse {
 
 	public DbDataArray getCommonUseParcels(Long parcelId, SvReader svr) throws SvException {
 		DbSearchCriterion cr = new DbSearchCriterion(CC.PARCEL_ID, DbCompareOperand.EQUAL, parcelId);
-		return svr.getObjects(new DbSearchExpression().addDbSearchItem(cr), SvReader.getTypeIdByName(CC.COMMON_USE),
-				null, 0, 0);
+
+		DbDataArray cus = svr.getObjects(new DbSearchExpression().addDbSearchItem(cr),
+				SvReader.getTypeIdByName(CC.COMMON_USE), null, 0, 0);
+		for (DbDataObject dbo : cus.getItems()) {
+			DbDataObject farm = svr.getObjectById(dbo.getParentId(), SvCore.getTypeIdByName("FARMER"), null);
+			dbo.setVal("FIC", farm.getVal("FIC"));
+		}
+
+		return cus;
 	}
 
 	public void saveCommonUseObject(DbDataObject dbo, Long parentId, Long parcelId,
@@ -109,7 +117,7 @@ public class CommonUse {
 			}
 		}
 	}
-	
+
 	public void commonUseChecksBeforeSave(Long parcelId, SvReader svr) throws SvException {
 		DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 		if (agriParcel != null) {
