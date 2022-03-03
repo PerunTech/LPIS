@@ -6,6 +6,7 @@ import { Guidance } from '../Guidance';
 
 const { Map, store, http } = core;
 const { Icon } = ui;
+const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'help';
 
@@ -14,20 +15,20 @@ const _Info = ({ processID }) => {
 
   const enable = () => {
     store.dispatch({ processID: _id });
-    // Click handler for selection of location and creation of crop parcel geometry.
     Map.on('click', (e) => {
       const p = Map.transform(e.latlng);
       setState({ X: p.x, Y: p.y, loading: true });
-      http.call('get-parcel-info', { url: `/spatial/geometry/info/{init.token}/AGRI_PARCEL/${p.x}/${p.y}` }).then((response) => {
+      const url = `/spatial/geometry/info/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
+      http.call('get-parcel-info', { url }).then((response) => {
         setState({ loading: false });
-        elements.alertUser(true, 'info',
+        alertUser(true, 'info',
           `Целосно име: ${response.data.items[0].FULL_NAME}`,
           `ИДБР: ${response.data.items[0].FIC}`,
           () => disable()
         );
       }).catch((err) => {
         console.log(err);
-        elements.alertUser(true, 'info', 'Нема податоци за избраната парцела', 'Или не е избрана парцела од мапата', () => disable());
+        alertUser(true, 'info', 'Нема податоци за избраната парцела', 'Или не е избрана парцела од мапата', () => disable());
       });
 
       Map.off('click');

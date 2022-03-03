@@ -24,11 +24,11 @@ const _DeleteParcelFromFarm = ({ processID }) => {
     http.call(_id, { url }).then(res => {
       setState({ loading: false })
       const type = res.data.type?.toLowerCase() || 'success'
-      alertUser(true, type, 'Успешно бришење', 'Парцелата е отстранета од фармата');
+      alertUser(true, type, 'Успешно бришење', 'Парцелата е отстранета од фармата', disable);
     }).catch(err => {
       console.error(err)
       setState({ loading: false })
-      alertUser(true, 'error', 'Грешка при бришење', 'Парцелата не е отстранета од фармата');
+      alertUser(true, 'error', 'Грешка при бришење', 'Парцелата не е отстранета од фармата', disable);
     });
   };
 
