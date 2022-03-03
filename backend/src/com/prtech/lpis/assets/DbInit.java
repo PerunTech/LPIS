@@ -649,7 +649,7 @@ public class DbInit implements IDbInit {
 		DbDataField dbf2 = new DbDataField();
 		dbf2.setDbFieldName("PARCEL_ID");
 		dbf2.setDbFieldType(DbFieldType.NUMERIC);
-		dbf1.setDbFieldSize(18);
+		dbf2.setDbFieldSize(18);
 		dbf2.setIndexName("PARCEL_ID_IDX");
 		dbf2.setLabel_code("common_use.parcel_id");
 		dbf2.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
@@ -674,6 +674,7 @@ public class DbInit implements IDbInit {
 		dbf5.setDbFieldName("ALLOWED_AREA");
 		dbf5.setDbFieldType(DbFieldType.NUMERIC);
 		dbf5.setDbFieldSize(18);
+		dbf5.setIsNull(false);
 		dbf5.setLabel_code("common_use.allowed_area");
 		dbf5.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
@@ -683,6 +684,7 @@ public class DbInit implements IDbInit {
 		dbf6.setDbFieldType(DbFieldType.NUMERIC);
 		dbf6.setDbFieldSize(18);
 		dbf6.setDbFieldScale(3);
+		dbf6.setIsNull(false);
 		dbf6.setLabel_code("common_use.percentage");
 		dbf6.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");

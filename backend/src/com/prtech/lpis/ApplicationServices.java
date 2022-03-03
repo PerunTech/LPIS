@@ -481,7 +481,7 @@ public class ApplicationServices {
 			@PathParam("parentId") final Long parentId, @PathParam("parcelId") final Long parcelId,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
-		String errMsg = "";
+		ResponseHandler jrh = new ResponseHandler();
 		JsonObject metadata = new JsonObject();
 		DbDataObject commonUse = null;
 		CommonUse cu = null;
@@ -511,8 +511,9 @@ public class ApplicationServices {
 			}
 			// Map form values to dbo fields
 			for (DbDataObject field : fieldSet.getItems()) {
-				String fieldName = field.getVal("FIELD_NAME").toString();
-				if (Util.excludeField(fieldName) && !"".equalsIgnoreCase(field.getVal("FIELD_TYPE").toString())) {
+				String fieldName = field.getVal(CC.FIELD_NAME).toString();
+				if (Util.excludeField(fieldName)
+						&& !CC.EMPTY_STRING.equalsIgnoreCase(field.getVal(CC.FIELD_TYPE).toString())) {
 					commonUse = Util.addValueToDataObject(commonUse, fieldName, field, metadata);
 				}
 			}
@@ -520,21 +521,14 @@ public class ApplicationServices {
 			cu.commonUseChecksBeforeSave(parcelId, svr);
 			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svg, svw, svr);
 			svw.dbCommit();
-		} catch (SvException e) {
-			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
-			errMsg = e.getMessage();
+			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");
 		}
-		if (errMsg.isEmpty()) {
-			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, commonUse.toSimpleJson().toString());
-			return Response.status(200).entity(rr.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
-		} else
-			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
-
-		// return mergeGeometryImpl(token, objectName, false, lineStringWKT,
-		// formVals);
+		jrh.create(MessageType.SUCCESS, I18n.getText("success.perun.successfullySavedObject"),
+				I18n.getText("success.perun.successfullySavedObject"));
+		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
-
+	
 	@Path("/save/agriParcel/{token}/{objectId}/{opType}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
