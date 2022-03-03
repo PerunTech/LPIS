@@ -179,22 +179,24 @@ public class ApplicationServices {
 	private DbDataArray createOverlaps(SvGeometry svg, DbDataObject agriParcel, Long typeId) throws SvException {
 		DbDataArray overlapDbos = new DbDataArray();
 		Geometry geom = SvGeometry.getGeometry(agriParcel);
-		Collection<Geometry> intersections = svg.getRelatedGeometries(geom, typeId,
-				SDIRelation.INTERSECTS, CC.PARENT_ID, agriParcel.getParentId(), true, true, true);
+		Collection<Geometry> intersections = svg.getRelatedGeometries(geom, typeId, SDIRelation.INTERSECTS,
+				CC.PARENT_ID, agriParcel.getParentId(), true, true, true);
 
 		for (Geometry related : intersections) {
 			Geometry overlap = geom.intersection(related);
-			DbDataObject relatedDbo = (DbDataObject)related.getUserData();
-			if(overlap.getArea()<minimumAgriParcelSize)
-				throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM,svg.getInstanceUser(),relatedDbo,overlap));
-			
+			DbDataObject relatedDbo = (DbDataObject) related.getUserData();
+			if (overlap.getArea() < minimumAgriParcelSize)
+				throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), relatedDbo, overlap));
+
 			DbDataObject overlapDbo = new DbDataObject(SvCore.getTypeIdByName(CC.AGRI_PARCEL_OVERLAP));
 			SvGeometry.setGeometry(overlapDbo, overlap);
 			overlapDbo.setVal("FARM_ID1", agriParcel.getParentId());
 			overlapDbo.setVal("FARM_PARCEL1", agriParcel.getObjectId());
 			overlapDbo.setVal("FARM_ID2", relatedDbo.getParentId());
 			overlapDbo.setVal("FARM_PARCEL2", relatedDbo.getObjectId());
+			Util.calculateGeometryDerivatives(overlapDbo);
 			overlapDbos.addDataItem(overlapDbo);
+
 		}
 		return overlapDbos;
 
@@ -251,11 +253,22 @@ public class ApplicationServices {
 						SvGeometry.setGeometry(ap, geom);
 						parcelsToSave.setItems(createOverlaps(svg, ap, typeId).getItems());
 					}
-
-					Util.calculateGeometryDerivatives(ap);
-					parcelsToSave.addDataItem(ap);
+					svg.setAutoCommit(false);
+					
 					svg.saveGeometry(parcelsToSave);
-
+					double overlapArea = 0;
+					if (parcelsToSave.size() > 0) {
+						ap.setVal("HAS_OVERLAP", true);
+						// deduct overlapped area
+						
+						for (DbDataObject ovr : parcelsToSave.getItems()) {
+							overlapArea = +SvGeometry.getGeometry(ovr).getArea();
+						}
+					}
+					ap.setVal(CC.ALLOWED_AREA,geom.getArea()-overlapArea);
+					Util.calculateGeometryDerivatives(ap);
+					svg.saveGeometry(ap);
+					svg.dbCommit();
 					enc.writeDbDataArray(parcelsToSave);
 				} catch (Exception e) {
 					String errMsg = "Failed saving agri parcel. Please see server logs";
@@ -528,7 +541,7 @@ public class ApplicationServices {
 				I18n.getText("success.perun.successfullySavedObject"));
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
-	
+
 	@Path("/save/agriParcel/{token}/{objectId}/{opType}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
