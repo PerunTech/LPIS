@@ -25,6 +25,8 @@ public class CC {
 	public static final String AGRI_PARCEL_OVERLAP = "AGRI_PARCEL_OVERLAP";
 	public static final String MINIMUM_AGRI_PARCEL_SIZE = "MINIMUM_AGRI_PARCEL_SIZE";
 	public static final String OVERLAP_LESS_THAN_MINIMUM = "error.overlap_less_then_minimum";
+	public static final String LAND_COVER_CODE = "LAND_COVER_CODE";
+	public static final String LAND_COVER_CODE_200 = "200";
 	
 	
 

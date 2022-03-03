@@ -516,6 +516,8 @@ public class ApplicationServices {
 					commonUse = Util.addValueToDataObject(commonUse, fieldName, field, metadata);
 				}
 			}
+
+			cu.commonUseChecksBeforeSave(parcelId, svr);
 			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svg, svw, svr);
 			svw.dbCommit();
 		} catch (SvException e) {
