@@ -51,14 +51,39 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
   const disable = (data, geojson) => {
     if (data && data.LAND_COVER_CODE) {
       if (Number(data.LAND_COVER_CODE) >= 400 && Number(data.LAND_COVER_CODE) < 500) {
-        store.dispatch({ processID: _id })
-        setState({ data: {}, geojson, showPermanentCropForm: true, isGuided: false, showForm: false })
+        const parcelId = geojson[0].feature.id
+        getPermanentCrop(parcelId, geojson)
       } else {
         reset()
       }
     } else {
       reset()
     }
+  }
+
+  const getPermanentCrop = (parcelId, geojson) => {
+    _stopEditAP()
+    setState({ loading: true })
+    const url = `/lpis/get/permanentCrop/{init.token}/${parcelId}`
+    http.call('get_permanent_crop', { url }).then(res => {
+      setState({ loading: false })
+      store.dispatch({ processID: _id })
+      if (res.data) {
+        if (Array.isArray(res.data.items) && res.data.items?.length > 0) {
+          const formData = res.data.items[0]
+          Object.keys(formData).forEach(k => {
+            formData[k] = '' + formData[k]
+          })
+          setState({ data: {}, permanentCropData: formData, geojson, showPermanentCropForm: true, isGuided: false, showForm: false })
+        } else {
+          setState({ data: {}, geojson, showPermanentCropForm: true, isGuided: false, showForm: false })
+        }
+      }
+    }).catch(err => {
+      console.error(err)
+      setState({ loading: false, data: {}, geojson, showPermanentCropForm: true, isGuided: false, showForm: false })
+      store.dispatch({ processID: _id })
+    })
   }
 
   const _editAP = () => {
@@ -113,8 +138,8 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
     }), disable);
   }
 
-  const submitPermanentCrop = data => {
-    const url = `/lpis/save/permanentCrop/{init.token}/0/${farmObjId}`
+  const submitPermanentCrop = (data, permanentCropObjId) => {
+    const url = `/lpis/save/permanentCrop/{init.token}/${permanentCropObjId}/${farmObjId}`
     http.call(_id, { url, method: 'post', data, responseType: 'arraybuffer' }).then(res => {
       const parsedResponse = bufferToString(res.data)
       let title = 'Успешно додадени информации за повеќегодишна култура'
@@ -150,10 +175,11 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
           delete data[k]
         }
       })
+      const permanentCropObjId = data.object_id || 0
       // Append the parcel object ID & the OLD ID to the form data object
       Reflect.set(data, 'PARCEL_ID', Number(parcelId))
       Reflect.set(data, 'LPIS_PARCEL_ID', Number(oldId))
-      submitPermanentCrop(JSON.stringify(data))
+      submitPermanentCrop(JSON.stringify(data), permanentCropObjId)
     }
   }
 
