@@ -16,11 +16,6 @@ let hiddenAssets = [];
 
 const getParcelVisibleIcon = (id) => {
   let iconName = 'eye-on';
-  for (let i = 0; i < hiddenAssets.length; i++) {
-    if (Number(hiddenAssets[i].getId()) === Number(id)) {
-      iconName = 'eye-off';
-    }
-  }
   const layers = store.getState().farmRegistry.agriParcels;
   Object.values(layers).forEach((l) => {
     if (Number(l.getId()) === Number(id)) {
@@ -29,6 +24,11 @@ const getParcelVisibleIcon = (id) => {
       }
     }
   });
+  for (let i = 0; i < hiddenAssets.length; i++) {
+    if (Number(hiddenAssets[i].getId()) === Number(id)) {
+      iconName = 'eye-off';
+    }
+  }
   return iconName;
 };
 
