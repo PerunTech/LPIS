@@ -649,7 +649,9 @@ public class ApplicationServices {
 				}
 			}
 
-			cu.commonUseChecksBeforeSave(parcelId, svr);
+			DbDataObject agriParcel = cu.commonUseChecksBeforeSave(parcelId, parentId, svr);
+			if (agriParcel.getIsDirty())
+				svw.saveObject(agriParcel);
 			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svg, svw, svr);
 			svw.dbCommit();
 		} catch (Exception e) {
@@ -897,7 +899,7 @@ public class ApplicationServices {
 				I18n.getText("success.perun.successfullySavedObject"));
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
-	
+
 	@Path("/get/permanentCrop/{token}/{parcelId}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

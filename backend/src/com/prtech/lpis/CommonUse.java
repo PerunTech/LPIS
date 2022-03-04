@@ -117,9 +117,15 @@ public class CommonUse {
 		}
 	}
 
-	public void commonUseChecksBeforeSave(Long parcelId, SvReader svr) throws SvException {
+	public DbDataObject commonUseChecksBeforeSave(Long parcelId, Long farmId, SvReader svr) throws SvException {
+		svr.setIncludeGeometries(true);
 		DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 		if (agriParcel != null) {
+			//if the parcel is under the current farm we want to convert it to common use.
+			if (agriParcel.getParentId().equals(farmId)) {
+				agriParcel.setParentId(0L);
+				return agriParcel;
+			}
 			if (!agriParcel.getParentId().equals(0L)) {
 				throw new SvException("lpis.error.agriParcelAlreadyBelongsToAgriculturalHolding",
 						svr.getInstanceUser());
@@ -129,5 +135,6 @@ public class CommonUse {
 						svr.getInstanceUser());
 			}
 		}
+		return agriParcel;
 	}
 }
