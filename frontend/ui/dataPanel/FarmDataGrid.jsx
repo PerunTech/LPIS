@@ -4,7 +4,8 @@ import { core, ui } from '../../Spatial';
 const { factory, Map, store } = core;
 const { ButtonGroup, Button, Icon } = ui;
 const { useState } = React;
-const { ListGroup } = elements.ReactBootstrap;
+const { ListGroup, ProgressBar } = elements.ReactBootstrap;
+const { Item: ListGroupItem } = ListGroup;
 
 const zoomParcel = (id) => {
   const layers = store.getState().farmRegistry?.agriParcels;
@@ -123,19 +124,46 @@ const _InfoHeader = ({ fic, fullName }) => {
 const _ExpandedRow = ({ index, id, rowData, unit }) => {
   return <div key={`${id}_${index}`} id={`expanded-row-${id}_${index}`} className='data-grid-expanded-row' style={{ fontSize: '1.5vh' }}>
     <ListGroup className='text-center'>
-      <ListGroup.Item className='p-1'>Вкупна површина: {Math.round(Number(rowData.AREA)) + ` ${unit}`}</ListGroup.Item>
-      <ListGroup.Item className='p-1'>Локалитет: {rowData.HOME_NAME || 'Не е наведено'}</ListGroup.Item>
-      <ListGroup.Item className='p-1'>Тераси: {translateBooleanValue(rowData.TERRACE)}</ListGroup.Item>
-      <ListGroup.Item className='p-1'>Наводнување: {translateBooleanValue(rowData.IRRIGATION)}</ListGroup.Item>
-      <ListGroup.Item className='p-1'>Пејсажни карактеристики: {translateBooleanValue(rowData.LANDSCAPE_FEATURES)}</ListGroup.Item>
-      <ListGroup.Item className='p-1'>Невидлива граница: {rowData.INVISIBLE_BORDER || '/'}</ListGroup.Item>
-      <ListGroup.Item className='p-1'>Променета граница: {translateBooleanValue(rowData.CHANGED_BORDER)}</ListGroup.Item>
-      <ListGroup.Item className='p-1'>Експозиција: {rowData.EXPOSITION_AVG}</ListGroup.Item>
-      <ListGroup.Item className='p-1'>Наклон: {rowData.Z_AVG}</ListGroup.Item>
-      <ListGroup.Item className='p-1'>Надморска височина: {rowData.SLOPE_AVG}</ListGroup.Item>
-      <ListGroup.Item className='p-1'>Коефициент на искористена површина: {rowData.ELIGIBILITY_COEF}</ListGroup.Item>
-      <ListGroup.Item className='p-1'>Органско производство: {translateBooleanValue(rowData.ORGANIC)}</ListGroup.Item>
-      <ListGroup.Item className='p-1'>Тип на почва: /</ListGroup.Item>
+      <ListGroupItem className='p-1'>
+        Вкупна површина: <span className='font-weight-bold'>{Math.round(Number(rowData.AREA)) + ` ${unit}`}</span>
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
+        Локалитет: <span className='font-weight-bold'>{rowData.HOME_NAME || 'Не е наведено'}</span>
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
+        Тераси: <span className='font-weight-bold'>{translateBooleanValue(rowData.TERRACE)}</span>
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
+        Наводнување: <span className='font-weight-bold'>{translateBooleanValue(rowData.IRRIGATION)}</span>
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
+        Пејсажни карактеристики: <span className='font-weight-bold'>{translateBooleanValue(rowData.LANDSCAPE_FEATURES)}</span>
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
+        Невидлива граница: <span className='font-weight-bold'>{translateBooleanValue(rowData.INVISIBLE_BORDER)}</span>
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
+        Променета граница: <span className='font-weight-bold'>{translateBooleanValue(rowData.CHANGED_BORDER)}</span>
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
+        Експозиција: <span className='font-weight-bold'>{rowData.EXPOSITION_AVG}</span>
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
+        Наклон: <span className='font-weight-bold'>{rowData.SLOPE_AVG}</span>
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
+        Надморска височина: <span className='font-weight-bold'>{rowData.Z_AVG} m</span>
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
+        Коефициент на искористена површина:
+        <ProgressBar now={rowData.ELIGIBILITY_COEF} label={`${rowData.ELIGIBILITY_COEF}%`} />
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
+        Органско производство: <span className='font-weight-bold'>{translateBooleanValue(rowData.ORGANIC)}</span>
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
+        Тип на почва: <span className='font-weight-bold'>/</span>
+      </ListGroupItem>
     </ListGroup>
   </div>
 }
