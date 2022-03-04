@@ -463,6 +463,16 @@ public class ApplicationServices {
 			@PathParam("objectName") final String objectName, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
 
+		return removeParcel(token, objectId, objectName, 0L, formVals, httpRequest);
+	}
+
+	@GET
+	@Path("/remove/farm/{token}/{objectId}/{objectName}/{parentId}")
+	@Produces("application/pbf")
+	public Response removeParcel(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
+			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
 		ResponseHandler jrh = new ResponseHandler();
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvReader svr = new SvReader(token);
@@ -478,8 +488,7 @@ public class ApplicationServices {
 						null);
 
 				if ((boolean) dbo.getVal(CC.COMMON_USE)) {
-					DbDataArray dba = svr.getObjectsByParentId(dbo.getParentId(), SvCore.getTypeIdByName(CC.COMMON_USE),
-							null);
+					DbDataArray dba = svr.getObjectsByParentId(parentId, SvCore.getTypeIdByName(CC.COMMON_USE), null);
 					for (DbDataObject cu : dba.getItems()) {
 						if (cu.getVal(CC.PARCEL_ID).equals(objectId)) {
 							svw.deleteObject(cu);
