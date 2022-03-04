@@ -651,7 +651,7 @@ public class ApplicationServices {
 
 			DbDataObject agriParcel = cu.commonUseChecksBeforeSave(parcelId, parentId, svr);
 			if (agriParcel.getIsDirty())
-				svw.saveObject(agriParcel);
+				svg.saveObject(agriParcel);
 			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svg, svw, svr);
 			svw.dbCommit();
 		} catch (Exception e) {
