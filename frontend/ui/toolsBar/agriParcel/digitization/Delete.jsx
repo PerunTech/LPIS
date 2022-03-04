@@ -56,7 +56,7 @@ const _Delete = ({ processID }) => {
 
     const disable = () => {
         // Reset state, internal and application-wide.
-        store.dispatch({ processID: '' });
+        store.dispatch({ processID: '', selectedParcelId: '' });
         setState({ isGuided: false, layer: {} });
         getFarmMapAssets();
     }

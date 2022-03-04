@@ -3,7 +3,7 @@ import { core, ui } from '../../Spatial';
 
 const { factory, Map, store } = core;
 const { ButtonGroup, Button, Icon } = ui;
-const { useState } = React;
+const { useState, useEffect } = React;
 const { ListGroup, ProgressBar } = elements.ReactBootstrap;
 const { Item: ListGroupItem } = ListGroup;
 
@@ -58,7 +58,11 @@ const toggleAssetFromMap = (id) => {
   return visible;
 };
 
-export const FarmDataGrid = ({ type, rows }) => {
+const _FarmDataGrid = ({ type, rows, selectedParcelId }) => {
+  useEffect(() => {
+    store.dispatch({ selectedParcelId: '' })
+  }, [])
+
   const fic = store.getState().farmRegistry.fic;
   const fullName = store.getState().farmRegistry.fullName;
 
@@ -66,15 +70,20 @@ export const FarmDataGrid = ({ type, rows }) => {
     <_InfoHeader fic={fic} fullName={fullName} />
     <div id={type + '-grid'} className='data-grid'>
       <_Header typeId={type} />
-      {rows.length > 0 ? <_Rows rows={rows} /> : <_NoData />}
+      {rows.length > 0 ? <_Rows rows={rows} selectedParcelId={selectedParcelId} /> : <_NoData />}
     </div>
   </React.Fragment>
 };
 
-FarmDataGrid.propTypes = {
+_FarmDataGrid.propTypes = {
   type: PropTypes.object,
   rows: PropTypes.array,
+  selectedParcelId: PropTypes.string
 };
+
+export const FarmDataGrid = core.connect(state => ({
+  selectedParcelId: state.farmRegistry?.selectedParcelId
+}))(_FarmDataGrid)
 
 /* ----------------------------- */
 /*        NO DATA FOUND          */
@@ -174,10 +183,20 @@ const _ExpandedRow = ({ index, id, rowData, unit }) => {
 /* -------------- */
 /*      ROWS      */
 /* ---------- --- */
-const _Rows = ({ rows }) => {
+const _Rows = ({ rows, selectedParcelId }) => {
   const [rowIsExpanded, expandRow] = useState(false);
   const [selectedRowId, selectRow] = useState('');
   const [isOpen, setOpen] = useState(true);
+
+  useEffect(() => {
+    if (selectedParcelId) {
+      onRowClick(selectedParcelId)
+    } else {
+      expandRow(false)
+      selectRow('')
+    }
+  }, [selectedParcelId])
+
   const onRowClick = id => {
     if (selectedRowId !== id) {
       expandRow(true);
@@ -185,6 +204,7 @@ const _Rows = ({ rows }) => {
     } else {
       expandRow(false);
       selectRow('');
+      store.dispatch({ selectedParcelId: '' })
     }
   };
   const zoomParcelAction = (e, el) => {
