@@ -69,8 +69,19 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
         const parentId = buff.features[0].properties.parent_id
         const selectedParcel = { parcelId, area, landUseCode }
         if (parentId && Number(parentId) !== 0) {
-          const title = 'Парцелата е веќе доделена на земјоделско стопанство и истата не може да се користи за Заедничка употреба'
-          alertUser(true, 'info', title, '', () => disable())
+          if (Number(parentId) !== Number(farmObjId)) {
+            const title = 'Парцелата е веќе доделена на земјоделско стопанство и истата не може да се користи за Заедничка употреба'
+            alertUser(true, 'info', title, '', () => disable())
+          } else {
+            if (!strcmp(landUseCode, '200')) {
+              const title = 'Само парцели со код на употреба 200 може да се користат за заедничка употреба'
+              alertUser(true, 'warning', title, '', () => disable())
+            } else {
+              const title = 'Дали сакате парцелата да се промени во парцела со Заедничка употреба?'
+              const confirm = () => setState({ isGuided: false, showForm: true, selectedParcel })
+              alertUser(true, 'info', title, '', confirm, disable, true, 'Да', 'Не')
+            }
+          }
         } else if (!strcmp(landUseCode, '200')) {
           const title = 'Само парцели со код на употреба 200 може да се користат за заедничка употреба'
           alertUser(true, 'warning', title, '', () => disable())
