@@ -487,8 +487,9 @@ public class ApplicationServices {
 				SvSDITile svTile = SvGeometry.getTile(SvCore.getTypeIdByName(objectName), (String) gTile.getUserData(),
 						null);
 
+				Long pid = parentId.equals(0L) ? dbo.getParentId() : parentId;
 				if ((boolean) dbo.getVal(CC.COMMON_USE)) {
-					DbDataArray dba = svr.getObjectsByParentId(parentId, SvCore.getTypeIdByName(CC.COMMON_USE), null);
+					DbDataArray dba = svr.getObjectsByParentId(pid, SvCore.getTypeIdByName(CC.COMMON_USE), null);
 					for (DbDataObject cu : dba.getItems()) {
 						if (cu.getVal(CC.PARCEL_ID).equals(objectId)) {
 							svw.deleteObject(cu);
