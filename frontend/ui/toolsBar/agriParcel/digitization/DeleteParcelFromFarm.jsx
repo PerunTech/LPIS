@@ -12,15 +12,15 @@ const { useReducer } = React;
 const _id = 'cropDelete';
 const _processID = 'deleteAPFromFarm';
 
-const _DeleteParcelFromFarm = ({ processID }) => {
+const _DeleteParcelFromFarm = ({ processID, farmObjId }) => {
   const [{ isGuided, layer, loading }, setState] = useReducer(
     (currState, update) => ({ ...currState, ...update }), { isGuided: false, layer: {}, loading: false }
   );
 
-  const deleteLayer = () => {
+  const deleteParcelFromFarm = () => {
     disable()
     setState({ loading: true })
-    const url = `/lpis/remove/farm/{init.token}/${layer.feature.id}/AGRI_PARCEL`
+    const url = `/lpis/remove/farm/{init.token}/${layer.feature.id}/AGRI_PARCEL/${farmObjId}`
     http.call(_id, { url }).then(res => {
       setState({ loading: false })
       const type = res.data.type?.toLowerCase() || 'success'
@@ -52,7 +52,7 @@ const _DeleteParcelFromFarm = ({ processID }) => {
 
   const disable = () => {
     // Reset state, internal and application-wide.
-    store.dispatch({ processID: '' });
+    store.dispatch({ processID: '', selectedParcelId: '' });
     setState({ isGuided: false, layer: {}, loading: false });
     getFarmMapAssets();
   };
@@ -76,7 +76,7 @@ const _DeleteParcelFromFarm = ({ processID }) => {
             Math.round(layer.getMeasurement()) +
             ' m². Дали сте сигурни дека сакате да ја отстраните од фармата?'}
         </div>
-        <Button onClick={() => deleteLayer()} size='' className='cancel'>Отстрани</Button>
+        <Button onClick={deleteParcelFromFarm} size='' className='cancel'>Отстрани</Button>
       </Modal.Body>
     </Modal>
   }
@@ -103,4 +103,6 @@ const _DeleteParcelFromFarm = ({ processID }) => {
   );
 };
 
-export const DeleteParcelFromFarm = core.connect((state) => ({ processID: state.app.processID }))(_DeleteParcelFromFarm);
+export const DeleteParcelFromFarm = core.connect((state) => ({
+  processID: state.app.processID, farmObjId: state.farmRegistry?.farmObjId
+}))(_DeleteParcelFromFarm);

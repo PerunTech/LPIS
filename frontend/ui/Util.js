@@ -26,7 +26,7 @@ export const decodeResponse = (response) => {
     return errorMsg
 }
 
-export function isJSON(value) {
+export function isJSON (value) {
     value = !strcmp(typeof value, 'string') ? JSON.stringify(value) : value
     try {
         value = JSON.parse(value);
@@ -50,7 +50,7 @@ export function isJSON(value) {
  * @param {any} firstValue The first value to be checked & compared
  * @param {any} secondValue The second value lpisto be checked & compared
  */
-export function strcmp(firstValue, secondValue) {
+export function strcmp (firstValue, secondValue) {
     // First, check if both of the values are strings
     if ((typeof firstValue === 'string' && typeof secondValue === 'string') || (firstValue instanceof String && secondValue instanceof String)) {
         // If both of the values are strings, compare them & return the result as a boolean value
@@ -60,7 +60,7 @@ export function strcmp(firstValue, secondValue) {
     }
 }
 
-export function readCookie(name) {
+export function readCookie (name) {
     var nameEQ = name + "=";
     // String("farmerObj=20348156; token=92b39ce8-e7e2-4b12-bf6b-bbd31dd04b91; _ga=GA1.1.536760576.1612264197; _gid=GA1.1.1645977351.1615282019; _gat=1"
     var ca = window.parent.document.cookie.split(';');
@@ -73,6 +73,10 @@ export function readCookie(name) {
     return null;
 }
 
+function handleLayerClick (layer) {
+    store.dispatch({ selectedParcelId: layer.feature.id })
+}
+
 export const getFarmMapAssets = (fitBounds = false) => {
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
@@ -81,12 +85,12 @@ export const getFarmMapAssets = (fitBounds = false) => {
     });
 
     const token = perunStore.getState().security.svSession
-    const farmObjId = perunStore.getState().frmapData?.farmData?.objectId || 0;
-    const farmObjTypeId = perunStore.getState().frmapData?.farmData?.objectTypeId || 0;
-    const tableName = perunStore.getState().frmapData?.farmData?.tableName || ""
+    const farmObjId = perunStore.getState().frmapData?.farmData?.objectId || 0
+    const farmObjTypeId = perunStore.getState().frmapData?.farmData?.objectTypeId || 0
+    const tableName = perunStore.getState().frmapData?.farmData?.tableName || ''
     const data = perunStore.getState().frmapData?.farmData?.rowsData
-    const fic = data?.[`${tableName}.FIC`] || 0
-    const fullName = data?.[`${tableName}.FULL_NAME`] || ""
+    const fic = data?.[`${tableName}.FIC`] || ''
+    const fullName = data?.[`${tableName}.FULL_NAME`] || ''
 
     store.dispatch({ farmObjId, farmObjTypeId, fic, fullName, tableName })
     const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`
@@ -104,6 +108,9 @@ export const getFarmMapAssets = (fitBounds = false) => {
         layers.forEach(layer => {
             layer.addTo(Map)
             setAPLabel(layer)
+            layer.on('click', function () {
+                handleLayerClick(this)
+            })
         });
 
         // register in app state
