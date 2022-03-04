@@ -131,6 +131,9 @@ const _ExpandedRow = ({ index, id, rowData, unit }) => {
         Локалитет: <span className='font-weight-bold'>{rowData.HOME_NAME || 'Не е наведено'}</span>
       </ListGroupItem>
       <ListGroupItem className='p-1'>
+        Преклоп: <span className='font-weight-bold'>{translateBooleanValue(rowData.HAS_OVERLAP)}</span>
+      </ListGroupItem>
+      <ListGroupItem className='p-1'>
         Тераси: <span className='font-weight-bold'>{translateBooleanValue(rowData.TERRACE)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-1'>

@@ -37,22 +37,27 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
     }
   };
 
+  const reset = () => {
+    Map.off('click');
+    // Reset state, internal and application-wide.
+    setState({ layer: {}, data: {}, geojson: {}, permanentCropData: {}, isGuided: false, showForm: false, showPermanentCropForm: false, loading: false });
+    store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
+    // We remove the working geometry, save process will add the result.
+    layer.removeFrom && layer.removeFrom(Map);
+    getFarmMapAssets()
+    _stopEditAP()
+  }
+
   const disable = (data, geojson) => {
     if (data && data.LAND_COVER_CODE) {
-      _stopEditAP()
       if (Number(data.LAND_COVER_CODE) >= 400 && Number(data.LAND_COVER_CODE) < 500) {
         store.dispatch({ processID: _id })
         setState({ data: {}, geojson, showPermanentCropForm: true, isGuided: false, showForm: false })
+      } else {
+        reset()
       }
     } else {
-      Map.off('click');
-      // Reset state, internal and application-wide.
-      setState({ layer: {}, data: {}, geojson: {}, permanentCropData: {}, isGuided: false, showForm: false, showPermanentCropForm: false, loading: false });
-      store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
-      // We remove the working geometry, save process will add the result.
-      layer.removeFrom && layer.removeFrom(Map);
-      getFarmMapAssets()
-      _stopEditAP()
+      reset()
     }
   }
 
