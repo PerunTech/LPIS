@@ -304,6 +304,9 @@ public class ApplicationServices {
 		Geometry g = SvGeometry.getGeometry(parcel);
 		for (DbDataObject dbo : assets.getItems()) {
 			Geometry other = SvGeometry.getGeometry(dbo);
+			DbDataObject d = (DbDataObject) other.getUserData();
+			if (parcel.getObjectId().equals(d.getObjectId()))
+				continue;
 			if (g.intersects(other))
 				g = g.difference(other);
 		}
