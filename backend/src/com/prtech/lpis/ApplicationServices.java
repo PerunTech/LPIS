@@ -460,7 +460,7 @@ public class ApplicationServices {
 			@PathParam("objectName") final String objectName, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
 
-		String errMsg = "";
+		ResponseHandler jrh = new ResponseHandler();
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvReader svr = new SvReader(token);
 				SvWriter svw = new SvWriter(svr);
@@ -492,19 +492,14 @@ public class ApplicationServices {
 
 			}
 
-		} catch (SvException e) {
-			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
-			errMsg = e.getMessage();
+			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToRemoveObject");
 		}
-		if (errMsg.isEmpty()) {
-			ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, "parcel.detached.from.farm");
-			return Response.status(200).entity(rr.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
-		} else
-			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
-
-//		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
-
+		jrh.create(MessageType.SUCCESS, I18n.getText("parcel.detached.from.farm"),
+				I18n.getText("parcel.detached.from.farm"));
+		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
+		// return mergeGeometryImpl(token, objectName, false, lineStringWKT,
+		// formVals);
 	}
 
 	@POST
