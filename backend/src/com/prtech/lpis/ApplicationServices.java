@@ -887,4 +887,21 @@ public class ApplicationServices {
 				I18n.getText("success.perun.successfullySavedObject"));
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
+	
+	@Path("/get/permanentCrop/{token}/{parcelId}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPermanentCrop(@PathParam("token") final String token, @PathParam("parcelId") final Long parcelId,
+			@Context HttpServletRequest httpRequest) {
+		DbDataArray result = new DbDataArray();
+		try (SvReader svr = new SvReader(token)) {
+			if (parcelId != null) {
+				result = new PermanentCrop().getPermanentCrops(parcelId, svr);
+			}
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+					"error.perun.failedToGetObject");
+		}
+		return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
+	}
 }
