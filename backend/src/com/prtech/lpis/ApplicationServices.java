@@ -767,7 +767,7 @@ public class ApplicationServices {
 			// Perform check if our parcel crosses with neighbouring parcels.
 			Set<Geometry> neighbourAP = new HashSet<>();
 			neighbourAP = svg.getRelatedGeometries(containedAP, SvCore.getTypeIdByName("AGRI_PARCEL"),
-					SDIRelation.INTERSECTS, null, null, true);
+					SDIRelation.OVERLAPS, null, null, true);
 
 			// revert user data, do not return as part of json.
 			containedAP.setUserData(null);
