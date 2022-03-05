@@ -106,6 +106,7 @@ export const getFarmMapAssets = (fitBounds = false) => {
 
         // send geojson to factory, visualize
         layers.forEach(layer => {
+            layer.unbindTooltip()
             layer.addTo(Map)
             setAPLabel(layer)
             layer.on('click', function () {
