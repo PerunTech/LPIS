@@ -307,9 +307,10 @@ public class ApplicationServices {
 			DbDataObject d = (DbDataObject) other.getUserData();
 			if (parcel.getObjectId().equals(d.getObjectId()))
 				continue;
-			if (g.intersects(other))
+			if (g.overlaps(other))
 				g = g.difference(other);
 		}
+		g.setUserData(parcel);
 		return g;
 	}
 
