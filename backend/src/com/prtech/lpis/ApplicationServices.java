@@ -366,7 +366,7 @@ public class ApplicationServices {
 					if (opType.equals(CC.CUTOFF)) {
 						geom = svg.cutLayerFromGeom(geom, typeId);
 						SvGeometry.setGeometry(ap, geom);
-						if ((boolean) ap.getVal(CC.HAS_OVERLAP))
+						if (ap.getVal(CC.HAS_OVERLAP)!=null && (boolean) ap.getVal(CC.HAS_OVERLAP))
 							result.setItems(removeOverlaps(svg, ap).getItems());
 					}
 					// check minimum parcel size
