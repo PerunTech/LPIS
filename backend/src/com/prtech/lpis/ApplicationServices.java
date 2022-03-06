@@ -366,7 +366,7 @@ public class ApplicationServices {
 					if (opType.equals(CC.CUTOFF)) {
 						geom = svg.cutLayerFromGeom(geom, typeId);
 						SvGeometry.setGeometry(ap, geom);
-						if (ap.getVal(CC.HAS_OVERLAP)!=null && (boolean) ap.getVal(CC.HAS_OVERLAP))
+						if (ap.getVal(CC.HAS_OVERLAP) != null && (boolean) ap.getVal(CC.HAS_OVERLAP))
 							result.setItems(removeOverlaps(svg, ap).getItems());
 					}
 					// check minimum parcel size
@@ -524,7 +524,6 @@ public class ApplicationServices {
 			@PathParam("y") final Double y, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
 
-		String errMsg = "";
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvReader svr = new SvReader(token);
 				SvWriter svw = new SvWriter(svr);
@@ -535,16 +534,13 @@ public class ApplicationServices {
 			Collection<Geometry> geomArr = svg.getRelatedGeometries(point, layerTypeId, SDIRelation.INTERSECTS, null,
 					null, false);
 			if (geomArr.size() == 1) {
-				errMsg = "success.overlap_created";
-			} else
-				errMsg = "err.no_parcel.selected";
-		} catch (SvException e) {
-			errMsg = e.getJsonMessage();
+				result.add(geomArr.iterator().next());
+			}
 		} catch (Exception e) {
-			errMsg = e.getMessage();
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.overlap");
 		}
 
-		if (errMsg.isEmpty()) {
+		if (!result.isEmpty()) {
 			StreamingOutput pbfStream = new StreamingOutput() {
 				public void write(OutputStream stream) throws IOException {
 					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
@@ -553,7 +549,8 @@ public class ApplicationServices {
 			};
 			return Response.ok(pbfStream, "application/pbf").build();
 		} else
-			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+			return Response.status(500).entity("{error:err.no_parcel.selected}").type(MediaType.APPLICATION_JSON)
+					.build();
 
 //		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
 
@@ -765,16 +762,22 @@ public class ApplicationServices {
 			}
 
 			// Perform check if our parcel crosses with neighbouring parcels.
-			Set<Geometry> neighbourAP = new HashSet<>();
-			neighbourAP = svg.getRelatedGeometries(containedAP, SvCore.getTypeIdByName("AGRI_PARCEL"),
-					SDIRelation.OVERLAPS, null, null, true);
+			Collection<Geometry> neighbourAP = svg.getRelatedGeometries(containedAP,
+					SvCore.getTypeIdByName("AGRI_PARCEL"), SDIRelation.INTERSECTS, null, null, true, true, true);
 
+			boolean neighbourAPoverlap = false;
+			for (Geometry ng : neighbourAP) {
+				if (geom.overlaps(ng)) {
+					neighbourAPoverlap = true;
+					break;
+				}
+			}
 			// revert user data, do not return as part of json.
 			containedAP.setUserData(null);
 			json.addProperty("GEOM", Util.geometryToJson(containedAP));
 			result = new JsonObject();
 			result.add("layer", json);
-			result.addProperty("check", neighbourAP.size() > 0);
+			result.addProperty("check", neighbourAPoverlap);
 		} catch (Exception e) {
 			// TODO: handle exception
 		} finally {
