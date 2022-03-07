@@ -15,6 +15,7 @@ import { Info } from './Info/Info';
 import { Merge } from './Merge';
 import { Refresh } from './Refresh';
 import { Split } from './Split';
+import { PermanentCrops } from './PermanentCrops';
 
 const { ButtonGroup, Divider, Icon } = ui;
 const { useState } = React;
@@ -61,6 +62,7 @@ export const Digitization = () => {
         <Divider />
         <Assign />
         <CommonUse />
+        <PermanentCrops />
         <DeleteParcelFromFarm />
         <Delete />
     </ButtonGroup>;
