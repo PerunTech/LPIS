@@ -1,5 +1,6 @@
 import { React, PropTypes, elements } from 'perun-core';
 import { core, ui } from '../../Spatial';
+import { translateBooleanValue } from '../Util';
 
 const { factory, Map, store } = core;
 const { ButtonGroup, Button, Icon } = ui;
@@ -241,18 +242,4 @@ const _Rows = ({ rows, selectedParcelId }) => {
       {rowIsExpanded && selectedRowId === id && <_ExpandedRow index={i} id={id} rowData={rowData} unit={unit} />}
     </div>
   });
-};
-
-const translateBooleanValue = (value) => {
-  let translatedValue = '';
-  switch (true) {
-    case value:
-      translatedValue = 'Да';
-      break;
-    default:
-      translatedValue = 'Не';
-      break;
-  }
-
-  return translatedValue;
 };
