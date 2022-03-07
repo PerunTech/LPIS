@@ -745,6 +745,7 @@ public class DbInit implements IDbInit {
 		dbf4.setDbFieldName("PLANT_AREA");
 		dbf4.setDbFieldType(DbFieldType.NUMERIC);
 		dbf4.setDbFieldSize(18);
+		dbf4.setDbFieldScale(3);
 		dbf4.setIsNull(false);
 		dbf4.setLabel_code("permanent_crop.plant_area");
 		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
