@@ -957,6 +957,7 @@ public class ApplicationServices {
 					permanentCrop = Util.addValueToDataObject(permanentCrop, fieldName, field, metadata);
 				}
 			}
+			new PermanentCrop().checkBeforeSavePermanentCrop(permanentCrop, svr);
 			svw.saveObject(permanentCrop);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");

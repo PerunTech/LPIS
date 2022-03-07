@@ -1,5 +1,6 @@
 import { React, PropTypes, elements } from 'perun-core';
 import { core, ui } from '../../Spatial';
+import { translateBooleanValue } from '../Util';
 
 const { factory, Map, store } = core;
 const { ButtonGroup, Button, Icon } = ui;
@@ -131,7 +132,8 @@ const _InfoHeader = ({ fic, fullName }) => {
 /*  EXPANDED ROW  */
 /* ---------- --- */
 const _ExpandedRow = ({ index, id, rowData, unit }) => {
-  return <div key={`${id}_${index}`} id={`expanded-row-${id}_${index}`} className='data-grid-expanded-row' style={{ fontSize: '1.5vh' }}>
+  const rowId = `expanded-row-${id}_${index}`
+  return <div key={rowId} id={rowId} className='data-grid-expanded-row border border-dark rounded' style={{ fontSize: '1.5vh' }}>
     <ListGroup className='text-center'>
       <ListGroupItem className='p-1'>
         Вкупна површина: <span className='font-weight-bold'>{Math.round(Number(rowData.AREA)) + ` ${unit}`}</span>
@@ -164,7 +166,7 @@ const _ExpandedRow = ({ index, id, rowData, unit }) => {
         Наклон: <span className='font-weight-bold'>{rowData.SLOPE_AVG}</span>
       </ListGroupItem>
       <ListGroupItem className='p-1'>
-        Надморска височина: <span className='font-weight-bold'>{rowData.Z_AVG} m</span>
+        Надморска височина: <span className='font-weight-bold'>{Math.round(rowData.Z_AVG)} m</span>
       </ListGroupItem>
       <ListGroupItem className='p-1'>
         Коефициент на искористена површина:
@@ -174,7 +176,7 @@ const _ExpandedRow = ({ index, id, rowData, unit }) => {
         Органско производство: <span className='font-weight-bold'>{translateBooleanValue(rowData.ORGANIC)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-1'>
-        Тип на почва: <span className='font-weight-bold'>/</span>
+        Тип на почва: <span className='font-weight-bold'>{rowData.SOIL_TYPE || 'Не е наведено'}</span>
       </ListGroupItem>
     </ListGroup>
   </div>
@@ -240,18 +242,4 @@ const _Rows = ({ rows, selectedParcelId }) => {
       {rowIsExpanded && selectedRowId === id && <_ExpandedRow index={i} id={id} rowData={rowData} unit={unit} />}
     </div>
   });
-};
-
-const translateBooleanValue = (value) => {
-  let translatedValue = '';
-  switch (true) {
-    case value:
-      translatedValue = 'Да';
-      break;
-    default:
-      translatedValue = 'Не';
-      break;
-  }
-
-  return translatedValue;
 };

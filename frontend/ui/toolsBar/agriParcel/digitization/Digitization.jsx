@@ -10,7 +10,7 @@ import { DeleteParcelFromFarm } from './DeleteParcelFromFarm';
 import { Draw } from './Draw';
 import { Edit } from './Edit';
 import { Fill } from './Fill';
-import { Info } from './Info';
+import { Info } from './Info/Info';
 import { Merge } from './Merge';
 import { Refresh } from './Refresh';
 import { Split } from './Split';

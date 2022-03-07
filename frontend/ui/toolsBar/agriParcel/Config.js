@@ -277,7 +277,7 @@ export const permanentCropSchema = {
             }
         },
         type: 'object',
-        required: ['PERM_CROP_TYPE_ID']
+        required: ['PERM_CROP_TYPE_ID', 'PLANT_AREA', 'NUMBER_OF_TREES']
     }
 }
 
