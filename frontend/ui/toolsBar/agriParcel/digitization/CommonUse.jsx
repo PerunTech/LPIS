@@ -168,7 +168,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
   return (
     <ProcessButton id={_id} onClick={enable}>
       <Icon name={_iconId} size='30px' />
-      <span style={{ display: "block", marginTop: '5px' }}>Додади заедничка употреба</span>
+      <span style={{ display: "block", marginTop: '5px' }}>Заедничка употреба</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>
