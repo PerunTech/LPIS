@@ -165,7 +165,7 @@ const _ExpandedRow = ({ index, id, rowData, unit }) => {
         Наклон: <span className='font-weight-bold'>{rowData.SLOPE_AVG}</span>
       </ListGroupItem>
       <ListGroupItem className='p-1'>
-        Надморска височина: <span className='font-weight-bold'>{rowData.Z_AVG} m</span>
+        Надморска височина: <span className='font-weight-bold'>{Math.round(rowData.Z_AVG)} m</span>
       </ListGroupItem>
       <ListGroupItem className='p-1'>
         Коефициент на искористена површина:
