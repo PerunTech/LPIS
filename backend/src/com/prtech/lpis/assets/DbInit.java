@@ -736,6 +736,7 @@ public class DbInit implements IDbInit {
 		dbf3.setDbFieldName("NUMBER_OF_TREES");
 		dbf3.setDbFieldType(DbFieldType.NUMERIC);
 		dbf3.setDbFieldSize(18);
+		dbf3.setIsNull(false);
 		dbf3.setLabel_code("permanent_crop.number_of_trees");
 		dbf3.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
@@ -744,6 +745,7 @@ public class DbInit implements IDbInit {
 		dbf4.setDbFieldName("PLANT_AREA");
 		dbf4.setDbFieldType(DbFieldType.NUMERIC);
 		dbf4.setDbFieldSize(18);
+		dbf4.setIsNull(false);
 		dbf4.setLabel_code("permanent_crop.plant_area");
 		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
