@@ -37,7 +37,7 @@ public class CC {
 	public static final String HAS_OVERLAP = "HAS_OVERLAP";
 	public static final String IGNORE = "IGNORE";
 	public static final String FULL_NAME = "FULL_NAME";
-
+	public static final String PLANT_AREA = "PLANT_AREA";
 	
 
 }
