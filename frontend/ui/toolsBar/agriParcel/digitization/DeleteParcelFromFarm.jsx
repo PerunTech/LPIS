@@ -96,7 +96,7 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId }) => {
   return (
     <ProcessButton id={_processID} onClick={() => enable()}>
       <Icon name={_id} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Отстрани парцела од фарма</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>Отстрани парцела</span>
       {processID === _processID && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>
