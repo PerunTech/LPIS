@@ -1,8 +1,9 @@
-import { redux } from 'perun-core';
+import { redux, elements } from 'perun-core';
 import { core, data } from '../Spatial';
 import { setAPLabel } from '.';
 import { config as apConfig } from './toolsBar/agriParcel/Config';
 
+const { alertUser } = elements;
 const { store: perunStore } = redux;
 const { factory, store, http, Map } = core;
 const { geobuf, protobuf } = data;
@@ -91,7 +92,7 @@ function handleLayerClick (layer) {
     store.dispatch({ selectedParcelId: layer.feature.id })
 }
 
-export const getFarmMapAssets = (fitBounds = false) => {
+export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
             Map.removeLayer(layer);
@@ -130,6 +131,10 @@ export const getFarmMapAssets = (fitBounds = false) => {
 
         // register in app state
         store.dispatch({ 'agriParcels': layers })
+        showAlert && alertUser(true, 'success', 'Податоците се успешно освежени.')
         fitBounds && Map.fitBounds(geojson.getBounds(), { padding: [100, 100] });
-    }).catch(err => console.log(err));
+    }).catch(err => {
+        console.log(err)
+        showAlert && alertUser(true, 'error', 'Настана грешка', 'Податоците не се успешно освежени.')
+    });
 };
