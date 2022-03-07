@@ -106,3 +106,19 @@
   margin-bottom: 10px;
   margin-left: 20px;
 }
+
+.parcel-info-modal .modal-dialog {
+  position: relative;
+  right: 0 !important;
+  top: 1px !important;
+  font-size: larger;
+}
+
+.parcel-info-modal .modal-dialog .progress-bar {
+  background-color: #232323;
+}
+
+.parcel-info-modal .modal-body .info {
+  color: #114cb8 !important;
+  border: 1px solid #114cb8 !important;
+}
