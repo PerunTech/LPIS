@@ -10,7 +10,7 @@ import { ProcessButton } from '../../ProcessButton';
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory, http } = core;
 const { edit } = tools;
-const { Icon, DrawActions } = ui;
+const { Icon, DrawActions, Button, Modal } = ui;
 const { alertUser } = elements;
 const { useReducer } = React;
 
@@ -18,15 +18,18 @@ const _id = 'editAP';
 const _layerGroup = factory.layerGroup();
 
 const _Edit = ({ processID, farmObjId, agriParcels }) => {
-  const [{ layer, geojson, data, permanentCropData, loading, isGuided, showForm, showPermanentCropForm }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }),
-    { layer: {}, data: {}, geojson: {}, permanentCropData: {}, loading: false, isGuided: false, showForm: false, showPermanentCropForm: false });
+  const [{ layer, geojson, data, permanentCropData, loading, isGuided, showForm, showPermanentCropForm, allPermanentCrops }, setState] = useReducer(
+    (currState, update) => ({ ...currState, ...update }),
+    {
+      layer: {}, data: {}, geojson: {}, permanentCropData: {}, loading: false,
+      isGuided: false, showForm: false, showPermanentCropForm: false, allPermanentCrops: undefined
+    });
 
   const enable = () => {
     if (agriParcels.length > 0) {
       agriParcels.forEach(sc => _setBlockEvents(sc, agriParcels))
       store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
-      setState({ isGuided: true, showForm: false, showPermanentCropForm: false, data: {}, permanentCropData: {}, layer: {} })
+      setState({ isGuided: true, showForm: false, showPermanentCropForm: false, data: {}, permanentCropData: {}, layer: {}, allPermanentCrops: undefined })
       _editAP()
     } else {
       alertUser(true,
@@ -40,7 +43,10 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
   const reset = () => {
     Map.off('click');
     // Reset state, internal and application-wide.
-    setState({ layer: {}, data: {}, geojson: {}, permanentCropData: {}, isGuided: false, showForm: false, showPermanentCropForm: false, loading: false });
+    setState({
+      layer: {}, data: {}, geojson: {}, permanentCropData: {}, isGuided: false,
+      showForm: false, showPermanentCropForm: false, loading: false, allPermanentCrops: undefined
+    });
     store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
     // We remove the working geometry, save process will add the result.
     layer.removeFrom && layer.removeFrom(Map);
@@ -74,7 +80,10 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
           Object.keys(formData).forEach(k => {
             formData[k] = '' + formData[k]
           })
-          setState({ data: {}, permanentCropData: formData, geojson, showPermanentCropForm: true, isGuided: false, showForm: false })
+          setState({
+            data: {}, allPermanentCrops: res.data.items, permanentCropData: formData, geojson,
+            showPermanentCropForm: true, isGuided: false, showForm: false
+          })
         } else {
           setState({ data: {}, geojson, showPermanentCropForm: true, isGuided: false, showForm: false })
         }
@@ -197,13 +206,63 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
 
   const renderPermanentCropForm = () => {
     const { schema } = permanentCropSchema
-    return <Form isSimple formTitle='Повеќегодишна култура'
-      onSubmit={onPermanentCropSubmit}
-      formData={permanentCropData}
-      onChange={onPermanentCropChange}
-      schema={schema}
-    ><DrawActions cancel={disable} />
-    </Form>
+    const currentPermanentCropId = permanentCropData.object_id
+    let additionalCropsContainer = null
+    if (allPermanentCrops && Array.isArray(allPermanentCrops) && allPermanentCrops.length > 1) {
+      const modalProps = {
+        show: true,
+        backdrop: false,
+        enforceFocus: false,
+        id: 'additional-crops-dialog',
+        className: 'additional-crops-modal',
+        container: document.getElementsByClassName('control-map')[0]
+      }
+
+      const onClick = permanentCrop => {
+        Object.keys(permanentCrop).forEach(k => {
+          permanentCrop[k] = '' + permanentCrop[k]
+        })
+        setState({ permanentCropData: permanentCrop })
+      }
+
+      const resetForm = () => {
+        setState({ permanentCropData: {} })
+      }
+
+      additionalCropsContainer = <Modal {...modalProps}>
+        <Modal.Title>
+          <Button disabled className='as-label ap-modal-title' >Листа на записи за Повеќегодишни култури</Button>
+        </Modal.Title>
+        <Modal.Body className='show-grid'>
+          <div className='p-2'>
+            {allPermanentCrops.map(permanentCrop => {
+              return <Button key={permanentCrop.object_id} block
+                className={currentPermanentCropId === permanentCrop.object_id ? 'active' : ''} onClick={() => onClick(permanentCrop)}
+              >
+                <span className='mr-1'>{schema.properties.PERM_CROP_TYPE_ID.enumNames[Number(permanentCrop.PERM_CROP_TYPE_ID) - 1]}</span>
+                <span>({permanentCrop.NUMBER_OF_TREES} садници</span>
+                <span className='mr-1'> на {Math.round(permanentCrop.PLANT_AREA)} m²)</span>
+              </Button>
+            })}
+            <Button block variant='dark' onClick={resetForm}>Додади нов запис</Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+    }
+
+    return <React.Fragment>
+      {additionalCropsContainer}
+      <Form
+        key={currentPermanentCropId}
+        isSimple
+        formTitle='Повеќегодишна култура'
+        onSubmit={onPermanentCropSubmit}
+        formData={permanentCropData}
+        onChange={onPermanentCropChange}
+        schema={schema}
+      ><DrawActions cancel={disable} />
+      </Form>
+    </React.Fragment>
   }
 
   const renderComponent = () => {

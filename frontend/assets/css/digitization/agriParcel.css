@@ -1,152 +1,150 @@
 .ap-modal-title {
-    margin-right: 20px;
-    margin-left: 10px;
+  margin-right: 20px;
+  margin-left: 10px;
 }
 .ap-modal-body {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 #measure-dialog .next {
-    color: #3399ff;
-    border: 1px solid #3399ff;
-    float: right;
+  color: #3399ff;
+  border: 1px solid #3399ff;
+  float: right;
 }
 #measure-dialog .next:hover:not(.disabled) {
-    background-color: #e2e6ea;
+  background-color: #e2e6ea;
 }
 #measure-dialog .prev {
-    color: #3399ff;
-    float: left;
-    border: 1px solid transparent;
-    /*padding: 0.75rem;*/
+  color: #3399ff;
+  float: left;
+  border: 1px solid transparent;
+  /*padding: 0.75rem;*/
 }
 #measure-dialog .prev:hover:not(.disabled) {
-    background-color: #e2e6ea;
+  background-color: #e2e6ea;
 }
 #measure-dialog .rjsf {
-    margin: unset;
-    border: unset;
-    background-color: unset;
-    padding: unset;
+  margin: unset;
+  border: unset;
+  background-color: unset;
+  padding: unset;
 }
 
-#measure-dialog .rjsf input[type=checkbox] {
-    vertical-align: middle;
+#measure-dialog .rjsf input[type='checkbox'] {
+  vertical-align: middle;
 }
 
 #measure-dialog .rjsf span {
-    margin-left: 5px;
+  margin-left: 5px;
 }
 
-#pb-contains-ap-dialog {
-    /*position: initial;*/
-}
 #pb-contains-ap-dialog .modal-title {
-    font-size: 20px;
-    text-align: center;
-    padding: 1.5rem;
-    background-color: #F9F9F9;
-    border-bottom: 1px solid #00000025;
-    cursor: unset;
+  font-size: 20px;
+  text-align: center;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #00000025;
+  cursor: unset;
 }
 #pb-contains-ap-dialog .modal-body {
-    padding: 1.5rem;
+  padding: 1.5rem;
 }
 #pb-contains-ap-dialog .modal-body button {
-    font-size: 16px;
-    padding: 1rem;
+  font-size: 16px;
+  padding: 1rem;
 }
 
-#ap-ap-intersect-dialog {
-    /*position: initial;*/
-}
 #ap-ap-intersect-dialog .modal-title {
-    font-size: 20px;
-    text-align: center;
-    padding: 1.5rem;
-    background-color: #F9F9F9;
-    border-bottom: 1px solid #00000025;
-    cursor: unset;
+  font-size: 20px;
+  text-align: center;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #00000025;
+  cursor: unset;
 }
 #ap-ap-intersect-dialog .modal-body {
-    padding: 1.5rem;
+  padding: 1.5rem;
 }
 #ap-ap-intersect-dialog .modal-body button {
-    font-size: 16px;
-    padding: 1rem;
+  font-size: 16px;
+  padding: 1rem;
 }
 
 .control-center .control-map.modal-open .modal-backdrop {
-    z-index: 4000;
+  z-index: 4000;
 }
-.control-center .control-map.modal-open .modal{
-    z-index: 4100;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    padding-top: unset;
+.control-center .control-map.modal-open .modal {
+  z-index: 4100;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding-top: unset;
 }
 /* topleft corner used for prompts, highest z index of all */
 .control-center .control-map .control-topleft.modal-open {
-    z-index: 9000;
+  z-index: 9000;
 }
 
-.control-center .control-map .control-topleft.modal-open .modal{
-    z-index: 9100;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    padding-top: unset;
+.control-center .control-map .control-topleft.modal-open .modal {
+  z-index: 9100;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding-top: unset;
 }
 
 #measure-dialog .modal-body #createAP {
-    text-align: left;
-    padding: 0.5rem;
+  text-align: left;
+  padding: 0.5rem;
 }
 #measure-dialog .modal-body #createAP div {
-    margin: 3px;
+  margin: 3px;
 }
 #measure-dialog .modal-body #createAP div:not(:nth-child(1)) {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 #measure-dialog .modal-body #createAP div:nth-child(2) {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 #measure-dialog .modal-body #createAP div:nth-last-child() {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 #measure-dialog .modal-body #drawAP {
-    text-align: left;
-    padding: 0.5rem;
+  text-align: left;
+  padding: 0.5rem;
 }
 #measure-dialog .modal-body #drawAP div {
-    margin: 3px;
+  margin: 3px;
 }
 #measure-dialog .modal-body #drawAP div:not(:nth-child(1)) {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 #measure-dialog .modal-body #drawAP div:nth-child(2) {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 #measure-dialog .modal-body #drawAP div:nth-last-child() {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 #measure-dialog .modal-body .cancel {
-    margin-top: 30px;
-    color: #dc3545;
-    border: 1px solid #dc3545;
-    float: right;
+  margin-top: 30px;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  float: right;
 }
 #measure-dialog .modal-body .cancel:hover:not(.disabled) {
-    background-color: #e2e6ea;
+  background-color: #e2e6ea;
 }
 
 #measure-dialog .modal-body #deleteAP {
-    text-align: left;
-    padding: 0.5rem;
+  text-align: left;
+  padding: 0.5rem;
 }
 #measure-dialog .modal-body #deleteAP div {
-    margin: 3px;
+  margin: 3px;
+}
+
+.additional-crops-modal .modal-dialog {
+  right: 520px !important;
 }
