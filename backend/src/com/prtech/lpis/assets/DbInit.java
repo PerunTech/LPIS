@@ -787,6 +787,7 @@ public class DbInit implements IDbInit {
 		dbf9.setDbFieldName("LPIS_PARCEL_ID");
 		dbf9.setDbFieldType(DbFieldType.NUMERIC);
 		dbf9.setDbFieldSize(18);
+		dbf9.setIsNull(false);
 		dbf9.setLabel_code("common_use.lpis_parcel_id");
 		dbf9.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
