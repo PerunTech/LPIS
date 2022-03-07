@@ -131,7 +131,8 @@ const _InfoHeader = ({ fic, fullName }) => {
 /*  EXPANDED ROW  */
 /* ---------- --- */
 const _ExpandedRow = ({ index, id, rowData, unit }) => {
-  return <div key={`${id}_${index}`} id={`expanded-row-${id}_${index}`} className='data-grid-expanded-row' style={{ fontSize: '1.5vh' }}>
+  const rowId = `expanded-row-${id}_${index}`
+  return <div key={rowId} id={rowId} className='data-grid-expanded-row border border-dark rounded' style={{ fontSize: '1.5vh' }}>
     <ListGroup className='text-center'>
       <ListGroupItem className='p-1'>
         Вкупна површина: <span className='font-weight-bold'>{Math.round(Number(rowData.AREA)) + ` ${unit}`}</span>
@@ -174,7 +175,7 @@ const _ExpandedRow = ({ index, id, rowData, unit }) => {
         Органско производство: <span className='font-weight-bold'>{translateBooleanValue(rowData.ORGANIC)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-1'>
-        Тип на почва: <span className='font-weight-bold'>/</span>
+        Тип на почва: <span className='font-weight-bold'>{rowData.SOIL_TYPE || 'Не е наведено'}</span>
       </ListGroupItem>
     </ListGroup>
   </div>
