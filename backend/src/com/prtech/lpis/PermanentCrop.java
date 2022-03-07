@@ -28,7 +28,7 @@ public class PermanentCrop {
 				for (DbDataObject tempPermanentCrop : permanentCrops.getItems()) {
 					sumOfParcels += (Long) tempPermanentCrop.getVal(CC.PLANT_AREA);
 				}
-				if (sumOfParcels > ((BigDecimal) agriParcel.getVal(CC.AREA)).doubleValue()) {
+				if (sumOfParcels > ((BigDecimal) agriParcel.getVal(CC.AREA)).longValue()) {
 					throw new SvException("lpis.error.sumOfPermanentCropsAreaCannotBeBiggerThanParcelArea",
 							svr.getInstanceUser());
 				}
