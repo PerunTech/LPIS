@@ -36,6 +36,7 @@ public class CC {
 	public static final String PARCEL_ID2 = "PARCEL_ID2";
 	public static final String HAS_OVERLAP = "HAS_OVERLAP";
 	public static final String IGNORE = "IGNORE";
+	public static final String FULL_NAME = "FULL_NAME";
 
 	
 

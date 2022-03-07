@@ -258,7 +258,7 @@ public class ApplicationServices {
 
 	};
 
-	private DbDataArray getOverlaps(SvGeometry svg, DbDataObject ap) throws SvException {
+	private DbDataArray getOverlaps(SvCore svg, DbDataObject ap) throws SvException {
 		try (SvReader svr = new SvReader(svg);) {
 			DbSearchExpression dbs = new DbSearchExpression();
 			dbs.setNextCritOperand("OR");
@@ -556,6 +556,42 @@ public class ApplicationServices {
 
 	}
 
+	@GET
+	@Path("/info/agriParel/{token}/{objectName}/{x}/{y}")
+	@Produces("application/pbf")
+	public Response getGeometryInfo(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("x") final Double x,
+			@PathParam("y") final Double y) {
+
+		DbDataArray result = new DbDataArray();
+		String errMsg = null;
+		try (SvGeometry svg = new SvGeometry(token); SvReader svr = new SvReader(svg)) {
+			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
+			Long layerTypeId = SvCore.getTypeIdByName(objectName);
+			Collection<Geometry> geomArr = svg.getRelatedGeometries(point, layerTypeId, SDIRelation.INTERSECTS, null,
+					null, false);
+			for (Geometry g : geomArr) {
+				DbDataObject dbo = (DbDataObject) g.getUserData();
+				DbDataObject dbt = SvCore.getDbt(SvCore.getDbt(dbo).getParentId());
+				DbDataObject dboP = null;
+				if (dbo.getParentId().equals(0L))
+					dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
+				if (dboP != null)
+					result.addDataItem(dboP);
+				if (dbo != null)
+					result.addDataItem(dbo);
+			}
+		} catch (Exception e) {
+			log.error("Error fetching geometry info", e);
+			errMsg = "Failed fetching geometry set. Please see server logs";
+		}
+		if (errMsg != null)
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+		else
+			return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON)
+					.build();
+	}
+
 	/**
 	 * parent filter class.
 	 * 
@@ -598,6 +634,26 @@ public class ApplicationServices {
 		}
 		// ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, );
 		return Response.status(200).entity(commonUse.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON)
+				.build();
+
+	}
+
+	@Path("/get/overlaps/{token}/{parcelId}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getOverlaps(@PathParam("token") final String token, @PathParam("parcelId") final Long parcelId,
+			@Context HttpServletRequest httpRequest) {
+
+		DbDataArray overlaps = new DbDataArray();
+		try (SvReader svr = new SvReader(token)) {
+			DbDataObject parcel = svr.getObjectById(parcelId, SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
+			overlaps = getOverlaps(svr, parcel);
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+					"error.lpis.getOverlaps");
+		}
+		// ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, );
+		return Response.status(200).entity(overlaps.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON)
 				.build();
 
 	}

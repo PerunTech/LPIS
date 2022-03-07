@@ -75,6 +75,7 @@ public class CommonUse {
 		for (DbDataObject dbo : cus.getItems()) {
 			DbDataObject farm = svr.getObjectById(dbo.getParentId(), SvCore.getTypeIdByName(CC.FARM), null);
 			dbo.setVal(CC.FIC, farm.getVal(CC.FIC));
+			dbo.setVal(CC.FULL_NAME, farm.getVal(CC.FULL_NAME));
 		}
 		return cus;
 	}
