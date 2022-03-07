@@ -3,11 +3,13 @@ import { core, ui, data } from '../../../../Spatial';
 import { assignAPMsg, config } from '../Config';
 import { bufferToString, decodeResponse, getFarmMapAssets, isJSON, strcmp } from '../../../Util';
 import { Guidance } from '../Guidance';
+import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
+import { saveAP } from '../SaveAP';
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
-const { Icon } = ui;
+const { Icon, DrawActions } = ui;
 const { useReducer } = React;
 const { alertUser } = elements;
 const { store: perunStore, logoutUser } = redux;
@@ -15,9 +17,9 @@ const history = createHashHistory();
 const _id = 'assignAP';
 
 const _Assign = ({ processID, farmObjId }) => {
-  const [{ layer, data, X, Y, loading, isGuided }, setState] = useReducer((currState, update) =>
+  const [{ layer, data, X, Y, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false });
+    { layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
 
   const enable = () => {
     store.dispatch({ processID: _id });
@@ -34,7 +36,7 @@ const _Assign = ({ processID, farmObjId }) => {
         responseType: 'arraybuffer',
         // data: JSON.stringify(factory.GeoJSON.fromLayer(e.layer)),
       }).then(response => {
-        setState({ loading: false, isGuided: false })
+        setState({ loading: false, isGuided: false, showForm: false })
         alertUser(true, 'success', 'Успешно назначено стопанство', '', () => disable())
         const proto = protobuf(response);
         const buff = geobuf.decode(proto);
@@ -48,7 +50,7 @@ const _Assign = ({ processID, farmObjId }) => {
         })
       }).catch(err => {
         console.log(err.response)
-        setState({ loading: false, isGuided: false })
+        setState({ loading: false, isGuided: false, showForm: false })
         // Get the stringified response from the array buffer
         const stringfiedResponse = bufferToString(err.response.data)
         // Temporary workaround for the issue with using the INTL context in spatial modules
@@ -107,7 +109,7 @@ const _Assign = ({ processID, farmObjId }) => {
       } else {
         Map.off('click');
         // Reset state, internal and application-wide.
-        setState({ layer: {}, data: {}, X: 0, Y: 0, loading: false, enumIdx: [], enumNames: [], isGuided: false });
+        setState({ layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
         store.dispatch({ processID: '' });
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
@@ -116,29 +118,70 @@ const _Assign = ({ processID, farmObjId }) => {
     }
   }
 
+  const onChange = ({ formData }) => {
+    setState({ data: { ...data, ...formData } });
+  }
+
+  const onSubmit = ({ formData }) => {
+    saveAP(JSON.stringify({
+      ...data,
+      ...formData,
+      OBJECT_ID: 0,
+      parent_id: farmObjId,
+      GEOM: factory.GeoJSON.fromLayer(layer)
+    }), disable);
+  }
+
   const handleOverlap = (translatedError, x, y) => {
-    const msg = 'Доколку продолжите ќе биде регистриран целосен преклоп на двете стопанската и парцелата ќе биде оневозможена за понатамошна употреба.'
+    const msg = 'Доколку продолжите ќе биде регистриран целосен преклоп на двете стопанства и парцелата ќе биде оневозможена за понатамошна употреба.'
     elements.alertUser(true, 'warning', translatedError, msg, () => confirmOverlap(x, y), () => disable(), true, 'Продолжи', 'Откажи')
   }
 
   const confirmOverlap = (x, y) => {
     const url = `/lpis/overlap/farm/{init.token}/${farmObjId}/AGRI_PARCEL/${x}/${y}`
-    http.call('assign-agri', { url, method: 'post' }).then(response => {
-      if (response.data) {
-        alertUser(true, 'info', response.data || '', '', () => disable())
-      }
+    http.call('overlap-agri', { url, method: 'post', responseType: 'arraybuffer' }).then(response => {
+      const proto = protobuf(response);
+      const buff = geobuf.decode(proto);
+      const geojson = factory.geoJSON(buff, config.pathOptions);
+      geojson.getLayers().forEach(layer => {
+        layer.feature.id = 0
+        layer.addTo(Map);
+        setState({ data: layer.feature.properties, layer: layer })
+      })
+      setState({ isGuided: false, showForm: true })
     }).catch(err => {
       const { response } = err
-      alertUser(true, 'error', 'Настана грешка', response.data || '', () => disable())
+      console.error(response)
+      alertUser(true, 'error', 'Настана грешка', '', () => disable())
     })
   }
 
-  const renderForm = () => (isGuided ? <Guidance id={_id} disable={disable} msg={assignAPMsg} title='Назначи стопанство' /> : <></>);
+  const renderGuideForm = () => {
+    return <Guidance id={_id} disable={disable} msg={assignAPMsg} title='Назначи стопанство' />
+  }
+
+  const renderForm = () => {
+    return <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
+      <DrawActions cancel={disable} />
+    </Form>
+  }
+
+  const renderComponent = () => {
+    let componentToRender = null
+
+    if (isGuided && !showForm) {
+      componentToRender = renderGuideForm()
+    } else if (showForm && !isGuided) {
+      componentToRender = renderForm()
+    }
+
+    return componentToRender
+  }
 
   return <ProcessButton id={_id} onClick={enable} >
     <Icon name={_id} size='30px' />
     <span style={{ display: 'block', marginTop: '5px' }}>Назначи стопанство</span>
-    {processID === _id && renderForm()}
+    {processID === _id && renderComponent()}
     {loading && <Loading />}
   </ProcessButton>;
 };

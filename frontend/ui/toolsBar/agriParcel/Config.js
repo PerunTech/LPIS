@@ -159,9 +159,7 @@ export const metadataAux = {
     },
     uiSchema: {
         LAND_COVER_CODE_2: {},
-        EXPOSITION_AVG: { 'ui:widget': 'range' },
-        INVISIBLE_BORDER: { 'ui:disabled': true },
-        CHANGED_BORDER: { 'ui:disabled': true },
+        EXPOSITION_AVG: { 'ui:widget': 'range', 'ui:disabled': true },
         SLOPE_AVG: { 'ui:disabled': true },
         Z_AVG: { 'ui:disabled': true },
     }
