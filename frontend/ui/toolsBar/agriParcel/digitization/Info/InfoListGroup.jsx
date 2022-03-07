@@ -14,6 +14,18 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
       ИДБР: <span className='font-weight-bold'>{farmInfo.FIC}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
+      СИЗП број: <span className='font-weight-bold'>{parcelInfo.OLD_ID}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Површина: <span className='font-weight-bold'>{parcelInfo.ALLOWED_AREA ? `${Math.round(parcelInfo.ALLOWED_AREA)} m²` : ''}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Заедничка употреба: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.COMMON_USE)}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Право на користење: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.CERTIFICATE_OF_USE)}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
       Вкупна површина: <span className='font-weight-bold'>{Math.round(parcelInfo.AREA)} m²</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
