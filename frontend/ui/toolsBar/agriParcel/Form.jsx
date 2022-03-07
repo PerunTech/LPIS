@@ -4,7 +4,7 @@ import { Main, Aux, Admin } from './Steps';
 
 const { Button, Modal, Wizard } = ui;
 
-export function Form ({ formData, onSubmit, onChange, children, isSimple, formTitle, schema, uiSchema }) {
+export function Form ({ formData, onSubmit, onChange, children, isSimple, className, formTitle, schema, uiSchema }) {
     if (!isSimple) {
         return <Modal id='measure-dialog'
             show
@@ -25,7 +25,7 @@ export function Form ({ formData, onSubmit, onChange, children, isSimple, formTi
         </Modal>;
     } else {
         const title = formTitle || 'Пополнете ја формата'
-        return <Modal id='measure-dialog'
+        return <Modal id='measure-dialog' className={className || ''}
             show
             backdrop={false}
             enforceFocus={false}

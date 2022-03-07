@@ -205,10 +205,12 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
   }
 
   const renderPermanentCropForm = () => {
+    let permanentCropsModalClassName = ''
     const { schema } = permanentCropSchema
     const currentPermanentCropId = permanentCropData.object_id
     let additionalCropsContainer = null
     if (allPermanentCrops && Array.isArray(allPermanentCrops) && allPermanentCrops.length > 1) {
+      permanentCropsModalClassName = 'permanent-crops-modal'
       const modalProps = {
         show: true,
         backdrop: false,
@@ -255,6 +257,7 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
       <Form
         key={currentPermanentCropId}
         isSimple
+        className={permanentCropsModalClassName}
         formTitle='Повеќегодишна култура'
         onSubmit={onPermanentCropSubmit}
         formData={permanentCropData}
