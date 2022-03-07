@@ -6,12 +6,12 @@ const { http } = core;
 const { Button } = ui;
 const { alertUser, ReactBootstrap } = elements;
 const { useReducer } = React;
-const { Spinner, ListGroup } = ReactBootstrap;
+const { ListGroup } = ReactBootstrap;
 const { Item: ListGroupItem } = ListGroup;
 
 export const InfoList = ({ farmInfo, parcelInfo }) => {
-  const [{ loadingOverlaps, overlaps }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { overlaps: undefined });
+  const [{ overlaps, commonUses, permanentCrops }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { overlaps: undefined, commonUses: undefined, permanentCrops: undefined });
 
   const getCommonUse = () => {
     const parcelId = parcelInfo.object_id
@@ -19,7 +19,7 @@ export const InfoList = ({ farmInfo, parcelInfo }) => {
     http.call('get-common-use', { url }).then(res => {
       if (res.data && Object.keys(res.data).length > 0) {
         if (Array.isArray(res.data.items) && res.data.items?.length > 0) {
-          console.log(res.data.items)
+          setState({ commonUses: res.data.items })
         } else {
           alertUser(true, 'info', 'Не се пронајдени податоци за Заедничка употреба')
         }
@@ -32,12 +32,22 @@ export const InfoList = ({ farmInfo, parcelInfo }) => {
     })
   }
 
+  const commonUsesContainer = () => {
+    return <ListGroup className='text-center '>
+      Парцелата има заедничка употреба со следниве стопанства
+      {commonUses.map(commonUse => {
+        return <ListGroupItem className='p-2'>
+          Целосно име: <span className='font-weight-bold mr-1'>{commonUse.FULL_NAME}</span>
+          ИДБР: <span className='font-weight-bold'>{commonUse.FIC}</span>
+        </ListGroupItem>
+      })}
+    </ListGroup>
+  }
+
   const getOverlaps = () => {
-    setState({ loadingOverlaps: true })
     const parcelId = parcelInfo.object_id
     const url = `/lpis/get/overlaps/{init.token}/${parcelId}`
     http.call('get-overlaps', { url }).then(res => {
-      setState({ loadingOverlaps: false })
       if (res.data && Object.keys(res.data).length > 0) {
         if (Array.isArray(res.data.items) && res.data.items?.length > 0) {
           setState({ overlaps: res.data.items })
@@ -49,7 +59,6 @@ export const InfoList = ({ farmInfo, parcelInfo }) => {
       }
     }).catch(err => {
       console.error(err)
-      setState({ loadingOverlaps: false })
       alertUser(true, 'error', 'Настана грешка')
     })
   }
@@ -66,19 +75,60 @@ export const InfoList = ({ farmInfo, parcelInfo }) => {
     </ListGroup>
   }
 
+  const getPermanentCrops = () => {
+    const parcelId = parcelInfo.object_id
+    const url = `/lpis/get/permanentCrop/{init.token}/${parcelId}`
+    http.call('get-permanent-crops', { url }).then(res => {
+      if (res.data && Object.keys(res.data).length > 0) {
+        if (Array.isArray(res.data.items) && res.data.items?.length > 0) {
+          setState({ permanentCrops: res.data.items })
+        } else {
+          alertUser(true, 'info', 'Не се пронајдени податоци за долгогодишни култури')
+        }
+      } else {
+        alertUser(true, 'info', 'Не се пронајдени податоци за долгогодишни култури')
+      }
+    }).catch(err => {
+      console.error(err)
+      alertUser(true, 'error', 'Настана грешка')
+    })
+  }
+
+  const permanentCropsContainer = () => {
+    return <ListGroup className='text-center '>
+      На парцелата се декларирани следниве долгогодишни култури
+      {permanentCrops.map(permanentCrop => {
+        return <ListGroupItem className='p-2'>
+          Број на парцела: <span className='font-weight-bold mr-1'>{permanentCrop.PARCEL_ID1}</span>
+          Површина: <span className='font-weight-bold'>{Math.round(permanentCrop.AREA)} m²</span>
+        </ListGroupItem>
+      })}
+    </ListGroup>
+  }
+
   const componentToRender = () => {
     return <React.Fragment>
       {parcelInfo.COMMON_USE && <Button className='mb-3 p-2 info' onClick={getCommonUse}>
         Информации за заедничка употреба
       </Button>}
+      {commonUses && Array.isArray(commonUses) && commonUses.length > 0 && <div id='commonUses' className='mb-2'>
+        <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Заедничка употреба</p>
+        {commonUsesContainer()}
+      </div>}
       {parcelInfo.HAS_OVERLAP && !overlaps && <Button className='mb-3 p-2 info' onClick={getOverlaps}>
         Информации за преклопи
       </Button>}
-      {loadingOverlaps && <div className='mt-n2'><Spinner animation='grow' /></div>}
       {overlaps && Array.isArray(overlaps) && overlaps.length > 0 && <div id='overlaps' className='mb-2'>
         <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Преклопи</p>
         {overlapsContainer()}
       </div>}
+      {/* {parcelInfo.HAS_PERMANENT_CROP && !permanentCrops && <Button className='mb-3 p-2 info' onClick={getPermanentCrops}>
+        Информации за долгогодишни култури
+      </Button>}
+      {permanentCrops && Array.isArray(permanentCrops) && permanentCrops.length > 0 && <div id='permanentCrops' className='mb-2'>
+        <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Долгогодишни култури</p>
+        {permanentCropsContainer()}
+      </div>} */}
       <InfoListGroup farmInfo={farmInfo} parcelInfo={parcelInfo} />
     </React.Fragment>
   }
