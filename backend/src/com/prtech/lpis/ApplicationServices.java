@@ -208,7 +208,7 @@ public class ApplicationServices {
 		return overlapDbo;
 	}
 
-	private DbDataObject updateOverlap(SvGeometry svg, DbDataObject agriParcel, Geometry related,
+	private DbDataObject updateOverlap(SvCore svg, DbDataObject agriParcel, Geometry related,
 			DbDataArray existingOverlaps, DbDataArray overlapParcels) throws SvException {
 		Geometry geom = SvGeometry.getGeometry(agriParcel);
 
@@ -236,9 +236,17 @@ public class ApplicationServices {
 		// get any existing overlaps we need to update
 		DbDataArray existingOverlaps = getOverlaps(svg, agriParcel);
 		Geometry geom = SvGeometry.getGeometry(agriParcel);
+		DbDataArray assets = null;
+		try (SvReader svr = new SvReader(svg)) {
+			assets = getAssetsList(svr, agriParcel.getParentId(), CC.AGRI_PARCEL);
+			assets.rebuildIndex("OBJECT_ID", true);
+		}
 
 		double overlapArea = 0;
 		for (Geometry related : intersections) {
+			DbDataObject relatedDbo = (DbDataObject) related.getUserData();
+			if (assets.getItemByIdx(relatedDbo.getObjectId().toString()) != null)
+				continue;
 			DbDataObject overlapDbo = updateOverlap(svg, agriParcel, related, existingOverlaps, overlapParcels);
 			overlapArea = +SvGeometry.getGeometry(overlapDbo).getArea();
 			overlapDbos.addDataItem(overlapDbo);
@@ -649,12 +657,10 @@ public class ApplicationServices {
 			DbDataObject parcel = svr.getObjectById(parcelId, SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
 			overlaps = getOverlaps(svr, parcel);
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
-					"error.lpis.getOverlaps");
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.getOverlaps");
 		}
 		// ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, );
-		return Response.status(200).entity(overlaps.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON)
-				.build();
+		return Response.status(200).entity(overlaps.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
 
 	}
 
