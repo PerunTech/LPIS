@@ -880,10 +880,53 @@ public class ApplicationServices {
 			else
 				rhs.create(MessageType.SUCCESS, "ok");
 		} catch (Exception e) {
-			// TODO: handle exception
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+					"error.lpis.check.physicallBlock");
 		}
 
 		return Response.status(200).entity(rhs.getAll().toString()).build();
+	}
+
+	@Path("/cutoff/physicalBlock/{token}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response cutOffPB(@PathParam("token") String token, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
+
+		JsonObject json = null;
+		final ArrayList<Geometry> result = new ArrayList<Geometry>();
+		ResponseHandler rhs = new ResponseHandler();
+		try (SvGeometry svg = new SvGeometry(token);) {
+
+			json = Util.dataToJson(formVals);
+			Geometry gp = Util.jsonToGeometry(json.get("GEOM"));
+			Collection<Geometry> gg = getPhysicalBlock(svg, gp.getEnvelopeInternal(), "ext_lpis.ilpis", "geometry");
+			Geometry greatest = null;
+			for (Geometry pb : gg) {
+				Geometry tmp = gp.intersection(pb);
+				if (greatest == null || tmp.getArea() > greatest.getArea()) {
+					greatest = tmp;
+					greatest.setUserData(gp.getUserData());
+				}
+			}
+			result.add(greatest);
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+					"error.lpis.cutoff.physicallBlock");
+		}
+
+		if (!result.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+					enc.writeSvGeometry(result);
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity("{error:err.no_parcel.selected}").type(MediaType.APPLICATION_JSON)
+					.build();
 	}
 
 	@Path("/get/cropList/{token}/{farmObjectId}")
