@@ -991,9 +991,9 @@ public class ApplicationServices {
 	@Path("/Generate/report/sessionId/{sessionId}/objectId/{objectId}/reportName/{reportName}/fileType/{fileType}")
 	@Produces("application/vnd.ms-excel")
 	public Response generateAndUploadPdfOrExcel(@PathParam("sessionId") final String sessionId,
-			@PathParam("objectId") final Long objectId, @PathParam("fileType") final String printType,
+			@PathParam("objectId") final Long objectId, @PathParam("fileType") final String fileType,
 			@PathParam("reportName") final String reportName, @Context HttpServletRequest httpRequest) {
-		String fileExtension = printType.equals("EXCEL") ? ".xls" : ".pdf";
+		String fileExtension = fileType.equals("EXCEL") ? ".xls" : ".pdf";
 		StreamingOutput fileStream = new StreamingOutput() {
 			@Override
 			public void write(java.io.OutputStream output) throws IOException {
@@ -1002,7 +1002,7 @@ public class ApplicationServices {
 					String printParam = SvConf.getParam("print.jrxml_path");
 					ByteArrayOutputStream bstr = new ByteArrayOutputStream();
 					Properties rb = setReportProperties(reportName, printParam, objectId, svr);
-					com.prtech.svarog.printer.GeneratePrint2.executeReport(rb, reportName, printType, bstr,
+					com.prtech.svarog.printer.GeneratePrint2.executeReport(rb, reportName, fileType, bstr,
 							svr.dbGetConn());
 					data = bstr.toByteArray();
 					IOUtils.write(data, output);
