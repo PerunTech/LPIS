@@ -86,9 +86,9 @@ const _Info = ({ processID, farmObjId }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable}>
+  return <ProcessButton id={_id} onClick={enable} title='Информации за парцела'>
     <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Информации за парцела</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>Информации</span>
     {processID === _id && renderComponent()}
     {loading && <Loading />}
   </ProcessButton>
