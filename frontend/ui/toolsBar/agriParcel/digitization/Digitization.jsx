@@ -16,6 +16,7 @@ import { Merge } from './Merge';
 import { Refresh } from './Refresh';
 import { Split } from './Split';
 import { PermanentCrops } from './PermanentCrops';
+import { Print } from './Print';
 
 const { ButtonGroup, Divider } = ui;
 
@@ -38,5 +39,7 @@ export const Digitization = () => {
         <PermanentCrops />
         <DeleteParcelFromFarm />
         <Delete />
+        <Divider />
+        <Print />
     </ButtonGroup>;
 }
