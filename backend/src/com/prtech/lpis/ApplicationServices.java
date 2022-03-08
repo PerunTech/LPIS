@@ -4,6 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -60,12 +64,16 @@ import com.prtech.svarog_common.ResponseHandler;
 import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
 import com.prtech.svarog_common.ResponseHandler.MessageType;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.util.GeometryExtracter;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKBReader;
+
 @Path("/lpis")
 public class ApplicationServices {
 
@@ -569,6 +577,45 @@ public class ApplicationServices {
 		// formVals);
 	}
 
+	Collection<Geometry> getPhysicalBlock(SvCore svc, Envelope env, String tableName, String geomColName)
+			throws SvException, SQLException, ParseException {
+		List<Geometry> result = new ArrayList<>();
+		String select = "SELECT " + SvCore.getDbHandler().getGeomReadSQL(geomColName) + " as GG, tt.* FROM " + tableName
+				+ " tt WHERE " + SvCore.getDbHandler().getBBoxSQL(geomColName);
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		WKBReader wkb = new WKBReader(SvUtil.sdiFactory);
+		try {
+			Connection con = svc.dbGetConn();
+			ps = con.prepareStatement(select);
+			ps.setDouble(1, env.getMinX());
+			ps.setDouble(2, env.getMinY());
+			ps.setDouble(3, env.getMaxX());
+			ps.setDouble(4, env.getMaxY());
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				DbDataObject dbo = new DbDataObject();
+				byte[] geom = SvConf.getDbHandler().getGeometry(rs, 1);
+				if (geom != null) {
+					Geometry g = wkb.read(geom);
+
+					for (int i = 2; i <= rs.getMetaData().getColumnCount(); i++) {
+						String colName = rs.getMetaData().getColumnName(i);
+						dbo.setVal(colName, rs.getObject(i));
+					}
+					g.setUserData(dbo);
+					result.add(g);
+				}
+			}
+		} finally {
+			if (ps != null)
+				ps.close();
+			if (rs != null)
+				rs.close();
+		}
+		return result;
+	}
+
 	@POST
 	@Path("/copy/parcel/{token}/{objectName}/{x}/{y}")
 	@Produces("application/pbf")
@@ -608,7 +655,7 @@ public class ApplicationServices {
 //		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
 
 	}
-	
+
 	@POST
 	@Path("/overlap/farm/{token}/{farmId}/{objectName}/{x}/{y}")
 	@Produces("application/pbf")
@@ -815,23 +862,28 @@ public class ApplicationServices {
 			@Context HttpServletRequest httpRequest) {
 
 		Boolean result = false;
-		SvGeometry svg = null;
 		JsonObject json = null;
+		ResponseHandler rhs = new ResponseHandler();
+		try (SvGeometry svg = new SvGeometry(token);) {
 
-		try {
-			svg = new SvGeometry(token);
 			json = Util.dataToJson(formVals);
-
+			Geometry gp = Util.jsonToGeometry(json.get("GEOM"));
 			Set<Geometry> geoms = new HashSet<Geometry>();
-			geoms = svg.getRelatedGeometries(Util.jsonToGeometry(json.get("GEOM")),
-					SvCore.getTypeIdByName("PHYSICAL_BLOCK"), SDIRelation.COVERS, null, null, true);
+			Collection<Geometry> gg = getPhysicalBlock(svg, gp.getEnvelopeInternal(), "ext_lpis.ilpis", "geometry");
 
-			result = geoms.size() == 1;
+			if (gg.size() > 1) {
+				rhs.create(MessageType.WARNING, "error.intersects_physical_block");
+			} else if (gg.size() < 1)
+				rhs.create(MessageType.ERROR, "error.out_of_physical_block");
+			else if (!gg.iterator().next().covers(gp))
+				rhs.create(MessageType.WARNING, "error.intersects_physical_block");
+			else
+				rhs.create(MessageType.SUCCESS, "ok");
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 
-		return Response.status(200).entity(result.toString()).build();
+		return Response.status(200).entity(rhs.getAll().toString()).build();
 	}
 
 	@Path("/get/cropList/{token}/{farmObjectId}")
@@ -1068,7 +1120,7 @@ public class ApplicationServices {
 		}
 		return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
-	
+
 	@GET
 	@Path("/Generate/report/sessionId/{sessionId}/objectId/{objectId}/reportName/{reportName}/fileType/{fileType}")
 	@Produces("application/pdf")
