@@ -14,7 +14,7 @@ const { Icon, DrawActions } = ui;
 const { useReducer } = React;
 const _id = 'cutAP';
 
-const _Cut = ({ processID, farmObjId }) => {
+const _Cut = ({ processID, farmObjId, saveIsPending }) => {
     const [{ layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
         { layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
@@ -146,10 +146,10 @@ const _Cut = ({ processID, farmObjId }) => {
         <Icon name={_id} size='30px' />
         <span style={{ display: 'block', marginTop: '5px' }}>Отсечи</span>
         {processID === _id && renderComponent()}
-        {loading && <Loading />}
+        {saveIsPending && <Loading />}
     </ProcessButton>
 }
 
 export const Cut = core.connect(state => ({
-    processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
+    processID: state.app.processID, saveIsPending: state.farmRegistry?.saveIsPending, farmObjId: state.farmRegistry?.farmObjId
 }))(_Cut)

@@ -13,6 +13,7 @@ export const saveAP = (layer, callback) => {
     // Exit operations on failed workflow.
     const _fail = (msg, desc) => {
         callback();
+        store.dispatch({ saveIsPending: false })
         elements.alertUser(true,
             'error',
             msg || 'Грешка при зачувување',
@@ -36,6 +37,7 @@ export const saveAP = (layer, callback) => {
             layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
             layer.addTo(Map);
         })
+        store.dispatch({ saveIsPending: false })
         elements.alertUser(true,
             'success',
             'Успешно зачувување',
@@ -71,6 +73,7 @@ export const saveAP = (layer, callback) => {
     // Final step of the worklfow, saves agri parcel.
     // Recalculates geometry based on check 2, before the save.
     const _saveAP = (layer, action) => {
+        store.dispatch({ saveIsPending: true })
         // Unmount user prompt from check 2 manually
         ReactDOM.unmountComponentAtNode(container);
         const parentId = layer.PARENT_ID || layer.parent_id || 0

@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, tools, config as cfg } from '../../../../Spatial';
 import { config, permanentCropSchema } from '../Config';
-import { bufferToString, getFarmMapAssets, isJSON, strcmp } from '../../../Util';
+import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { GuideForm } from '../GuideForm';
 import { Form } from '../Form';
@@ -15,10 +15,10 @@ const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'drawAP';
 
-const _Draw = ({ processID, farmObjId }) => {
-    const [{ layer, data, geojson, loading, isGuided, showForm, showPermanentCropForm, permanentCropData }, setState] = useReducer((currState, update) =>
+const _Draw = ({ processID, farmObjId, saveIsPending }) => {
+    const [{ layer, data, geojson, isGuided, showForm, showPermanentCropForm, permanentCropData }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
-        { layer: {}, data: {}, geojson: {}, loading: false, isGuided: false, showForm: false, showPermanentCropForm: false, permanentCropData: {} });
+        { layer: {}, data: {}, geojson: {}, isGuided: false, showForm: false, showPermanentCropForm: false, permanentCropData: {} });
 
     const enable = () => {
         Map.on('new_shape', e => {
@@ -164,10 +164,10 @@ const _Draw = ({ processID, farmObjId }) => {
         <Icon name={_id} size='30px' />
         <span style={{ display: 'block', marginTop: '5px' }}>Нацртај</span>
         {processID === _id && renderComponent()}
-        {loading && <Loading />}
+        {saveIsPending && <Loading />}
     </ProcessButton>;
 }
 
 export const Draw = core.connect(state => ({
-    processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
+    processID: state.app.processID, saveIsPending: state.farmRegistry?.saveIsPending, farmObjId: state.farmRegistry?.farmObjId
 }))(_Draw)
