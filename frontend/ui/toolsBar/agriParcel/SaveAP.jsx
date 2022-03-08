@@ -1,6 +1,7 @@
 import { React, ReactDOM, PropTypes, elements } from 'perun-core';
 import { core, data, ui } from '../../../Spatial';
 import { config } from './Config';
+import { strcmp } from '../../Util'
 
 const { http, store, factory, Map, util } = core;
 const { protobuf, geobuf } = data;
@@ -45,29 +46,62 @@ export const saveAP = (layer, callback) => {
     };
 
     // Check 1, intersection with the underlining physical block.  
-    const _checkPB = () =>
-        http.call('check_ap', { data: layer })
-            .then(response =>
-                response.data
-                    ? _checkAP(0) // if contained, continue to check 2
-                    : ReactDOM.render(<PBModal />, container) // otherwise prompt user.
-            ).catch(() => _fail());
+    const _checkPB = () => {
+        http.call('check_ap', { data: layer }).then(response => {
+            const resType = response.data?.type
+            if (strcmp(resType, 'success')) {
+                // The parcel is contained within a physical block
+                _checkAP(0)
+            } else if (strcmp(resType, 'warning')) {
+                // The parcel is partially contained with a physical block
+                ReactDOM.render(<PBModal />, container)
+            } else {
+                // The parcel is not contained within a physical block
+                const title = 'Парцелата не се наоѓа во границите на ниту еден физички блок'
+                elements.alertUser(true, 'error', title, '', () => callback());
+            }
+        }).catch(() => _fail());
+    }
 
-    // Check 2, intersection with neigbouring agri parcels. 
+    const _cutoffAPaccordingToPB = () => {
+        http.call('cutoff_ap', {
+            url: '/lpis/cutoff/physicalBlock/{init.token}',
+            data: layer,
+            method: 'post',
+            responseType: 'arraybuffer'
+        }).then(response => {
+            const data = geobuf.decode(protobuf(response));
+            const geojson = factory.geoJSON(data, config.pathOptions);
+            const layers = geojson.getLayers();
+            layers.forEach(layer => {
+                layer.feature.id = 0
+                layer.addTo(Map);
+                _checkAP(0, layer)
+            })
+        }).catch(() => _fail())
+    }
+
+    // Check 2, intersection with neigbouring agri parcels.
     // Recalculates geometry based on check 1.
-    const _checkAP = action => {
+    const _checkAP = (action, cutoffLayer) => {
         // Unmount user prompt from check 1 manually
         ReactDOM.unmountComponentAtNode(container);
-
+        let finalData = JSON.parse(layer)
+        // If the layer was cutoff in the previous check, use that one, else, use the initial drawn (or edited) one
+        if (cutoffLayer) {
+            Reflect.set(finalData, 'GEOM', factory.GeoJSON.fromLayer(cutoffLayer))
+        }
         // Make the call for check 2
         http.call('check_ap', {
-            data: layer,
+            data: JSON.stringify(finalData),
             url: '/lpis/check/APIntersectsAP/{init.token}/' + (action === 0),
-        }).then(response =>
-            response.data.check
-                ? ReactDOM.render(<APModal layer={response.data.layer} />, container)
-                : _saveAP(response.data.layer, 'IGNORE')
-        ).catch(() => _fail);
+        }).then(response => {
+            if (response.data?.check) {
+                ReactDOM.render(<APModal layer={finalData} />, container)
+            } else {
+                _saveAP(finalData, 'IGNORE')
+            }
+        }).catch(() => _fail);
     };
 
     // Final step of the worklfow, saves agri parcel.
@@ -79,7 +113,7 @@ export const saveAP = (layer, callback) => {
         const parentId = layer.PARENT_ID || layer.parent_id || 0
         // Make the call for the final save, with results from prompt 2.
         http.call('save_ap', {
-            data: JSON.stringify({ ...layer, GEOM: JSON.parse(layer.GEOM) }),
+            data: JSON.stringify(layer),
             url: '/lpis/save/agriParcel/{init.token}/' + layer.OBJECT_ID + '/' + parentId + '/' + action,
         })
             .then(response => _succeed(geobuf.decode(protobuf(response)), layer))
@@ -98,7 +132,7 @@ export const saveAP = (layer, callback) => {
                     <div>Задржи ја просторната определба</div>
                     <div>(системот ќе покрене барање за контрола на терен)</div>
                 </Button>
-                <Button block onClick={() => _checkAP(1)} >
+                <Button block onClick={() => _cutoffAPaccordingToPB(1)} >
                     Отсечи ја земјоделската парцела според границите на физичкиот блок
                 </Button>
             </Modal.Body>
@@ -131,5 +165,5 @@ export const saveAP = (layer, callback) => {
     // Begin workflow
     // intentional dispatch, disables form on screen, workflow is atomic (will either fail or succeed)
     store.dispatch({ processID: '' });
-    _checkAP(0);
+    _checkPB();
 }
