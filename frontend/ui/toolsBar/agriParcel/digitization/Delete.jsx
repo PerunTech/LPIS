@@ -79,7 +79,8 @@ const _Delete = ({ processID }) => {
                     </Modal.Title>
                     <Modal.Body className='ap-modal-body' >
                         <div id={_id} >{'Ја избравте парцелата со СИЗП број '
-                            + layer.feature.id + ' и површина ' + Math.round(layer.getMeasurement()) + ' m². Дали сте сигурни дека сакате да ја избришете?'}</div>
+                            + layer.feature.properties.OLD_ID + ' и површина ' + Math.round(layer.getMeasurement()) + ' m². '
+                            + 'Дали сте сигурни дека сакате да ја избришете?'}</div>
                         <Button onClick={() => { deleteLayer() }} size='' className='cancel' > Избриши</Button>
                     </Modal.Body>
                 </Modal>)}

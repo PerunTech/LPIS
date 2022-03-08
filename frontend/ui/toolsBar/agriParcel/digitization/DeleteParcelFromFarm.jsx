@@ -71,7 +71,7 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId }) => {
       <Modal.Body className='ap-modal-body'>
         <div id={_id}>
           {'Ја избравте парцелата со СИЗП број ' +
-            layer.feature.id +
+            layer.feature.properties.OLD_ID +
             ' и површина ' +
             Math.round(layer.getMeasurement()) +
             ' m². Дали сте сигурни дека сакате да ја отстраните од фармата?'}
