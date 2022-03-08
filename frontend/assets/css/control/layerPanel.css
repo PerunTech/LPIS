@@ -40,7 +40,7 @@
   border-color: #dae0e5;
 }
 
-#farm-registry-map .leaflet-control-layers-base {
+#farm-registry-map .leaflet-control-layers-list {
   max-height: 725px;
 }
 
