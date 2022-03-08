@@ -1,5 +1,6 @@
 package com.prtech.lpis;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -10,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +27,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -39,6 +42,7 @@ import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvExecManager;
+import com.prtech.svarog.SvFileStore;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvParameter;
 import com.prtech.svarog.SvReader;
@@ -62,7 +66,6 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.util.GeometryExtracter;
-
 @Path("/lpis")
 public class ApplicationServices {
 
@@ -982,5 +985,49 @@ public class ApplicationServices {
 					"error.perun.failedToGetObject");
 		}
 		return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
+	}
+	
+	@GET
+	@Path("/Generate/report/sessionId/{sessionId}/objectId/{objectId}/reportName/{reportName}/fileType/{fileType}")
+	@Produces("application/vnd.ms-excel")
+	public Response generateAndUploadPdfOrExcel(@PathParam("sessionId") final String sessionId,
+			@PathParam("objectId") final Long objectId, @PathParam("fileType") final String printType,
+			@PathParam("reportName") final String reportName, @Context HttpServletRequest httpRequest) {
+		String fileExtension = printType.equals("EXCEL") ? ".xls" : ".pdf";
+		StreamingOutput fileStream = new StreamingOutput() {
+			@Override
+			public void write(java.io.OutputStream output) throws IOException {
+				try (SvReader svr = new SvReader(sessionId);) {
+					byte[] data = null;
+					String printParam = SvConf.getParam("print.jrxml_path");
+					ByteArrayOutputStream bstr = new ByteArrayOutputStream();
+					Properties rb = setReportProperties(reportName, printParam, objectId, svr);
+					com.prtech.svarog.printer.GeneratePrint2.executeReport(rb, reportName, printType, bstr,
+							svr.dbGetConn());
+					data = bstr.toByteArray();
+					IOUtils.write(data, output);
+				} catch (Exception e) {
+					log4j.error("Error occurred while printing PDF/Excel!", e);
+				}
+			}
+		};
+		return Response.ok(fileStream, MediaType.APPLICATION_OCTET_STREAM)
+				.header("content-disposition", "attachment; filename = " + reportName + fileExtension).build();
+	}
+	
+	public static Properties setReportProperties(String reportName, String reportPath, Long objectId, SvReader svr) {
+		Properties prop = new Properties();
+		prop.put("path", reportPath + CC.PATH_DELIMITER);
+		switch (reportName) {
+		case "parcels_changes":
+			prop.put("OBJ_ID", objectId);
+			break;
+		case "parcels_identification":
+			prop.put("OBJ_ID", objectId);
+			break;
+		default:
+			break;
+		}
+		return prop;
 	}
 }
