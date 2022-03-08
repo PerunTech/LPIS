@@ -96,7 +96,9 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
             if (layer.options.tooltips) {
-                layer.unbindTooltip()
+                if (layer._tooltip?._content) {
+                    layer._tooltip._content = ''
+                }
             }
             Map.removeLayer(layer);
         }
