@@ -65,14 +65,17 @@ export const farmRegLpis = () => {
     const _token = redux.store.getState().security.svSession;
     getFarmMapAssets(true)
 
-    return ui.init(_token)
-        .addControl(ToolsBar, {}, { position: 'top' })
-        .addControl(DataPanel, {}, { position: 'left' })
-        .addControl(LayerPanel, {}, { position: 'right' })
-        .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
-        .withNavigationControl()
-        .addRasterLayers(layerList[0], layerList[1], { collapsed: false, position: 'right' })
-        //.addRasterLayers(parcelLayersList[0], { collapsed: false, position: 'right' })
-        .withWindRose()
-        .render('farm-registry-map');
+    // Prevent multiple initializations.
+    return !_isLoaded
+        ? (_isLoaded = true, ui.init(_token)
+            .addControl(ToolsBar, {}, { position: 'top' })
+            .addControl(DataPanel, {}, { position: 'left' })
+            .addControl(LayerPanel, {}, { position: 'right' })
+            .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
+            .withNavigationControl()
+            .addRasterLayers(layerList[0], layerList[1], { collapsed: false, position: 'right' })
+            //.addRasterLayers(parcelLayersList[0], { collapsed: false, position: 'right' })
+            .withWindRose()
+            .render('farm-registry-map'))
+        : null;
 }
