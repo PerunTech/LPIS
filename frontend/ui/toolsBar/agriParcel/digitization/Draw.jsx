@@ -160,9 +160,9 @@ const _Draw = ({ processID, farmObjId }) => {
         return componentToRender
     }
 
-    return <ProcessButton id={_id} onClick={enable} >
+    return <ProcessButton id={_id} onClick={enable} title='Нацртај парцела' className='mr-2'>
         <Icon name={_id} size='30px' />
-        <span style={{ display: 'block', marginTop: '5px' }}>Нацртај парцела</span>
+        <span style={{ display: 'block', marginTop: '5px' }}>Нацртај</span>
         {processID === _id && renderComponent()}
         {loading && <Loading />}
     </ProcessButton>;

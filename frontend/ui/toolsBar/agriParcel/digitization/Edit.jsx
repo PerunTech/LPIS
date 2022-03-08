@@ -282,9 +282,9 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} >
+  return <ProcessButton id={_id} onClick={enable} title='Промени парцела' className='mr-2'>
     <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Промени парцела</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>Промени</span>
     {processID === _id && renderComponent()}
     {loading && <Loading />}
   </ProcessButton>;

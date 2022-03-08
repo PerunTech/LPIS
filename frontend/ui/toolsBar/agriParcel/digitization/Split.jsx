@@ -75,9 +75,9 @@ const _Split = ({ processID, farmObjId }) => {
     line.disable('force');
   }
 
-  return <ProcessButton id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
+  return <ProcessButton id={_id} onClick={enable} title='Подели парцела' className='mr-2' >
     <Icon name={_id} size='28px' style={{ marginTop: '2px' }} />
-    <span style={{ display: 'block', marginTop: '5px' }}>Подели парцела</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>Подели</span>
     {processID === _id
       && <Guidance id={_id}
         finish={() => line._finishShape()}

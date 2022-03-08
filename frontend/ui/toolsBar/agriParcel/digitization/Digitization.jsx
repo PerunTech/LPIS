@@ -17,46 +17,19 @@ import { Refresh } from './Refresh';
 import { Split } from './Split';
 import { PermanentCrops } from './PermanentCrops';
 
-const { ButtonGroup, Divider, Icon } = ui;
-const { useState } = React;
-const caretLeftIcon = <Icon name='caret-left' size='16px' />
-const caretRightIcon = <Icon name='caret-right' size='16px' />
+const { ButtonGroup, Divider } = ui;
 
 export const Digitization = () => {
-    const [firstGroupIsToggled, toggleFirstGroup] = useState(false)
-    const [secondGroupIsToggled, toggleSecondGroup] = useState(true)
-
-    const onFirstGroupClick = () => {
-        toggleFirstGroup(!firstGroupIsToggled)
-        toggleSecondGroup(false)
-    }
-
-    const onSecondGroupClick = () => {
-        toggleFirstGroup(false)
-        toggleSecondGroup(!secondGroupIsToggled)
-    }
-
     return <ButtonGroup>
+        <Info />
         <Divider />
-        <ProcessButton id='toggle-first-group' onClick={onFirstGroupClick}>
-            {firstGroupIsToggled ? caretLeftIcon : caretRightIcon}
-        </ProcessButton>
-        {firstGroupIsToggled && <React.Fragment>
-            <Copy />
-            <Info />
-        </React.Fragment>}
-        <Divider />
-        <ProcessButton id='toggle-second-group' onClick={onSecondGroupClick}>
-            {secondGroupIsToggled ? caretLeftIcon : caretRightIcon}
-        </ProcessButton>
-        {secondGroupIsToggled && <React.Fragment>
-            <Draw />
-            <Edit />
-            <Cut />
-            <Split />
-            <Merge />
-            <Fill />
-        </React.Fragment>}
+        <Copy />
+        <Draw />
+        <Edit />
+        <Cut />
+        <Split />
+        <Merge />
+        <Fill />
         <Divider />
         <Refresh />
         <Divider />

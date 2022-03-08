@@ -74,9 +74,9 @@ const _Merge = ({ processID, farmObjId }) => {
     line.disable('force');
   }
 
-  return <ProcessButton id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
+  return <ProcessButton id={_id} onClick={enable} title='Спои парцела' className='mr-2' >
     <Icon name={_id} size='28px' style={{ marginTop: '2px' }} />
-    <span style={{ display: 'block', marginTop: '5px' }}>Спои парцела</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>Спои</span>
     {processID === _id
       && <Guidance id={_id}
         finish={() => line._finishShape()}
