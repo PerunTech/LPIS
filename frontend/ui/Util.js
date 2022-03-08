@@ -95,6 +95,9 @@ function handleLayerClick (layer) {
 export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
+            if (layer.options.tooltips) {
+                layer.unbindTooltip()
+            }
             Map.removeLayer(layer);
         }
     });
@@ -121,7 +124,6 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
 
         // send geojson to factory, visualize
         layers.forEach(layer => {
-            layer.unbindTooltip()
             layer.addTo(Map)
             setAPLabel(layer)
             layer.on('click', function () {
