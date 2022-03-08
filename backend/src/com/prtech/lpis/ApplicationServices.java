@@ -570,6 +570,46 @@ public class ApplicationServices {
 	}
 
 	@POST
+	@Path("/copy/parcel/{token}/{objectName}/{x}/{y}")
+	@Produces("application/pbf")
+	public Response copyFromLayer(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("x") final Double x,
+			@PathParam("y") final Double y, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
+
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try (SvReader svr = new SvReader(token);
+				SvWriter svw = new SvWriter(svr);
+				SvGeometry svg = new SvGeometry(svr)) {
+			svr.setIncludeGeometries(true);
+			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
+			Long layerTypeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
+			Collection<Geometry> geomArr = svg.getRelatedGeometries(point, layerTypeId, SDIRelation.INTERSECTS, null,
+					null, false);
+			if (geomArr.size() == 1) {
+				result.add(geomArr.iterator().next());
+			}
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.copy");
+		}
+
+		if (!result.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+					enc.writeSvGeometry(result);
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity("{error:err.no_parcel.selected}").type(MediaType.APPLICATION_JSON)
+					.build();
+
+//		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
+
+	}
+	
+	@POST
 	@Path("/overlap/farm/{token}/{farmId}/{objectName}/{x}/{y}")
 	@Produces("application/pbf")
 	public Response overlapFarm(@PathParam("token") final String token, @PathParam("farmId") final Long farmId,
