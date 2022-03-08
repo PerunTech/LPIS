@@ -465,6 +465,48 @@ public class ApplicationServices {
 
 	}
 
+	@POST
+	@Path("/lpis/delete/{token}/{objectId}/{objectType}/")
+	@Produces("application/pbf")
+	public Response deleteGeometry(@PathParam("token") final String token, @PathParam("objectId") final Long objectId,
+			@PathParam("objectType") final Long objectType, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
+
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try (SvReader svr = new SvReader(token);
+				SvWriter svw = new SvWriter(svr);
+				SvGeometry svg = new SvGeometry(svr)) {
+			svw.setAutoCommit(false);
+			svg.setAutoCommit(false);
+			svr.setIncludeGeometries(true);
+			DbDataObject dbo = svr.getObjectById(objectId, objectType, null);
+			if (dbo == null)
+				throw (new SvException(Sv.Exceptions.NULL_OBJECT, svr.getInstanceUser()));
+			else {
+				Geometry gTile = SvGeometry.getTileGeometry(SvGeometry.getCentroid(dbo));
+				SvSDITile svTile = SvGeometry.getTile(objectType, (String) gTile.getUserData(), null);
+				removeOverlaps(svg, dbo);
+				svw.deleteObject(dbo, false);
+				svw.dbCommit();
+				svTile.setIsTileDirty(true);
+			}
+
+		} catch (SvException e) {
+			com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
+		}
+
+		StreamingOutput pbfStream = new StreamingOutput() {
+			public void write(OutputStream stream) throws IOException {
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+				enc.writeSvGeometry(result);
+			};
+		};
+		return Response.ok(pbfStream, "application/pbf").build();
+
+//		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
+
+	}
+
 	@GET
 	@Path("/remove/farm/{token}/{objectId}/{objectName}")
 	@Produces("application/pbf")
