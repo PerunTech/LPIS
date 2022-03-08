@@ -989,32 +989,41 @@ public class ApplicationServices {
 	
 	@GET
 	@Path("/Generate/report/sessionId/{sessionId}/objectId/{objectId}/reportName/{reportName}/fileType/{fileType}")
-	@Produces("application/vnd.ms-excel")
+	@Produces("application/pdf")
 	public Response generateAndUploadPdfOrExcel(@PathParam("sessionId") final String sessionId,
 			@PathParam("objectId") final Long objectId, @PathParam("fileType") final String fileType,
 			@PathParam("reportName") final String reportName, @Context HttpServletRequest httpRequest) {
-		String fileExtension = fileType.equals("EXCEL") ? ".xls" : ".pdf";
-		StreamingOutput fileStream = new StreamingOutput() {
-			@Override
-			public void write(java.io.OutputStream output) throws IOException {
-				try (SvReader svr = new SvReader(sessionId);) {
-					byte[] data = null;
-					String printParam = SvConf.getParam("print.jrxml_path");
-					ByteArrayOutputStream bstr = new ByteArrayOutputStream();
-					Properties rb = setReportProperties(reportName, printParam, objectId, svr);
-					com.prtech.svarog.printer.GeneratePrint2.executeReport(rb, reportName, fileType, bstr,
-							svr.dbGetConn());
-					data = bstr.toByteArray();
-					IOUtils.write(data, output);
-				} catch (Exception e) {
-					log4j.error("Error occurred while printing PDF/Excel!", e);
+		String errMsg = "error.perun.failedToGeneratePdf";
+		Boolean shouldGenerate = false;
+		final ByteArrayOutputStream bstr = new ByteArrayOutputStream();
+		try (SvReader svr = new SvReader(sessionId)) {
+			String printParam = SvConf.getParam("print.jrxml_path");
+			Properties rb = setReportProperties(reportName, printParam, objectId, svr);
+			com.prtech.svarog.printer.GeneratePrint2.executeReport(rb, reportName, fileType, bstr, svr.dbGetConn());
+			shouldGenerate = true;
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+					"error.perun.failedToGeneratePdf");
+		}
+		if (shouldGenerate) {
+			StreamingOutput fileStream = new StreamingOutput() {
+				@Override
+				public void write(java.io.OutputStream output) throws IOException {
+					try (SvReader svr = new SvReader(sessionId);) {
+						byte[] data = bstr.toByteArray();
+						IOUtils.write(data, output);
+					} catch (Exception e) {
+						log4j.error("Error occurred while printing PDF/Excel!", e);
+					}
 				}
-			}
-		};
-		return Response.ok(fileStream, MediaType.APPLICATION_OCTET_STREAM)
-				.header("content-disposition", "attachment; filename = " + reportName + fileExtension).build();
+			};
+			return Response.ok(fileStream, MediaType.APPLICATION_OCTET_STREAM)
+					.header("content-disposition", "attachment; filename = " + reportName + ".pdf").build();
+		} else {
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+		}
 	}
-	
+
 	public static Properties setReportProperties(String reportName, String reportPath, Long objectId, SvReader svr) {
 		Properties prop = new Properties();
 		prop.put("path", reportPath + CC.PATH_DELIMITER);
