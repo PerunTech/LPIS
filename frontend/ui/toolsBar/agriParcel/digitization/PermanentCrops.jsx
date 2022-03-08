@@ -149,7 +149,7 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
     const { schema } = permanentCropSchema
     const currentPermanentCropId = data.object_id
     let additionalCropsContainer = null
-    if (allPermanentCrops && Array.isArray(allPermanentCrops) && allPermanentCrops.length > 1) {
+    if (allPermanentCrops && Array.isArray(allPermanentCrops) && allPermanentCrops.length >= 1) {
       permanentCropsModalClassName = 'permanent-crops-modal'
       const modalProps = {
         show: true,

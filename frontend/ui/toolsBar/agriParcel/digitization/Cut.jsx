@@ -63,40 +63,40 @@ const _Cut = ({ processID, farmObjId }) => {
                 responseType: 'arraybuffer',
                 data: JSON.stringify(factory.GeoJSON.fromLayer(e.layer))
             }).then(response => {
-                    const buff = geobuf.decode(protobuf(response));
-                    const geojson = factory.geoJSON(buff, config.pathOptions);
-                    const stateData = store.getState().data.layers;
+                const buff = geobuf.decode(protobuf(response));
+                const geojson = factory.geoJSON(buff, config.pathOptions);
+                const stateData = store.getState().data.layers;
 
-                    geojson.getLayers().forEach(layer => {
-                        const id = layer.feature.id
+                geojson.getLayers().forEach(layer => {
+                    const id = layer.feature.id
 
-                        // remove old app layers entries, will update with the new geojson set.
-                        stateData[id] && stateData[id].removeFrom(Map);
+                    // remove old app layers entries, will update with the new geojson set.
+                    stateData[id] && stateData[id].removeFrom(Map);
 
-                        layer.addTo(Map);
-                        e.layer.removeFrom(Map);
-
-                        setState({
-                            layer: layer,
-                            data: {
-                                ...layer.feature.properties,
-                                OBJECT_ID: Number(layer.feature.id),
-                                FORCE_CROP_REFRESH: true
-                            },
-                            isGuided: false,
-                            showForm: true
-                        })
-                    })
-                }).catch(error => {
+                    layer.addTo(Map);
                     e.layer.removeFrom(Map);
-                    let enc = new TextDecoder("utf-8");
-                    let errmsg = enc.decode(error.response.data);
-                    elements.alertUser(true,
-                        'error',
-                        'Грешка при отсекување земјоделска парцела',
-                        errmsg, disable
-                    );
+
+                    setState({
+                        layer: layer,
+                        data: {
+                            ...layer.feature.properties,
+                            OBJECT_ID: Number(layer.feature.id),
+                            FORCE_CROP_REFRESH: true
+                        },
+                        isGuided: false,
+                        showForm: true
+                    })
                 })
+            }).catch(error => {
+                e.layer.removeFrom(Map);
+                let enc = new TextDecoder("utf-8");
+                let errmsg = enc.decode(error.response.data);
+                elements.alertUser(true,
+                    'error',
+                    'Грешка при отсекување земјоделска парцела',
+                    errmsg, disable
+                );
+            })
         }
 
         Map.off('new_shape');
@@ -142,9 +142,9 @@ const _Cut = ({ processID, farmObjId }) => {
         return componentToRender
     }
 
-    return <ProcessButton id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
+    return <ProcessButton id={_id} onClick={enable} title='Отсечи парцела' className='mr-2' >
         <Icon name={_id} size='30px' />
-        <span style={{ display: 'block', marginTop: '5px' }}>Отсечи парцела</span>
+        <span style={{ display: 'block', marginTop: '5px' }}>Отсечи</span>
         {processID === _id && renderComponent()}
         {loading && <Loading />}
     </ProcessButton>

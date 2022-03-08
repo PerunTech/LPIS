@@ -131,9 +131,9 @@ const _Fill = ({ processID, farmObjId }) => {
         return componentToRender
     }
 
-    return <ProcessButton id={_id} onClick={enable} className={processID === _id ? 'active' : ''} >
+    return <ProcessButton id={_id} onClick={enable} title='Пополни парцела' >
         <Icon name={_id} size='30px' />
-        <span style={{ display: 'block', marginTop: '5px' }}>Пополни парцела</span>
+        <span style={{ display: 'block', marginTop: '5px' }}>Пополни</span>
         {processID === _id && renderComponent()}
     </ProcessButton>
 }

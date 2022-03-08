@@ -1,4 +1,4 @@
-import { React, PropTypes} from 'perun-core';
+import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
 
 /**
@@ -16,12 +16,17 @@ import { core, ui } from '../../Spatial';
  * 
  * @returns JSX;
  */
-function _ProcessButton ({id, ...props}) {
-    return <ui.Button {...props} 
-        id={id} 
-        className={props.processID === id ? 'active' : ''}
+function _ProcessButton ({ id, ...props }) {
+    let classNames = [props.className ? `${props.className}` : '']
+    if (props.processID === id) {
+        classNames.push('active')
+    }
+
+    return <ui.Button {...props}
+        id={id}
+        className={classNames.join(' ')}
         disabled={String(props.processID).length > 0} >
-            {props.children}
+        {props.children}
     </ui.Button>
 }
 
@@ -31,6 +36,6 @@ _ProcessButton.propTypes = {
     processID: PropTypes.string,
 }
 
-export const ProcessButton = core.connect(({app}) => { 
+export const ProcessButton = core.connect(({ app }) => {
     return { processID: app.processID };
 })(_ProcessButton);

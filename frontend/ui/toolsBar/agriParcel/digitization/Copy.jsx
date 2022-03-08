@@ -105,9 +105,9 @@ const _Copy = ({ processID, farmObjId }) => {
         </Form>);
 
 
-    return <ProcessButton id={_id} onClick={enable} >
+    return <ProcessButton id={_id} onClick={enable} title='Копирај парцела' className='mr-2' >
         <Icon name={_id} size='30px' />
-        <span style={{ display: 'block', marginTop: '5px' }}>Копирај парцела</span>
+        <span style={{ display: 'block', marginTop: '5px' }}>Копирај</span>
         {processID === _id
             && renderForm()}
         {loading && <Loading />}
