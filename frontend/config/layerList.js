@@ -17,238 +17,169 @@ export const parcelLayersList = [{
     }
 }];
 
-
 export const layerList = [{
-    'Мапи и авионски снимки': {
-        'Ортофото 2017 [380-740 nm]': factory.tileLayer.wms(
+    'РАСТЕР': {
+        'Орто фото 2017': factory.tileLayer.wms(
             geoService + '/geoserver/mk/wms', {
             layers: 'Macedonia_30cm',
             format: 'image/png',
             transparent: true,
             tiled: true
-        }
-        ).addTo(Map),
-
+        }).addTo(Map),
+        'Орто фото ИЦ 2017': factory.tileLayer.wms(
+            geoService + '/geoserver/mk/wms', {
+            layers: 'Macedonia_30cm_cir',
+            format: 'image/png',
+            transparent: true,
+            tiled: true,
+        })
+    },
+    'ДГУ': {
+        'ТК 25': factory.tileLayer.wms(
+            geoService + '/geoserver/mk/wms', {
+            layers: 'mk:TK25',
+            format: 'image/png',
+            transparent: true,
+            tiled: true,
+        }),
+        'Државни граници': factory.tileLayer.wms(
+            geoService + '/geoserver/mk/wms', {
+            layers: 'mk:boundary',
+            format: 'image/png',
+            transparent: true,
+            tiled: true,
+        }),
+        'Општини': factory.tileLayer.wms(
+            geoService + '/geoserver/mk/wms', {
+            layers: 'mk:Admin_Border_polygon',
+            format: 'image/png',
+            transparent: true,
+            tiled: true,
+        })
+    },
+    'СИЗП': {
         'СИЗП': factory.tileLayer.wms(
-            'http://192.168.9.73:8070/geoserver/mkd/wms', {
+            geoService + '/geoserver/mk/wms', {
             layers: 'mkd:VAGRI_PARCEL_WMS',
             format: 'image/png',
             transparent: true,
-            tiled: true
-        }
-        ).addTo(Map)
-        ,
-
-        'Ортофото 2017 [IR 700-1100 nm]': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'Macedonia_30cm_cir',   // Macedonia_30cm_cir
-            format: 'image/png',
-            transparent: true,
             tiled: true,
-        }
-        ),
+        })
     },
-    'Сателитски снимки - Битола': {
-        'Битола_Е-29.07-F': factory.tileLayer.wms(
+    'Иницијални податоци': {
+        'Иницијален СИЗП (ажуриран)': factory.tileLayer.wms(
             geoService + '/geoserver/mk/wms', {
-            layers: 'nir_e_bitola',
+            layers: 'mk:ILPIS',
             format: 'image/png',
             transparent: true,
             tiled: true,
-        }
-        ),
-        'Битола_W1-29.07-F': factory.tileLayer.wms(
+        }),
+        'Референтна парцела (РП)': factory.tileLayer.wms(
             geoService + '/geoserver/mk/wms', {
-            layers: 'nir_w1_bitola',
+            layers: 'mk:RP',
             format: 'image/png',
             transparent: true,
             tiled: true,
-        }
-        ),
-        'Битола_W2-29.07-F': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'nir_w2_bitola',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Битола_Е-29.07-T': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'rgb_e_bitola',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Битола_W1-29.07-T': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'rgb_w1_bitola',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Битола_W2-29.07-T': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'rgb_w2_bitola',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
+        })
     },
-    'Сателитски снимки - Виница': {
-        'Виница_Е-10.07-F': factory.tileLayer.wms(
+    'Катастарски податоци': {
+        'СИЗП КП пресек': factory.tileLayer.wms(
             geoService + '/geoserver/mk/wms', {
-            layers: 'nir_vinica_3',
+            layers: 'mk:ALP_CAD_INTERSECTIONS',
             format: 'image/png',
             transparent: true,
             tiled: true,
-        }
-        ),
-        'Виница_W-10.07-F': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'nir_vinica_4',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Виница_Е-10.07-Т': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'rgb_vinica_3',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Виница_W-10.07-Т': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'rgb_vinica_4',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
+        })
     },
-    'Сателитски снимки - Гевгелија': {
-        'Гевгелија_E1-16.05-F': factory.tileLayer.wms(
+    'Води': {
+        'Линии': factory.tileLayer.wms(
             geoService + '/geoserver/mk/wms', {
-            layers: 'nir_gevgelija_1',
+            layers: 'mk:WF_LINES',
             format: 'image/png',
             transparent: true,
             tiled: true,
-        }
-        ),
-        'Гевгелија_E2-16.05-F': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'nir_gevgelija_2',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Гевгелија_W-19.05-F': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'nir_gevgelija_3',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Гевгелија_E1-16.05-Т': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'rgb_gevgelija_1',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Гевгелија_E2-16.05-Т': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'rgb_gevgelija_2',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Гевгелија_W-19.05-Т': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'rgb_gevgelija_3',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Гевгелија-20.09-F': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'nir_gevgelija_4',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Гевгелија-20.09-T': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'rgb_gevgelija_4',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
+        })
     },
-    'Сателитски снимки - Кавадарци': {
-        'Кавадарци-28.06-F': factory.tileLayer.wms(
+    'Високопланински пасишта': {
+        'Високопланински пасишта (полигони)': factory.tileLayer.wms(
             geoService + '/geoserver/mk/wms', {
-            layers: 'nir_kavadarci',
+            layers: 'mk:HIGHLAND_PASTURES_FINAL_ALL',
             format: 'image/png',
             transparent: true,
             tiled: true,
-        }
-        ),
-        'Кавадарци-28.06-Т': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'rgb_kavadarci',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
+        })
     },
-    'Сателитски снимки - Куманово': {
-        'Куманово_W-15.07-F': factory.tileLayer.wms(
+    'Патна мрежа (податоци од AREC)': {
+        'Патишта': factory.tileLayer.wms(
             geoService + '/geoserver/mk/wms', {
-            layers: 'nir_kumanovo_1',
+            layers: 'mk:roadn_RM',
             format: 'image/png',
             transparent: true,
             tiled: true,
-        }
-        ),
-        'Куманово_Е-15.07-F': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'nir_kumanovo_2',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Куманово_W-15.07-Т': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'rgb_kumanovo_1',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-        'Куманово_Е-15.07-Т': factory.tileLayer.wms(
-            geoService + '/geoserver/mk/wms', {
-            layers: 'rgb_kumanovo_2',
-            format: 'image/png',
-            transparent: true,
-            tiled: true,
-        }
-        ),
-
+        })
     },
+    'Почвена карта': {
+        'Почвени типови': factory.tileLayer.wms(
+            geoService + '/geoserver/mk/wms', {
+            layers: 'mk:PocveniTipovi',
+            format: 'image/png',
+            transparent: true,
+            tiled: true,
+        }),
+        'Почвени профили': factory.tileLayer.wms(
+            geoService + '/geoserver/mk/wms', {
+            layers: 'mk:Agropedology_Profili',
+            format: 'image/png',
+            transparent: true,
+            tiled: true,
+        })
+    },
+    'Заштитено подрачје': {
+        'ЗПП': factory.tileLayer.wms(
+            geoService + '/geoserver/mk/wms', {
+            layers: 'mk:NATURE_PROTECTED_AREAS',
+            format: 'image/png',
+            transparent: true,
+            tiled: true,
+        })
+    },
+    'Системи за наводнување и одводнување': {
+        'Главни канали': factory.tileLayer.wms(
+            geoService + '/geoserver/mk/wms', {
+            layers: 'mk:glavnikanali',
+            format: 'image/png',
+            transparent: true,
+            tiled: true,
+        }),
+        'Споредни канали': factory.tileLayer.wms(
+            geoService + '/geoserver/mk/wms', {
+            layers: 'mk:sporednikanali',
+            format: 'image/png',
+            transparent: true,
+            tiled: true,
+        }),
+        'Главни цевководи': factory.tileLayer.wms(
+            geoService + '/geoserver/mk/wms', {
+            layers: 'mk:glavnicevkovodi',
+            format: 'image/png',
+            transparent: true,
+            tiled: true,
+        }),
+        'Споредни цевководи': factory.tileLayer.wms(
+            geoService + '/geoserver/mk/wms', {
+            layers: 'mk:sporednicevkovodi',
+            format: 'image/png',
+            transparent: true,
+            tiled: true,
+        })
+    },
+    'Податоци од земјишна покривка': {
+        'Земјишна покривка': factory.tileLayer.wms(
+            geoService + '/geoserver/mk/wms', {
+            layers: 'mk:LAND_COVERS',
+            format: 'image/png',
+            transparent: true,
+            tiled: true,
+        })
+    }
 }, { /* overlays, tbd */ }];

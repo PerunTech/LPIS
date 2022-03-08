@@ -1,41 +1,45 @@
 #layer-panel {
-    background-color: #F9F9F9;
-    transition: width 1s;
+  background-color: #f9f9f9;
+  transition: width 1s;
 }
 #layer-panel-toggle {
-    width: 50px;
+  width: 50px;
 }
 
 #layer-panel button {
-    background-color: #F9F9F9;
-    border-color:  #F9F9F9;
+  background-color: #f9f9f9;
+  border-color: #f9f9f9;
 }
 
 #layer-panel .btn-light:hover:not(.disabled) {
-    background-color: #e2e6ea;
-    border-color: #dae0e5;
+  background-color: #e2e6ea;
+  border-color: #dae0e5;
 }
 
 #layer-panel-toggle button {
-    padding: 0.5rem 0.5rem;
-    border-radius: 50%;
-    margin-right: 5px;
+  padding: 0.5rem 0.5rem;
+  border-radius: 50%;
+  margin-right: 5px;
 }
 
 #layer-panel .layer-panel-title.as-label {
-    font-size: 14px;
-    font-style: italic;
-    padding: 0.75rem;
-    margin-left: 25px;
-    margin-right: 22px;
+  font-size: 14px;
+  font-style: italic;
+  padding: 0.75rem;
+  margin-left: 25px;
+  margin-right: 22px;
 }
 
 .control-right .leaflet-control-layers-toggle {
-    height: 60px;
-    width: 60px;
+  height: 60px;
+  width: 60px;
 }
 
 .control-right .leaflet-control-layers-toggle:hover:not(.disabled) {
-    background-color: #e2e6ea;
-    border-color: #dae0e5;
+  background-color: #e2e6ea;
+  border-color: #dae0e5;
+}
+
+#farm-registry-map .leaflet-control-layers-group {
+  margin-top: 0.5rem !important;
 }
