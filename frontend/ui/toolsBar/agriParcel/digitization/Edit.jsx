@@ -17,7 +17,7 @@ const { useReducer } = React;
 const _id = 'editAP';
 const _layerGroup = factory.layerGroup();
 
-const _Edit = ({ processID, farmObjId, agriParcels }) => {
+const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   const [{ layer, geojson, data, permanentCropData, loading, isGuided, showForm, showPermanentCropForm, allPermanentCrops }, setState] = useReducer(
     (currState, update) => ({ ...currState, ...update }),
     {
@@ -286,10 +286,13 @@ const _Edit = ({ processID, farmObjId, agriParcels }) => {
     <Icon name={_id} size='30px' />
     <span style={{ display: 'block', marginTop: '5px' }}>Промени</span>
     {processID === _id && renderComponent()}
-    {loading && <Loading />}
+    {loading || saveIsPending && <Loading />}
   </ProcessButton>;
 }
 
 export const Edit = core.connect(state => ({
-  processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId, agriParcels: state.farmRegistry?.agriParcels
+  processID: state.app.processID,
+  saveIsPending: state.farmRegistry?.saveIsPending,
+  farmObjId: state.farmRegistry?.farmObjId,
+  agriParcels: state.farmRegistry?.agriParcels
 }))(_Edit)

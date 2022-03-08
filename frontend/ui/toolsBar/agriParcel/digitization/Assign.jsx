@@ -16,7 +16,7 @@ const { store: perunStore, logoutUser } = redux;
 const history = createHashHistory();
 const _id = 'assignAP';
 
-const _Assign = ({ processID, farmObjId }) => {
+const _Assign = ({ processID, farmObjId, saveIsPending }) => {
   const [{ layer, data, X, Y, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
     { layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
@@ -182,10 +182,10 @@ const _Assign = ({ processID, farmObjId }) => {
     <Icon name={_id} size='30px' />
     <span style={{ display: 'block', marginTop: '5px' }}>Назначи стопанство</span>
     {processID === _id && renderComponent()}
-    {loading && <Loading />}
+    {loading || saveIsPending && <Loading />}
   </ProcessButton>;
 };
 
 export const Assign = core.connect(state => ({
-  processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
+  processID: state.app.processID, saveIsPending: state.farmRegistry?.saveIsPending, farmObjId: state.farmRegistry?.farmObjId
 }))(_Assign)
