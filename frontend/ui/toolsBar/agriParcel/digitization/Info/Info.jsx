@@ -11,7 +11,7 @@ const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'help';
 
-const _Info = ({ processID, farmObjId }) => {
+const _Info = ({ processID }) => {
   const [{ isGuided, loading, farmInfo, parcelInfo, showModal }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
     { isGuided: false, loading: false, farmInfo: {}, parcelInfo: {}, showModal: false });
@@ -24,14 +24,12 @@ const _Info = ({ processID, farmObjId }) => {
       setState({ X: p.x, Y: p.y, loading: true });
       const url = `/spatial/geometry/info/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
       http.call('get-parcel-info', { url }).then((response) => {
-        const farmInfo = response.data.items[0]
-        const parcelInfo = response.data.items[1]
-        setState({ isGuided: false, loading: false })
-        const parentId = response.data.items[0]?.parent_id
-        if (parentId && Number(parentId) === Number(farmObjId)) {
-          console.log('test')
+        if (response.data.items && Array.isArray(response.data.items) && response.data?.items.length >= 1) {
+          const farmInfo = response.data?.items[0]
+          const parcelInfo = response.data?.items[1]
+          setState({ isGuided: false, loading: false, farmInfo, parcelInfo, showModal: true })
         } else {
-          setState({ farmInfo, parcelInfo, showModal: true })
+          alertUser(true, 'error', 'Настана грешка', 'Нема податоци за избраната парцела или не е избрана парцела од мапата', () => disable());
         }
       }).catch((err) => {
         console.log(err);

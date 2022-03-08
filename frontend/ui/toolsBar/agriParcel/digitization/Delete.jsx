@@ -17,7 +17,7 @@ const _Delete = ({ processID }) => {
 
     const deleteLayer = () => {
         http.call(_id, {
-            url: '/spatial/geometry/delete/confirm/{init.token}/' + Number(layer.feature.id) + '/' + Number(layer.feature.properties.type),
+            url: '/lpis/lpis/delete/{init.token}/' + Number(layer.feature.id) + '/' + Number(layer.feature.properties.type),
             method: 'post',
             data: JSON.stringify({
                 ...layer.feature.properties,
