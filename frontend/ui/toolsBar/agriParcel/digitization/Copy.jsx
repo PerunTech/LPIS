@@ -1,6 +1,6 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
-import { config, createAPMsg } from '../Config';
+import { config, copyAPMsg } from '../Config';
 import { decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
@@ -10,20 +10,18 @@ import { ProcessButton } from '../../ProcessButton';
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { Icon, DrawActions } = ui;
+const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'copy-control';
 
-/**
- * Create a crop parcel by selecting a single point.
- */
-const _Copy = ({ processID, farmObjId }) => {
-    const [{ layer, data, X, Y, loading, isGuided }, setState] = useReducer((currState, update) =>
+const _Copy = ({ processID, farmObjId, saveIsPending }) => {
+    const [{ layer, data, X, Y, loading, showForm, isGuided }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
-        { layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false });
+        { layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
 
     const enable = () => {
+        setState({ isGuided: true })
         store.dispatch({ processID: _id });
-        setState({ isGuided: false })
 
         // Click handler for selection of location and creation of crop parcel geometry.
         Map.on('click', e => {
@@ -31,32 +29,28 @@ const _Copy = ({ processID, farmObjId }) => {
             setState({ X: p.x, Y: p.y, loading: true });
 
             http.call('copy-agri', {
-                url: '/spatial/geometry/layer/cutoff/{init.token}/PHYSICAL_BLOCK/AGRI_PARCEL/' + p.x + '/' + p.y,
-                method: 'get',
+                url: '/lpis/copy/parcel/{init.token}/ILPIS/' + p.x + '/' + p.y,
+                method: 'post',
                 responseType: 'arraybuffer',
-            })
-                .then(response => {
-                    setState({ loading: false })
-                    const proto = protobuf(response);
-                    const buff = geobuf.decode(proto);
-                    const geojson = factory.geoJSON(buff, config.pathOptions);
+            }).then(response => {
+                setState({ loading: false, isGuided: false, showForm: true })
+                const proto = protobuf(response);
+                const buff = geobuf.decode(proto);
+                const geojson = factory.geoJSON(buff, config.pathOptions);
 
-                    geojson.getLayers().forEach(layer => {
-                        // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
-                        //layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
+                geojson.getLayers().forEach(layer => {
+                    // assign metadata
+                    layer.feature.id = 0
+                    layer.feature.properties = { parent_id: farmObjId }
 
-                        // assign metadata
-                        layer.feature.id = 0
-                        layer.feature.properties = { parent_id: farmerId }
-
-                        layer.addTo(Map);
-                        setState({ data: layer.feature.properties, layer: layer })
-                    })
+                    layer.addTo(Map);
+                    setState({ data: layer.feature.properties, layer: layer })
                 })
-                .catch(err => {
-                    console.log(err)
-                    disable()
-                });
+            }).catch(err => {
+                console.log(err)
+                disable()
+                alertUser(true, 'error', 'Настана грешка')
+            });
 
             Map.off('click');
         });
@@ -69,11 +63,11 @@ const _Copy = ({ processID, farmObjId }) => {
             setState({ loading: false })
             if (strcmp(responseType, 'error')) {
                 const errorMsg = decodeResponse(response)
-                elements.alertUser(true, 'error', 'Грешка при зачувување', errorMsg);
+                alertUser(true, 'error', 'Грешка при зачувување', errorMsg);
             } else {
                 Map.off('click');
                 // Reset state, internal and application-wide.
-                setState({ layer: {}, data: {}, X: 0, Y: 0, loading: false, enumIdx: [], enumNames: [], isGuided: false });
+                setState({ layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
                 store.dispatch({ processID: '' });
                 // We remove the working geometry, save process will add the result.
                 layer.removeFrom && layer.removeFrom(Map);
@@ -97,23 +91,36 @@ const _Copy = ({ processID, farmObjId }) => {
             OBJECT_ID: 0
         }), disable);
 
-    const renderForm = () =>
-    (isGuided
-        ? <Guidance id={_id} disable={disable} msg={createAPMsg} title='Додади земјоделска парцела' />
-        : <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
-            <DrawActions cancel={disable} />
-        </Form>);
+    const renderGuideForm = () => {
+        return <Guidance id={_id} disable={disable} msg={copyAPMsg} title='Копирај земјоделска парцела' />
+    }
 
+    const renderForm = () => {
+        return <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
+            <DrawActions cancel={disable} />
+        </Form>
+    }
+
+    const componentToRender = () => {
+        let componentToRender = null
+
+        if (isGuided && !showForm) {
+            componentToRender = renderGuideForm()
+        } else if (showForm && !isGuided) {
+            componentToRender = renderForm()
+        }
+
+        return componentToRender
+    }
 
     return <ProcessButton id={_id} onClick={enable} title='Копирај парцела' className='mr-2' >
         <Icon name={_id} size='30px' />
         <span style={{ display: 'block', marginTop: '5px' }}>Копирај</span>
-        {processID === _id
-            && renderForm()}
-        {loading && <Loading />}
+        {processID === _id && componentToRender()}
+        {loading || saveIsPending && <Loading />}
     </ProcessButton>;
 };
 
 export const Copy = core.connect(state => ({
-    processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
+    processID: state.app.processID, saveIsPending: state.farmRegistry?.saveIsPending, farmObjId: state.farmRegistry?.farmObjId
 }))(_Copy)
