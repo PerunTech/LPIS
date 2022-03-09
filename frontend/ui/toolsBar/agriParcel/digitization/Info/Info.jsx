@@ -22,11 +22,22 @@ const _Info = ({ processID }) => {
     Map.on('click', (e) => {
       const p = Map.transform(e.latlng);
       setState({ X: p.x, Y: p.y, loading: true });
-      const url = `/spatial/geometry/info/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
+      const url = `/lpis/info/agriParcel/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
       http.call('get-parcel-info', { url }).then((response) => {
         if (response.data.items && Array.isArray(response.data.items) && response.data?.items.length >= 1) {
-          const farmInfo = response.data?.items[0]
-          const parcelInfo = response.data?.items[1]
+          let farmInfo
+          let parcelInfo
+          if (response.data?.items[0]?.FIC) {
+            farmInfo = response.data?.items[0]
+            parcelInfo = response.data?.items[1]
+          } else {
+            farmInfo = {}
+            if (!response.data?.items[1]) {
+              parcelInfo = response.data?.items[0]
+            } else {
+              parcelInfo = response.data?.items[1]
+            }
+          }
           setState({ isGuided: false, loading: false, farmInfo, parcelInfo, showModal: true })
         } else {
           alertUser(true, 'error', 'Настана грешка', 'Нема податоци за избраната парцела или не е избрана парцела од мапата', () => disable());

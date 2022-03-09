@@ -108,14 +108,14 @@ export const InfoList = ({ farmInfo, parcelInfo }) => {
 
   const componentToRender = () => {
     return <React.Fragment>
-      {parcelInfo.COMMON_USE && <Button className='mb-3 p-2 info' onClick={getCommonUse}>
+      {parcelInfo && parcelInfo.COMMON_USE && <Button className='mb-3 p-2 info' onClick={getCommonUse}>
         Информации за заедничка употреба
       </Button>}
       {commonUses && Array.isArray(commonUses) && commonUses.length > 0 && <div id='commonUses' className='mb-2'>
         <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Заедничка употреба</p>
         {commonUsesContainer()}
       </div>}
-      {parcelInfo.HAS_OVERLAP && !overlaps && <Button className='mb-3 p-2 info' onClick={getOverlaps}>
+      {parcelInfo && parcelInfo.HAS_OVERLAP && !overlaps && <Button className='mb-3 p-2 info' onClick={getOverlaps}>
         Информации за преклопи
       </Button>}
       {overlaps && Array.isArray(overlaps) && overlaps.length > 0 && <div id='overlaps' className='mb-2'>

@@ -8,10 +8,10 @@ const { Item: ListGroupItem } = ListGroup;
 export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
   return <ListGroup className='text-center mb-2' style={{ height: '650px' }}>
     <ListGroupItem className='p-2'>
-      Целосно име: <span className='font-weight-bold'>{farmInfo.FULL_NAME}</span>
+      Целосно име: <span className='font-weight-bold'>{farmInfo?.FULL_NAME}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
-      ИДБР: <span className='font-weight-bold'>{farmInfo.FIC}</span>
+      ИДБР: <span className='font-weight-bold'>{farmInfo?.FIC}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       СИЗП број: <span className='font-weight-bold'>{parcelInfo.OLD_ID}</span>
