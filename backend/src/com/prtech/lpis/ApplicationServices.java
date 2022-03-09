@@ -869,6 +869,12 @@ public class ApplicationServices {
 			Geometry gp = Util.jsonToGeometry(json.get("GEOM"));
 			Set<Geometry> geoms = new HashSet<Geometry>();
 			Collection<Geometry> gg = getPhysicalBlock(svg, gp.getEnvelopeInternal(), "ext_lpis.ilpis", "geometry");
+			Iterator<Geometry> i = gg.iterator();
+			while (i.hasNext()) {
+				Geometry g = i.next();
+				if (!g.intersects(g))
+					i.remove();
+			}
 
 			if (gg.size() > 1) {
 				rhs.create(MessageType.WARNING, "error.intersects_physical_block");
