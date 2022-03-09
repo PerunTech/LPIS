@@ -147,6 +147,7 @@
 
 .additional-crops-modal .modal-dialog {
   right: 520px !important;
+  max-width: unset !important;
 }
 
 .permanent-crops-modal .modal-dialog {
