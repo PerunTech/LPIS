@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, config } from '../../../../Spatial';
 import { permanentCropsMsg, permanentCropSchema } from '../Config';
-import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
+import { bufferToString, getFarmMapAssets, isJSON, strcmp } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
@@ -14,6 +14,7 @@ const { useReducer } = React;
 
 const _id = 'permanentCrops';
 const _iconId = 'map-report';
+const _deleteIconId = 'trash'
 
 const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
   const [{ layer, data, loading, isGuided, showForm, allPermanentCrops }, setState] = useReducer((currState, update) =>
@@ -140,6 +141,28 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
     }
   }
 
+  const deletePermanentCrop = objectId => {
+    const url = `/lpis/delete/permanentCrop/{init.token}/${objectId}`
+    http.call('delete-permanent-crop', { url }).then(res => {
+      if (res.data) {
+        const resType = res.data.type
+        if (strcmp(resType, 'success')) {
+          alertUser(true, 'success', 'Избраниот запис е успешно избришан', '', disable)
+        } else if (strcmp(resType, 'error')) {
+          alertUser(true, 'error', 'Настана грешка', 'Избраниот запис не е избришан', disable)
+        }
+      }
+    }).catch(err => {
+      console.error(err)
+      alertUser(true, 'error', 'Настана грешка', 'Избраниот запис не е избришан', disable)
+    })
+  }
+
+  const deletePermanentCropPrompt = objectId => {
+    const title = 'Дали сте сигурни дека сакате да го избришете избраниот запис?'
+    alertUser(true, 'warning', title, '', () => deletePermanentCrop(objectId), () => { }, true, 'Да', 'Не')
+  }
+
   const renderGuideForm = () => {
     return <Guidance id={_id} disable={() => disable()} msg={permanentCropsMsg} title='Долгогодишни култури' />
   }
@@ -172,21 +195,27 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
       }
 
       additionalCropsContainer = <Modal {...modalProps}>
-        <Modal.Title>
+        <Modal.Title className='text-center'>
           <Button disabled className='as-label ap-modal-title' >Листа на записи за Повеќегодишни култури</Button>
         </Modal.Title>
         <Modal.Body className='show-grid'>
           <div className='p-2'>
             {allPermanentCrops.map(permanentCrop => {
-              return <Button key={permanentCrop.object_id} block
-                className={currentPermanentCropId === permanentCrop.object_id ? 'active' : ''} onClick={() => onClick(permanentCrop)}
-              >
-                <span className='mr-1'>{schema.properties.PERM_CROP_TYPE_ID.enumNames[Number(permanentCrop.PERM_CROP_TYPE_ID) - 1]}</span>
-                <span>({permanentCrop.NUMBER_OF_TREES} садници</span>
-                <span className='mr-1'> на {Math.round(permanentCrop.PLANT_AREA)} m²)</span>
-              </Button>
+              return <div key={`${permanentCrop.object_id}-container`} className='mt-1'>
+                <Button key={permanentCrop.object_id}
+                  className={currentPermanentCropId === permanentCrop.object_id ? 'active' : ''} onClick={() => onClick(permanentCrop)}
+                >
+                  <span className='mr-1'>{schema.properties.PERM_CROP_TYPE_ID.enumNames[Number(permanentCrop.PERM_CROP_TYPE_ID) - 1]}</span>
+                  <span>({permanentCrop.NUMBER_OF_TREES} садници</span>
+                  <span className='mr-1'> на {Math.round(permanentCrop.PLANT_AREA)} m²)</span>
+                </Button>
+                <span className='ml-2' style={{ cursor: 'pointer', float: 'right' }} title='Избриши запис'
+                  onClick={() => deletePermanentCropPrompt(permanentCrop.object_id)}
+                ><Icon name={_deleteIconId} size='16px' />
+                </span>
+              </div>
             })}
-            <Button block variant='dark' onClick={resetForm}>Додади нов запис</Button>
+            <Button block variant='dark' className='mt-3' onClick={resetForm}>Додади нов запис</Button>
           </div>
         </Modal.Body>
       </Modal>
