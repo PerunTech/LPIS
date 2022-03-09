@@ -713,8 +713,16 @@ public class ApplicationServices {
 				DbDataObject dbo = (DbDataObject) g.getUserData();
 				DbDataObject dbt = SvCore.getDbt(SvCore.getDbt(dbo).getParentId());
 				DbDataObject dboP = null;
-				if (!dbo.getParentId().equals(0L))
+				if (!dbo.getParentId().equals(0L)) {
 					dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
+					if (dboP == null) {
+						if (dbt.getVal(Sv.TABLE_NAME).equals("FARM"))
+							dbt = SvCore.getDbtByName("FARMER");
+						else
+							dbt = SvCore.getDbtByName("FARM");
+						dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
+					}
+				}
 				if (dboP != null)
 					result.addDataItem(dboP);
 				if (dbo != null)
