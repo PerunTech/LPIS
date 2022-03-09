@@ -696,7 +696,7 @@ public class ApplicationServices {
 	}
 
 	@GET
-	@Path("/info/agriParel/{token}/{objectName}/{x}/{y}")
+	@Path("/info/agriParcel/{token}/{objectName}/{x}/{y}")
 	@Produces("application/pbf")
 	public Response getGeometryInfo(@PathParam("token") final String token,
 			@PathParam("objectName") final String objectName, @PathParam("x") final Double x,
@@ -713,7 +713,7 @@ public class ApplicationServices {
 				DbDataObject dbo = (DbDataObject) g.getUserData();
 				DbDataObject dbt = SvCore.getDbt(SvCore.getDbt(dbo).getParentId());
 				DbDataObject dboP = null;
-				if (dbo.getParentId().equals(0L))
+				if (!dbo.getParentId().equals(0L))
 					dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
 				if (dboP != null)
 					result.addDataItem(dboP);
