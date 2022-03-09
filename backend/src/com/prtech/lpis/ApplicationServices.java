@@ -151,7 +151,7 @@ public class ApplicationServices {
 		return Response.status(200).entity(pb.toSimpleJson().toString()).build();
 	}
 
-	@Path("/split/agriParcel/{token}/{objectName}/{parentId}")
+	@Path("/split/agriParcel/{token}/{objectName}/{parentId}/{x}/{y}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/pbf")
