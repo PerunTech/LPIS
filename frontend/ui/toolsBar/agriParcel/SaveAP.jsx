@@ -78,7 +78,11 @@ export const saveAP = (layer, callback) => {
                 layer.addTo(Map);
                 _checkAP(0, layer)
             })
-        }).catch(() => _fail())
+        }).catch(() => {
+            // Unmount user prompt from check 1 manually
+            ReactDOM.unmountComponentAtNode(container);
+            _fail()
+        })
     }
 
     // Check 2, intersection with neigbouring agri parcels.
