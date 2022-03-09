@@ -1,6 +1,6 @@
 import { React, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
-import { config } from '../Config';
+import { config, splitAPMsg } from '../Config';
 import { decodeResponse, getFarmMapAssets } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
@@ -9,13 +9,10 @@ const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { draw: { line } } = tools;
 const { Icon } = ui;
-const { useReducer } = React;
 const { alertUser } = elements;
 const _id = 'splitAP';
 
-const _Split = ({ processID, farmObjId }) => {
-  const [{ layer }, setState] = useReducer((currState, update) => ({ ...currState, ...update }), { layer: {} });
-
+const _Split = ({ processID, agriParcels, farmObjId }) => {
   const cleanup = (lineLayer) => {
     disable()
     Map.off('new_shape');
@@ -25,22 +22,49 @@ const _Split = ({ processID, farmObjId }) => {
     }
   }
 
-  const enable = () => {
+  const _enableLine = point => {
     Map.on('new_shape', e => {
       if (e && e.layer) {
         const title = 'Дали сакате да ја поделите парцелата?'
-        alertUser(true, 'warning', title, '', splitParcel.bind(null, e.layer), cleanup.bind(null, e.layer), true, 'Да', 'Не')
+        alertUser(true, 'warning', title, '', splitParcel.bind(null, e.layer, point), cleanup.bind(null, e.layer), true, 'Да', 'Не')
       } else {
         cleanup();
       }
     });
-    store.dispatch({ processID: _id });
     line.enable(config);
+  }
+
+  const _handleLayerClick = (ap, agriParcels) => {
+    ap.on('click', function (e) {
+      const latLng = e.latlng
+      // Get the correct coordinates for the current CRS
+      const point = Map.transform(latLng);
+      agriParcels.forEach(ap => ap.off('click'))
+      // Create a marker & add it to the map
+      const markerConfig = { icon: factory.divIcon({ className: 'marker-icon' }) }
+      const marker = factory.marker(latLng, markerConfig)
+      marker.addTo(Map)
+      _enableLine(point);
+    });
+  }
+
+  const enable = () => {
+    if (agriParcels.length > 0) {
+      agriParcels.forEach(ap => _handleLayerClick(ap, agriParcels))
+      store.dispatch({ processID: _id });
+    } else {
+      alertUser(true,
+        'warning',
+        'Не се пронајдени земјоделски парцели.',
+        'Додадете земјоделски парцели пред да ја користите алатката за делење.',
+        () => disable());
+    }
   };
 
-  const splitParcel = (lineLayer) => {
+  const splitParcel = (lineLayer, point) => {
+    const { x, y } = point
     http.call(_id, {
-      url: '/spatial/geometry/split/confirm/{init.token}/AGRI_PARCEL/' + farmObjId,
+      url: `/lpis/split/agriParcel/{init.token}/AGRI_PARCEL/${farmObjId}/${x}/${y}`,
       method: 'post',
       responseType: 'arraybuffer',
       data: JSON.stringify(factory.GeoJSON.fromLayer(lineLayer))
@@ -65,29 +89,35 @@ const _Split = ({ processID, farmObjId }) => {
   }
 
   const disable = () => {
-    // Reset state, internal and application-wide.
-    setState({ layer: {}, data: {} });
+    // Reset state
     store.dispatch({ processID: '' });
-
-    // We remove the working geometry, save process will add the result.
-    layer.removeFrom && layer.removeFrom(Map);
+    // This will remove the point when disabling the action
+    Map.eachLayer(layer => {
+      if (layer?.options?.icon) {
+        layer.removeFrom(Map)
+      }
+    })
     // Disable Split handler.
     line.disable('force');
+    // Reload the assets
+    getFarmMapAssets()
+  }
+
+  const renderGuideForm = () => {
+    return <Guidance id={_id} msg={splitAPMsg} title='Подели парцела'
+      finish={() => line._finishShape()}
+      undo={() => line._removeLastVertex()}
+      disable={disable}
+    />
   }
 
   return <ProcessButton id={_id} onClick={enable} title='Подели парцела' className='mr-2' >
     <Icon name={_id} size='28px' style={{ marginTop: '2px' }} />
     <span style={{ display: 'block', marginTop: '5px' }}>Подели</span>
-    {processID === _id
-      && <Guidance id={_id}
-        finish={() => line._finishShape()}
-        undo={() => line._removeLastVertex()}
-        disable={disable}
-        msg={['', '']}
-        title='Подели парцела' />}
+    {processID === _id && renderGuideForm()}
   </ProcessButton>;
 };
 
 export const Split = core.connect(state => ({
-  processID: state.app.processID, mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
+  processID: state.app.processID, agriParcels: state.farmRegistry?.agriParcels, farmObjId: state.farmRegistry?.farmObjId
 }))(_Split)
