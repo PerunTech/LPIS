@@ -131,8 +131,8 @@ const _InfoHeader = ({ fic, fullName }) => {
 /* -------------- */
 /*  EXPANDED ROW  */
 /* ---------- --- */
-const _ExpandedRow = ({ index, id, rowData, unit }) => {
-  const rowId = `expanded-row-${id}_${index}`
+const _ExpandedRow = ({ id, rowData, unit }) => {
+  const rowId = `expanded-row-${id}`
   return <div key={rowId} id={rowId} className='data-grid-expanded-row border border-dark rounded' style={{ fontSize: '1.5vh' }}>
     <ListGroup className='text-center'>
       <ListGroupItem className='p-1'>
@@ -193,6 +193,7 @@ const _Rows = ({ rows, selectedParcelId }) => {
   useEffect(() => {
     if (selectedParcelId) {
       onRowClick(selectedParcelId)
+      document.getElementById(selectedParcelId)?.scrollIntoView();
     } else {
       expandRow(false)
       selectRow('')
@@ -219,14 +220,18 @@ const _Rows = ({ rows, selectedParcelId }) => {
     setOpen(!isOpen);
   }
 
-  return rows.map((el, i) => {
+  return rows.map(el => {
     const rowData = el.feature && el.feature.properties;
     if (!rowData) return null;
 
     const id = el.feature.id;
+    let rowClassNames = ['fr-data-grid-row']
+    if (rowIsExpanded && selectedRowId === id) {
+      rowClassNames.push(' fr-data-grid-row-focused')
+    }
     const unit = el instanceof factory.Polygon ? 'm²' : 'm';
-    return <div className='container' key={`${id}_${i}`}>
-      <ButtonGroup className='fr-data-grid-row' key={id} onClick={() => onRowClick(id)}>
+    return <div className='container' key={id} id={id}>
+      <ButtonGroup className={rowClassNames.join('')} key={id} onClick={() => onRowClick(id)}>
         <Button className='fr-data-grid-column'>{rowData.OLD_ID}</Button>
         <Button className='fr-data-grid-column'>{rowData.LAND_COVER_CODE}</Button>
         <Button className='fr-data-grid-column'>{Math.round(Number(rowData.ALLOWED_AREA || rowData.AREA)) + ` ${unit}`}</Button>
@@ -239,7 +244,7 @@ const _Rows = ({ rows, selectedParcelId }) => {
           <Icon name={getParcelVisibleIcon(id)} size='14px' />
         </Button>
       </ButtonGroup>
-      {rowIsExpanded && selectedRowId === id && <_ExpandedRow index={i} id={id} rowData={rowData} unit={unit} />}
+      {rowIsExpanded && selectedRowId === id && <_ExpandedRow id={id} rowData={rowData} unit={unit} />}
     </div>
   });
 };

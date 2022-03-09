@@ -64,6 +64,11 @@
   background-color: #3399ff25;
 }
 
+.fr-data-grid-row-focused .fr-data-grid-column,
+.fr-data-grid-row-focused .data-grid-util {
+  background-color: #cdcbcb !important;
+}
+
 .data-grid-empty-rows {
   height: 50px;
   display: flex;
