@@ -1187,14 +1187,16 @@ public class ApplicationServices {
 			DbDataObject permanentCrop = svr.getObjectById(objectId, SvReader.getTypeIdByName(CC.PERMANENT_CROP), null);
 			if (permanentCrop != null) {
 				svw.deleteObject(permanentCrop);
-
+				jrh.create(MessageType.SUCCESS, I18n.getText("success.perun.successfullyDeletedObject"),
+						I18n.getText("success.perun.successfullyDeletedObject"));
+			} else {
+				jrh.create(MessageType.ERROR, I18n.getText("error.perun.failedToDeleteObject"),
+						I18n.getText("error.perun.failedToDeleteObject"));
 			}
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToDeleteObject");
 		}
-		jrh.create(MessageType.SUCCESS, I18n.getText("success.perun.successfullyDeletedObject"),
-				I18n.getText("success.perun.successfullyDeletedObject"));
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 
