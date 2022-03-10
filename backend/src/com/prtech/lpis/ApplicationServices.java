@@ -1142,6 +1142,20 @@ public class ApplicationServices {
 
 	}
 
+	/**
+	 * WS that saves DbDataObject of PERMANENT_CROP type
+	 * 
+	 * @param token
+	 *            Session ID
+	 * @param objectId
+	 *            Object ID of the PERMANENT_CROP object (0 for new object)
+	 * @param parentId
+	 *            Object ID of the FARMER object
+	 * @param formVals
+	 *            MultivaluedMap with form data values
+	 * @param httpRequest
+	 * @return appropriate message if object was successfully saved or not
+	 */
 	@Path("/save/permanentCrop/{token}/{objectId}/{parentId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -1189,6 +1203,16 @@ public class ApplicationServices {
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 
+	/**
+	 * WS that return list of PERMANENT_CROP object/s
+	 * 
+	 * @param token
+	 *            Session ID
+	 * @param parcelId
+	 *            Object ID of AGRI_PARCEL object
+	 * @param httpRequest
+	 * @return
+	 */
 	@Path("/get/permanentCrop/{token}/{parcelId}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1206,6 +1230,16 @@ public class ApplicationServices {
 		return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 	
+	/**
+	 * WS that delete DbDataObject of PERMANENT_CROP type
+	 * 
+	 * @param token
+	 *            Session ID
+	 * @param objectId
+	 *            Object ID of PERMANENT_CROP object
+	 * @param httpRequest
+	 * @return
+	 */
 	@GET
 	@Path("/delete/permanentCrop/{token}/{objectId}")
 	@Produces("application/pbf")
