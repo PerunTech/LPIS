@@ -35,4 +35,15 @@ public class PermanentCrop {
 			}
 		}
 	}
+	
+	public static void checkIfPlantAreaIsBiggerThanArea(DbDataObject permanentCrop, SvReader svr) throws SvException {
+		DbDataObject agriParcel = svr.getObjectById((long) permanentCrop.getVal(CC.PARCEL_ID),
+				SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
+		if (agriParcel != null) {
+			if (((BigDecimal) agriParcel.getVal(CC.AREA)).longValue() < ((Double) permanentCrop.getVal(CC.PLANT_AREA))
+					.doubleValue()) {
+				throw new SvException("lpis.error.plantAreaCannotBeBiggerThanArea", svr.getInstanceUser());
+			}
+		}
+	}
 }

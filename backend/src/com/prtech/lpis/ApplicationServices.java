@@ -851,6 +851,7 @@ public class ApplicationServices {
 			DbDataObject agriParcel = cu.commonUseChecksBeforeSave(parcelId, parentId, svr);
 			if (agriParcel.getIsDirty())
 				svg.saveObject(agriParcel);
+			CommonUse.checkIfAllowedAreaIsBiggerThanArea(commonUse, svr);
 			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svg, svw, svr);
 			svw.dbCommit();
 		} catch (Exception e) {
@@ -1151,6 +1152,7 @@ public class ApplicationServices {
 				}
 			}
 			new PermanentCrop().checkBeforeSavePermanentCrop(permanentCrop, svr);
+			PermanentCrop.checkIfPlantAreaIsBiggerThanArea(permanentCrop, svr);
 			svw.saveObject(permanentCrop);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");
