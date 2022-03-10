@@ -41,7 +41,7 @@ public class PermanentCrop {
 				SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 		if (agriParcel != null) {
 			if (((BigDecimal) agriParcel.getVal(CC.AREA)).longValue() < ((Double) permanentCrop.getVal(CC.PLANT_AREA))
-					.longValue()) {
+					.doubleValue()) {
 				throw new SvException("lpis.error.plantAreaCannotBeBiggerThanArea", svr.getInstanceUser());
 			}
 		}
