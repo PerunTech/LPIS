@@ -122,7 +122,8 @@ public class CommonUse {
 		svr.setIncludeGeometries(true);
 		DbDataObject agriParcel = svr.getObjectById(parcelId, SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 		if (agriParcel != null) {
-			//if the parcel is under the current farm we want to convert it to common use.
+			// if the parcel is under the current farm we want to convert it to
+			// common use.
 			if (agriParcel.getParentId().equals(farmId)) {
 				agriParcel.setParentId(0L);
 				return agriParcel;
@@ -137,5 +138,15 @@ public class CommonUse {
 			}
 		}
 		return agriParcel;
+	}
+
+	public void checkIfAllowedAreaIsBiggerThanArea(DbDataObject commonUse, SvReader svr) throws SvException {
+		DbDataObject agriParcel = svr.getObjectById((long) commonUse.getVal(CC.PARCEL_ID),
+				SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
+		if (agriParcel != null) {
+			if (((BigDecimal) agriParcel.getVal(CC.AREA)).longValue() < ((Long) commonUse.getVal(CC.ALLOWED_AREA))) {
+				throw new SvException("lpis.error.allowedAreaCannotBeBiggerThanArea", svr.getInstanceUser());
+			}
+		}
 	}
 }
