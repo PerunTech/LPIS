@@ -125,7 +125,13 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
       alertUser(true, responseType.toLowerCase(), labelCode, '', () => disable())
     }).catch(err => {
       const { response } = err
-      alertUser(true, 'error', 'Грешка при зачувување', response.data.Label_Code || '');
+      let message = ''
+      if (response.data && response.data.title) {
+        if (response.data.title?.includes('allowedAreaCannotBeBiggerThanArea')) {
+          message = 'Површината за заедничка употреба не може да биде поголема од површината на парцелата'
+        }
+      }
+      alertUser(true, 'error', 'Грешка при зачувување', message);
     })
   }
 

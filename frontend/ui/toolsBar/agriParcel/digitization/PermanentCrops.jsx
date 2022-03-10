@@ -99,15 +99,22 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
       let title = 'Успешно додадени информации за повеќегодишна култура'
       if (isJSON(parsedResponse)) {
         const jsonResponse = JSON.parse(parsedResponse)
-        alertUser(true, jsonResponse.type?.toLowerCase() || 'success', jsonResponse.label_code || title, '', () => disable())
+        const resType = jsonResponse.type
+        alertUser(true, resType?.toLowerCase() || 'success', title, '', () => disable())
       } else {
         alertUser(true, 'success', title, '', () => disable())
       }
     }).catch(err => {
       const { response } = err
-      const parsedResponse = bufferToString(response)
+      const parsedResponse = bufferToString(response.data)
       console.error(parsedResponse)
-      alertUser(true, 'error', 'Настана грешка', '', () => disable())
+      let message = ''
+      if (parsedResponse.includes('plantAreaCannotBeBiggerThanArea')) {
+        message = 'Површината со засадена култура не може да биде поголема од површината на парцелата'
+      } else if (parsedResponse.includes('sumOfPermanentCropsAreaCannotBeBiggerThanParcelArea')) {
+        message = 'Збирот на површините со засадена култура не може да биде поголем од површината на парцелата'
+      }
+      alertUser(true, 'error', 'Настана грешка', message, () => disable())
     })
   }
 
