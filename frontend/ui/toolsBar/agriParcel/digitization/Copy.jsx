@@ -12,7 +12,7 @@ const { geobuf, protobuf } = data;
 const { Icon, DrawActions } = ui;
 const { alertUser } = elements;
 const { useReducer } = React;
-const _id = 'copy-control';
+const _id = 'copy';
 
 const _Copy = ({ processID, farmObjId, saveIsPending }) => {
     const [{ layer, data, X, Y, loading, showForm, isGuided }, setState] = useReducer((currState, update) =>
