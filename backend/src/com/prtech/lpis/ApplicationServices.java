@@ -759,6 +759,18 @@ public class ApplicationServices {
 
 	}
 
+	/**
+	 * WS that return list of COMMON_USE object/s
+	 * 
+	 * @param token
+	 *            Session ID
+	 * @param parentId
+	 *            Object ID of FARMER object
+	 * @param parcelId
+	 *            Object ID of AGRI_PARCEL object
+	 * @param httpRequest
+	 * @return DbDataArray of DbDataObjects (COMMON_USE)
+	 */
 	@Path("/get/commonUse/{token}/{parentId}/{parcelId}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -803,6 +815,22 @@ public class ApplicationServices {
 
 	}
 
+	/**
+	 * WS that saves DbDataObject of COMMON_USE type
+	 *
+	 * @param token
+	 *            session ID
+	 * @param objectId
+	 *            Object ID of the COMMON_USE object (0 for new object)
+	 * @param parentId
+	 *            Object ID of the FARMER object
+	 * @param parcelId
+	 *            Object ID of the AGRI_PARCEL object
+	 * @param formVals
+	 *            MultivaluedMap with form data values
+	 * @param httpRequest
+	 * @return appropriate message if object was successfully saved or not
+	 */
 	@Path("/save/commonUse/{token}/{objectId}/{parentId}/{parcelId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
