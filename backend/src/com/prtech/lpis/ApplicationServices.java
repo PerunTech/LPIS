@@ -1263,6 +1263,20 @@ public class ApplicationServices {
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 
+	/**
+	 * WS that generates PDF reports
+	 * 
+	 * @param sessionId
+	 *            Session object ID
+	 * @param objectId
+	 *            Input object ID parameter
+	 * @param fileType
+	 *            PDF
+	 * @param reportName
+	 *            Name of report
+	 * @param httpRequest
+	 * @return
+	 */
 	@GET
 	@Path("/Generate/report/sessionId/{sessionId}/objectId/{objectId}/reportName/{reportName}/fileType/{fileType}")
 	@Produces("application/pdf")
