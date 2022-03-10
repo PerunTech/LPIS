@@ -36,7 +36,7 @@ public class PermanentCrop {
 		}
 	}
 	
-	public void checkIfPlantAreaIsBiggerThanArea(DbDataObject permanentCrop, SvReader svr) throws SvException {
+	public static void checkIfPlantAreaIsBiggerThanArea(DbDataObject permanentCrop, SvReader svr) throws SvException {
 		DbDataObject agriParcel = svr.getObjectById((long) permanentCrop.getVal(CC.PARCEL_ID),
 				SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 		if (agriParcel != null) {

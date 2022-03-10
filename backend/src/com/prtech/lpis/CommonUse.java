@@ -140,7 +140,7 @@ public class CommonUse {
 		return agriParcel;
 	}
 
-	public void checkIfAllowedAreaIsBiggerThanArea(DbDataObject commonUse, SvReader svr) throws SvException {
+	public static void checkIfAllowedAreaIsBiggerThanArea(DbDataObject commonUse, SvReader svr) throws SvException {
 		DbDataObject agriParcel = svr.getObjectById((long) commonUse.getVal(CC.PARCEL_ID),
 				SvReader.getTypeIdByName(CC.AGRI_PARCEL), null);
 		if (agriParcel != null) {
