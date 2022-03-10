@@ -1151,6 +1151,7 @@ public class ApplicationServices {
 				}
 			}
 			new PermanentCrop().checkBeforeSavePermanentCrop(permanentCrop, svr);
+			new PermanentCrop().checkIfPlantAreaIsBiggerThanArea(permanentCrop, svr);
 			svw.saveObject(permanentCrop);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");
