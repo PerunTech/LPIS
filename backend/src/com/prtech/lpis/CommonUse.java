@@ -93,6 +93,7 @@ public class CommonUse {
 				distributedLock = SvLock.getDistributedLock(agriParcel.getObjectId().toString());
 				if (distributedLock != 0) {
 					createCommonUseObject(dbo, parcelId, formVals, metadata, svr);
+					checkIfAllowedAreaIsBiggerThanArea(dbo, svr);
 					DbDataArray commonsParcels = getCommonUseParcels(agriParcel.getObjectId(), svr);
 					if (commonsParcels != null && !commonsParcels.getItems().isEmpty()) {
 						for (DbDataObject tempCommonUse : commonsParcels.getItems()) {
