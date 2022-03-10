@@ -286,7 +286,7 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
     <Icon name={_id} size='30px' />
     <span style={{ display: 'block', marginTop: '5px' }}>Промени</span>
     {processID === _id && renderComponent()}
-    {loading || saveIsPending && <Loading />}
+    {(loading || saveIsPending) && <Loading />}
   </ProcessButton>;
 }
 

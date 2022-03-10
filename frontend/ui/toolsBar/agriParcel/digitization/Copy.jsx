@@ -117,7 +117,7 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
         <Icon name={_id} size='30px' />
         <span style={{ display: 'block', marginTop: '5px' }}>Копирај</span>
         {processID === _id && componentToRender()}
-        {loading || saveIsPending && <Loading />}
+        {(loading || saveIsPending) && <Loading />}
     </ProcessButton>;
 };
 

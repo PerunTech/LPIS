@@ -182,7 +182,7 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
     <Icon name={_id} size='30px' />
     <span style={{ display: 'block', marginTop: '5px' }}>Назначи стопанство</span>
     {processID === _id && renderComponent()}
-    {loading || saveIsPending && <Loading />}
+    {(loading || saveIsPending) && <Loading />}
   </ProcessButton>;
 };
 
