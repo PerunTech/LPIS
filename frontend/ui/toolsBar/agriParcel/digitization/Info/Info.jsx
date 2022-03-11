@@ -77,7 +77,7 @@ const _Info = ({ processID }) => {
         <Button disabled className='as-label ap-modal-title' >Информации за парцела</Button>
         <DrawActions cancel={disable} />
       </Modal.Title>
-      <Modal.Body className='show-grid'>
+      <Modal.Body className='parcel-info-modal-body'>
         <InfoList farmInfo={farmInfo} parcelInfo={parcelInfo} />
       </Modal.Body>
     </Modal>

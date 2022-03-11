@@ -123,6 +123,10 @@
   background-color: #232323;
 }
 
+.parcel-info-modal .parcel-info-modal-body {
+  max-height: 800px !important;
+}
+
 .parcel-info-modal .modal-body .info {
   color: #114cb8 !important;
   border: 1px solid #114cb8 !important;
