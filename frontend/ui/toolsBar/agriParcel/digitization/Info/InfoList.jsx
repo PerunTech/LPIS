@@ -1,17 +1,25 @@
 import { React, elements } from 'perun-core'
 import { core, ui } from '../../../../../Spatial';
+import { permanentCropSchema } from '../../Config';
 import { InfoListGroup } from './InfoListGroup';
 
 const { http } = core;
 const { Button } = ui;
 const { alertUser, ReactBootstrap } = elements;
-const { useReducer } = React;
+const { useEffect, useReducer } = React;
 const { ListGroup } = ReactBootstrap;
 const { Item: ListGroupItem } = ListGroup;
 
 export const InfoList = ({ farmInfo, parcelInfo }) => {
-  const [{ overlaps, commonUses, permanentCrops }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { overlaps: undefined, commonUses: undefined, permanentCrops: undefined });
+  const [{ overlaps, commonUses, canHavePermanentCrops, permanentCrops }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { overlaps: undefined, commonUses: undefined, canHavePermanentCrops: false, permanentCrops: undefined });
+
+  useEffect(() => {
+    const landCoverCode = parcelInfo.LAND_COVER_CODE
+    if (Number(landCoverCode) >= 400 && Number(landCoverCode) < 500) {
+      setState({ canHavePermanentCrops: true })
+    }
+  }, [])
 
   const getCommonUse = () => {
     const parcelId = parcelInfo.object_id
@@ -95,12 +103,15 @@ export const InfoList = ({ farmInfo, parcelInfo }) => {
   }
 
   const permanentCropsContainer = () => {
+    const schema = permanentCropSchema.schema
     return <ListGroup className='text-center '>
       На парцелата се декларирани следниве долгогодишни култури
       {permanentCrops.map(permanentCrop => {
+        const numberOfTreesLabel = Number(permanentCrop.NUMBER_OF_TREES) === 1 ? 'садница' : 'садници'
         return <ListGroupItem className='p-2'>
-          Број на парцела: <span className='font-weight-bold mr-1'>{permanentCrop.PARCEL_ID1}</span>
-          Површина: <span className='font-weight-bold'>{Math.round(permanentCrop.AREA)} m²</span>
+          <span className='mr-1'>{schema.properties.PERM_CROP_TYPE_ID.enumNames[Number(permanentCrop.PERM_CROP_TYPE_ID) - 1]}</span>
+          <span>(<strong>{permanentCrop.NUMBER_OF_TREES}</strong> {numberOfTreesLabel}</span>
+          <span className='mr-1'> на <strong>{Math.round(permanentCrop.PLANT_AREA)}</strong> m²)</span>
         </ListGroupItem>
       })}
     </ListGroup>
@@ -122,13 +133,13 @@ export const InfoList = ({ farmInfo, parcelInfo }) => {
         <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Преклопи</p>
         {overlapsContainer()}
       </div>}
-      {/* {parcelInfo.HAS_PERMANENT_CROP && !permanentCrops && <Button className='mb-3 p-2 info' onClick={getPermanentCrops}>
+      {canHavePermanentCrops && !permanentCrops && <Button className='mb-3 p-2 info' onClick={getPermanentCrops}>
         Информации за долгогодишни култури
       </Button>}
       {permanentCrops && Array.isArray(permanentCrops) && permanentCrops.length > 0 && <div id='permanentCrops' className='mb-2'>
         <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Долгогодишни култури</p>
         {permanentCropsContainer()}
-      </div>} */}
+      </div>}
       <InfoListGroup farmInfo={farmInfo} parcelInfo={parcelInfo} />
     </React.Fragment>
   }
