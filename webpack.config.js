@@ -1,7 +1,8 @@
 let path = require('path');
 
-module.exports = (mode, {env}) => {
+module.exports = (mode, { env }) => {
     return {
+        devtool: 'source-map',
         mode: mode,
         entry: env === 'production' ? './frontend/index.js' : './frontend/client.js',
         output: {
@@ -19,7 +20,7 @@ module.exports = (mode, {env}) => {
         module: {
             rules: [
                 {
-                    test: /\.(js|jsx)?$/, 
+                    test: /\.(js|jsx)?$/,
                     exclude: /(node_modules)/,
                     use: {
                         loader: 'babel-loader',
@@ -28,7 +29,7 @@ module.exports = (mode, {env}) => {
                             cacheDirectory: true
                         }
                     }
-                }, 
+                },
                 {
                     test: /(\.jsx|\.js)$/,
                     use: {
@@ -72,6 +73,6 @@ module.exports = (mode, {env}) => {
         resolve: {
             extensions: ['.js', '.jsx']
         },
-        externals: env === 'production' ? { 'perun-core': 'perun-core', spatial: 'spatial'} : {}
+        externals: env === 'production' ? { 'perun-core': 'perun-core', spatial: 'spatial' } : {}
     }
 };
