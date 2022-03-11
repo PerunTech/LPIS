@@ -17,7 +17,7 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
       СИЗП број: <span className='font-weight-bold'>{parcelInfo.OLD_ID}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
-      Површина: <span className='font-weight-bold'>{parcelInfo.ALLOWED_AREA ? `${Math.round(parcelInfo.ALLOWED_AREA)} m²` : ''}</span>
+      Површина: <span className='font-weight-bold'>{`${Math.round(Number(parcelInfo.ALLOWED_AREA || parcelInfo.AREA))} m²`}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       Заедничка употреба: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.COMMON_USE)}</span>
