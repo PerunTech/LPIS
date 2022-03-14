@@ -108,8 +108,9 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     const token = perunStore.getState().security.svSession
     let searchParams = ''
     // First, check if the query params (everything after the question mark) part of the url exists
-    if (window.location.hash?.split('?')[1]) {
-        searchParams = `?${window.location.hash?.split('?')[1]}`
+    const queryParams = window.location.hash?.split('?')[1]
+    if (queryParams) {
+        searchParams = `?${queryParams}`
     }
     // If no query params are present, re-route the user to the root route
     if (!searchParams) {
