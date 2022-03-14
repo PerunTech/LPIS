@@ -1,8 +1,9 @@
-import { redux, elements } from 'perun-core';
+import { redux, createHashHistory, elements } from 'perun-core';
 import { core, data } from '../Spatial';
 import { setAPLabel } from '.';
 import { config as apConfig } from './toolsBar/agriParcel/Config';
 
+const history = createHashHistory();
 const { alertUser } = elements;
 const { store: perunStore } = redux;
 const { factory, store, http, Map } = core;
@@ -105,40 +106,51 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     });
 
     const token = perunStore.getState().security.svSession
-    const farmObjId = perunStore.getState().frmapData?.farmData?.objectId || 0
-    const farmObjTypeId = perunStore.getState().frmapData?.farmData?.objectTypeId || 0
-    const tableName = perunStore.getState().frmapData?.farmData?.tableName || ''
-    const data = perunStore.getState().frmapData?.farmData?.rowsData
-    const fic = data?.[`${tableName}.FIC`] || ''
-    const fullName = data?.[`${tableName}.FULL_NAME`] || ''
+    let searchParams = ''
+    // First, check if the query params (everything after the question mark) part of the url exists
+    if (window.location.hash?.split('?')[1]) {
+        searchParams = `?${window.location.hash?.split('?')[1]}`
+    }
+    // If no query params are present, re-route the user to the root route
+    if (!searchParams) {
+        history.push('/')
+    } else {
+        const farmObjId = new URLSearchParams(searchParams).get('id')
+        const farmObjTypeId = new URLSearchParams(searchParams).get('type')
+        const actionType = new URLSearchParams(searchParams).get('action')
+        const tableName = perunStore.getState().frmapData?.farmData?.tableName || 'FARM'
+        const data = perunStore.getState().frmapData?.farmData?.rowsData
+        const fic = data?.[`${tableName}.FIC`] || ''
+        const fullName = data?.[`${tableName}.FULL_NAME`] || ''
 
-    store.dispatch({ farmObjId, farmObjTypeId, fic, fullName, tableName })
-    const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`
-    http.call('getFarmMapAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
-        const data = geobuf.decode(protobuf(response));
-        // filter data for type, set approp. config in factory.geoJSON
-        const geojson = factory.geoJSON(data, apConfig);
-        const layers = geojson.getLayers();
+        store.dispatch({ farmObjId, farmObjTypeId, actionType, fic, fullName, tableName })
+        const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`
+        http.call('getFarmMapAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
+            const data = geobuf.decode(protobuf(response));
+            // filter data for type, set approp. config in factory.geoJSON
+            const geojson = factory.geoJSON(data, apConfig);
+            const layers = geojson.getLayers();
 
-        //clear map of all vectors, reset state.
-        const prevAgriParcels = store.getState().farmRegistry.agriParcels;
-        Object.values(prevAgriParcels).forEach(v => v.removeFrom && v.removeFrom(Map));
+            //clear map of all vectors, reset state.
+            const prevAgriParcels = store.getState().farmRegistry.agriParcels;
+            Object.values(prevAgriParcels).forEach(v => v.removeFrom && v.removeFrom(Map));
 
-        // send geojson to factory, visualize
-        layers.forEach(layer => {
-            layer.addTo(Map)
-            setAPLabel(layer)
-            layer.on('click', function () {
-                handleLayerClick(this)
-            })
+            // send geojson to factory, visualize
+            layers.forEach(layer => {
+                layer.addTo(Map)
+                setAPLabel(layer)
+                layer.on('click', function () {
+                    handleLayerClick(this)
+                })
+            });
+
+            // register in app state
+            store.dispatch({ 'agriParcels': layers })
+            showAlert && alertUser(true, 'success', 'Податоците се успешно освежени.')
+            fitBounds && Map.fitBounds(geojson.getBounds(), { padding: [100, 100] });
+        }).catch(err => {
+            console.log(err)
+            showAlert && alertUser(true, 'error', 'Настана грешка', 'Податоците не се успешно освежени.')
         });
-
-        // register in app state
-        store.dispatch({ 'agriParcels': layers })
-        showAlert && alertUser(true, 'success', 'Податоците се успешно освежени.')
-        fitBounds && Map.fitBounds(geojson.getBounds(), { padding: [100, 100] });
-    }).catch(err => {
-        console.log(err)
-        showAlert && alertUser(true, 'error', 'Настана грешка', 'Податоците не се успешно освежени.')
-    });
+    }
 };
