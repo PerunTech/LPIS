@@ -325,7 +325,7 @@ public class DbInit implements IDbInit {
 		DbDataField dbf2 = new DbDataField();
 		dbf2.setDbFieldName("GEOM");
 		dbf2.setDbFieldType(DbFieldType.GEOMETRY);
-		dbf2.setGeometryType("MULTIPOLYGON"); // allows holes, do not use Polygon.
+		dbf2.setGeometryType("POLYGON"); // allows holes, do not use Polygon.
 		dbf2.setGeometrySrid(SRID);
 		dbf2.setIndexName("_GEOM_SIDX"); // name must be unique
 		dbf2.setIsNull(false);
