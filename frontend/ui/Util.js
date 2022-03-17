@@ -135,39 +135,46 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
         const farmObjId = new URLSearchParams(searchParams).get('id')
         const farmObjTypeId = new URLSearchParams(searchParams).get('type')
         const actionType = new URLSearchParams(searchParams).get('action')
-        const tableName = perunStore.getState().frmapData?.farmData?.tableName || 'FARM'
-        const data = perunStore.getState().frmapData?.farmData?.rowsData
-        const fic = data?.[`${tableName}.FIC`] || ''
-        const fullName = data?.[`${tableName}.FULL_NAME`] || ''
 
-        store.dispatch({ farmObjId, farmObjTypeId, actionType, fic, fullName, tableName })
-        const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`
-        http.call('getFarmMapAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
-            const data = geobuf.decode(protobuf(response));
-            // filter data for type, set approp. config in factory.geoJSON
-            const geojson = factory.geoJSON(data, apConfig);
-            const layers = geojson.getLayers();
+        // If all query params are present, continue as usual
+        if (farmObjId && farmObjTypeId && actionType) {
+            const tableName = perunStore.getState().frmapData?.farmData?.tableName || 'FARM'
+            const data = perunStore.getState().frmapData?.farmData?.rowsData
+            const fic = data?.[`${tableName}.FIC`] || ''
+            const fullName = data?.[`${tableName}.FULL_NAME`] || ''
 
-            //clear map of all vectors, reset state.
-            const prevAgriParcels = store.getState().farmRegistry.agriParcels;
-            Object.values(prevAgriParcels).forEach(v => v.removeFrom && v.removeFrom(Map));
+            store.dispatch({ farmObjId, farmObjTypeId, actionType, fic, fullName, tableName })
+            const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`
+            http.call('getFarmMapAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
+                const data = geobuf.decode(protobuf(response));
+                // filter data for type, set approp. config in factory.geoJSON
+                const geojson = factory.geoJSON(data, apConfig);
+                const layers = geojson.getLayers();
 
-            // send geojson to factory, visualize
-            layers.forEach(layer => {
-                layer.addTo(Map)
-                setAPLabel(layer)
-                layer.on('click', function () {
-                    handleLayerClick(this)
-                })
+                //clear map of all vectors, reset state.
+                const prevAgriParcels = store.getState().farmRegistry.agriParcels;
+                Object.values(prevAgriParcels).forEach(v => v.removeFrom && v.removeFrom(Map));
+
+                // send geojson to factory, visualize
+                layers.forEach(layer => {
+                    layer.addTo(Map)
+                    setAPLabel(layer)
+                    layer.on('click', function () {
+                        handleLayerClick(this)
+                    })
+                });
+
+                // register in app state
+                store.dispatch({ 'agriParcels': layers })
+                showAlert && alertUser(true, 'success', 'Податоците се успешно освежени.')
+                fitBounds && Map.fitBounds(geojson.getBounds(), { padding: [100, 100] });
+            }).catch(err => {
+                console.log(err)
+                showAlert && alertUser(true, 'error', 'Настана грешка', 'Податоците не се успешно освежени.')
             });
-
-            // register in app state
-            store.dispatch({ 'agriParcels': layers })
-            showAlert && alertUser(true, 'success', 'Податоците се успешно освежени.')
-            fitBounds && Map.fitBounds(geojson.getBounds(), { padding: [100, 100] });
-        }).catch(err => {
-            console.log(err)
-            showAlert && alertUser(true, 'error', 'Настана грешка', 'Податоците не се успешно освежени.')
-        });
+        } else {
+            // If any (or all) of the query params are not present, re-route the user to the root route
+            history.push('/')
+        }
     }
 };
