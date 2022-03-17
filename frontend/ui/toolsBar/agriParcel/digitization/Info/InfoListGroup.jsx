@@ -1,23 +1,27 @@
 import { React, elements } from 'perun-core'
-import { translateBooleanValue } from '../../../../Util';
+import { translateBooleanValue, translateLandCoverCode } from '../../../../Util';
 
 const { ReactBootstrap } = elements;
 const { ListGroup, ProgressBar } = ReactBootstrap;
 const { Item: ListGroupItem } = ListGroup;
 
 export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
+  const translatedLandCoverCode = translateLandCoverCode(parcelInfo.LAND_COVER_CODE)
   return <ListGroup className='text-center mb-2' style={{ height: '650px' }}>
     <ListGroupItem className='p-2'>
-      Целосно име: <span className='font-weight-bold'>{farmInfo?.FULL_NAME}</span>
+      Целосно име: <span className='font-weight-bold'>{farmInfo?.FULL_NAME || '/'}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
-      ИДБР: <span className='font-weight-bold'>{farmInfo?.FIC}</span>
+      ИДБР: <span className='font-weight-bold'>{farmInfo?.FIC || '/'}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       СИЗП број: <span className='font-weight-bold'>{parcelInfo.OLD_ID}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       Површина: <span className='font-weight-bold'>{`${Math.round(Number(parcelInfo.ALLOWED_AREA || parcelInfo.AREA))} m²`}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Употреба на земјиште: <span className='font-weight-bold'>{translatedLandCoverCode}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       Заедничка употреба: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.COMMON_USE)}</span>

@@ -1,7 +1,7 @@
 import { redux, createHashHistory, elements } from 'perun-core';
 import { core, data } from '../Spatial';
 import { setAPLabel } from '.';
-import { config as apConfig } from './toolsBar/agriParcel/Config';
+import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
 
 const history = createHashHistory();
 const { alertUser } = elements;
@@ -74,6 +74,22 @@ export const translateBooleanValue = (value) => {
     }
 
     return translatedValue;
+};
+
+export const translateLandCoverCode = (code) => {
+    let translatedValue = '/'
+    // These are the available land cover codes
+    const landCoverCodes = apFormConfig.schema.properties.LAND_COVER_CODE.enum
+    // These are their translated values (names)
+    const landCoverCodeNames = apFormConfig.schema.properties.LAND_COVER_CODE.enumNames
+    // Get the position of the land cover code
+    const landCoverCodeIndex = landCoverCodes.indexOf(code)
+    // If it's found (therefore the number will be 0 or larger than 0), get the appropriate name for the code
+    if (landCoverCodeIndex >= 0) {
+        translatedValue = landCoverCodeNames[landCoverCodeIndex]
+    }
+
+    return translatedValue
 };
 
 export function readCookie (name) {
