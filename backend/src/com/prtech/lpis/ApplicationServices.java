@@ -157,17 +157,25 @@ public class ApplicationServices {
 	@Produces("application/pbf")
 	public Response splitSpatialControl(@PathParam("token") final String token,
 			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
+			@PathParam("x") final Double x, @PathParam("y") final Double y,
 			final MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		String errMsg = "";
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvReader svr = new SvReader(token); SvGeometry svg = new SvGeometry(svr)) {
+			svg.setAutoCommit(false);
 			Geometry geom = Util.getInputGeometry(formVals, null);
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
 			List<DbDataObject> toBeDeleted = new ArrayList<DbDataObject>();
 			Set<Geometry> split = svg.splitGeometries((LineString) geom, layerTypeId, toBeDeleted, false, SC.PARENT_ID,
 					parentId, false);
 
+			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
+			Iterator<Geometry> gi = split.iterator();
+			while (gi.hasNext()) {
+				if (!gi.next().covers(point))
+					gi.remove();
+			}
 			// TODO add calculus of overlaps
 			svg.splitMergeGeometryDbUpdate(split, toBeDeleted, true);
 			result.addAll(split);
@@ -762,12 +770,9 @@ public class ApplicationServices {
 	/**
 	 * WS that return list of COMMON_USE object/s
 	 * 
-	 * @param token
-	 *            Session ID
-	 * @param parentId
-	 *            Object ID of FARMER object
-	 * @param parcelId
-	 *            Object ID of AGRI_PARCEL object
+	 * @param token       Session ID
+	 * @param parentId    Object ID of FARMER object
+	 * @param parcelId    Object ID of AGRI_PARCEL object
 	 * @param httpRequest
 	 * @return DbDataArray of DbDataObjects (COMMON_USE)
 	 */
@@ -818,16 +823,11 @@ public class ApplicationServices {
 	/**
 	 * WS that saves DbDataObject of COMMON_USE type
 	 *
-	 * @param token
-	 *            session ID
-	 * @param objectId
-	 *            Object ID of the COMMON_USE object (0 for new object)
-	 * @param parentId
-	 *            Object ID of the FARMER object
-	 * @param parcelId
-	 *            Object ID of the AGRI_PARCEL object
-	 * @param formVals
-	 *            MultivaluedMap with form data values
+	 * @param token       session ID
+	 * @param objectId    Object ID of the COMMON_USE object (0 for new object)
+	 * @param parentId    Object ID of the FARMER object
+	 * @param parcelId    Object ID of the AGRI_PARCEL object
+	 * @param formVals    MultivaluedMap with form data values
 	 * @param httpRequest
 	 * @return appropriate message if object was successfully saved or not
 	 */
@@ -1145,14 +1145,10 @@ public class ApplicationServices {
 	/**
 	 * WS that saves DbDataObject of PERMANENT_CROP type
 	 * 
-	 * @param token
-	 *            Session ID
-	 * @param objectId
-	 *            Object ID of the PERMANENT_CROP object (0 for new object)
-	 * @param parentId
-	 *            Object ID of the FARMER object
-	 * @param formVals
-	 *            MultivaluedMap with form data values
+	 * @param token       Session ID
+	 * @param objectId    Object ID of the PERMANENT_CROP object (0 for new object)
+	 * @param parentId    Object ID of the FARMER object
+	 * @param formVals    MultivaluedMap with form data values
 	 * @param httpRequest
 	 * @return appropriate message if object was successfully saved or not
 	 */
@@ -1206,10 +1202,8 @@ public class ApplicationServices {
 	/**
 	 * WS that return list of PERMANENT_CROP object/s
 	 * 
-	 * @param token
-	 *            Session ID
-	 * @param parcelId
-	 *            Object ID of AGRI_PARCEL object
+	 * @param token       Session ID
+	 * @param parcelId    Object ID of AGRI_PARCEL object
 	 * @param httpRequest
 	 * @return
 	 */
@@ -1229,14 +1223,12 @@ public class ApplicationServices {
 		}
 		return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
-	
+
 	/**
 	 * WS that delete DbDataObject of PERMANENT_CROP type
 	 * 
-	 * @param token
-	 *            Session ID
-	 * @param objectId
-	 *            Object ID of PERMANENT_CROP object
+	 * @param token       Session ID
+	 * @param objectId    Object ID of PERMANENT_CROP object
 	 * @param httpRequest
 	 * @return
 	 */
@@ -1266,14 +1258,10 @@ public class ApplicationServices {
 	/**
 	 * WS that generates PDF reports
 	 * 
-	 * @param sessionId
-	 *            Session object ID
-	 * @param objectId
-	 *            Input object ID parameter
-	 * @param fileType
-	 *            PDF
-	 * @param reportName
-	 *            Name of report
+	 * @param sessionId   Session object ID
+	 * @param objectId    Input object ID parameter
+	 * @param fileType    PDF
+	 * @param reportName  Name of report
 	 * @param httpRequest
 	 * @return
 	 */
