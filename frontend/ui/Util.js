@@ -109,6 +109,21 @@ function handleLayerClick (layer) {
     store.dispatch({ selectedParcelId: layer.feature.id })
 }
 
+const getFarmData = objectId => {
+    const token = perunStore.getState().security.svSession
+    const url = `${window.server}/ReactElements/getRowDataByObjectId/${token}/${objectId}/FARM`
+    http.call('getFarmData', { url }).then(res => {
+        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+            const farmData = res.data[0]
+            const fic = farmData['FARM.FIC'] || ''
+            const fullName = farmData['FARM.FULL_NAME'] || ''
+            store.dispatch({ fic, fullName })
+        }
+    }).catch(err => {
+        console.error(err)
+    })
+}
+
 export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
@@ -139,11 +154,8 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
         // If all query params are present, continue as usual
         if (farmObjId && farmObjTypeId && actionType) {
             const tableName = perunStore.getState().frmapData?.farmData?.tableName || 'FARM'
-            const data = perunStore.getState().frmapData?.farmData?.rowsData
-            const fic = data?.[`${tableName}.FIC`] || ''
-            const fullName = data?.[`${tableName}.FULL_NAME`] || ''
-
-            store.dispatch({ farmObjId, farmObjTypeId, actionType, fic, fullName, tableName })
+            getFarmData(farmObjId)
+            store.dispatch({ farmObjId, farmObjTypeId, actionType, tableName })
             const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`
             http.call('getFarmMapAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
                 const data = geobuf.decode(protobuf(response));
