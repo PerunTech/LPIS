@@ -1,8 +1,7 @@
 import { React, PropTypes } from 'perun-core';
-import { ui, core } from '../../Spatial';
+import { core } from '../../Spatial';
 import { DataList, DataListUtils } from '..';
-
-// const { Button, Divider } = ui;
+import { FarmDataGridInfoHeader } from './FarmDataGridInfoHeader';
 
 /* Root nodes in the data panel tree. */
 const dataCategories = (function () {
@@ -27,7 +26,7 @@ const dataCategories = (function () {
  * 
  * @param {*} props 
  */
-const _DataPanel = ({categories}) => {
+const _DataPanel = ({ categories, actionType }) => {
     const [data, setData] = React.useState(categories);
 
     return <div id='data-panel' >
@@ -37,7 +36,8 @@ const _DataPanel = ({categories}) => {
         {/* Data list utilities */}
         <DataListUtils setData={setData} />
         {/* Data list content */}
-        <DataList data={data} setData={setData}  />
+        {actionType === 'sizp' && <FarmDataGridInfoHeader />}
+        <DataList data={data} setData={setData} />
     </div>;
 }
 
@@ -47,8 +47,9 @@ _DataPanel.defaultProps = {
 
 _DataPanel.propTypes = {
     categories: PropTypes.array,
-    processID: PropTypes.string
+    processID: PropTypes.string,
+    actionType: PropTypes.string
 }
 
-export const DataPanel = core.connect(state => 
-    ({processID: state.app.processID}))(_DataPanel);
+export const DataPanel = core.connect(state =>
+    ({ processID: state.app.processID, actionType: state.farmRegistry?.actionType }))(_DataPanel);

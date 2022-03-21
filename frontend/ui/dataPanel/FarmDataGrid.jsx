@@ -64,16 +64,10 @@ const _FarmDataGrid = ({ type, rows, selectedParcelId }) => {
     store.dispatch({ selectedParcelId: '' })
   }, [])
 
-  const fic = store.getState().farmRegistry.fic;
-  const fullName = store.getState().farmRegistry.fullName;
-
-  return <React.Fragment>
-    <_InfoHeader fic={fic} fullName={fullName} />
-    <div id={type + '-grid'} className='data-grid'>
-      <_Header typeId={type} />
-      {rows.length > 0 ? <_Rows rows={rows} selectedParcelId={selectedParcelId} /> : <_NoData />}
-    </div>
-  </React.Fragment>
+  return <div id={type + '-grid'} className='data-grid'>
+    <_Header typeId={type} />
+    {rows.length > 0 ? <_Rows rows={rows} selectedParcelId={selectedParcelId} /> : <_NoData />}
+  </div>
 };
 
 _FarmDataGrid.propTypes = {
@@ -113,19 +107,6 @@ const _Header = () => {
       {columns.map((c, i) => <Button key={i} disabled className='fr-data-grid-column'>{c}</Button>)}
     </ButtonGroup>
   );
-};
-
-const _InfoHeader = ({ fic, fullName }) => {
-  return <div className='fr-info-header'>
-    {fic && <div className='header-info-wrapper'>
-      <h3 className='info-header-title'>ИДБР:</h3>
-      <span className='info-header-span'>{fic}</span>
-    </div>}
-    {fullName && <div className='header-info-wrapper'>
-      <h3 className='info-header-title'>Целосно име:</h3>
-      <span className='info-header-span'>{fullName}</span>
-    </div>}
-  </div>
 };
 
 /* -------------- */
