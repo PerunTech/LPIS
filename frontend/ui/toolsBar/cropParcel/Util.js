@@ -124,6 +124,10 @@ Map.on('zoomend', ({target}) => {
     (target.getZoom() >= MIN_DIGI_SCALE && lastZoom < MIN_DIGI_SCALE) 
         && target.eachLayer(layer => {
             if (layer.feature && layer.feature.properties) {
+                // Check if the layer has a tooltip bound to it already & unbind the tooltip if it does
+                if (layer.getTooltip() && layer.isTooltipOpen()) {
+                    layer.unbindTooltip()
+                }
                 const props = layer.feature.properties;
 
                 props.DESCRIPTOR === 'AGRI_PARCEL' && setAPLabel(layer);
