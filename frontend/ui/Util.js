@@ -127,11 +127,6 @@ const getFarmData = objectId => {
 export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
-            if (layer.options.tooltips) {
-                if (layer._tooltip?._content) {
-                    layer._tooltip._content = ''
-                }
-            }
             Map.removeLayer(layer);
         }
     });
@@ -153,9 +148,11 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
 
         // If all query params are present, continue as usual
         if (farmObjId && farmObjTypeId && actionType) {
-            const tableName = perunStore.getState().frmapData?.farmData?.tableName || 'FARM'
-            getFarmData(farmObjId)
-            store.dispatch({ farmObjId, farmObjTypeId, actionType, tableName })
+            // Get the farm data only when we first call this function
+            if (fitBounds) {
+                getFarmData(farmObjId)
+            }
+            store.dispatch({ farmObjId, farmObjTypeId, actionType })
             const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`
             http.call('getFarmMapAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
                 const data = geobuf.decode(protobuf(response));
