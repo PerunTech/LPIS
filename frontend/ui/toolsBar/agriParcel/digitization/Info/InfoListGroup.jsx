@@ -33,7 +33,7 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
       Вкупна површина: <span className='font-weight-bold'>{Math.round(parcelInfo.AREA)} m²</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
-      Локалитет: <span className='font-weight-bold'>{parcelInfo.HOME_NAME || 'Не е наведено'}</span>
+      Место викано: <span className='font-weight-bold'>{parcelInfo.HOME_NAME || 'Не е наведено'}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       Преклоп: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.HAS_OVERLAP)}</span>

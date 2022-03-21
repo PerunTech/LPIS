@@ -96,7 +96,7 @@ const _NoData = () => (
 /*      HEADERS      */
 /* ---------------- */
 const colEnum = {
-  agri_parcel: ['СИЗП Број', 'Класа', 'Површина', 'Заедничка употр.', 'Право на корист.', '']
+  agri_parcel: ['СИЗП Број', 'Класа', 'Површина', 'Место викано', 'Заедничка употр.', 'Право на корист.', '']
 };
 
 /* Column names above each set of data types in the list. */
@@ -118,9 +118,6 @@ const _ExpandedRow = ({ id, rowData, unit }) => {
     <ListGroup className='text-center'>
       <ListGroupItem className='p-1'>
         Вкупна површина: <span className='font-weight-bold'>{Math.round(Number(rowData.AREA)) + ` ${unit}`}</span>
-      </ListGroupItem>
-      <ListGroupItem className='p-1'>
-        Локалитет: <span className='font-weight-bold'>{rowData.HOME_NAME || 'Не е наведено'}</span>
       </ListGroupItem>
       <ListGroupItem className='p-1'>
         Преклоп: <span className='font-weight-bold'>{translateBooleanValue(rowData.HAS_OVERLAP)}</span>
@@ -211,11 +208,13 @@ const _Rows = ({ rows, selectedParcelId }) => {
       rowClassNames.push(' fr-data-grid-row-focused')
     }
     const unit = el instanceof factory.Polygon ? 'm²' : 'm';
+    const homeName = rowData.HOME_NAME || 'Не е наведено';
     return <div className='container' key={id} id={id}>
-      <ButtonGroup className={rowClassNames.join('')} key={id} onClick={() => onRowClick(id)}>
+      <ButtonGroup className={rowClassNames.join('')} style={{ marginLeft: '0.15rem' }} key={id} onClick={() => onRowClick(id)}>
         <Button className='fr-data-grid-column'>{rowData.OLD_ID}</Button>
         <Button className='fr-data-grid-column'>{rowData.LAND_COVER_CODE}</Button>
         <Button className='fr-data-grid-column'>{Math.round(Number(rowData.ALLOWED_AREA || rowData.AREA)) + ` ${unit}`}</Button>
+        <Button className='fr-data-grid-column' title={homeName}>{homeName}</Button>
         <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.COMMON_USE)}</Button>
         <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.CERTIFICATE_OF_USE)}</Button>
         <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el)}>
