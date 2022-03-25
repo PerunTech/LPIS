@@ -232,7 +232,7 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
     const selectedParcelArea = Math.round(Number(selectedParcel?.ALLOWED_AREA || selectedParcel?.AREA)) || '/'
     const parcelData = <div className='p-2 mt-1'>
       <p style={{ fontSize: 'small', fontWeight: '700' }}>Информации за избраната парцела</p>
-      <div className='d-flex flex-row justify-content-center align-items-center mt-n2 mb-n1' style={{ fontSize: 'small' }}>
+      <div className='d-flex flex-row justify-content-center align-items-center mt-n2' style={{ fontSize: 'small' }}>
         <p className='mr-1 mb-n1'>Површина: {selectedParcelArea} m²</p>
       </div>
     </div>
