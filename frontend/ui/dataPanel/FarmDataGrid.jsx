@@ -65,7 +65,6 @@ const _FarmDataGrid = ({ type, rows, selectedParcelId }) => {
   }, [])
 
   return <div id={type + '-grid'} className='data-grid'>
-    <_Header typeId={type} />
     {rows.length > 0 ? <_Rows rows={rows} selectedParcelId={selectedParcelId} /> : <_NoData />}
   </div>
 };
@@ -91,23 +90,6 @@ const _NoData = () => (
     </ButtonGroup>
   </div>
 );
-
-/* ---------------- */
-/*      HEADERS      */
-/* ---------------- */
-const colEnum = {
-  agri_parcel: ['СИЗП Број', 'Класа', 'Површина', 'Место викано', 'Заедничка употр.', 'Право на корист.', '']
-};
-
-/* Column names above each set of data types in the list. */
-const _Header = () => {
-  const columns = colEnum['agri_parcel'];
-  return (
-    <ButtonGroup className='fr-data-grid-header' id='grid-header'>
-      {columns.map((c, i) => <Button key={i} disabled className='fr-data-grid-column'>{c}</Button>)}
-    </ButtonGroup>
-  );
-};
 
 /* -------------- */
 /*  EXPANDED ROW  */

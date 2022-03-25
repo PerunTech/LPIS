@@ -2,6 +2,7 @@ import { React, PropTypes } from 'perun-core';
 import { core } from '../../Spatial';
 import { DataList, DataListUtils } from '..';
 import { FarmDataGridInfoHeader } from './FarmDataGridInfoHeader';
+import { FarmDataGridHeader } from './FarmDataGridHeader';
 
 /* Root nodes in the data panel tree. */
 const dataCategories = (function () {
@@ -36,7 +37,12 @@ const _DataPanel = ({ categories, actionType }) => {
         {/* Data list utilities */}
         <DataListUtils setData={setData} />
         {/* Data list content */}
-        {actionType === 'sizp' && <FarmDataGridInfoHeader />}
+        {actionType === 'sizp' &&
+            <React.Fragment>
+                <FarmDataGridInfoHeader />
+                <FarmDataGridHeader />
+            </React.Fragment>
+        }
         <DataList data={data} setData={setData} />
     </div>;
 }
