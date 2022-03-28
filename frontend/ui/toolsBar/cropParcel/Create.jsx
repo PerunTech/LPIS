@@ -1,12 +1,13 @@
-import { React, PropTypes } from 'perun-core';
+import { React, PropTypes, elements } from 'perun-core';
 import { core, data, ui, config as cfg } from '../../../Spatial';
 import { config, createCPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
 import { ProcessButton, loadFarmerAssets } from '../..';
-import { getFarmMapAssets } from '../../Util';
+import { getFarmMapAssets, strcmp } from '../../Util';
 
+const { alertUser } = elements;
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory, http, util } = core;
 const { geobuf, protobuf } = data;
@@ -33,46 +34,46 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
 
             http.call('create_ap', {
                 url: '/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/' + p.x + '/' + p.y
-            })
-                .then(response => {
-                    const data = geobuf.decode(protobuf(response));
-                    const geojson = factory.geoJSON(data, config.pathOptions);
-
-                    geojson.getLayers().forEach(layer => {
-                        // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
-                        layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
-
-                        // assign metadata
-                        layer.feature.id = 0
-                        layer.feature.properties = { parent_id: farmerId }
-
-                        layer.addTo(Map);
-                        setState({ data: layer.feature.properties, layer: layer })
-                        let url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
-                        if (mapId === 'farm-registry-map') {
-                            url = `/lpis/get/cropList/{init.token}/${farmObjId}`
+            }).then(response => {
+                const data = geobuf.decode(protobuf(response));
+                const geojson = factory.geoJSON(data, config.pathOptions);
+                geojson.getLayers().forEach(layer => {
+                    // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
+                    layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
+                    // assign metadata
+                    layer.feature.id = 0
+                    layer.feature.properties = { parent_id: farmerId }
+                    layer.addTo(Map);
+                    setState({ data: layer.feature.properties, layer: layer })
+                    let url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
+                    if (mapId === 'farm-registry-map') {
+                        url = `/lpis/get/cropList/{init.token}/${farmObjId}`
+                    }
+                    http.call('get_code_list', {
+                        method: 'post', url,
+                        data: JSON.stringify({
+                            ...data,
+                            GEOM: factory.GeoJSON.fromLayer(layer)
+                        }),
+                    }).then(response => {
+                        if (strcmp(response.data?.type, 'error')) {
+                            const title = response.data.title || 'Настана грешка'
+                            const msg = response.data.message || ''
+                            alertUser(true, 'error', title, msg, disable)
+                        } else {
+                            setState({ enumIdx: response.data.enum, enumNames: response.data.enumNames })
+                            setState({ isGuided: false })
                         }
-                        http.call('get_code_list', {
-                            method: 'post', url,
-                            data: JSON.stringify({
-                                ...data,
-                                GEOM: factory.GeoJSON.fromLayer(layer)
-                            }),
-                        })
-                            .then(response => {
-                                setState({ enumIdx: response.data.enum, enumNames: response.data.enumNames })
-                                setState({ isGuided: false })
-                            })
-                            .catch(err => {
-                                console.log(err);
-                                disable();
-                            })
+                    }).catch(err => {
+                        console.log(err);
+                        disable();
                     })
                 })
-                .catch(err => {
-                    console.log(err)
-                    disable()
-                });
+            }).catch(err => {
+                console.log(err)
+                disable()
+                alertUser(true, 'error', 'Настана грешка')
+            });
 
             Map.off('click');
         });
