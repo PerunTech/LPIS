@@ -37,7 +37,7 @@ const _DataPanel = ({ categories, actionType }) => {
         {/* Data list utilities */}
         <DataListUtils setData={setData} />
         {/* Data list content */}
-        {actionType === 'sizp' &&
+        {(actionType === 'sizp' || actionType === 'pplan') &&
             <React.Fragment>
                 <FarmDataGridInfoHeader />
                 <FarmDataGridHeader gridType='agri_parcel' />
