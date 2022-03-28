@@ -174,7 +174,7 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
                 });
 
                 // register in app state
-                store.dispatch({ 'agriParcels': layers })
+                store.dispatch({ 'agriParcels': layers, layers })
                 showAlert && alertUser(true, 'success', 'Податоците се успешно освежени.')
                 fitBounds && Map.fitBounds(geojson.getBounds(), { padding: [100, 100] });
             }).catch(err => {
