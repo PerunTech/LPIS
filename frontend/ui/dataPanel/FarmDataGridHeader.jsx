@@ -10,7 +10,6 @@ export const FarmDataGridHeader = ({ gridType }) => {
 
   const generateHeader = () => {
     const type = gridType || 'agri_parcel'
-    console.log(type)
     const columns = colEnum[type];
     return (
       <ButtonGroup className='fr-data-grid-header' id='grid-header'>
