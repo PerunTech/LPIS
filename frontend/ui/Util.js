@@ -111,12 +111,12 @@ function handleLayerClick (layer) {
 
 const getFarmData = objectId => {
     const token = perunStore.getState().security.svSession
-    const url = `${window.server}/ReactElements/getRowDataByObjectId/${token}/${objectId}/FARM`
+    const url = `${window.server}/ReactElements/getRowDataByObjectId/${token}/${objectId}/FARMER`
     http.call('getFarmData', { url }).then(res => {
         if (res.data && Array.isArray(res.data) && res.data.length > 0) {
             const farmData = res.data[0]
-            const fic = farmData['FARM.FIC'] || ''
-            const fullName = farmData['FARM.FULL_NAME'] || ''
+            const fic = farmData['FARMER.FIC'] || ''
+            const fullName = farmData['FARMER.FULL_NAME'] || ''
             store.dispatch({ fic, fullName })
         }
     }).catch(err => {

@@ -49,6 +49,7 @@ const _DataPanel = ({ categories, pplanCategories, actionType }) => {
                 <FarmDataGridHeader gridType='agri_parcel' />
             </React.Fragment>
         }
+        {actionType === 'pplan' && <FarmDataGridInfoHeader />}
         <DataList data={data} setData={setData} pplanData={pplanData} setPplanData={setPplanData} />
     </div>;
 }
