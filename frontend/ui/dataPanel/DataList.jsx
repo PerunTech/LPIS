@@ -30,7 +30,7 @@ export const _DataList = ({ data, setData, pplanData, setPplanData, actionType, 
                     setPplanData(core.util.replaceElement(pplanData, id, { ...pplanData[id], isOpen: !(el.isOpen) }))} >
                 {<DataGrid
                     type={el}
-                    rows={Object.values(layers).filter(layer => strcmp(layer.feature.properties.DESCRIPTOR, el.id))} />}
+                    rows={Object.values(layers).filter(layer => strcmp(layer.feature?.properties?.DESCRIPTOR, el.id))} />}
             </ui.TreeNode>)}
     </div>
 }
