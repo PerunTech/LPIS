@@ -142,12 +142,16 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     if (!searchParams) {
         history.push('/')
     } else {
-        const farmObjId = new URLSearchParams(searchParams).get('id')
-        const farmObjTypeId = new URLSearchParams(searchParams).get('type')
-        const actionType = new URLSearchParams(searchParams).get('action')
+        const extractedParams = {}
+        const urlParams = new URLSearchParams(searchParams).entries()
+        for (const [key, value] of urlParams) {
+            Reflect.set(extractedParams, key, value)
+        }
+        const { id: farmObjId, type: farmObjTypeId, action: actionType } = extractedParams
+        const validParams = (farmObjId && !strcmp(farmObjId, '0')) && (farmObjTypeId && !strcmp(farmObjTypeId, '0')) && (actionType && !strcmp(actionType, '0'))
 
-        // If all query params are present, continue as usual
-        if (farmObjId && farmObjTypeId && actionType) {
+        // If all query params are present and valid, continue as usual
+        if (validParams) {
             // Get the farm data only when we first call this function
             if (fitBounds) {
                 getFarmData(farmObjId)
