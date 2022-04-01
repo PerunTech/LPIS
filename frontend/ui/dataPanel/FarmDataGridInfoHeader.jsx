@@ -5,7 +5,7 @@ import { truncate } from './Util';
 
 const _FarmDataGridInfoHeader = ({ actionType, fic, fullName }) => {
   let finalFullName = fullName
-  let fullNameMaxLength = 25
+  let fullNameMaxLength = 35
   if (strcmp(actionType, 'sizp')) {
     fullNameMaxLength = 45
   }
