@@ -48,6 +48,7 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
                     let url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
                     if (mapId === 'farm-registry-map') {
                         url = `/lpis/get/cropList/{init.token}/${farmObjId}`
+                        layer.feature.properties = { parent_id: farmObjId }
                     }
                     http.call('get_code_list', {
                         method: 'post', url,
