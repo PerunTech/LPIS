@@ -40,10 +40,16 @@ _DataList.propTypes = {
     setData: PropTypes.func,
     pplanData: PropTypes.array,
     setPplanData: PropTypes.func,
-    layers: PropTypes.object,
+    layers: PropTypes.oneOfType([
+        PropTypes.object,
+        PropTypes.array
+    ]),
     pauseGrid: PropTypes.bool,
     actionType: PropTypes.string,
-    farmData: PropTypes.array,
+    farmData: PropTypes.oneOfType([
+        PropTypes.object,
+        PropTypes.array
+    ]),
 };
 
 export const DataList = core.connect(state =>

@@ -128,7 +128,10 @@ _Edit.propTypes = {
     processID: PropTypes.string,
     mapId: PropTypes.string,
     farmerId: PropTypes.number,
-    farmObjId: PropTypes.number
+    farmObjId: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
+    ])
 }
 
 export const Edit = core.connect(state => ({

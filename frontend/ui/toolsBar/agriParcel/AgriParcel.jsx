@@ -488,7 +488,10 @@ const _AgriParcel = ({processID, mapId, farmObjId}) => {
 _AgriParcel.propTypes = {
     processID: PropTypes.string,
     mapId: PropTypes.string,
-    farmObjId: PropTypes.number,
+    farmObjId: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
+    ])
 }
 
 export const AgriParcel = core.connect(state => 
