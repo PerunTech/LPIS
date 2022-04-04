@@ -19,9 +19,9 @@ const _id = 'createCP';
  * Create a crop parcel by selecting a single point.
  */
 const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
-    const [{ layer, data, X, Y, enumIdx, enumNames, isGuided }, setState] = useReducer((currState, update) =>
+    const [{ layer, data, X, Y, enumIdx, enumNames, isGuided, showForm }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
-        { layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false });
+        { layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
 
     const enable = () => {
         store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
@@ -62,8 +62,7 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
                             const msg = response.data.message || ''
                             alertUser(true, 'error', title, msg, disable)
                         } else {
-                            setState({ enumIdx: response.data.enum, enumNames: response.data.enumNames })
-                            setState({ isGuided: false })
+                            setState({ isGuided: false, showForm: true, enumIdx: response.data.enum, enumNames: response.data.enumNames })
                         }
                     }).catch(err => {
                         console.log(err);
@@ -83,7 +82,7 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
     const disable = () => {
         Map.off('click');
         // Reset state, internal and application-wide.
-        setState({ layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false });
+        setState({ layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
         store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
@@ -107,15 +106,32 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
             Y: Y
         }), disable);
 
+    const renderGuideForm = () => {
+        return <Guidance id={_id} disable={disable} msg={createCPMsg} title='Додади производна парцела' />
+    }
+
+    const renderForm = () => {
+        return <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
+            <DrawActions cancel={disable} />
+        </Form>
+    }
+
+    const renderComponent = () => {
+        let componentToRender = null
+
+        if (isGuided && !showForm) {
+            componentToRender = renderGuideForm()
+        } else if (showForm && !isGuided) {
+            componentToRender = renderForm()
+        }
+
+        return componentToRender
+    }
+
     return <ProcessButton id={_id} onClick={enable} >
         <Icon name={_id} size='30px' />
         <span style={{ display: 'block', marginTop: '2px' }}>Додади производна парцела</span>
-        {processID === _id
-            && (isGuided
-                ? <Guidance id={_id} disable={disable} msg={createCPMsg} title='Додади производна парцела' />
-                : <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
-                    <DrawActions cancel={disable} />
-                </Form>)}
+        {processID === _id && renderComponent()}
     </ProcessButton>;
 };
 
