@@ -32,6 +32,11 @@
   height: 50px;
 }
 
+.fr-data-grid-empty-rows {
+  display: grid;
+  justify-content: center;
+}
+
 .fr-data-grid-row {
   display: flex;
   align-items: center;

@@ -41,15 +41,23 @@ export const InfoList = ({ farmInfo, parcelInfo }) => {
   }
 
   const commonUsesContainer = () => {
-    return <ListGroup className='text-center '>
+    return <div className='text-center'>
       Парцелата има заедничка употреба со следниве стопанства
       {commonUses.map(commonUse => {
-        return <ListGroupItem className='p-2'>
-          Целосно име: <span className='font-weight-bold mr-1'>{commonUse.FULL_NAME}</span>
-          ИДБР: <span className='font-weight-bold'>{commonUse.FIC}</span>
-        </ListGroupItem>
+        return <ListGroup className='text-center mb-2' key={commonUse.object_id}>
+          <ListGroupItem className='p-2'>
+            Целосно име: <span className='font-weight-bold mr-1'>{commonUse.FULL_NAME}</span>
+          </ListGroupItem>
+          <ListGroupItem className='p-2'>
+            ИДБР: <span className='font-weight-bold'>{commonUse.FIC}</span>
+          </ListGroupItem>
+          <ListGroupItem className='p-2'>
+            Површина: <span className='font-weight-bold'>{Math.round(commonUse.ALLOWED_AREA)} m²</span>
+          </ListGroupItem>
+        </ListGroup>
       })}
-    </ListGroup>
+      <hr />
+    </div>
   }
 
   const getOverlaps = () => {

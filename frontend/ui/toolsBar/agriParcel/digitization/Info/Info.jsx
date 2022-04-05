@@ -4,6 +4,7 @@ import { parcelInfoMsg } from '../../Config';
 import { ProcessButton } from '../../../ProcessButton';
 import { Guidance } from '../../Guidance';
 import { InfoList } from './InfoList';
+import { strcmp } from '../../../../Util';
 
 const { Map, store, http } = core;
 const { Icon, Modal, Button, DrawActions } = ui;
@@ -27,17 +28,14 @@ const _Info = ({ processID }) => {
         if (response.data.items && Array.isArray(response.data.items) && response.data?.items.length >= 1) {
           let farmInfo
           let parcelInfo
-          if (response.data?.items[0]?.FIC) {
-            farmInfo = response.data?.items[0]
-            parcelInfo = response.data?.items[1]
-          } else {
-            farmInfo = {}
-            if (!response.data?.items[1]) {
-              parcelInfo = response.data?.items[0]
-            } else {
-              parcelInfo = response.data?.items[1]
+          response.data.items.forEach(item => {
+            if (item.FIC) {
+              farmInfo = item
             }
-          }
+            if (strcmp(item.DESCRIPTOR, 'AGRI_PARCEL') || (item.ALLOWED_AREA || item.AREA)) {
+              parcelInfo = item
+            }
+          })
           setState({ isGuided: false, loading: false, farmInfo, parcelInfo, showModal: true })
         } else {
           alertUser(true, 'error', 'Настана грешка', 'Нема податоци за избраната парцела или не е избрана парцела од мапата', () => disable());

@@ -84,7 +84,8 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
             let title = 'Успешно додадени информации за повеќегодишна култура'
             if (isJSON(parsedResponse)) {
                 const jsonResponse = JSON.parse(parsedResponse)
-                alertUser(true, jsonResponse.type?.toLowerCase() || 'success', jsonResponse.label_code || title, '', () => disable())
+                title = jsonResponse.label_code || title
+                alertUser(true, jsonResponse.type?.toLowerCase() || 'success', title, '', () => disable())
             } else {
                 alertUser(true, 'success', title, '', () => disable())
             }

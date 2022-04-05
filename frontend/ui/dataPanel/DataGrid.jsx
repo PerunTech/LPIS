@@ -28,7 +28,7 @@ DataGrid.propTypes = {
 /* --------------------- */
 const columnEnum = {
     physical_block: ['Ид. Број', 'Класа', 'Површина'],
-    agri_parcel: ['Ид. Број', 'ИДБР', 'Површина'],
+    agri_parcel: ['СИЗП Број', 'Површина', 'Употр. на земјиште', 'Локалитет'],
     land_use_plan: ['Ид. Број', 'ИДБР', 'Површина'],
     cad_parcel: ['Ид. Број', 'Број на КО', 'Површина'],
     measurements: ['Ид. Број', 'Тип', 'Мерење'],
@@ -45,12 +45,10 @@ const columnEnum = {
 /* Column names above each set of data types in the list. */
 const _GridHeader = ({ typeId }) => {
     const columns = columnEnum[typeId] || columnEnum['resto'];
-
+    const columnElements = columns.map(el => <Button key={el} disabled className='data-grid-column' >{el}</Button>)
     return <ButtonGroup className='data-grid-header' id="grid-header">
         <Button disabled className='data-grid-index' />
-        <Button disabled className='data-grid-column' >{columns[0]}</Button>
-        <Button disabled className='data-grid-column' >{columns[1]}</Button>
-        <Button disabled className='data-grid-column' >{columns[2]}</Button>
+        {columnElements}
         <Button disabled style={{ width: '60px' }} />
     </ButtonGroup>
 }
@@ -64,19 +62,22 @@ _GridHeader.propTypes = {
 /* ------------------------------ */
 const _GridRows = ({ rows }) => {
     return rows.map((el) => {
-        const id = el.getId(),
-            name = el.getName(),
+        const props = el.feature && el.feature.properties;
+        const id = props.OLD_ID || el.getId(),
             measurement = Math.round(el.getMeasurement()),
+            landClass = props.LAND_COVER_CODE,
+            name = props.HOME_NAME || el.getName(),
             unit = el instanceof factory.Polygon ? 'm²' : 'm';
 
         // Connect and filter when id || name || measurement matches search string. Thats our search list filter.
         return <ButtonGroup className='data-grid-row' key={id} >
             <Button disabled className='data-grid-index' />
             <Button disabled className='data-grid-column' >{id}</Button>
-            <Button disabled className='data-grid-column' >{name}</Button>
             <Button disabled className='data-grid-column' >{measurement + ' ' + unit}</Button>
+            <Button disabled className='data-grid-column' >{landClass}</Button>
+            <Button disabled className='data-grid-column' >{name}</Button>
             <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} >
-                <Icon name='pinpoint' size='16px' />
+                <Icon name='pinpoint-secondary' size='16px' />
             </Button>
             <Button className='data-grid-util' onClick={() => console.log('more')} >
                 <Icon name='more' size='12px' />

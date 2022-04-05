@@ -120,11 +120,9 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   const initEdit = layer => {
     // Move map view on top of selected polygon.
     Map.fitBounds(layer.getBounds());
-
     // Activate edit handler on selected polygon
     edit.polygon.enable(layer, config);
     setState({ layer: layer, data: layer.feature.properties, isGuided: false, showForm: true });
-
     // Activate edit event listeners on layer.
     layer.on('pm:edit', e => setState({ layer: e.target }));
   }
@@ -154,7 +152,8 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
       let title = 'Успешно додадени информации за повеќегодишна култура'
       if (isJSON(parsedResponse)) {
         const jsonResponse = JSON.parse(parsedResponse)
-        alertUser(true, jsonResponse.type?.toLowerCase() || 'success', jsonResponse.label_code || title, '', () => disable())
+        title = jsonResponse.label_code || title
+        alertUser(true, jsonResponse.type?.toLowerCase() || 'success', title, '', () => disable())
       } else {
         alertUser(true, 'success', title, '', () => disable())
       }
@@ -197,11 +196,9 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   }
 
   const renderForm = () => {
-    return (
-      <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
-        <DrawActions cancel={() => disable()} />
-      </Form>
-    )
+    return <Form onSubmit={onSubmit} onChange={onChange} formData={data} >
+      <DrawActions cancel={() => disable()} />
+    </Form>
   }
 
   const renderPermanentCropForm = () => {

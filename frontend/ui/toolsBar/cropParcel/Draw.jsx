@@ -17,8 +17,8 @@ const _id = 'drawCP';
  * Draw crop parcel.
  */
 const _Draw = ({ processID, mapId, farmerId, farmObjId }) => {
-    const [{ layer, data, enumIdx, enumNames, isGuided }, setState] = useReducer((currState, update) =>
-        ({ ...currState, ...update }), { layer: {}, data: {}, enumIdx: [], enumNames: [], isGuided: false });
+    const [{ layer, data, enumIdx, enumNames, isGuided, showForm }, setState] = useReducer((currState, update) =>
+        ({ ...currState, ...update }), { layer: {}, data: {}, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
 
     const enable = () => {
         Map.on('new_shape', e => {
@@ -35,20 +35,17 @@ const _Draw = ({ processID, mapId, farmerId, farmObjId }) => {
                         ...data,
                         GEOM: factory.GeoJSON.fromLayer(e.layer)
                     }),
+                }).then(response => {
+                    if (response.data.type && strcmp(response.data.type, 'error')) {
+                        elements.alertUser(true, 'error', response.data.title, response.data.message || '')
+                        disable()
+                    } else {
+                        setState({ isGuided: false, showForm: true, enumIdx: response.data.enum, enumNames: response.data.enumNames })
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    disable();
                 })
-                    .then(response => {
-                        if (response.data.type && strcmp(response.data.type, 'error')) {
-                            elements.alertUser(true, 'error', response.data.title, response.data.message || '')
-                            disable()
-                        } else {
-                            setState({ enumIdx: response.data.enum, enumNames: response.data.enumNames })
-                            setState({ isGuided: false })
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        disable();
-                    })
             }
             Map.off('new_shape');
         });
@@ -60,7 +57,7 @@ const _Draw = ({ processID, mapId, farmerId, farmObjId }) => {
 
     const disable = () => {
         // Reset state, internal and application-wide.
-        setState({ layer: {}, data: {}, enumIdx: [], enumNames: [] });
+        setState({ layer: {}, data: {}, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
         store.dispatch({ processID: '' });
 
         // We remove the working geometry, save process will add the result.
@@ -87,23 +84,38 @@ const _Draw = ({ processID, mapId, farmerId, farmObjId }) => {
         }), disable);
     }
 
-    const renderForm = () =>
-        isGuided
-            ? <Guidance id={_id}
-                finish={() => polygon._finishShape()}
-                undo={() => polygon._removeLastVertex()}
-                disable={disable}
-                msg={drawCPMsg}
-                title='Нацртај производна парцела' />
-            : <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
-                <DrawActions
-                    cancel={disable} />
-            </Form>;
+    const renderGuideForm = () => {
+        return <Guidance id={_id}
+            finish={() => polygon._finishShape()}
+            undo={() => polygon._removeLastVertex()}
+            disable={disable}
+            msg={drawCPMsg}
+            title='Нацртај производна парцела' />
+    }
+
+    const renderForm = () => {
+        return <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
+            <DrawActions
+                cancel={disable} />
+        </Form>
+    }
+
+    const renderComponent = () => {
+        let componentToRender = null
+
+        if (isGuided && !showForm) {
+            componentToRender = renderGuideForm()
+        } else if (showForm && !isGuided) {
+            componentToRender = renderForm()
+        }
+
+        return componentToRender
+    }
 
     return <ProcessButton id={_id} onClick={enable} >
         <Icon name={_id} size='32px' />
         <span style={{ display: 'block', marginTop: '2px' }}>Нацртај производна парцела</span>
-        {processID === _id && renderForm()}
+        {processID === _id && renderComponent()}
     </ProcessButton>;
 };
 
@@ -111,7 +123,10 @@ _Draw.propTypes = {
     processID: PropTypes.string,
     mapId: PropTypes.string,
     farmerId: PropTypes.number,
-    farmObjId: PropTypes.number
+    farmObjId: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
+    ])
 }
 
 export const Draw = core.connect(state => ({

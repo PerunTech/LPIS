@@ -109,14 +109,24 @@ function handleLayerClick (layer) {
     store.dispatch({ selectedParcelId: layer.feature.id })
 }
 
+const getFarmData = objectId => {
+    const token = perunStore.getState().security.svSession
+    const url = `${window.server}/ReactElements/getRowDataByObjectId/${token}/${objectId}/FARMER`
+    http.call('getFarmData', { url }).then(res => {
+        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+            const farmData = res.data[0]
+            const fic = farmData['FARMER.FIC'] || ''
+            const fullName = farmData['FARMER.FULL_NAME'] || ''
+            store.dispatch({ fic, fullName })
+        }
+    }).catch(err => {
+        console.error(err)
+    })
+}
+
 export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
-            if (layer.options.tooltips) {
-                if (layer._tooltip?._content) {
-                    layer._tooltip._content = ''
-                }
-            }
             Map.removeLayer(layer);
         }
     });
@@ -132,18 +142,21 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     if (!searchParams) {
         history.push('/')
     } else {
-        const farmObjId = new URLSearchParams(searchParams).get('id')
-        const farmObjTypeId = new URLSearchParams(searchParams).get('type')
-        const actionType = new URLSearchParams(searchParams).get('action')
+        const extractedParams = {}
+        const urlParams = new URLSearchParams(searchParams).entries()
+        for (const [key, value] of urlParams) {
+            Reflect.set(extractedParams, key, value)
+        }
+        const { id: farmObjId, type: farmObjTypeId, action: actionType } = extractedParams
+        const validParams = (farmObjId && !strcmp(farmObjId, '0')) && (farmObjTypeId && !strcmp(farmObjTypeId, '0')) && (actionType && !strcmp(actionType, '0'))
 
-        // If all query params are present, continue as usual
-        if (farmObjId && farmObjTypeId && actionType) {
-            const tableName = perunStore.getState().frmapData?.farmData?.tableName || 'FARM'
-            const data = perunStore.getState().frmapData?.farmData?.rowsData
-            const fic = data?.[`${tableName}.FIC`] || ''
-            const fullName = data?.[`${tableName}.FULL_NAME`] || ''
-
-            store.dispatch({ farmObjId, farmObjTypeId, actionType, fic, fullName, tableName })
+        // If all query params are present and valid, continue as usual
+        if (validParams) {
+            // Get the farm data only when we first call this function
+            if (fitBounds) {
+                getFarmData(farmObjId)
+            }
+            store.dispatch({ farmObjId, farmObjTypeId, actionType })
             const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`
             http.call('getFarmMapAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
                 const data = geobuf.decode(protobuf(response));
@@ -165,7 +178,7 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
                 });
 
                 // register in app state
-                store.dispatch({ 'agriParcels': layers })
+                store.dispatch({ 'agriParcels': layers, layers })
                 showAlert && alertUser(true, 'success', 'Податоците се успешно освежени.')
                 fitBounds && Map.fitBounds(geojson.getBounds(), { padding: [100, 100] });
             }).catch(err => {

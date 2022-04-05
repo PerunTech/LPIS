@@ -791,6 +791,10 @@ public class ApplicationServices {
 				result = result.applyFilter(new parentFilter(parentId));
 				if (result.size() > 0)
 					commonUse = result.get(0);
+				else {
+					commonUse = new Jsonable() {
+					};
+				}
 			}
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),

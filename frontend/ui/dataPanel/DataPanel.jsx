@@ -1,8 +1,8 @@
 import { React, PropTypes } from 'perun-core';
-import { ui, core } from '../../Spatial';
+import { core } from '../../Spatial';
 import { DataList, DataListUtils } from '..';
-
-// const { Button, Divider } = ui;
+import { FarmDataGridInfoHeader } from './FarmDataGridInfoHeader';
+import { FarmDataGridHeader } from './FarmDataGridHeader';
 
 /* Root nodes in the data panel tree. */
 const dataCategories = (function () {
@@ -23,12 +23,18 @@ const dataCategories = (function () {
         .concat([{ id: 'resto', label: 'Останато', isOpen: false }]);
 })();
 
+const pplanCategories = [
+    { id: 'agri_parcel', label: 'Земјоделски парцели', isOpen: true },
+    { id: 'land_use_plan', label: 'Производни парцели', isOpen: true }
+]
+
 /**
  * 
  * @param {*} props 
  */
-const _DataPanel = ({categories}) => {
+const _DataPanel = ({ categories, pplanCategories, actionType }) => {
     const [data, setData] = React.useState(categories);
+    const [pplanData, setPplanData] = React.useState(pplanCategories)
 
     return <div id='data-panel' >
         {/* Data list title */}
@@ -37,18 +43,28 @@ const _DataPanel = ({categories}) => {
         {/* Data list utilities */}
         <DataListUtils setData={setData} />
         {/* Data list content */}
-        <DataList data={data} setData={setData}  />
+        {actionType === 'sizp' &&
+            <React.Fragment>
+                <FarmDataGridInfoHeader />
+                <FarmDataGridHeader gridType='agri_parcel' />
+            </React.Fragment>
+        }
+        {actionType === 'pplan' && <FarmDataGridInfoHeader />}
+        <DataList data={data} setData={setData} pplanData={pplanData} setPplanData={setPplanData} />
     </div>;
 }
 
 _DataPanel.defaultProps = {
-    categories: dataCategories
+    categories: dataCategories,
+    pplanCategories
 }
 
 _DataPanel.propTypes = {
     categories: PropTypes.array,
-    processID: PropTypes.string
+    pplanCategories: PropTypes.array,
+    processID: PropTypes.string,
+    actionType: PropTypes.string
 }
 
-export const DataPanel = core.connect(state => 
-    ({processID: state.app.processID}))(_DataPanel);
+export const DataPanel = core.connect(state =>
+    ({ processID: state.app.processID, actionType: state.farmRegistry?.actionType }))(_DataPanel);

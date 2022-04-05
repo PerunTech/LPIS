@@ -1,12 +1,13 @@
-import { React, PropTypes } from 'perun-core';
+import { React, PropTypes, elements } from 'perun-core';
 import { core, data, ui, config as cfg } from '../../../Spatial';
 import { config, createCPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
 import { ProcessButton, loadFarmerAssets } from '../..';
-import { getFarmMapAssets } from '../../Util';
+import { getFarmMapAssets, strcmp } from '../../Util';
 
+const { alertUser } = elements;
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory, http, util } = core;
 const { geobuf, protobuf } = data;
@@ -18,9 +19,9 @@ const _id = 'createCP';
  * Create a crop parcel by selecting a single point.
  */
 const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
-    const [{ layer, data, X, Y, enumIdx, enumNames, isGuided }, setState] = useReducer((currState, update) =>
+    const [{ layer, data, X, Y, enumIdx, enumNames, isGuided, showForm }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
-        { layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false });
+        { layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
 
     const enable = () => {
         store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
@@ -33,46 +34,46 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
 
             http.call('create_ap', {
                 url: '/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/' + p.x + '/' + p.y
-            })
-                .then(response => {
-                    const data = geobuf.decode(protobuf(response));
-                    const geojson = factory.geoJSON(data, config.pathOptions);
-
-                    geojson.getLayers().forEach(layer => {
-                        // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
-                        layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
-
-                        // assign metadata
-                        layer.feature.id = 0
-                        layer.feature.properties = { parent_id: farmerId }
-
-                        layer.addTo(Map);
-                        setState({ data: layer.feature.properties, layer: layer })
-                        let url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
-                        if (mapId === 'farm-registry-map') {
-                            url = `/lpis/get/cropList/{init.token}/${farmObjId}`
+            }).then(response => {
+                const data = geobuf.decode(protobuf(response));
+                const geojson = factory.geoJSON(data, config.pathOptions);
+                geojson.getLayers().forEach(layer => {
+                    // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
+                    layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
+                    // assign metadata
+                    layer.feature.id = 0
+                    layer.feature.properties = { parent_id: farmerId }
+                    layer.addTo(Map);
+                    setState({ data: layer.feature.properties, layer: layer })
+                    let url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
+                    if (mapId === 'farm-registry-map') {
+                        url = `/lpis/get/cropList/{init.token}/${farmObjId}`
+                        layer.feature.properties = { parent_id: farmObjId }
+                    }
+                    http.call('get_code_list', {
+                        method: 'post', url,
+                        data: JSON.stringify({
+                            ...data,
+                            GEOM: factory.GeoJSON.fromLayer(layer)
+                        }),
+                    }).then(response => {
+                        if (strcmp(response.data?.type, 'error')) {
+                            const title = response.data.title || 'Настана грешка'
+                            const msg = response.data.message || ''
+                            alertUser(true, 'error', title, msg, disable)
+                        } else {
+                            setState({ isGuided: false, showForm: true, enumIdx: response.data.enum, enumNames: response.data.enumNames })
                         }
-                        http.call('get_code_list', {
-                            method: 'post', url,
-                            data: JSON.stringify({
-                                ...data,
-                                GEOM: factory.GeoJSON.fromLayer(layer)
-                            }),
-                        })
-                            .then(response => {
-                                setState({ enumIdx: response.data.enum, enumNames: response.data.enumNames })
-                                setState({ isGuided: false })
-                            })
-                            .catch(err => {
-                                console.log(err);
-                                disable();
-                            })
+                    }).catch(err => {
+                        console.log(err);
+                        disable();
                     })
                 })
-                .catch(err => {
-                    console.log(err)
-                    disable()
-                });
+            }).catch(err => {
+                console.log(err)
+                disable()
+                alertUser(true, 'error', 'Настана грешка')
+            });
 
             Map.off('click');
         });
@@ -81,7 +82,7 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
     const disable = () => {
         Map.off('click');
         // Reset state, internal and application-wide.
-        setState({ layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false });
+        setState({ layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
         store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
@@ -105,15 +106,32 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
             Y: Y
         }), disable);
 
+    const renderGuideForm = () => {
+        return <Guidance id={_id} disable={disable} msg={createCPMsg} title='Додади производна парцела' />
+    }
+
+    const renderForm = () => {
+        return <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
+            <DrawActions cancel={disable} />
+        </Form>
+    }
+
+    const renderComponent = () => {
+        let componentToRender = null
+
+        if (isGuided && !showForm) {
+            componentToRender = renderGuideForm()
+        } else if (showForm && !isGuided) {
+            componentToRender = renderForm()
+        }
+
+        return componentToRender
+    }
+
     return <ProcessButton id={_id} onClick={enable} >
         <Icon name={_id} size='30px' />
         <span style={{ display: 'block', marginTop: '2px' }}>Додади производна парцела</span>
-        {processID === _id
-            && (isGuided
-                ? <Guidance id={_id} disable={disable} msg={createCPMsg} title='Додади производна парцела' />
-                : <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
-                    <DrawActions cancel={disable} />
-                </Form>)}
+        {processID === _id && renderComponent()}
     </ProcessButton>;
 };
 
@@ -121,7 +139,10 @@ _Create.propTypes = {
     processID: PropTypes.string,
     mapId: PropTypes.string,
     farmerId: PropTypes.number,
-    farmObjId: PropTypes.number
+    farmObjId: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
+    ])
 }
 
 export const Create = core.connect(state => ({
