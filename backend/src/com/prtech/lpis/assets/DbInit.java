@@ -61,7 +61,7 @@ public class DbInit implements IDbInit {
 		DbDataField dbf2 = new DbDataField();
 		dbf2.setDbFieldName("GEOM");
 		dbf2.setDbFieldType(DbFieldType.GEOMETRY);
-		dbf2.setGeometryType("MULTIPOLYGON"); // allows holes, do not use Polygon.
+		dbf2.setGeometryType("POLYGON"); // allows holes, do not use Polygon.
 		dbf2.setGeometrySrid(SRID);
 		dbf2.setIndexName("GEOM_SIDX"); // name must be unique
 		dbf2.setIsNull(false);
@@ -210,7 +210,7 @@ public class DbInit implements IDbInit {
 		DbDataField dbf2 = new DbDataField();
 		dbf2.setDbFieldName("GEOM");
 		dbf2.setDbFieldType(DbFieldType.GEOMETRY);
-		dbf2.setGeometryType("MULTIPOLYGON"); // allows holes, do not use Polygon.
+		dbf2.setGeometryType("POLYGON"); // allows holes, do not use Polygon.
 		dbf2.setGeometrySrid(SRID);
 		dbf2.setIndexName("GEOM_SIDX"); // name must be unique
 		dbf2.setIsNull(false);
@@ -562,6 +562,7 @@ public class DbInit implements IDbInit {
 		dbf27.setDbFieldType(DbFieldType.NUMERIC);
 		dbf27.setDbFieldSize(18);
 		dbf27.setDbFieldScale(0);
+		dbf27.setIndexName("IDX_LPIS_ID");
 		dbf27.setIsNull(true);
 		dbf27.setLabel_code("agri_parcel.old_id");
 		dbf27.setSort_order(110);
@@ -580,8 +581,16 @@ public class DbInit implements IDbInit {
 		dbf30.setLabel_code("agri_parcel.has_overlap");
 		dbf30.setSort_order(120);
 		
+		DbDataField dbf31 = new DbDataField();
+		dbf30.setDbFieldName(CC.LPIS_REVISION);
+		dbf30.setDbFieldType(DbFieldType.NUMERIC);
+		dbf27.setDbFieldSize(18);
+		dbf27.setDbFieldScale(0);
+		dbf30.setIsNull(true);
+		dbf30.setLabel_code("agri_parcel.lpis_revision");
+		dbf30.setSort_order(120);
 		
-		DbDataField[] fieldList = new DbDataField[30];
+		DbDataField[] fieldList = new DbDataField[31];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
@@ -617,6 +626,7 @@ public class DbInit implements IDbInit {
 		fieldList[27] = dbf28;
 		fieldList[28] = dbf29;
 		fieldList[29] = dbf30;
+		fieldList[30] = dbf31;
 
 		dbt.setDbTableFields(fieldList);
 		
