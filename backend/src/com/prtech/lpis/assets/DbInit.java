@@ -582,13 +582,13 @@ public class DbInit implements IDbInit {
 		dbf30.setSort_order(120);
 		
 		DbDataField dbf31 = new DbDataField();
-		dbf30.setDbFieldName(CC.LPIS_REVISION);
-		dbf30.setDbFieldType(DbFieldType.NUMERIC);
-		dbf27.setDbFieldSize(18);
-		dbf27.setDbFieldScale(0);
-		dbf30.setIsNull(true);
-		dbf30.setLabel_code("agri_parcel.lpis_revision");
-		dbf30.setSort_order(120);
+		dbf31.setDbFieldName(CC.LPIS_REVISION);
+		dbf31.setDbFieldType(DbFieldType.NUMERIC);
+		dbf31.setDbFieldSize(18);
+		dbf31.setDbFieldScale(0);
+		dbf31.setIsNull(true);
+		dbf31.setLabel_code("agri_parcel.lpis_revision");
+		dbf31.setSort_order(120);
 		
 		DbDataField[] fieldList = new DbDataField[31];
 		fieldList[0] = dbf1;
