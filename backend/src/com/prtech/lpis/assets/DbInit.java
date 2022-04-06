@@ -577,7 +577,8 @@ public class DbInit implements IDbInit {
 		DbDataField dbf30 = new DbDataField();
 		dbf30.setDbFieldName(CC.HAS_OVERLAP);
 		dbf30.setDbFieldType(DbFieldType.BOOLEAN);
-		dbf30.setIsNull(true);		dbf26.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+		dbf30.setIsNull(true);		
+		dbf30.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		dbf30.setLabel_code("agri_parcel.has_overlap");
 		dbf30.setSort_order(120);
 		
