@@ -62,7 +62,7 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
                             const msg = response.data.message || ''
                             alertUser(true, 'error', title, msg, disable)
                         } else {
-                            setState({ isGuided: false, showForm: true, enumIdx: response.data.enum, enumNames: response.data.enumNames })
+                            setState({ isGuided: false, showForm: true, enumIdx: response.data.enum || [], enumNames: response.data.enumNames || [] })
                         }
                     }).catch(err => {
                         console.log(err);
