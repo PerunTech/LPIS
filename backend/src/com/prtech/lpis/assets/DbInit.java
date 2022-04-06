@@ -703,13 +703,22 @@ public class DbInit implements IDbInit {
 		dbf6.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 
-		DbDataField[] fieldList = new DbDataField[6];
+		DbDataField dbf24 = new DbDataField();
+		dbf24.setDbFieldName("CERTIFICATE_OF_USE");
+		dbf24.setDbFieldType(DbFieldType.BOOLEAN);
+		dbf24.setIsNull(true);
+		dbf24.setLabel_code("agri_parcel.certificate_of_use");
+		dbf24.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+		
+		DbDataField[] fieldList = new DbDataField[7];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
 		fieldList[3] = dbf4;
 		fieldList[4] = dbf5;
 		fieldList[5] = dbf6;
+		fieldList[6] = dbf24;
 
 		dbt.setDbTableFields(fieldList);
 		return dbt;
