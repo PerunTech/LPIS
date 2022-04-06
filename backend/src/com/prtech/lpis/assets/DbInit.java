@@ -662,6 +662,8 @@ public class DbInit implements IDbInit {
 		dbf2.setDbFieldType(DbFieldType.NUMERIC);
 		dbf2.setDbFieldSize(18);
 		dbf2.setIndexName("PARCEL_ID_IDX");
+		dbf2.setRefereftialField("OBJECT_ID");
+		dbf2.setReferentialTable("AGRI_PARCEL");
 		dbf2.setLabel_code("common_use.parcel_id");
 		dbf2.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 
