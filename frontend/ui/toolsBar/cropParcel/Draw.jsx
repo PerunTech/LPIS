@@ -40,7 +40,7 @@ const _Draw = ({ processID, mapId, farmerId, farmObjId }) => {
                         elements.alertUser(true, 'error', response.data.title, response.data.message || '')
                         disable()
                     } else {
-                        setState({ isGuided: false, showForm: true, enumIdx: response.data.enum, enumNames: response.data.enumNames })
+                        setState({ isGuided: false, showForm: true, enumIdx: response.data.enum || [], enumNames: response.data.enumNames || [] })
                     }
                 }).catch(err => {
                     console.log(err);
