@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
 import { config } from '../Config';
-import { decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
+import { getFarmMapAssets } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -30,29 +30,16 @@ const _Cut = ({ processID, farmObjId, saveIsPending }) => {
         polygon.enable(config);
     }
 
-    const disable = (responseType, response, isLoading) => {
-        if (isLoading) {
-            setState({ loading: true })
-        } else {
-            setState({ loading: false })
-            if (strcmp(responseType, 'error')) {
-                const errorMsg = decodeResponse(response)
-                elements.alertUser(true, 'error', 'Грешка при зачувување', errorMsg);
-            } else {
-                // Reset state, internal and application-wide.
-                Map.off('new_shape');
-                setState({ layer: {}, data: {}, isGuided: false, showForm: false });
-                store.dispatch({ processID: '' });
-
-                // We remove the working geometry, save process will add the result, as well as additional vectors.
-                layer.removeFrom && layer.removeFrom(Map);
-
-                polygon.disable('force');
-
-                // refresh work layer
-                getFarmMapAssets();
-            }
-        }
+    const disable = () => {
+        // Reset state, internal and application-wide.
+        Map.off('new_shape');
+        setState({ layer: {}, data: {}, isGuided: false, showForm: false });
+        store.dispatch({ processID: '' });
+        // We remove the working geometry, save process will add the result, as well as additional vectors.
+        layer.removeFrom && layer.removeFrom(Map);
+        polygon.disable('force');
+        // refresh work layer
+        getFarmMapAssets();
     }
 
     const cutParcel = e => {
@@ -69,13 +56,10 @@ const _Cut = ({ processID, farmObjId, saveIsPending }) => {
 
                 geojson.getLayers().forEach(layer => {
                     const id = layer.feature.id
-
                     // remove old app layers entries, will update with the new geojson set.
                     stateData[id] && stateData[id].removeFrom(Map);
-
                     layer.addTo(Map);
                     e.layer.removeFrom(Map);
-
                     setState({
                         layer: layer,
                         data: {
