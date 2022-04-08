@@ -1088,11 +1088,10 @@ public class ApplicationServices {
 	DbDataArray getAssetsList(SvReader svr, Long objectId, String typeName) throws SvException {
 		DbDataArray result = new DbDataArray();
 
-		svr.setIncludeGeometries(true);
-		DbDataArray dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
-
 		// Filter for campaign year and geometry not null, when cp is requested.
 		if (typeName.equalsIgnoreCase("LAND_USE_PLAN")) {
+			svr.setIncludeGeometries(true);
+			DbDataArray dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
 			for (DbDataObject dbo : dbArr.getItems()) {
 				String cYear = (String) dbo.getVal("CAMPAIGN_YEAR");
 				String now = String.valueOf(new DateTime().year().get());
@@ -1103,17 +1102,8 @@ public class ApplicationServices {
 				}
 			}
 		} else if (typeName.equalsIgnoreCase(CC.AGRI_PARCEL)) {
-			result.setItems(dbArr.getItems());
-			DbDataArray dba = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(CC.COMMON_USE), null);
-			for (DbDataObject dbo : dba.getItems()) {
-				DbDataObject dbp = svr.getObjectById((Long) dbo.getVal(CC.PARCEL_ID),
-						SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
-				if (dbp != null) {
-					dbp.setVal(CC.ALLOWED_AREA, dbo.getVal(CC.ALLOWED_AREA));
-					dbp.setVal(CC.COMMON_USE, true);
-					result.addDataItem(dbp);
-				}
-			}
+			result = new Reader(svr).getParcels(objectId, null,true); 
+			
 
 		}
 

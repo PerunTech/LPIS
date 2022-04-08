@@ -40,6 +40,8 @@ public class CC {
 	public static final String PLANT_AREA = "PLANT_AREA";
 	public static final String PATH_DELIMITER = "/";
 	public static final String LPIS_REVISION = "LPIS_REVISION";
+	public static final String LPIS = "LPIS";
+	public static final String PARCELS = "PARCELS";
 	
 
 }
