@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
 import { config, copyAPMsg } from '../Config';
-import { decodeResponse, getFarmMapAssets, strcmp } from '../../../Util';
+import { getFarmMapAssets } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -18,6 +18,16 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
     const [{ layer, data, X, Y, loading, showForm, isGuided }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
         { layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
+
+    const disable = () => {
+        Map.off('click');
+        // Reset state, internal and application-wide.
+        setState({ layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
+        store.dispatch({ processID: '' });
+        // We remove the working geometry, save process will add the result.
+        layer.removeFrom && layer.removeFrom(Map);
+        getFarmMapAssets();
+    }
 
     const enable = () => {
         setState({ isGuided: true })
@@ -55,26 +65,6 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
             Map.off('click');
         });
     };
-
-    const disable = (responseType, response, isLoading) => {
-        if (isLoading) {
-            setState({ loading: true })
-        } else {
-            setState({ loading: false })
-            if (strcmp(responseType, 'error')) {
-                const errorMsg = decodeResponse(response)
-                alertUser(true, 'error', 'Грешка при зачувување', errorMsg);
-            } else {
-                Map.off('click');
-                // Reset state, internal and application-wide.
-                setState({ layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
-                store.dispatch({ processID: '' });
-                // We remove the working geometry, save process will add the result.
-                layer.removeFrom && layer.removeFrom(Map);
-                getFarmMapAssets();
-            }
-        }
-    }
 
     const onChange = ({ formData }) => {
         setState({ data: { ...data, ...formData } });
