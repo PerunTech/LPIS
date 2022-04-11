@@ -1,6 +1,5 @@
 import { React } from 'perun-core';
 import { ui } from '../../../../Spatial';
-import { ProcessButton } from '../../ProcessButton';
 // Components
 import { CommonUse } from './CommonUse';
 import { Assign } from './Assign';
