@@ -146,6 +146,17 @@ public class Activator implements BundleActivator {
 				this.services.add(svc);
 		}
 		
+		for (ISvExecutorGroup eg : executorGroupServiceClasses) {
+			try {
+				log4j.info("Registering executor group service class: " + eg.getClass().getName());
+				svc = context.registerService(ISvExecutorGroup.class.getName(), eg, null);
+			} catch (Exception ex) {
+				log4j.error("Can't register service class:" + eg.getClass().getName(), ex);
+			}
+			if (svc != null)
+				this.services.add(svc);
+		}
+		
 		httpTracker = new ServiceTracker(context, HttpService.class.getName(), null) {
 			public void removedService(ServiceReference reference, Object service) {
 				// HTTP service is no longer available, unregister our
