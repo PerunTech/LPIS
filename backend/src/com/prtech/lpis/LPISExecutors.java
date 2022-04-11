@@ -31,13 +31,13 @@ public class LPISExecutors implements ISvExecutorGroup {
 
 	@Override
 	public long versionUID() {
-		return 1;
+		return 2;
 	}
 
 	@Override
 	public Map<String, Class<?>> getReturningTypes() {
 		// TODO Auto-generated method stub
-		return null;
+		return returnTypes;
 	}
 
 	@Override
