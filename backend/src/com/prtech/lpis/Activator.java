@@ -13,6 +13,7 @@ import org.osgi.util.tracker.ServiceTracker;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog_interfaces.IPerunPlugin;
 import com.prtech.svarog_interfaces.ISvExecutor;
+import com.prtech.svarog_interfaces.ISvExecutorGroup;
 
 /**
  * This class implements a simple bundle that uses the bundle context to
@@ -72,12 +73,31 @@ public class Activator implements BundleActivator {
 		// add executors here.
 		return list;
 	}
+	
+	/**
+	 * List of executorGroup objects to be used for initialisation
+	 * 
+	 * @return Map with executors
+	 */
+	private ArrayList<ISvExecutorGroup> initExecutorGroups() {
+		ArrayList<ISvExecutorGroup> list = new ArrayList<ISvExecutorGroup>();
+		list.add(new LPISExecutors());
+		return list;
+
+	}
 
 	/**
 	 * List of executors (classes implementing ISvExecutor). Cross-plugin
 	 * communication.
 	 */
 	private ArrayList<ISvExecutor> executors = initExecutors();
+	
+	/**
+	 * List of classes implementing ISvExecutorGroup which we will later use for
+	 * registration in the bundle startup
+	 */
+	private ArrayList<ISvExecutorGroup> executorGroupServiceClasses = initExecutorGroups();
+
 
 	/**
 	 * Member used to track the http services in order to register path for
@@ -121,6 +141,17 @@ public class Activator implements BundleActivator {
 				svc = context.registerService(ISvExecutor.class.getName(), exec, null);
 			} catch (Exception ex) {
 				log4j.error("Can't register executor class:" + exec.getClass().getName(), ex);
+			}
+			if (svc != null)
+				this.services.add(svc);
+		}
+		
+		for (ISvExecutorGroup eg : executorGroupServiceClasses) {
+			try {
+				log4j.info("Registering executor group service class: " + eg.getClass().getName());
+				svc = context.registerService(ISvExecutorGroup.class.getName(), eg, null);
+			} catch (Exception ex) {
+				log4j.error("Can't register service class:" + eg.getClass().getName(), ex);
 			}
 			if (svc != null)
 				this.services.add(svc);

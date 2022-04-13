@@ -15,9 +15,8 @@ const { useReducer } = React;
 const _id = 'cutAP';
 
 const _Cut = ({ processID, farmObjId, saveIsPending }) => {
-    const [{ layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
-        ({ ...currState, ...update }),
-        { layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
+    const [{ layer, data, isGuided, showForm }, setState] = useReducer((currState, update) =>
+        ({ ...currState, ...update }), { layer: {}, data: {}, isGuided: false, showForm: false });
 
     const enable = () => {
         Map.on('new_shape', e => cutParcel(e));

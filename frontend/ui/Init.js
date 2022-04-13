@@ -1,6 +1,6 @@
 import { redux } from 'perun-core';
 import { ui, core } from '../Spatial';
-import { layerList, parcelLayersList } from '../config/layerList';
+import { layerList } from '../config/layerList';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets } from '.';
 import { getFarmMapAssets } from './Util';
 
