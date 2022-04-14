@@ -386,7 +386,7 @@ public class DbInit implements IDbInit {
 		dbf6.setIsNull(false);
 		dbf6.setLabel_code("agri_parcel.land_cover_code");
 		dbf6.setCode_list_user_code("LAND_COVER");
-		dbf6.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+		dbf6.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":false,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 		
 		DbDataField dbf7 = new DbDataField();
@@ -441,7 +441,7 @@ public class DbInit implements IDbInit {
 		dbf12.setDbFieldScale(0);
 		dbf12.setIsNull(true);	// this needs to be mandatory, but politics... 
 		dbf12.setLabel_code("agri_parcel.cadastral_municipality");
-		dbf12.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+		dbf12.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":false,"
 				+ "\"resizable\":true,\"editable\":false}}");
 		
 		DbDataField dbf13 = new DbDataField();
