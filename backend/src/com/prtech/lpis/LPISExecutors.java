@@ -8,24 +8,29 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 
+import com.prtech.iacs.importer.Importer;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
+import com.prtech.svarog.SvReader;
 import com.prtech.svarog_common.DbDataArray;
+import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_interfaces.ISvCore;
 import com.prtech.svarog_interfaces.ISvExecutorGroup;
 
 public class LPISExecutors implements ISvExecutorGroup {
-	private static List<String> names = new ArrayList<>(Arrays.asList(CC.PARCELS));
+	private static List<String> names = new ArrayList<>(Arrays.asList(CC.PARCELS, CC.IMPORT));
 	private static Map<String, Class<?>> returnTypes;
 	private static Map<String, String> descriptions;
 	static {
 		returnTypes = new HashMap<>();
 		returnTypes.put(CC.PARCELS, DbDataArray.class);
+		returnTypes.put(CC.IMPORT, DbDataArray.class);
 
 		descriptions = new HashMap<>();
 		descriptions.put(CC.PARCELS,
 				"Method which returns array of all parcels related to the farm identified by parameter FARM_ID");
+		descriptions.put(CC.IMPORT, "Method which performs import of all farm parcels by FARM_ID ");
 
 	}
 
@@ -79,6 +84,24 @@ public class LPISExecutors implements ISvExecutorGroup {
 			DateTime refDate = (DateTime) params.get("REFERENCE_DATE");
 			Boolean inludeGeometries = (Boolean) params.get("INCLUDE_GEOMETRIES");
 			result = new Reader((SvCore) svCore).getParcels(farmId, refDate, inludeGeometries);
+			break;
+		case CC.IMPORT:
+			try (SvReader svr = new SvReader((SvCore) svCore);) {
+				DbDataArray errorObjects = new DbDataArray();
+				DbDataObject farm = svr.getObjectById((Long) params.get("farmId"), SvCore.getTypeIdByName("FARMER"),
+						null);
+				Importer.updateIACS((Long) farm.getVal("OLD_PKID"), "FARM_ID", svr, null, "VLPIS_IMP2", "AGRI_PARCEL",
+						errorObjects);
+				Importer.updateIACS((Long) farm.getVal("OLD_PKID"), "FARM_ID", svr, null, "VLPIS_DEL2", "AGRI_PARCEL",
+						errorObjects);
+				Importer.updateIACS((Long) farm.getVal("OLD_PKID"), "FARM_ID", svr, null, "VCOMMON_USE_IMP2",
+						"COMMON_USE", errorObjects);
+				Importer.updateIACS((Long) farm.getVal("OLD_PKID"), "FARM_ID", svr, null, "VCOMMON_USE_DEL2",
+						"COMMON_USE", errorObjects);
+				svr.dbCommit();
+				result = errorObjects;
+			}
+			break;
 		}
 		return result;
 	}

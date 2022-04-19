@@ -42,6 +42,7 @@ public class CC {
 	public static final String LPIS_REVISION = "LPIS_REVISION";
 	public static final String LPIS = "LPIS";
 	public static final String PARCELS = "PARCELS";
+	public static final String IMPORT = "IMPORT";
 	
 
 }
