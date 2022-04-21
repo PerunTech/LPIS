@@ -725,6 +725,128 @@ public class DbInit implements IDbInit {
 		return dbt;
 	}
 	
+
+	public static DbDataTable createCadIntersection() {
+		DbDataTable dbt = new DbDataTable();
+		dbt.setDbTableName("LP_CAD_INTERSECTIONS");
+		dbt.setDbRepoName(CONST_MASTER_REPO);
+		dbt.setDbSchema(CONST_DEFAULT_SCHEMA);
+		dbt.setIsSystemTable(false);
+		dbt.setIsRepoTable(false);
+		dbt.setIsConfigTable(false);
+		dbt.setLabel_code("cad_intersections.general");
+		dbt.setUse_cache(true);
+		dbt.setParentName("FARMER");
+
+		DbDataField dbf1 = new DbDataField();
+		dbf1.setDbFieldName("PKID");
+		dbf1.setDbFieldType(DbFieldType.NUMERIC);
+		dbf1.setIsPrimaryKey(true);
+		dbf1.setDbFieldSize(18);
+		dbf1.setDbFieldScale(0);
+		dbf1.setIsNull(false);
+		dbf1.setLabel_code("cad_intersections.pkid");
+		dbf1.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+
+		DbDataField dbf2 = new DbDataField();
+		dbf2.setDbFieldName("PARCEL_ID");
+		dbf2.setDbFieldType(DbFieldType.NUMERIC);
+		dbf2.setDbFieldSize(18);
+		dbf2.setIndexName("PARCEL_ID_IDX");
+		dbf2.setRefereftialField("OBJECT_ID");
+		dbf2.setReferentialTable("AGRI_PARCEL");
+		dbf2.setLabel_code("cad_intersections.parcel_id");
+		dbf2.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+
+		DbDataField dbf3 = new DbDataField();
+		dbf3.setDbFieldName("LAND_PARCEL_ID");
+		dbf3.setDbFieldType(DbFieldType.NUMERIC);
+		dbf3.setDbFieldSize(18);
+		dbf3.setLabel_code("cad_intersections.LAND_PARCEL_ID");
+		dbf3.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf4 = new DbDataField();
+		dbf4.setDbFieldName("GR_COD_CC");
+		dbf4.setDbFieldType(DbFieldType.NUMERIC);
+		dbf4.setDbFieldSize(18);
+		dbf4.setLabel_code("cad_intersections.GR_COD_CC");
+		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf5 = new DbDataField();
+		dbf5.setDbFieldName("GR_COD_DP");
+		dbf5.setDbFieldType(DbFieldType.NUMERIC);
+		dbf5.setDbFieldSize(18);
+		dbf5.setIsNull(false);
+		dbf5.setLabel_code("cad_intersections.GR_COD_DP");
+		dbf5.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf6 = new DbDataField();
+		dbf6.setDbFieldName("FR_AREA");
+		dbf6.setDbFieldType(DbFieldType.NUMERIC);
+		dbf6.setDbFieldSize(18);
+		dbf6.setIsNull(false);
+		dbf6.setLabel_code("cad_intersections.FR_AREA");
+		dbf6.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+		DbDataField dbf7 = new DbDataField();
+		dbf7.setDbFieldName("AREA");
+		dbf7.setDbFieldType(DbFieldType.NUMERIC);
+		dbf7.setDbFieldSize(18);
+		dbf7.setIsNull(false);
+		dbf7.setLabel_code("cad_intersections.AREA");
+		dbf7.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+
+
+		DbDataField dbf8 = new DbDataField();
+		dbf8.setDbFieldName("CAD_AREA");
+		dbf8.setDbFieldType(DbFieldType.NUMERIC);
+		dbf8.setDbFieldSize(18);
+		dbf8.setIsNull(false);
+		dbf8.setLabel_code("cad_intersections.AREA");
+		dbf8.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+		
+		DbDataField dbf24 = new DbDataField();
+		dbf24.setDbFieldName("GR_PARCEL");
+		dbf24.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf24.setDbFieldSize(50);
+		dbf24.setIsNull(true);
+		dbf24.setLabel_code("agri_parcel.GR_PARCEL");
+		dbf24.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+		
+		DbDataField dbf22 = new DbDataField();
+		dbf22.setDbFieldName("GEOM");
+		dbf22.setDbFieldType(DbFieldType.GEOMETRY);
+		dbf22.setGeometryType("POLYGON"); // allows holes, do not use Polygon.
+		dbf22.setGeometrySrid(SRID);
+		dbf22.setIndexName("_GEOM_SIDX"); // name must be unique
+		dbf22.setIsNull(false);
+		dbf22.setLabel_code("common.geometry");
+		dbf22.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+		
+		DbDataField[] fieldList = new DbDataField[10];
+		fieldList[0] = dbf1;
+		fieldList[1] = dbf2;
+		fieldList[2] = dbf3;
+		fieldList[3] = dbf4;
+		fieldList[4] = dbf5;
+		fieldList[5] = dbf6;
+		fieldList[6] = dbf24;
+		fieldList[7] = dbf7;
+		fieldList[8] = dbf8;
+		fieldList[9] = dbf22;
+		dbt.setDbTableFields(fieldList);
+		return dbt;
+	}
+	
+	
 	public static DbDataTable createPermanentCrop() {
 		DbDataTable dbt = new DbDataTable();
 		dbt.setDbTableName("PERMANENT_CROP");
