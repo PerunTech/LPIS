@@ -962,6 +962,8 @@ public class DbInit implements IDbInit {
 		dbtList.add(addSortOrder(DbInit.createCommonUse()));
 		dbtList.add(addSortOrder(DbInit.createPermanentCrop()));
 		dbtList.add(addSortOrder(DbInit.createAPOverlap()));
+		dbtList.add(addSortOrder(DbInit.createCadIntersection()));
+		
 		return dbtList;
 	}
 
