@@ -831,7 +831,18 @@ public class DbInit implements IDbInit {
 		dbf22.setLabel_code("common.geometry");
 		dbf22.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
-		DbDataField[] fieldList = new DbDataField[10];
+		
+		DbDataField dbf18 = new DbDataField();
+		dbf18.setDbFieldName("EXTERNAL_ID");
+		dbf18.setDbFieldType(DbFieldType.NUMERIC);
+		dbf18.setDbFieldSize(18);
+		dbf18.setIsNull(false);
+		dbf18.setLabel_code("cad_intersections.EXTERNAL_ID");
+		dbf18.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+		
+		
+		DbDataField[] fieldList = new DbDataField[11];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
@@ -842,6 +853,7 @@ public class DbInit implements IDbInit {
 		fieldList[7] = dbf7;
 		fieldList[8] = dbf8;
 		fieldList[9] = dbf22;
+		fieldList[10] = dbf18;
 		dbt.setDbTableFields(fieldList);
 		return dbt;
 	}
