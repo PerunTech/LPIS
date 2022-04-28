@@ -33,7 +33,7 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
             setState({ X: p.x, Y: p.y });
 
             http.call('create_ap', {
-                url: '/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/' + p.x + '/' + p.y
+                url: '/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/' + p.x + '/' + p.y + '/' + farmObjId
             }).then(response => {
                 const data = geobuf.decode(protobuf(response));
                 const geojson = factory.geoJSON(data, config.pathOptions);
