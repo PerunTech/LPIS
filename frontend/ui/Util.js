@@ -159,6 +159,10 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
             store.dispatch({ farmObjId, farmObjTypeId, actionType })
             const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`
             http.call('getFarmMapAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
+                // Get the land use plan data only for the appropriate action type
+                if (strcmp(actionType, 'pplan')) {
+                    getFarmPPlanAssets()
+                }
                 const data = geobuf.decode(protobuf(response));
                 // filter data for type, set approp. config in factory.geoJSON
                 const geojson = factory.geoJSON(data, apConfig);
@@ -191,3 +195,21 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
         }
     }
 };
+
+export const getFarmPPlanAssets = (showAlert = false) => {
+    const token = perunStore.getState().security.svSession
+    const farmObjId = store.getState()?.farmRegistry?.farmObjId
+    const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/LAND_USE_PLAN`
+    http.call('getFarmPPlanAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
+        const data = geobuf.decode(protobuf(response));
+        // filter data for type, set approp. config in factory.geoJSON
+        const geojson = factory.geoJSON(data, apConfig);
+        const layers = geojson.getLayers();
+        // register in app state
+        store.dispatch({ 'farmPPlanData': layers })
+        showAlert && alertUser(true, 'success', 'Податоците се успешно освежени.')
+    }).catch(err => {
+        console.log(err)
+        showAlert && alertUser(true, 'error', 'Настана грешка', 'Податоците не се успешно освежени.')
+    })
+}
