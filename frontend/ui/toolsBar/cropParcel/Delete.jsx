@@ -4,7 +4,7 @@ import { Guidance } from './Guidance';
 import { deleteCPMsg } from './Config';
 import { loadFarmerAssets } from '../..'
 import { ProcessButton } from '../..';
-import { getFarmMapAssets } from '../../Util';
+import { getFarmPPlanAssets } from '../../Util';
 
 const { Map, store } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
@@ -49,7 +49,7 @@ const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
         })
             .then(() => {
                 if (mapId === 'farm-registry-map') {
-                    getFarmMapAssets()
+                    getFarmPPlanAssets()
                 } else {
                     loadFarmerAssets(core.store.getState().init.token, farmerId);
                 }

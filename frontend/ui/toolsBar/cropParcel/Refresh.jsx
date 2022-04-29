@@ -1,7 +1,7 @@
 import { React, PropTypes } from 'perun-core';
 import { ui, core } from '../../../Spatial';
 import { loadFarmerAssets } from '../..'
-import { getFarmMapAssets } from '../../Util';
+import { getFarmPPlanAssets } from '../../Util';
 
 const { Button, Icon } = ui;
 const _id = 'refreshCP';
@@ -12,7 +12,7 @@ const _id = 'refreshCP';
 const _Refresh = ({ processID, mapId, farmerId }) => {
     const onClick = () => {
         if (mapId === 'farm-registry-map') {
-            getFarmMapAssets()
+            getFarmPPlanAssets(true)
         } else {
             loadFarmerAssets(core.store.getState().gsaa.token, farmerId, false, true)
         }
@@ -33,6 +33,4 @@ _Refresh.propTypes = {
     farmerId: PropTypes.number
 }
 
-export const Refresh = core.connect(state => ({
-    mapId: state.map.id
-}))(_Refresh)
+export const Refresh = core.connect(state => ({ mapId: state.map.id }))(_Refresh)

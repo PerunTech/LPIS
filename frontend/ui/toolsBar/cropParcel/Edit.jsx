@@ -5,7 +5,7 @@ import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
 import { loadFarmerAssets, ProcessButton } from '../..';
-import { getFarmMapAssets } from '../../Util';
+import { getFarmPPlanAssets } from '../../Util';
 
 const { Map, store, factory } = core;
 const { edit } = tools;
@@ -45,7 +45,7 @@ const _Edit = ({ processID, mapId, farmerId, farmObjId }) => {
         // _layerGroup.clearLayers().removeFrom(Map);
         // store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
         if (mapId === 'farm-registry-map') {
-            getFarmMapAssets()
+            getFarmPPlanAssets()
         } else {
             loadFarmerAssets(store.getState().gsaa.token, farmerId);
         }
