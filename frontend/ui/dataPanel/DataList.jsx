@@ -4,7 +4,12 @@ import { DataGrid } from '..';
 import { FarmDataGrid } from './FarmDataGrid';
 import { strcmp } from '../Util';
 
-export const _DataList = ({ data, setData, pplanData, setPplanData, actionType, farmData, layers, pauseGrid }) => {
+const { useState } = React;
+
+export const _DataList = ({ data, setData, actionType, farmData, farmPPlanData, layers, pauseGrid }) => {
+    const [isAgriParcelNodeOpen, setAgriParcelNodeOpen] = useState(true)
+    const [isPPlanNodeOpen, setPPlanNodeOpen] = useState(true)
+
     return <div id='dataList' >
         {!pauseGrid && actionType !== 'sizp' && actionType !== 'pplan' && data.map((el, idx) =>
             <ui.TreeNode
@@ -20,18 +25,30 @@ export const _DataList = ({ data, setData, pplanData, setPplanData, actionType, 
                         layer.getMetadata().type === el.id)} />}
             </ui.TreeNode>)}
         {actionType === 'sizp' && <FarmDataGrid type='agri_parcel' rows={farmData} />}
-        {actionType === 'pplan' && pplanData.map((el, idx) =>
-            <ui.TreeNode
-                id={idx}
-                key={el.id}
-                label={el.label}
-                isOpen={el.isOpen}
-                onClick={id =>
-                    setPplanData(core.util.replaceElement(pplanData, id, { ...pplanData[id], isOpen: !(el.isOpen) }))} >
-                {<DataGrid
-                    type={el}
-                    rows={Object.values(layers).filter(layer => strcmp(layer.feature?.properties?.DESCRIPTOR, el.id))} />}
-            </ui.TreeNode>)}
+        {actionType === 'pplan' && (
+            <React.Fragment>
+                <ui.TreeNode
+                    id={0}
+                    key='agri_parcel'
+                    label='Земјоделски парцели'
+                    isOpen={isAgriParcelNodeOpen}
+                    onClick={() => setAgriParcelNodeOpen(!isAgriParcelNodeOpen)} >
+                    {<DataGrid
+                        type={{ id: 'agri_parcel', label: 'Земјоделски парцели' }}
+                        rows={Object.values(layers).filter(layer => strcmp(layer.feature?.properties?.DESCRIPTOR, 'agri_parcel'))} />}
+                </ui.TreeNode>
+                <ui.TreeNode
+                    id={1}
+                    key='land_use_plan'
+                    label='Производни парцели'
+                    isOpen={isPPlanNodeOpen}
+                    onClick={() => setPPlanNodeOpen(!isPPlanNodeOpen)} >
+                    {<DataGrid
+                        type={{ id: 'land_use_plan', label: 'Производни парцели' }}
+                        rows={farmPPlanData} />}
+                </ui.TreeNode>
+            </React.Fragment>
+        )}
     </div>
 }
 
@@ -58,4 +75,5 @@ export const DataList = core.connect(state =>
     pauseGrid: state.gsaa.pauseGrid,
     actionType: state.farmRegistry?.actionType,
     farmData: state.farmRegistry?.agriParcels,
+    farmPPlanData: state.farmRegistry?.farmPPlanData,
 }))(_DataList);
