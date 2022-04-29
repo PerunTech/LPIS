@@ -1,10 +1,64 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { getCropLabel } from '..'
-import { strcmp } from '../Util';
+import { strcmp, translateBooleanValue } from '../Util';
 
 const { factory, Map, store } = core;
 const { ButtonGroup, Button, Icon } = ui;
+
+const { useState } = React;
+
+let hiddenAssets = [];
+
+const getParcelVisibleIcon = (id, type) => {
+    let iconName = 'eye-on';
+    let layers = store.getState().farmRegistry.agriParcels;
+    if (strcmp(type, 'land_use_plan')) {
+        layers = store.getState().farmRegistry.farmPPlanData;
+    }
+    Object.values(layers).forEach((l) => {
+        if (Number(l.getId()) === Number(id)) {
+            if (l.options.fillOpacity == 0) {
+                iconName = 'eye-light';
+            }
+        }
+    });
+    for (let i = 0; i < hiddenAssets.length; i++) {
+        if (Number(hiddenAssets[i].getId()) === Number(id)) {
+            iconName = 'eye-off';
+        }
+    }
+    return iconName;
+};
+
+const toggleAssetFromMap = (id, type) => {
+    let layers = store.getState().farmRegistry.agriParcels;
+    if (strcmp(type, 'land_use_plan')) {
+        layers = store.getState().farmRegistry.farmPPlanData;
+    }
+    let visible = true;
+    Object.values(layers).forEach((l) => {
+        if (Number(l.getId()) === Number(id)) {
+            if (l._map && l.options.fillOpacity === 0.0) {
+                l.removeFrom(Map);
+                hiddenAssets.push(l);
+                visible = false;
+            } else {
+                l.setStyle({ fillOpacity: 0 });
+            }
+        }
+    });
+    if (visible) {
+        for (let i = 0; i < hiddenAssets.length; i++) {
+            if (Number(hiddenAssets[i].getId()) === Number(id)) {
+                hiddenAssets[i].setStyle({ fillOpacity: 0.25 });
+                hiddenAssets[i].addTo(Map);
+                hiddenAssets.splice(i, 1);
+            }
+        }
+    }
+    return visible;
+};
 
 export const DataGrid = ({ type, rows }) => {
     return store.getState().map.id === 'gsaa-map'
@@ -28,7 +82,7 @@ DataGrid.propTypes = {
 /* --------------------- */
 const columnEnum = {
     physical_block: ['Ид. Број', 'Класа', 'Површина'],
-    agri_parcel: ['СИЗП Број', 'Површина', 'Употр. на земјиште', 'Локалитет'],
+    agri_parcel: ['СИЗП Број', 'Површина', 'Употр. на земјиште', 'Локалитет', , 'Заеднич. употр.', 'Право на корист.'],
     land_use_plan: ['СИЗП Број', 'Земјодел. култура', 'Површина', 'Број на насади'],
     cad_parcel: ['Ид. Број', 'Број на КО', 'Површина'],
     measurements: ['Ид. Број', 'Тип', 'Мерење'],
@@ -61,6 +115,12 @@ _GridHeader.propTypes = {
 /*      GENERIC GRID CONTENT      */
 /* ------------------------------ */
 const _GridRows = ({ rows }) => {
+    const [isOpen, setOpen] = useState(true);
+    const toggleAssetFromMapAction = (el, type) => {
+        toggleAssetFromMap(el.getId(), type);
+        setOpen(!isOpen);
+    }
+
     return rows.map((el) => {
         const props = el.feature && el.feature.properties;
         const descriptor = props.DESCRIPTOR
@@ -70,7 +130,9 @@ const _GridRows = ({ rows }) => {
                 measurement = Math.round(el.getMeasurement()),
                 landClass = props.LAND_COVER_CODE,
                 name = props.HOME_NAME || el.getName(),
-                unit = el instanceof factory.Polygon ? 'm²' : 'm';
+                unit = el instanceof factory.Polygon ? 'm²' : 'm',
+                commonUse = props.COMMON_USE,
+                certificateOfUse = props.CERTIFICATE_OF_USE;
 
             return <ButtonGroup className='data-grid-row' key={id} >
                 <Button disabled className='data-grid-index' />
@@ -78,11 +140,13 @@ const _GridRows = ({ rows }) => {
                 <Button disabled className='data-grid-column' >{measurement + ' ' + unit}</Button>
                 <Button disabled className='data-grid-column' >{landClass}</Button>
                 <Button disabled className='data-grid-column' >{name}</Button>
+                <Button disabled className='data-grid-column'>{translateBooleanValue(commonUse)}</Button>
+                <Button disabled className='data-grid-column'>{translateBooleanValue(certificateOfUse)}</Button>
                 <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} >
                     <Icon name='pinpoint-secondary' size='16px' />
                 </Button>
-                <Button className='data-grid-util' onClick={() => console.log('more')} >
-                    <Icon name='more' size='12px' />
+                <Button className='data-grid-util' onClick={() => toggleAssetFromMapAction(el, descriptor)}>
+                    <Icon name={getParcelVisibleIcon(el.getId(), descriptor)} size='16px' />
                 </Button>
             </ButtonGroup>
         } else if (strcmp(descriptor, 'land_use_plan')) {
@@ -101,6 +165,12 @@ const _GridRows = ({ rows }) => {
                 <Button disabled className='data-grid-column' >{nPlants}</Button>
                 <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} >
                     <Icon name='pinpoint-secondary' size='16px' />
+                </Button>
+                <Button className='data-grid-util' onClick={() => {
+                    toggleAssetFromMap(el.getId(), descriptor)
+                    setOpen(!isOpen)
+                }}>
+                    <Icon name={getParcelVisibleIcon(el.getId(), descriptor)} size='16px' />
                 </Button>
             </ButtonGroup>
         }
