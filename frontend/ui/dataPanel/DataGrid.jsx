@@ -87,8 +87,7 @@ const _GridRows = ({ rows }) => {
             </ButtonGroup>
         } else if (strcmp(descriptor, 'land_use_plan')) {
             if (props.AGRI_PARCEL_ID === undefined) return null;
-
-            const id = getAgriNum(props.AGRI_PARCEL_ID),
+            const id = getAgriNum(props.AGRI_PARCEL_ID, true),
                 code = getCropLabel(props.CROP_CODE),
                 measurement = Math.round(props.AREA),
                 unit = 'm²',
@@ -200,8 +199,11 @@ const _GSAARows = ({ rows }) => {
     });
 }
 
-const getAgriNum = id => {
-    const layers = Object.values(store.getState().data.layers);
+const getAgriNum = (id, isPPlan) => {
+    let layers = Object.values(store.getState().data.layers);
+    if (isPPlan) {
+        layers = store.getState().farmRegistry?.agriParcels
+    }
     const parcelArr = layers.filter(el => el.feature && el.feature.id && Number(el.feature.id) === Number(id));
 
     return parcelArr.length > 0

@@ -1,7 +1,8 @@
 import { redux, createHashHistory, elements } from 'perun-core';
 import { core, data } from '../Spatial';
-import { setAPLabel } from '.';
+import { setAPLabel, setCPLabel } from '.';
 import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
+import { config as cpConfig } from './toolsBar/cropParcel/Config';
 
 const history = createHashHistory();
 const { alertUser } = elements;
@@ -175,10 +176,12 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
                 // send geojson to factory, visualize
                 layers.forEach(layer => {
                     layer.addTo(Map)
-                    setAPLabel(layer)
-                    layer.on('click', function () {
-                        handleLayerClick(this)
-                    })
+                    if (!strcmp(actionType, 'pplan')) {
+                        setAPLabel(layer)
+                        layer.on('click', function () {
+                            handleLayerClick(this)
+                        })
+                    }
                 });
 
                 // register in app state
@@ -203,8 +206,16 @@ export const getFarmPPlanAssets = (showAlert = false) => {
     http.call('getFarmPPlanAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
         const data = geobuf.decode(protobuf(response));
         // filter data for type, set approp. config in factory.geoJSON
-        const geojson = factory.geoJSON(data, apConfig);
+        const geojson = factory.geoJSON(data, cpConfig.pathOptions);
         const layers = geojson.getLayers();
+        layers.forEach(layer => {
+            layer.addTo(Map);
+            layer.bringToFront();
+            setCPLabel(layer);
+        });
+        //clear map of all vectors, reset state.
+        const prevCropParcels = store.getState().farmRegistry.farmPPlanData;
+        Object.values(prevCropParcels).forEach(v => v.removeFrom && v.removeFrom(Map));
         // register in app state
         store.dispatch({ 'farmPPlanData': layers })
         showAlert && alertUser(true, 'success', 'Податоците се успешно освежени.')

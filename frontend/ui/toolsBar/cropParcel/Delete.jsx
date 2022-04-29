@@ -70,11 +70,11 @@ const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
     }
 
     const enable = () => {
-        let layers = store.getState().data.layers;
+        const layers = store.getState().data.layers;
+        let cps = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
         if (mapId === 'farm-registry-map') {
-            layers = store.getState().farmRegistry?.agriParcels;
+            cps = store.getState().farmRegistry?.farmPPlanData;
         }
-        const cps = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
 
         if (cps.length > 0) {
             store.dispatch({ processID: _id });
@@ -90,11 +90,11 @@ const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
     }
 
     const disable = () => {
-        let layers = store.getState().data.layers;
+        const layers = store.getState().data.layers;
+        let cps = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
         if (mapId === 'farm-registry-map') {
-            layers = store.getState().farmRegistry?.agriParcels;
+            cps = store.getState().farmRegistry?.farmPPlanData;
         }
-        const cps = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
 
         cps.forEach(cp => cp.off('click'))
 
