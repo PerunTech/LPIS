@@ -200,6 +200,14 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
 };
 
 export const getFarmPPlanAssets = (showAlert = false) => {
+    Map.eachLayer(function (layer) {
+        if (!!layer.toGeoJSON) {
+            if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'land_use_plan')) {
+                Map.removeLayer(layer);
+            }
+        }
+    });
+
     const token = perunStore.getState().security.svSession
     const farmObjId = store.getState()?.farmRegistry?.farmObjId
     const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/LAND_USE_PLAN`
