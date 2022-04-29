@@ -1,7 +1,7 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { getCropLabel } from '..'
-
+import { strcmp } from '../Util';
 
 const { factory, Map, store } = core;
 const { ButtonGroup, Button, Icon } = ui;
@@ -29,7 +29,7 @@ DataGrid.propTypes = {
 const columnEnum = {
     physical_block: ['Ид. Број', 'Класа', 'Површина'],
     agri_parcel: ['СИЗП Број', 'Површина', 'Употр. на земјиште', 'Локалитет'],
-    land_use_plan: ['Ид. Број', 'ИДБР', 'Површина'],
+    land_use_plan: ['СИЗП Број', 'Земјодел. култура', 'Површина', 'Број на насади'],
     cad_parcel: ['Ид. Број', 'Број на КО', 'Површина'],
     measurements: ['Ид. Број', 'Тип', 'Мерење'],
     imports: ['Ид. Број', 'Тип', 'Површина'],
@@ -63,26 +63,48 @@ _GridHeader.propTypes = {
 const _GridRows = ({ rows }) => {
     return rows.map((el) => {
         const props = el.feature && el.feature.properties;
-        const id = props.OLD_ID || el.getId(),
-            measurement = Math.round(el.getMeasurement()),
-            landClass = props.LAND_COVER_CODE,
-            name = props.HOME_NAME || el.getName(),
-            unit = el instanceof factory.Polygon ? 'm²' : 'm';
+        const descriptor = props.DESCRIPTOR
 
-        // Connect and filter when id || name || measurement matches search string. Thats our search list filter.
-        return <ButtonGroup className='data-grid-row' key={id} >
-            <Button disabled className='data-grid-index' />
-            <Button disabled className='data-grid-column' >{id}</Button>
-            <Button disabled className='data-grid-column' >{measurement + ' ' + unit}</Button>
-            <Button disabled className='data-grid-column' >{landClass}</Button>
-            <Button disabled className='data-grid-column' >{name}</Button>
-            <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} >
-                <Icon name='pinpoint-secondary' size='16px' />
-            </Button>
-            <Button className='data-grid-util' onClick={() => console.log('more')} >
-                <Icon name='more' size='12px' />
-            </Button>
-        </ButtonGroup>
+        if (strcmp(descriptor, 'agri_parcel')) {
+            const id = props.OLD_ID || el.getId(),
+                measurement = Math.round(el.getMeasurement()),
+                landClass = props.LAND_COVER_CODE,
+                name = props.HOME_NAME || el.getName(),
+                unit = el instanceof factory.Polygon ? 'm²' : 'm';
+
+            return <ButtonGroup className='data-grid-row' key={id} >
+                <Button disabled className='data-grid-index' />
+                <Button disabled className='data-grid-column' >{id}</Button>
+                <Button disabled className='data-grid-column' >{measurement + ' ' + unit}</Button>
+                <Button disabled className='data-grid-column' >{landClass}</Button>
+                <Button disabled className='data-grid-column' >{name}</Button>
+                <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} >
+                    <Icon name='pinpoint-secondary' size='16px' />
+                </Button>
+                <Button className='data-grid-util' onClick={() => console.log('more')} >
+                    <Icon name='more' size='12px' />
+                </Button>
+            </ButtonGroup>
+        } else if (strcmp(descriptor, 'land_use_plan')) {
+            if (props.AGRI_PARCEL_ID === undefined) return null;
+
+            const id = getAgriNum(props.AGRI_PARCEL_ID),
+                code = getCropLabel(props.CROP_CODE),
+                measurement = Math.round(props.AREA),
+                unit = 'm²',
+                nPlants = props.NUMBER_PLANTS;
+
+            return <ButtonGroup className='data-grid-row' key={id + measurement} >
+                <Button disabled className='data-grid-index' />
+                <Button disabled className='data-grid-column' >{id}</Button>
+                <Button disabled className='data-grid-column' >{code}</Button>
+                <Button disabled className='data-grid-column' >{measurement + ' ' + unit}</Button>
+                <Button disabled className='data-grid-column' >{nPlants}</Button>
+                <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} >
+                    <Icon name='pinpoint-secondary' size='16px' />
+                </Button>
+            </ButtonGroup>
+        }
     });
 }
 

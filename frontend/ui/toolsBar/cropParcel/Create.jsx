@@ -5,7 +5,7 @@ import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
 import { ProcessButton, loadFarmerAssets } from '../..';
-import { getFarmMapAssets, strcmp } from '../../Util';
+import { getFarmPPlanAssets, strcmp } from '../../Util';
 
 const { alertUser } = elements;
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
@@ -89,7 +89,7 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
         layer.removeFrom && layer.removeFrom(Map);
         // add refresh assets
         if (mapId === 'farm-registry-map') {
-            getFarmMapAssets();
+            getFarmPPlanAssets();
         } else {
             loadFarmerAssets();
         }

@@ -5,7 +5,7 @@ import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
 import { ProcessButton, loadFarmerAssets } from '../..';
-import { getFarmMapAssets, strcmp } from '../../Util';
+import { getFarmPPlanAssets, strcmp } from '../../Util';
 
 const { Map, store, factory, http } = core;
 const { draw: { polygon } } = tools;
@@ -66,7 +66,7 @@ const _Draw = ({ processID, mapId, farmerId, farmObjId }) => {
         polygon.disable('force');
         // add refresh assets
         if (mapId === 'farm-registry-map') {
-            getFarmMapAssets();
+            getFarmPPlanAssets();
         } else {
             loadFarmerAssets();
         }
