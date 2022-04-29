@@ -31,10 +31,11 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
         Map.on('click', e => {
             const p = Map.transform(e.latlng);
             setState({ X: p.x, Y: p.y });
-
-            http.call('create_ap', {
-                url: '/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/' + p.x + '/' + p.y + '/' + farmObjId
-            }).then(response => {
+            let url = `/spatial/geometry/layer/cutoff/{gsaa.token}/AGRI_PARCEL/LAND_USE_PLAN/${p.x}/${p.y}/{gsaa.farmerId}`
+            if (mapId === 'farm-registry-map') {
+                url = `/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/${p.x}/${p.y}/${farmObjId}`
+            }
+            http.call('create_ap', { url }).then(response => {
                 const data = geobuf.decode(protobuf(response));
                 const geojson = factory.geoJSON(data, config.pathOptions);
                 geojson.getLayers().forEach(layer => {
