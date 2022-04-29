@@ -2,7 +2,6 @@ import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { DataGrid } from '..';
 import { FarmDataGrid } from './FarmDataGrid';
-import { strcmp } from '../Util';
 
 const { useState } = React;
 
@@ -35,7 +34,7 @@ export const _DataList = ({ data, setData, actionType, farmData, farmPPlanData, 
                     onClick={() => setAgriParcelNodeOpen(!isAgriParcelNodeOpen)} >
                     {<DataGrid
                         type={{ id: 'agri_parcel', label: 'Земјоделски парцели' }}
-                        rows={Object.values(layers).filter(layer => strcmp(layer.feature?.properties?.DESCRIPTOR, 'agri_parcel'))} />}
+                        rows={farmData} />}
                 </ui.TreeNode>
                 <ui.TreeNode
                     id={1}

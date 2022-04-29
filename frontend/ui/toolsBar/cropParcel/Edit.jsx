@@ -20,11 +20,11 @@ const _Edit = ({ processID, mapId, farmerId, farmObjId }) => {
 
     const enable = () => {
         // Parcels are already loaded, activate handlers on each. Do not call REST.
-        let layers = store.getState().data.layers
+        const layers = store.getState().data.layers
+        let cropParcels = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
         if (mapId === 'farm-registry-map') {
-            layers = store.getState().farmRegistry?.agriParcels;
+            cropParcels = store.getState().farmRegistry?.farmPPlanData;
         }
-        const cropParcels = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
 
         if (cropParcels.length > 0) {
             cropParcels.forEach(cp => _setBlockEvents(cp, cropParcels))// _layerGroup.addLayer(cp),
