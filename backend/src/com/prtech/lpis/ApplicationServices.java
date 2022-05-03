@@ -974,6 +974,40 @@ public class ApplicationServices {
 					.build();
 	}
 
+	@Path("/get/cropList/{token}/land_cover/{landCover}/year/{year}/basic/{includeOnlyBasic}/otsc/{includeOtscCrops}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCropList(@PathParam("token") final String token, MultivaluedMap<String, String> formVals,
+			@PathParam("landCover") final Integer landCover, @PathParam("year") final Integer year, @PathParam("includeOnlyBasic") final Boolean includeOnlyBasic,
+			@PathParam("includeOnlyBasic") final Boolean includeOtscCrops, @Context HttpServletRequest httpRequest) {
+
+		JsonObject json = null;
+		try (SvExecManager svx = new SvExecManager(token)) {
+
+			Map<String, Object> params = new HashMap<>();
+			params.put("year", year);
+			params.put("landCover", landCover);
+			params.put("includeOnlyBasic", includeOnlyBasic);
+			params.put("includeOtscCrops", includeOtscCrops);
+
+			json = (JsonObject) svx.execute("LAND_USE.GET_LAND_USE_CODES", params, null);
+
+			/*
+			 * Map<String, Object> params = new HashMap<String, Object>();
+			 * params.put("FORM_VALS", formVals); params.put("FARM_OBJECT_ID",
+			 * farmObjectId); json = (JsonObject) svm.execute("EDBAR_UTIL.CROPS_BY_COVER",
+			 * params, null);
+			 */
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, "Системска Грешка");
+
+		}
+
+		return Response.status(200).entity(json.toString()).build();
+	}
+
+	
 	@Path("/get/cropList/{token}/{farmObjectId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
