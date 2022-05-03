@@ -23,6 +23,27 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
         ({ ...currState, ...update }),
         { layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
 
+    const getCropList = (layer, url) => {
+        http.call('get_code_list', {
+            method: 'post', url,
+            data: JSON.stringify({
+                ...data,
+                GEOM: factory.GeoJSON.fromLayer(layer)
+            }),
+        }).then(response => {
+            if (strcmp(response.data?.type, 'error')) {
+                const title = response.data.title || 'Настана грешка'
+                const msg = response.data.message || ''
+                alertUser(true, 'error', title, msg, disable)
+            } else {
+                setState({ isGuided: false, showForm: true, enumIdx: response.data.enum || [], enumNames: response.data.enumNames || [] })
+            }
+        }).catch(err => {
+            console.log(err);
+            disable();
+        })
+    }
+
     const enable = () => {
         store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
         setState({ isGuided: true })
@@ -41,34 +62,40 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
                 geojson.getLayers().forEach(layer => {
                     // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
                     layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
-                    // assign metadata
-                    layer.feature.id = 0
-                    layer.feature.properties = { parent_id: farmerId }
                     layer.addTo(Map);
-                    setState({ data: layer.feature.properties, layer: layer })
-                    let url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
                     if (mapId === 'farm-registry-map') {
-                        url = `/lpis/get/cropList/{init.token}/${farmObjId}`
-                        layer.feature.properties = { parent_id: farmObjId }
+                        const landCoverCode = layer.feature.properties.LAND_COVER_CODE
+                        const currentYear = new Date().getFullYear()
+                        const codeListUrl = `/lpis/get/cropList/{init.token}/land_cover/${landCoverCode}/year/${currentYear}/basic/false/otsc/false`
+                        layer.feature.id = 0
+                        getCropList(layer, codeListUrl)
+                        setState({ data: layer.feature.properties, layer: layer })
+                    } else {
+                        // assign metadata
+                        layer.feature.id = 0
+                        layer.feature.properties = { parent_id: farmerId }
+                        setState({ data: layer.feature.properties, layer: layer })
+
+                        const url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
+                        http.call('get_code_list', {
+                            method: 'post', url,
+                            data: JSON.stringify({
+                                ...data,
+                                GEOM: factory.GeoJSON.fromLayer(layer)
+                            }),
+                        }).then(response => {
+                            if (strcmp(response.data?.type, 'error')) {
+                                const title = response.data.title || 'Настана грешка'
+                                const msg = response.data.message || ''
+                                alertUser(true, 'error', title, msg, disable)
+                            } else {
+                                setState({ isGuided: false, showForm: true, enumIdx: response.data.enum || [], enumNames: response.data.enumNames || [] })
+                            }
+                        }).catch(err => {
+                            console.log(err);
+                            disable();
+                        })
                     }
-                    http.call('get_code_list', {
-                        method: 'post', url,
-                        data: JSON.stringify({
-                            ...data,
-                            GEOM: factory.GeoJSON.fromLayer(layer)
-                        }),
-                    }).then(response => {
-                        if (strcmp(response.data?.type, 'error')) {
-                            const title = response.data.title || 'Настана грешка'
-                            const msg = response.data.message || ''
-                            alertUser(true, 'error', title, msg, disable)
-                        } else {
-                            setState({ isGuided: false, showForm: true, enumIdx: response.data.enum || [], enumNames: response.data.enumNames || [] })
-                        }
-                    }).catch(err => {
-                        console.log(err);
-                        disable();
-                    })
                 })
             }).catch(err => {
                 console.log(err)
