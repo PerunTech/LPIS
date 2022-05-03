@@ -65,11 +65,13 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
                     layer.addTo(Map);
                     if (mapId === 'farm-registry-map') {
                         const landCoverCode = layer.feature.properties.LAND_COVER_CODE
+                        const formData = layer.feature.properties
+                        formData.AREA = Math.round(Number(layer.feature.properties.AREA))
                         const currentYear = new Date().getFullYear()
                         const codeListUrl = `/lpis/get/cropList/{init.token}/land_cover/${landCoverCode}/year/${currentYear}/basic/false/otsc/false`
                         layer.feature.id = 0
                         getCropList(layer, codeListUrl)
-                        setState({ data: layer.feature.properties, layer: layer })
+                        setState({ data: formData, layer: layer })
                     } else {
                         // assign metadata
                         layer.feature.id = 0
