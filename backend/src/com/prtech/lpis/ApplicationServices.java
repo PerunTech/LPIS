@@ -974,16 +974,28 @@ public class ApplicationServices {
 					.build();
 	}
 
-	@Path("/get/cropList/{token}/land_cover/{landCover}/year/{year}/basic/{includeOnlyBasic}/otsc/{includeOtscCrops}")
+	@Path("/get/cropList/{token}/land_parcel/{landParcelId}/year/{year}/basic/{includeOnlyBasic}/otsc/{includeOtscCrops}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getCropList(@PathParam("token") final String token, MultivaluedMap<String, String> formVals,
-			@PathParam("landCover") final Integer landCover, @PathParam("year") final Integer year, @PathParam("includeOnlyBasic") final Boolean includeOnlyBasic,
+	public Response getCropListByParcel(@PathParam("token") final String token, MultivaluedMap<String, String> formVals,
+			@PathParam("landParcelId") final Long landParcelId, @PathParam("year") final Integer year,
+			@PathParam("includeOnlyBasic") final Boolean includeOnlyBasic,
 			@PathParam("includeOnlyBasic") final Boolean includeOtscCrops, @Context HttpServletRequest httpRequest) {
 
+		return getCropList(token, landParcelId, null, year, includeOnlyBasic, includeOtscCrops);
+	}
+
+	Response getCropList(String token, Long landParcelId, Integer landCover, Integer year, Boolean includeOnlyBasic,
+			Boolean includeOtscCrops) {
+
 		JsonObject json = null;
-		try (SvExecManager svx = new SvExecManager(token)) {
+		try (SvExecManager svx = new SvExecManager(token); SvReader svr = new SvReader(svx)) {
+			if (landCover == null) {
+				DbDataObject dbo = svr.getObjectById(landParcelId, SvCore.getDbtByName(CC.AGRI_PARCEL), null);
+				if (dbo != null)
+					landCover = Integer.parseInt((String) dbo.getVal("LAND_COVER_CODE"));
+			}
 
 			Map<String, Object> params = new HashMap<>();
 			params.put("year", year);
@@ -993,12 +1005,6 @@ public class ApplicationServices {
 
 			json = (JsonObject) svx.execute("LAND_USE.GET_LAND_USE_CODES", params, null);
 
-			/*
-			 * Map<String, Object> params = new HashMap<String, Object>();
-			 * params.put("FORM_VALS", formVals); params.put("FARM_OBJECT_ID",
-			 * farmObjectId); json = (JsonObject) svm.execute("EDBAR_UTIL.CROPS_BY_COVER",
-			 * params, null);
-			 */
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, "Системска Грешка");
 
@@ -1007,7 +1013,17 @@ public class ApplicationServices {
 		return Response.status(200).entity(json.toString()).build();
 	}
 
-	
+	@Path("/get/cropList/{token}/land_cover/{landCover}/year/{year}/basic/{includeOnlyBasic}/otsc/{includeOtscCrops}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCropList(@PathParam("token") final String token, MultivaluedMap<String, String> formVals,
+			@PathParam("landCover") final Integer landCover, @PathParam("year") final Integer year,
+			@PathParam("includeOnlyBasic") final Boolean includeOnlyBasic,
+			@PathParam("includeOnlyBasic") final Boolean includeOtscCrops, @Context HttpServletRequest httpRequest) {
+		return getCropList(token, null, landCover, year, includeOnlyBasic, includeOtscCrops);
+	}
+
 	@Path("/get/cropList/{token}/{farmObjectId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -1136,8 +1152,7 @@ public class ApplicationServices {
 				}
 			}
 		} else if (typeName.equalsIgnoreCase(CC.AGRI_PARCEL)) {
-			result = new Reader(svr).getParcels(objectId, null,true); 
-			
+			result = new Reader(svr).getParcels(objectId, null, true);
 
 		}
 
