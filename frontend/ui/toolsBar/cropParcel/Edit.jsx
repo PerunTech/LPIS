@@ -72,7 +72,9 @@ const _Edit = ({ processID, mapId, farmerId, farmObjId }) => {
 
         let url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
         if (mapId === 'farm-registry-map') {
-            url = `/lpis/get/cropList/{init.token}/${farmObjId}`
+            const agriParcelId = layer.feature.properties?.AGRI_PARCEL_ID || 0
+            const currentYear = new Date().getFullYear()
+            url = `/lpis/get/cropList/{init.token}/land_parcel/${agriParcelId}/year/${currentYear}/basic/false/otsc/false`
         }
         core.http.call('get_code_list', {
             method: 'post', url,
