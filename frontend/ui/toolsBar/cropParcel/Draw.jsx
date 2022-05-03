@@ -1,5 +1,5 @@
 import { React, PropTypes, elements } from 'perun-core';
-import { core, tools, ui } from '../../../Spatial';
+import { core, data, tools, ui } from '../../../Spatial';
 import { config, drawCPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
@@ -8,6 +8,7 @@ import { ProcessButton, loadFarmerAssets } from '../..';
 import { getFarmPPlanAssets, strcmp } from '../../Util';
 
 const { Map, store, factory, http } = core;
+const { geobuf, protobuf } = data;
 const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
 const { useReducer } = React;
@@ -16,24 +17,24 @@ const _id = 'drawCP';
 /**
  * Draw crop parcel.
  */
-const _Draw = ({ processID, mapId, farmerId, farmObjId }) => {
+const _Draw = ({ processID, mapId, farmerId }) => {
     const [{ layer, data, enumIdx, enumNames, isGuided, showForm }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }), { layer: {}, data: {}, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
 
-    const enable = () => {
-        Map.on('new_shape', e => {
-            if (e && e.layer) {
-                setState({ layer: e.layer })
-                e.layer.addTo(Map)
-                let url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
-                if (mapId === 'farm-registry-map') {
-                    url = `/lpis/get/cropList/{init.token}/${farmObjId}`
-                }
+    const getParcelData = layer => {
+        const url = `/spatial/geometry/get/wkt/{init.token}/AGRI_PARCEL/null`
+        http.call('get_wkt', { method: 'post', url, data: JSON.stringify({ GEOM: layer }), responseType: 'arraybuffer' }).then(response => {
+            const proto = protobuf(response)
+            const buff = geobuf.decode(proto)
+            if (buff.features && Array.isArray(buff.features) && buff.features.length > 0) {
+                const landCoverCode = buff.features[0]?.properties?.LAND_COVER_CODE || '0'
+                const currentYear = new Date().getFullYear()
+                const codeListUrl = `/lpis/get/cropList/{init.token}/land_cover/${landCoverCode}/year/${currentYear}/basic/false/otsc/false`
                 http.call('get_code_list', {
-                    method: 'post', url,
+                    method: 'post', url: codeListUrl,
                     data: JSON.stringify({
                         ...data,
-                        GEOM: factory.GeoJSON.fromLayer(e.layer)
+                        GEOM: layer
                     }),
                 }).then(response => {
                     if (response.data.type && strcmp(response.data.type, 'error')) {
@@ -46,6 +47,42 @@ const _Draw = ({ processID, mapId, farmerId, farmObjId }) => {
                     console.log(err);
                     disable();
                 })
+            } else {
+                elements.alertUser(true, 'error', 'Настана грешка', '', disable)
+            }
+        }).catch(err => {
+            console.log(err);
+            disable();
+        })
+    }
+
+    const enable = () => {
+        Map.on('new_shape', e => {
+            if (e && e.layer) {
+                setState({ layer: e.layer })
+                e.layer.addTo(Map)
+                const url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
+                if (mapId === 'farm-registry-map') {
+                    getParcelData(factory.GeoJSON.fromLayer(e.layer))
+                } else {
+                    http.call('get_code_list', {
+                        method: 'post', url,
+                        data: JSON.stringify({
+                            ...data,
+                            GEOM: factory.GeoJSON.fromLayer(e.layer)
+                        }),
+                    }).then(response => {
+                        if (response.data.type && strcmp(response.data.type, 'error')) {
+                            elements.alertUser(true, 'error', response.data.title, response.data.message || '')
+                            disable()
+                        } else {
+                            setState({ isGuided: false, showForm: true, enumIdx: response.data.enum || [], enumNames: response.data.enumNames || [] })
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                        disable();
+                    })
+                }
             }
             Map.off('new_shape');
         });
