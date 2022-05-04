@@ -1,4 +1,4 @@
-import {crop_codes_idx, crop_codes_desc} from './Crop_Codes';
+import { crop_codes_idx, crop_codes_desc } from './Crop_Codes';
 
 export const metadata = {
     type: 'land_use_plan',
@@ -18,7 +18,7 @@ export const metadata = {
                 default: 0
             },
             NUMBER_PLANTS: {
-                title: 'Број на насади',
+                title: 'Број на садници',
                 type: 'number',
             },
             IS_ORGANIC: {
