@@ -66,6 +66,10 @@ _DataList.propTypes = {
         PropTypes.object,
         PropTypes.array
     ]),
+    farmPPlanData: PropTypes.oneOfType([
+        PropTypes.object,
+        PropTypes.array
+    ]),
 };
 
 export const DataList = core.connect(state =>

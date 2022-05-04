@@ -74,7 +74,10 @@ export const DataGrid = ({ type, rows }) => {
 
 DataGrid.propTypes = {
     type: PropTypes.object,
-    rows: PropTypes.array
+    rows: PropTypes.oneOfType([
+        PropTypes.object,
+        PropTypes.array
+    ]),
 }
 
 /* --------------------- */
