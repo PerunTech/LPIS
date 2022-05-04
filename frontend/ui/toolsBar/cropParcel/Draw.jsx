@@ -63,6 +63,9 @@ const _Draw = ({ processID, mapId, farmerId }) => {
                 e.layer.addTo(Map)
                 const url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
                 if (mapId === 'farm-registry-map') {
+                    const area = Math.round(e.layer.getMeasurement())
+                    const formData = { AREA: area }
+                    setState({ data: { ...data, ...formData } })
                     getParcelData(factory.GeoJSON.fromLayer(e.layer))
                 } else {
                     http.call('get_code_list', {

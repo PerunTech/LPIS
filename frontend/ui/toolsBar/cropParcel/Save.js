@@ -34,14 +34,16 @@ export const saveCP = (data, callback) => {
             const geojson = factory.geoJSON(geojsonTemplate, config.pathOptions);
             const layer = Object.values(geojson._layers)[0]
 
-            // Remove old entry on Map
-            const stateData = core.store.getState().data.layers;
-            const id = layer.feature.id
-            stateData[id] && stateData[id].removeFrom(Map);
+            if (layer) {
+                // Remove old entry on Map
+                const stateData = core.store.getState().data.layers;
+                const id = layer.feature.id
+                stateData[id] && stateData[id].removeFrom(Map);
 
-            if (mapId !== 'farm-registry-map') {
-                layer && layer.addTo(Map);
-                setCPLabel(layer)
+                if (mapId !== 'farm-registry-map') {
+                    layer && layer.addTo(Map);
+                    setCPLabel(layer)
+                }
             }
 
             elements.alertUser(true,
