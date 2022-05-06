@@ -8,6 +8,14 @@ const { store, logoutUser } = redux;
 const history = createHashHistory();
 
 const _ToolsBar = ({ actionType }) => {
+    const handleBack = () => {
+        if (actionType === 'pplan') {
+            history.push('/iacs-claims/p_plan')
+        } else {
+            history.goBack()
+        }
+    }
+
     const getDefaultActiveKey = () => {
         let defaultActiveKey = ''
         switch (actionType) {
@@ -48,7 +56,7 @@ const _ToolsBar = ({ actionType }) => {
     return <div id='toolsbar' >
         <Button disabled className='left-corner-filler' />
         <Button
-            onClick={() => history.goBack()}
+            onClick={handleBack}
             className='toolbar-home'
             title='Кон почетна'>
             <Icon name='home' size='18px' style={{ fill: '#3a3a3a' }} />
