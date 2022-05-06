@@ -10,7 +10,7 @@ const history = createHashHistory();
 const _ToolsBar = ({ actionType }) => {
     const handleBack = () => {
         if (actionType === 'pplan') {
-            history.push('/iacs-claims/p_plan')
+            history.push('main/iacs-claims/p_plan')
         } else {
             history.goBack()
         }
