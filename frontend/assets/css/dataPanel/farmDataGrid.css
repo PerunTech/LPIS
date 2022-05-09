@@ -70,7 +70,9 @@
 }
 
 .fr-data-grid-row-focused .fr-data-grid-column,
-.fr-data-grid-row-focused .data-grid-util {
+.fr-data-grid-row-focused .data-grid-util,
+.data-grid-row-focused .data-grid-column,
+.data-grid-row-focused .data-grid-util {
   background-color: #cdcbcb !important;
 }
 
