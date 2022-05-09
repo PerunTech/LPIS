@@ -99,7 +99,7 @@ const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
         cps.forEach(cp => cp.off('click'))
 
         // Reset state, internal and application-wide.
-        store.dispatch({ processID: '' });
+        store.dispatch({ processID: '', selectedParcelId: '', selectedCropParcelId: '' });
         setState({ isGuided: false, layer: {} });
     }
 
