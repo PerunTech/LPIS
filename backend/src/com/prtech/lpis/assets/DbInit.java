@@ -842,6 +842,14 @@ public class DbInit implements IDbInit {
 		dbf18.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 		
+		DbDataField dbf25 = new DbDataField();
+		dbf25.setDbFieldName("MUNICIPALITY_NAME");
+		dbf25.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf25.setDbFieldSize(200);
+		dbf25.setIsNull(true);
+		dbf25.setLabel_code("cad_intersections.MUNICIPALITY_NAME");
+		dbf25.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
 		
 		DbDataField[] fieldList = new DbDataField[11];
 		fieldList[0] = dbf1;
