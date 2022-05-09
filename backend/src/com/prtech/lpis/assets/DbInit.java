@@ -851,7 +851,7 @@ public class DbInit implements IDbInit {
 		dbf25.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 		
-		DbDataField[] fieldList = new DbDataField[11];
+		DbDataField[] fieldList = new DbDataField[12];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
@@ -863,6 +863,8 @@ public class DbInit implements IDbInit {
 		fieldList[8] = dbf8;
 		fieldList[9] = dbf22;
 		fieldList[10] = dbf18;
+		fieldList[11] = dbf25;
+		
 		dbt.setDbTableFields(fieldList);
 		return dbt;
 	}
