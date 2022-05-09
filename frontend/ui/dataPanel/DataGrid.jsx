@@ -6,7 +6,7 @@ import { strcmp, translateBooleanValue } from '../Util';
 const { factory, Map, store } = core;
 const { ButtonGroup, Button, Icon } = ui;
 
-const { useState } = React;
+const { useState, useEffect } = React;
 
 let hiddenAssets = [];
 
@@ -60,7 +60,7 @@ const toggleAssetFromMap = (id, type) => {
     return visible;
 };
 
-export const DataGrid = ({ type, rows }) => {
+const _DataGrid = ({ type, rows, selectedParcelId, selectedCropParcelId }) => {
     return store.getState().map.id === 'gsaa-map'
         ? <div id={type.id + '-grid'} className='data-grid' >
             <_GSAAHeader typeId={type.id} />
@@ -68,17 +68,21 @@ export const DataGrid = ({ type, rows }) => {
         </div>
         : <div id={type.id + '-grid'} className='data-grid' >
             <_GridHeader typeId={type.id} />
-            {rows.length > 0 ? <_GridRows rows={rows} /> : <_NoData />}
+            {rows.length > 0 ? <_GridRows rows={rows} selectedParcelId={selectedParcelId} selectedCropParcelId={selectedCropParcelId} /> : <_NoData />}
         </div>
 }
 
-DataGrid.propTypes = {
+_DataGrid.propTypes = {
     type: PropTypes.object,
     rows: PropTypes.oneOfType([
         PropTypes.object,
         PropTypes.array
     ]),
 }
+
+export const DataGrid = core.connect(state => ({
+    selectedParcelId: state.farmRegistry?.selectedParcelId, selectedCropParcelId: state.farmRegistry?.selectedCropParcelId
+}))(_DataGrid)
 
 /* --------------------- */
 /*      GRID HEADER      */
@@ -117,8 +121,45 @@ _GridHeader.propTypes = {
 /* ------------------------------ */
 /*      GENERIC GRID CONTENT      */
 /* ------------------------------ */
-const _GridRows = ({ rows }) => {
+const _GridRows = ({ rows, selectedParcelId, selectedCropParcelId }) => {
     const [isOpen, setOpen] = useState(true);
+    const [selectedParcelRowId, selectParcelRow] = useState('');
+    const [selectedCropParcelRowId, selectCropParcelRow] = useState('');
+
+    useEffect(() => {
+        if (selectedParcelId) {
+            handleParcelRowSelection(selectedParcelId)
+        } else {
+            selectParcelRow('')
+        }
+    }, [selectedParcelId])
+
+    useEffect(() => {
+        if (selectedCropParcelId) {
+            handleCropParcelRowSelection(selectedCropParcelId)
+        } else {
+            selectCropParcelRow('')
+        }
+    }, [selectedCropParcelId])
+
+    const handleParcelRowSelection = id => {
+        if (selectedParcelRowId !== id) {
+            selectParcelRow(id)
+        } else {
+            selectParcelRow('')
+            store.dispatch({ selectedParcelId: '' })
+        }
+    }
+
+    const handleCropParcelRowSelection = id => {
+        if (selectedCropParcelRowId !== id) {
+            selectCropParcelRow(id)
+        } else {
+            selectCropParcelRow('')
+            store.dispatch({ selectedCropParcelId: '' })
+        }
+    }
+
     const toggleAssetFromMapAction = (el, type) => {
         toggleAssetFromMap(el.getId(), type);
         setOpen(!isOpen);
@@ -130,6 +171,7 @@ const _GridRows = ({ rows }) => {
 
         if (strcmp(descriptor, 'agri_parcel')) {
             const id = props.OLD_ID || el.getId(),
+                objectId = el.getId(),
                 measurement = Math.round(el.getMeasurement()),
                 landClass = props.LAND_COVER_CODE,
                 name = props.HOME_NAME || el.getName(),
@@ -137,7 +179,12 @@ const _GridRows = ({ rows }) => {
                 commonUse = props.COMMON_USE,
                 certificateOfUse = props.CERTIFICATE_OF_USE;
 
-            return <ButtonGroup className='data-grid-row' key={id} >
+            let rowClassNames = ['data-grid-row']
+            if (selectedParcelRowId === objectId) {
+                rowClassNames.push(' data-grid-row-focused')
+            }
+
+            return <ButtonGroup className={rowClassNames.join('')} key={id} id={objectId}>
                 <Button disabled className='data-grid-index' />
                 <Button disabled className='data-grid-column' >{id}</Button>
                 <Button disabled className='data-grid-column' >{measurement + ' ' + unit}</Button>
@@ -155,12 +202,18 @@ const _GridRows = ({ rows }) => {
         } else if (strcmp(descriptor, 'land_use_plan')) {
             if (props.AGRI_PARCEL_ID === undefined) return null;
             const id = getAgriNum(props.AGRI_PARCEL_ID, true),
+                objectId = el.getId(),
                 code = getCropLabel(props.CROP_CODE),
                 measurement = Math.round(props.AREA),
                 unit = 'm²',
                 nPlants = props.NUMBER_PLANTS;
 
-            return <ButtonGroup className='data-grid-row' key={id + measurement} >
+            let rowClassNames = ['data-grid-row']
+            if (selectedCropParcelRowId === objectId) {
+                rowClassNames.push(' data-grid-row-focused')
+            }
+
+            return <ButtonGroup className={rowClassNames.join('')} key={id + measurement} >
                 <Button disabled className='data-grid-index' />
                 <Button disabled className='data-grid-column' >{id}</Button>
                 <Button disabled className='data-grid-column' >{code}</Button>
