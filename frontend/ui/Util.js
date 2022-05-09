@@ -106,8 +106,12 @@ export function readCookie (name) {
     return null;
 }
 
-function handleLayerClick (layer) {
-    store.dispatch({ selectedParcelId: layer.feature.id })
+function handleAgriParcelClick (layer) {
+    store.dispatch({ selectedParcelId: layer.feature.id, selectedCropParcelId: '' })
+}
+
+function handleCropParcelClick (layer) {
+    store.dispatch({ selectedCropParcelId: layer.feature.id, selectedParcelId: String(layer.feature?.properties?.AGRI_PARCEL_ID) })
 }
 
 const getFarmData = objectId => {
@@ -176,12 +180,10 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
                 // send geojson to factory, visualize
                 layers.forEach(layer => {
                     layer.addTo(Map)
-                    if (!strcmp(actionType, 'pplan')) {
-                        setAPLabel(layer)
-                        layer.on('click', function () {
-                            handleLayerClick(this)
-                        })
-                    }
+                    setAPLabel(layer)
+                    layer.on('click', function () {
+                        handleAgriParcelClick(this)
+                    })
                 });
 
                 // register in app state
@@ -220,6 +222,9 @@ export const getFarmPPlanAssets = (showAlert = false) => {
             layer.addTo(Map);
             layer.bringToFront();
             setCPLabel(layer);
+            layer.on('click', function () {
+                handleCropParcelClick(this)
+            })
         });
         //clear map of all vectors, reset state.
         const prevCropParcels = store.getState().farmRegistry.farmPPlanData;
