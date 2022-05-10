@@ -98,6 +98,10 @@ public class LPISExecutors implements ISvExecutorGroup {
 						"COMMON_USE", errorObjects);
 				Importer.updateIACS((Long) farm.getVal("OLD_PKID"), "FARM_ID", svr, null, "VCOMMON_USE_DEL2",
 						"COMMON_USE", errorObjects);
+				Importer.updateIACS((Long) farm.getVal("OLD_PKID"), "FARM_ID", svr, null, "VLP_CAD_INTERSECT_IMP2",
+						"LP_CAD_INTERSECTIONS", errorObjects);
+				Importer.updateIACS((Long) farm.getVal("OLD_PKID"), "FARM_ID", svr, null, "VLP_CAD_INTERSECT_DEL2",
+						"LP_CAD_INTERSECTIONS", errorObjects);
 				svr.dbCommit();
 				result = errorObjects;
 			}

@@ -43,6 +43,7 @@ public class CC {
 	public static final String LPIS = "LPIS";
 	public static final String PARCELS = "PARCELS";
 	public static final String IMPORT = "IMPORT";
+	public static final String LP_CAD_INTERSECTIONS = "LP_CAD_INTERSECTIONS";
 	
 
 }
