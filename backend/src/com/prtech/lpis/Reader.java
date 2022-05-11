@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import org.joda.time.DateTime;
 
+import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvReader;
@@ -41,28 +42,20 @@ public class Reader {
 			}
 
 			// deduplicate intersections
-			Map<String, Long> dedupCadParcels = new HashMap<>();
+			Map<Long, StringBuilder> dedupCadParcels = new HashMap<>();
 			for (DbDataObject dbo : dbIntersect.getItems()) {
 				if (dbo.getVal("LAND_PARCEL_ID") != null) {
-					String cadParcel = ((String) dbo.getVal("MUNICIPALITY_NAME")) + "-"
-							+ ((String) dbo.getVal("GR_PARCEL"));
-					dedupCadParcels.put(cadParcel, (Long) dbo.getVal("LAND_PARCEL_ID"));
+					StringBuilder existingParc = dedupCadParcels.get((Long) dbo.getVal("LAND_PARCEL_ID"));
+					existingParc = (existingParc != null ? existingParc : new StringBuilder());
+					existingParc.append(((String) dbo.getVal("MUNICIPALITY_NAME")) + "-"
+							+ ((String) dbo.getVal("GR_PARCEL")) + "; ");
+					dedupCadParcels.put((Long) dbo.getVal("LAND_PARCEL_ID"), existingParc);
 				}
 			}
 			// add intersections to the parcel list
 			for (DbDataObject parcel : dbArr.getItems()) {
-				Long landParcelId = (Long) parcel.getVal("OLD_ID");
-				Iterator<Entry<String, Long>> it = dedupCadParcels.entrySet().iterator();
-				StringBuilder sbt = new StringBuilder();
-				while (it.hasNext()) {
-					Entry<String, Long> e = it.next();
-					if (e.getValue() != null && e.getValue().equals(landParcelId)) {
-						sbt.append(e.getKey() + "; ");
-						it.remove();
-					}
-
-				}
-				parcel.setVal("PARCEL_INTERSECT", sbt.toString().trim());
+				StringBuilder str = dedupCadParcels.get((Long) parcel.getVal("OLD_ID"));
+				parcel.setVal("PARCEL_INTERSECT", str != null ? str.toString() : null);
 			}
 			return dbArr;
 		}
