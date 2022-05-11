@@ -827,7 +827,7 @@ public class DbInit implements IDbInit {
 		dbf22.setGeometryType("MULTIPOLYGON"); // allows holes, do not use Polygon.
 		dbf22.setGeometrySrid(SRID);
 		dbf22.setIndexName("_GEOM_SIDX"); // name must be unique
-		dbf22.setIsNull(false);
+		dbf22.setIsNull(true);
 		dbf22.setLabel_code("common.geometry");
 		dbf22.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
