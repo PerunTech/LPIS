@@ -43,9 +43,11 @@ public class Reader {
 			// deduplicate intersections
 			Map<String, Long> dedupCadParcels = new HashMap<>();
 			for (DbDataObject dbo : dbIntersect.getItems()) {
-				String cadParcel = ((String) dbo.getVal("MUNICIPALITY_NAME")) + "-"
-						+ ((String) dbo.getVal("GR_PARCEL"));
-				dedupCadParcels.put(cadParcel, (Long) dbo.getVal("LAND_PARCEL_ID"));
+				if (dbo.getVal("LAND_PARCEL_ID") != null) {
+					String cadParcel = ((String) dbo.getVal("MUNICIPALITY_NAME")) + "-"
+							+ ((String) dbo.getVal("GR_PARCEL"));
+					dedupCadParcels.put(cadParcel, (Long) dbo.getVal("LAND_PARCEL_ID"));
+				}
 			}
 			// add intersections to the parcel list
 			for (DbDataObject parcel : dbArr.getItems()) {
@@ -54,7 +56,7 @@ public class Reader {
 				StringBuilder sbt = new StringBuilder();
 				while (it.hasNext()) {
 					Entry<String, Long> e = it.next();
-					if (e.getValue().equals(landParcelId)) {
+					if (e.getValue() != null && e.getValue().equals(landParcelId)) {
 						sbt.append(e.getKey() + "; ");
 						it.remove();
 					}
