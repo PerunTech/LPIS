@@ -712,7 +712,17 @@ public class DbInit implements IDbInit {
 		dbf24.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 		
-		DbDataField[] fieldList = new DbDataField[7];
+		DbDataField dbf18 = new DbDataField();
+		dbf18.setDbFieldName("EXTERNAL_ID");
+		dbf18.setDbFieldType(DbFieldType.NUMERIC);
+		//dbf18.setIsUnique(true);
+		dbf18.setDbFieldSize(18);
+		dbf18.setIsNull(false);
+		dbf18.setLabel_code("common_use.EXTERNAL_ID");
+		dbf18.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":false}}");
+		
+		DbDataField[] fieldList = new DbDataField[8];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
@@ -720,6 +730,7 @@ public class DbInit implements IDbInit {
 		fieldList[4] = dbf5;
 		fieldList[5] = dbf6;
 		fieldList[6] = dbf24;
+		fieldList[7] = dbf18;
 
 		dbt.setDbTableFields(fieldList);
 		return dbt;
