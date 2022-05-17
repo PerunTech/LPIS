@@ -23,45 +23,31 @@ const dataCategories = (function () {
         .concat([{ id: 'resto', label: 'Останато', isOpen: false }]);
 })();
 
-const pplanCategories = [
-    { id: 'agri_parcel', label: 'Земјоделски парцели', isOpen: true },
-    { id: 'land_use_plan', label: 'Производни парцели', isOpen: true }
-]
-
 /**
  * 
  * @param {*} props 
  */
-const _DataPanel = ({ categories, pplanCategories, actionType }) => {
+const _DataPanel = ({ categories, actionType }) => {
     const [data, setData] = React.useState(categories);
-    const [pplanData, setPplanData] = React.useState(pplanCategories)
 
     return <div id='data-panel' >
-        {/* Data list title */}
-        {/* <Button disabled className='as-label data-panel-title' /> */}
-        {/*<Divider vertical={false} style={{margin: '0px'}} />*/}
-        {/* Data list utilities */}
         <DataListUtils setData={setData} />
-        {/* Data list content */}
-        {actionType === 'sizp' &&
+        {(actionType === 'sizp' || actionType === 'pplan') &&
             <React.Fragment>
                 <FarmDataGridInfoHeader />
                 <FarmDataGridHeader gridType='agri_parcel' />
             </React.Fragment>
         }
-        {actionType === 'pplan' && <FarmDataGridInfoHeader />}
-        <DataList data={data} setData={setData} pplanData={pplanData} setPplanData={setPplanData} />
+        <DataList data={data} setData={setData} />
     </div>;
 }
 
 _DataPanel.defaultProps = {
     categories: dataCategories,
-    pplanCategories
 }
 
 _DataPanel.propTypes = {
     categories: PropTypes.array,
-    pplanCategories: PropTypes.array,
     processID: PropTypes.string,
     actionType: PropTypes.string
 }
