@@ -3,6 +3,15 @@
   margin-bottom: 5px;
 }
 
+.data-grid-heading {
+  text-align: center;
+  color: #474747;
+  border-bottom: 2px solid #323232;
+  max-width: max-content;
+  margin: auto;
+  margin-bottom: 1vh;
+}
+
 .data-grid-expanded-row .progress .progress-bar {
   background-color: #232323;
 }
