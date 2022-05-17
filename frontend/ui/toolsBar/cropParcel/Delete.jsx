@@ -10,9 +10,6 @@ const { Map, store } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
 const _id = 'deleteCP';
 
-/**
- * Delete an agri parcel.
- */
 const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
     const [{ isGuided, layer }, setState] = React.useReducer((currState, update) =>
         ({ ...currState, ...update }), { isGuided: false, layer: {} });
@@ -23,21 +20,20 @@ const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
             core.http.call('getType', {
                 url: '/ReactElements/getTableFormData/{init.token}/' + objToDelete.feature.id + '/LAND_USE_PLAN',
                 method: 'get'
-            })
-                .then(response => {
-                    if (response.data.OBJECT_TYPE) {
-                        const props = objToDelete.feature.properties
-                        objToDelete.feature.properties = {
-                            ...props,
-                            OBJECT_ID: objToDelete.feature.id,
-                            OBJECT_TYPE: response.data.OBJECT_TYPE
-                        }
-
-                        setState({ layer: objToDelete, isGuided: false })
-                    } else {
-                        disable();
+            }).then(response => {
+                if (response.data.OBJECT_TYPE) {
+                    const props = objToDelete.feature.properties
+                    objToDelete.feature.properties = {
+                        ...props,
+                        OBJECT_ID: objToDelete.feature.id,
+                        OBJECT_TYPE: response.data.OBJECT_TYPE
                     }
-                }).catch(err => console.log(err))
+
+                    setState({ layer: objToDelete, isGuided: false })
+                } else {
+                    disable();
+                }
+            }).catch(err => console.log(err))
         }
     }
 
@@ -46,27 +42,23 @@ const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
             url: '/ReactElements/deleteObject/{init.token}',
             method: 'post',
             data: JSON.stringify(layer.feature.properties)
+        }).then(() => {
+            if (mapId !== 'farm-registry-map') {
+                loadFarmerAssets(core.store.getState().init.token, farmerId);
+            }
+            layer.removeFrom(Map);
+            elements.alertUser(true,
+                'success',
+                'Успешно бришење',
+                'Производната парцела е избришана од базата на податоци.');
+            disable()
+        }).catch(() => {
+            elements.alertUser(true,
+                'error',
+                'Грешка при бришење',
+                'Производната парцела не е избришана од базата на податоци.');
+            disable()
         })
-            .then(() => {
-                if (mapId === 'farm-registry-map') {
-                    getFarmPPlanAssets()
-                } else {
-                    loadFarmerAssets(core.store.getState().init.token, farmerId);
-                }
-                layer.removeFrom(Map);
-                elements.alertUser(true,
-                    'success',
-                    'Успешно бришење',
-                    'Производната парцела е избришана од базата на податоци.');
-                disable()
-            }) // add alert)
-            .catch(() => {
-                elements.alertUser(true,
-                    'error',
-                    'Грешка при бришење',
-                    'Производната парцела не е избришана од базата на податоци.');
-                disable()
-            }) // add alert);
     }
 
     const enable = () => {
@@ -101,6 +93,7 @@ const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
         // Reset state, internal and application-wide.
         store.dispatch({ processID: '', selectedParcelId: '', selectedCropParcelId: '' });
         setState({ isGuided: false, layer: {} });
+        getFarmPPlanAssets()
     }
 
     return <ProcessButton id={_id} onClick={() => enable()} >

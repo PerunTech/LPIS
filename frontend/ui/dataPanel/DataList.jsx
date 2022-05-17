@@ -3,12 +3,7 @@ import { core, ui } from '../../Spatial';
 import { DataGrid } from '..';
 import { FarmDataGrid } from './FarmDataGrid';
 
-const { useState } = React;
-
-export const _DataList = ({ data, setData, actionType, farmData, farmPPlanData, layers, pauseGrid }) => {
-    const [isAgriParcelNodeOpen, setAgriParcelNodeOpen] = useState(true)
-    const [isPPlanNodeOpen, setPPlanNodeOpen] = useState(true)
-
+export const _DataList = ({ data, setData, actionType, farmData, layers, pauseGrid }) => {
     return <div id='dataList' >
         {!pauseGrid && actionType !== 'sizp' && actionType !== 'pplan' && data.map((el, idx) =>
             <ui.TreeNode
@@ -23,31 +18,7 @@ export const _DataList = ({ data, setData, actionType, farmData, farmPPlanData, 
                     rows={Object.values(layers).filter(layer =>
                         layer.getMetadata().type === el.id)} />}
             </ui.TreeNode>)}
-        {actionType === 'sizp' && <FarmDataGrid type='agri_parcel' rows={farmData} />}
-        {actionType === 'pplan' && (
-            <React.Fragment>
-                <ui.TreeNode
-                    id={0}
-                    key='agri_parcel'
-                    label='Земјоделски парцели'
-                    isOpen={isAgriParcelNodeOpen}
-                    onClick={() => setAgriParcelNodeOpen(!isAgriParcelNodeOpen)} >
-                    {<DataGrid
-                        type={{ id: 'agri_parcel', label: 'Земјоделски парцели' }}
-                        rows={farmData} />}
-                </ui.TreeNode>
-                <ui.TreeNode
-                    id={1}
-                    key='land_use_plan'
-                    label='Производни парцели'
-                    isOpen={isPPlanNodeOpen}
-                    onClick={() => setPPlanNodeOpen(!isPPlanNodeOpen)} >
-                    {<DataGrid
-                        type={{ id: 'land_use_plan', label: 'Производни парцели' }}
-                        rows={farmPPlanData} />}
-                </ui.TreeNode>
-            </React.Fragment>
-        )}
+        {(actionType === 'sizp' || actionType === 'pplan') && <FarmDataGrid type='agri_parcel' rows={farmData} actionType={actionType} />}
     </div>
 }
 
@@ -78,5 +49,4 @@ export const DataList = core.connect(state =>
     pauseGrid: state.gsaa.pauseGrid,
     actionType: state.farmRegistry?.actionType,
     farmData: state.farmRegistry?.agriParcels,
-    farmPPlanData: state.farmRegistry?.farmPPlanData,
 }))(_DataList);
