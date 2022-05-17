@@ -717,7 +717,7 @@ public class DbInit implements IDbInit {
 		dbf18.setDbFieldType(DbFieldType.NUMERIC);
 		//dbf18.setIsUnique(true);
 		dbf18.setDbFieldSize(18);
-		dbf18.setIsNull(false);
+		dbf18.setIsNull(true);
 		dbf18.setLabel_code("common_use.EXTERNAL_ID");
 		dbf18.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
