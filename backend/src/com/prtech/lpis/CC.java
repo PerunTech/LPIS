@@ -44,6 +44,8 @@ public class CC {
 	public static final String PARCELS = "PARCELS";
 	public static final String IMPORT = "IMPORT";
 	public static final String LP_CAD_INTERSECTIONS = "LP_CAD_INTERSECTIONS";
+	public static final String WFS_SERVER_URL = "WFS_SERVER_URL";
+	public static final String WFS_NOT_CONFIGURED = "lpis.error.wfs.notconfigured";
 	
 
 }

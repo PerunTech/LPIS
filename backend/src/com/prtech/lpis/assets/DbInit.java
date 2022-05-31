@@ -846,7 +846,7 @@ public class DbInit implements IDbInit {
 		DbDataField dbf18 = new DbDataField();
 		dbf18.setDbFieldName("EXTERNAL_ID");
 		dbf18.setDbFieldType(DbFieldType.NUMERIC);
-		dbf18.setIsUnique(true);
+		dbf18.setIsUnique(false);
 		dbf18.setDbFieldSize(18);
 		dbf18.setIsNull(false);
 		dbf18.setLabel_code("cad_intersections.EXTERNAL_ID");

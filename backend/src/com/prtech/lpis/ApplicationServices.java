@@ -67,12 +67,14 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.util.GeometryExtracter;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
+import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 
 @Path("/lpis")
 public class ApplicationServices {
@@ -339,6 +341,119 @@ public class ApplicationServices {
 		}
 		g.setUserData(parcel);
 		return g;
+	}
+
+	DbDataObject calculateIntersection(Geometry g, DbDataObject dbo, DbDataArray cadParcels) {
+		Geometry parcel = SvGeometry.getGeometry(dbo);
+		Geometry geom_intersect = null;
+		DbDataObject intersection = null;
+
+		try {
+			if (g.intersects(parcel)) {
+				geom_intersect = parcel.intersection(g);
+				Map<String, Object> usermap = (Map<String, Object>) g.getUserData();
+				DbDataObject cadParcel = null;
+				// iterate the cadastral parcels looking for a match
+				for (DbDataObject dbc : cadParcels.getItems()) {
+					String dp = (String) dbc.getVal("DEPARTMENT_CODE");
+					String cc = (String) dbc.getVal("NATIONAL_CODE");
+					String pc = (String) dbc.getVal("PARCEL_ID");
+					if (dbc.getVal("SUB") != null && dbc.getVal("SUB") != " ")
+						pc = pc + "/" + dbc.getVal("SUB");
+					if (usermap.get("GR_COD_CC").toString().equals(cc) && usermap.get("GR_COD_DP").toString().equals(dp)
+							&& usermap.get("GR_PARCEL").toString().equals(pc)) {
+						cadParcel = dbo;
+					}
+
+				}
+				// if we have cadastral match, save the intersection
+				if (cadParcel != null) {
+					intersection = new DbDataObject(SvCore.getTypeIdByName("LP_CAD_INTERSECTIONS"));
+					geom_intersect = com.prtech.spatial.Util.verifyGeometryType(intersection, geom_intersect);
+					intersection.setParentId(dbo.getParentId());
+					SvGeometry.setGeometry(intersection, geom_intersect);
+					intersection.setVal("EXTERNAL_ID", usermap.get("ID_PARC"));
+					intersection.setVal("GR_COD_CC", usermap.get("GR_COD_CC").toString());
+					intersection.setVal("GR_COD_DP", usermap.get("GR_COD_DP").toString());
+					intersection.setVal("GR_PARCEL", usermap.get("GR_PARCEL").toString());
+					intersection.setVal("LAND_PARCEL_ID", dbo.getVal("OLD_ID"));
+					intersection.setVal("PARCEL_ID", dbo.getObjectId());
+					intersection.setVal("CAD_AREA", usermap.get("AREA"));
+					intersection.setVal("FR_AREA", cadParcel.getVal("AREA"));
+					intersection.setVal("MUNICIPALITY_NAME", cadParcel.getVal("MUNICIPALITY_NAME"));
+
+				}
+			}
+			// intersections.addDataItem(intersection);
+
+		} catch (Exception e) {
+			log4j.error("Parcel: " + dbo.getVal("OLD_ID") + " has bad cadastral intersection with:" + g.toString(), e);
+
+		}
+		return intersection;
+	}
+
+	@Path("/intersect/{token}/{objectName}/{objectId}/")
+	@GET
+	@Produces("application/pbf")
+	public Response calculateParcelCadIntersection(@PathParam("token") String token,
+			@PathParam("objectId") Long objectId, @PathParam("objectName") String objectName) {
+		DbDataObject type = SvCore.getDbtByName(objectName);
+		Response response = null;
+		try (SvReader svr = new SvReader(token); SvGeometry svg = new SvGeometry(svr)) {
+			svr.setIncludeGeometries(true);
+			DbDataObject dbo = svr.getObjectById(objectId, type, null);
+			Geometry parcel = SvGeometry.getGeometry(dbo);
+			String layer = SvConf.getParam("CAD_PARCEL_LAYER_NAME");
+			String epsg = SvConf.getParam("CAD_PARCEL_LAYER_EPSG");
+			String wfsUrl = SvConf.getParam("CAD_PARCEL_LAYER_WFS");
+			String wfsUser = SvConf.getParam("CAD_PARCEL_LAYER_WFS_U");
+			String wfsPass = SvConf.getParam("CAD_PARCEL_LAYER_WFS_P");
+			String sshProxy = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY");
+			String sshProxyUser = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_USER");
+			String sshProxyPass = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_PASS");
+			WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
+			if (log4j.isDebugEnabled())
+				log4j.debug("WFS request:" + wfs.buildWfsRequestUrl(parcel.getEnvelopeInternal()));
+			String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
+			String json = wfs.getWFSResponse(parcel.getEnvelopeInternal(), sshProxy, sshProxyUser, sshProxyPass,
+					wfsUser, wfsPass, extParams);
+			GeometryFactory gf = SvUtil.sdiFactory;
+			GeoJsonReader gjr = new GeoJsonReader(gf);
+			gjr.setUseFeatureType(true);
+			gjr.setUsePropertiesAsUserData(true);
+
+			Geometry geom = gjr.read(json);
+			svg.setAutoCommit(false);
+			svg.setAllowNullGeometry(true);
+
+			DbDataArray cadParcels = svr.getObjectsByParentId(dbo.getParentId(), SvCore.getTypeIdByName("CAD_PARCEL"),
+					null);
+			DbDataArray lpCadIntersections = svr.getObjectsByParentId(dbo.getParentId(),
+					SvCore.getTypeIdByName("LP_CAD_INTERSECTIONS"), null);
+			lpCadIntersections.rebuildIndex("EXTERNAL_ID");
+			DbDataArray intersections = new DbDataArray();
+			for (int i = 0; i < geom.getNumGeometries(); i++) {
+				Geometry g = geom.getGeometryN(i);
+				DbDataObject intersection = calculateIntersection(g, dbo, cadParcels);
+
+				if (intersection != null) {
+					DbDataObject existing = lpCadIntersections
+							.getItemByIdx(intersection.getVal("EXTERNAL_ID").toString(), dbo.getParentId());
+					if (existing == null)
+						svg.saveGeometry(intersection);
+				}
+			}
+
+			svg.dbCommit();
+			ResponseHandler jrh = new ResponseHandler(MessageType.SUCCESS, "lpis.intersections.calculated");
+			response = Response.ok().entity(jrh.getAll().toString()).build();
+		} catch (Exception e) {
+			response = com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), objectName);
+		}
+
+		return response;
+
 	}
 
 	@Path("/save/agriParcel/{token}/{objectId}/{parentId}/{opType}")
