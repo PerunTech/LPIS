@@ -396,6 +396,76 @@ public class ApplicationServices {
 		return intersection;
 	}
 
+	void performCadCalc(SvReader svr, Long objectId, DbDataObject type) throws SvException, ParseException {
+		try (SvGeometry svg = new SvGeometry(svr); SvWriter svw = new SvWriter(svr)) {
+			svr.setIncludeGeometries(true);
+			DbDataObject dbo = svr.getObjectById(objectId, type, null);
+			Geometry parcel = SvGeometry.getGeometry(dbo);
+			String layer = SvConf.getParam("CAD_PARCEL_LAYER_NAME");
+			String epsg = SvConf.getParam("CAD_PARCEL_LAYER_EPSG");
+			String wfsUrl = SvConf.getParam("CAD_PARCEL_LAYER_WFS");
+			String wfsUser = SvConf.getParam("CAD_PARCEL_LAYER_WFS_U");
+			String wfsPass = SvConf.getParam("CAD_PARCEL_LAYER_WFS_P");
+			String sshProxy = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY");
+			String sshProxyUser = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_USER");
+			String sshProxyPass = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_PASS");
+			WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
+			if (log4j.isDebugEnabled())
+				log4j.debug("WFS request:" + wfs.buildWfsRequestUrl(parcel.getEnvelopeInternal()));
+			String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
+			String json = wfs.getWFSResponse(parcel.getEnvelopeInternal(), sshProxy, sshProxyUser, sshProxyPass,
+					wfsUser, wfsPass, extParams);
+			GeometryFactory gf = SvUtil.sdiFactory;
+			GeoJsonReader gjr = new GeoJsonReader(gf);
+			gjr.setUseFeatureType(true);
+			gjr.setUsePropertiesAsUserData(true);
+
+			Geometry geom = gjr.read(json);
+			svg.setAutoCommit(false);
+			svw.setAutoCommit(false);
+			svg.setAllowNullGeometry(true);
+
+			DbDataArray cadParcels = svr.getObjectsByParentId(dbo.getParentId(), SvCore.getTypeIdByName("CAD_PARCEL"),
+					null);
+			DbDataArray lpCadIntersections = svr.getObjectsByParentId(dbo.getParentId(),
+					SvCore.getTypeIdByName("LP_CAD_INTERSECTIONS"), null);
+			DbDataArray intersections = new DbDataArray();
+
+			for (int i = 0; i < geom.getNumGeometries(); i++) {
+				Geometry g = geom.getGeometryN(i);
+				DbDataObject intersection = calculateIntersection(g, dbo, cadParcels);
+
+				if (intersection != null) {
+					boolean existingFound = false;
+					Iterator<DbDataObject> lpCadIt = lpCadIntersections.getItems().iterator();
+					while (lpCadIt.hasNext()) {
+						DbDataObject existing = lpCadIt.next();
+						if (intersection.getVal("EXTERNAL_ID").equals(existing.getVal("EXTERNAL_ID"))) {
+
+							if ((Long) intersection.getVal("AREA") != (Long) existing.getVal("AREA")) {
+								intersection.setObjectId(existing.getObjectId());
+								intersection.setPkid(existing.getObjectId());
+								intersections.addDataItem(intersection);
+								existingFound = true;
+							}
+							lpCadIt.remove();
+							break;
+						}
+
+					}
+					if (!existingFound)
+						intersections.addDataItem(intersection);
+				}
+			}
+			// add new or updated
+			svg.saveGeometry(intersections);
+			// delete non existing intersections
+			if (lpCadIntersections.size() > 0)
+				svw.deleteObjects(lpCadIntersections);
+			svg.dbCommit();
+		}
+	}
+
 	@Path("/intersect/{token}/{objectName}/{objectId}/")
 	@GET
 	@Produces("application/pbf")
@@ -404,76 +474,11 @@ public class ApplicationServices {
 		DbDataObject type = SvCore.getDbtByName(objectName);
 		int lock = 0;
 		Response response = null;
-		try (SvReader svr = new SvReader(token);
-				SvGeometry svg = new SvGeometry(svr);
-				SvWriter svw = new SvWriter(svr)) {
+		try (SvReader svr = new SvReader(token)) {
 			lock = SvLock.getDistributedLock("CAD-INTERSECT-" + objectId.toString());
 
 			if (lock != 0) {
-				svr.setIncludeGeometries(true);
-				DbDataObject dbo = svr.getObjectById(objectId, type, null);
-				Geometry parcel = SvGeometry.getGeometry(dbo);
-				String layer = SvConf.getParam("CAD_PARCEL_LAYER_NAME");
-				String epsg = SvConf.getParam("CAD_PARCEL_LAYER_EPSG");
-				String wfsUrl = SvConf.getParam("CAD_PARCEL_LAYER_WFS");
-				String wfsUser = SvConf.getParam("CAD_PARCEL_LAYER_WFS_U");
-				String wfsPass = SvConf.getParam("CAD_PARCEL_LAYER_WFS_P");
-				String sshProxy = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY");
-				String sshProxyUser = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_USER");
-				String sshProxyPass = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_PASS");
-				WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
-				if (log4j.isDebugEnabled())
-					log4j.debug("WFS request:" + wfs.buildWfsRequestUrl(parcel.getEnvelopeInternal()));
-				String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
-				String json = wfs.getWFSResponse(parcel.getEnvelopeInternal(), sshProxy, sshProxyUser, sshProxyPass,
-						wfsUser, wfsPass, extParams);
-				GeometryFactory gf = SvUtil.sdiFactory;
-				GeoJsonReader gjr = new GeoJsonReader(gf);
-				gjr.setUseFeatureType(true);
-				gjr.setUsePropertiesAsUserData(true);
-
-				Geometry geom = gjr.read(json);
-				svg.setAutoCommit(false);
-				svw.setAutoCommit(false);
-				svg.setAllowNullGeometry(true);
-
-				DbDataArray cadParcels = svr.getObjectsByParentId(dbo.getParentId(),
-						SvCore.getTypeIdByName("CAD_PARCEL"), null);
-				DbDataArray lpCadIntersections = svr.getObjectsByParentId(dbo.getParentId(),
-						SvCore.getTypeIdByName("LP_CAD_INTERSECTIONS"), null);
-				DbDataArray intersections = new DbDataArray();
-
-				for (int i = 0; i < geom.getNumGeometries(); i++) {
-					Geometry g = geom.getGeometryN(i);
-					DbDataObject intersection = calculateIntersection(g, dbo, cadParcels);
-
-					if (intersection != null) {
-						boolean existingFound = false;
-						Iterator<DbDataObject> lpCadIt = lpCadIntersections.getItems().iterator();
-						while (lpCadIt.hasNext()) {
-							DbDataObject existing = lpCadIt.next();
-							if (intersection.getVal("EXTERNAL_ID").equals(existing.getVal("EXTERNAL_ID"))) {
-
-								if ((Long) intersection.getVal("AREA") != (Long) existing.getVal("AREA")) {
-									intersection.setObjectId(existing.getObjectId());
-									intersection.setPkid(existing.getObjectId());
-									intersections.addDataItem(intersection);
-									existingFound = true;
-								}
-								lpCadIt.remove();
-								break;
-							}
-
-						}
-						if (!existingFound)
-							intersections.addDataItem(intersection);
-					}
-				}
-				// add new or updated
-				svg.saveGeometry(intersections);
-				// delete non existing intersections
-				svw.deleteObjects(lpCadIntersections);
-				svg.dbCommit();
+				performCadCalc(svr, objectId, type);
 				ResponseHandler jrh = new ResponseHandler();
 				jrh.create(MessageType.SUCCESS, "lpis.intersections.calculated", "lpis.intersections.calculated",
 						new JsonObject());
@@ -484,7 +489,6 @@ public class ApplicationServices {
 				response = Response.ok().entity(jrh.getAll().toString()).build();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			response = com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), objectName);
 		} finally {
 			if (lock != 0)
