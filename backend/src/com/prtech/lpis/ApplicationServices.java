@@ -402,12 +402,12 @@ public class ApplicationServices {
 	public Response calculateParcelCadIntersection(@PathParam("token") String token,
 			@PathParam("objectId") Long objectId, @PathParam("objectName") String objectName) {
 		DbDataObject type = SvCore.getDbtByName(objectName);
-
+		int lock = 0;
 		Response response = null;
 		try (SvReader svr = new SvReader(token);
 				SvGeometry svg = new SvGeometry(svr);
 				SvWriter svw = new SvWriter(svr)) {
-			int lock = SvLock.getDistributedLock("CAD-INTERSECT-" + objectId.toString());
+			lock = SvLock.getDistributedLock("CAD-INTERSECT-" + objectId.toString());
 
 			if (lock != 0) {
 				svr.setIncludeGeometries(true);
@@ -483,6 +483,13 @@ public class ApplicationServices {
 		} catch (Exception e) {
 			e.printStackTrace();
 			response = com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), objectName);
+		} finally {
+			if (lock != 0)
+				try {
+					SvLock.releaseDistributedLock(lock);
+				} catch (Exception e2) {
+					log4j.error("Error releasing lock:" + lock, e2);
+				}
 		}
 
 		return response;
