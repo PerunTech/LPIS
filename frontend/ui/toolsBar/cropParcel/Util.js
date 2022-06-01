@@ -117,6 +117,18 @@ export const setAPLabel = ap => {
     return ap;
 }
 
+export const setCILabel = ci => {
+    const cadParcelId = ci.feature.properties.GR_PARCEL || '';
+    const municName = ci.feature.properties.MUNICIPALITY_NAME || '';
+    const cnt = String(ci.feature.properties.CENTROID);
+    const latLng = Map.untransform(cnt.substring(cnt.indexOf('(') + 1, cnt.indexOf(')')).split(' ').map(s => Number(s)))
+
+    ci.bindTooltip(String(cadParcelId + ' ' + municName), { direction: 'center', permanent: true });
+    ci.openTooltip(latLng);
+
+    return ci;
+}
+
 /* Map event listener for label render */
 let lastZoom = MIN_DIGI_SCALE;
 Map.on('zoomend', ({target}) => {

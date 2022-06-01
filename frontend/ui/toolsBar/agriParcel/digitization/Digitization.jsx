@@ -14,6 +14,8 @@ import { Info } from './Info/Info';
 import { Merge } from './Merge';
 import { Refresh } from './Refresh';
 import { Split } from './Split';
+import { CalculateCadIntersections } from './CalculateCadIntersections';
+import { CadIntersections } from './CadIntersections'
 import { PermanentCrops } from './PermanentCrops';
 import { Print } from './Print';
 
@@ -36,6 +38,8 @@ export const Digitization = () => {
         <Assign />
         <CommonUse />
         <PermanentCrops />
+        <CalculateCadIntersections />
+        <CadIntersections />
         <DeleteParcelFromFarm />
         <Delete />
         <Divider />

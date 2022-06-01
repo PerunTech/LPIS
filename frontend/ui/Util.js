@@ -1,7 +1,7 @@
 import { redux, createHashHistory, elements } from 'perun-core';
 import { core, data } from '../Spatial';
 import { setAPLabel, setCPLabel } from '.';
-import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
+import { config as apConfig, metadataMain as apFormConfig, cadIntersectionsConfig } from './toolsBar/agriParcel/Config';
 import { config as cpConfig } from './toolsBar/cropParcel/Config';
 
 const history = createHashHistory();

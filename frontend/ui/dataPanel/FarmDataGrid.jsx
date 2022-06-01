@@ -19,8 +19,12 @@ let hiddenAssets = [];
 const getParcelVisibleIcon = (id, type) => {
   let iconName = 'eye-on';
   let layers = store.getState().farmRegistry.agriParcels;
-  if (type && strcmp(type, 'land_use_plan')) {
-    layers = store.getState().farmRegistry?.farmPPlanData;
+  if (type) {
+    if (strcmp(type, 'land_use_plan')) {
+      layers = store.getState().farmRegistry?.farmPPlanData;
+    } else if (strcmp(type, 'lp_cad_intersections')) {
+      layers = store.getState().farmRegistry?.cadIntersections;
+    }
   }
   Object.values(layers).forEach((l) => {
     if (Number(l.getId()) === Number(id)) {
@@ -39,8 +43,12 @@ const getParcelVisibleIcon = (id, type) => {
 
 const toggleAssetFromMap = (id, type) => {
   let layers = store.getState().farmRegistry?.agriParcels;
-  if (type && strcmp(type, 'land_use_plan')) {
-    layers = store.getState().farmRegistry?.farmPPlanData;
+  if (type) {
+    if (strcmp(type, 'land_use_plan')) {
+      layers = store.getState().farmRegistry?.farmPPlanData;
+    } else if (strcmp(type, 'lp_cad_intersections')) {
+      layers = store.getState().farmRegistry?.cadIntersections;
+    }
   }
   let visible = true;
   Object.values(layers).forEach((l) => {
@@ -78,13 +86,20 @@ const getAgriNum = (id, isPPlan) => {
     : 0;
 }
 
-const _FarmDataGrid = ({ type, rows, selectedParcelId, actionType, pplanRows }) => {
+const _FarmDataGrid = ({ type, rows, selectedParcelId, actionType, pplanRows, cadIntersectionRows, showCadParcels }) => {
   useEffect(() => {
     store.dispatch({ selectedParcelId: '' })
   }, [])
 
   return <div id={type + '-grid'} className='data-grid'>
-    {rows.length > 0 ? <_Rows rows={rows} selectedParcelId={selectedParcelId} actionType={actionType} pplanRows={pplanRows} /> : <_NoData />}
+    {rows.length > 0 ? <_Rows
+      rows={rows}
+      selectedParcelId={selectedParcelId}
+      actionType={actionType}
+      pplanRows={pplanRows}
+      cadIntersectionRows={cadIntersectionRows}
+      showCadParcels={showCadParcels}
+    /> : <_NoData />}
   </div>
 };
 
@@ -107,6 +122,7 @@ _FarmDataGrid.propTypes = {
 
 export const FarmDataGrid = core.connect(state => ({
   selectedParcelId: state.farmRegistry?.selectedParcelId, pplanRows: state.farmRegistry?.farmPPlanData,
+  cadIntersectionRows: state.farmRegistry?.cadIntersections, showCadParcels: state.farmRegistry?.showCadParcels
 }))(_FarmDataGrid)
 
 /* ----------------------------- */
@@ -160,42 +176,104 @@ const _PplanDataGrid = ({ el, rowData }) => {
 }
 
 const _PplanData = ({ parcelId, rows }) => {
-  const NoDataFound = <React.Fragment>
-    <h6 className='data-grid-heading mt-2'>Производни парцели</h6>
-    <_NoData />
-  </React.Fragment>
-
   let markup = []
   if (rows && rows.length > 0) {
     rows.map((el, i) => {
       const props = el.feature.properties;
       if (props.AGRI_PARCEL_ID == parcelId) {
-        markup.push(
-          <div className='data-grid-pplan mb-2' key={`${el.getId()}_${i + 1}`}>
-            <h6 className='data-grid-heading mt-2 mb-2'>Производни парцели</h6>
-            <_PplanDataGridGHeader />
-            <_PplanDataGrid el={el} rowData={props} />
-          </div>
-        )
+        markup.push(<_PplanDataGrid key={`${el.getId()}_${i + 1}`} el={el} rowData={props} />)
       }
     })
   }
 
   if (markup.length > 0) {
-    return markup
+    return <React.Fragment>
+      <div className='data-grid-pplan mb-2'>
+        <h6 className='data-grid-heading mt-2 mb-2'>Производни парцели</h6>
+        <_PplanDataGridGHeader />
+        {markup}
+      </div>
+    </React.Fragment>
   } else {
-    return NoDataFound
+    return <React.Fragment>
+      <h6 className='data-grid-heading mt-2'>Производни парцели</h6>
+      <_NoData />
+    </React.Fragment>
+  }
+}
+
+const _CadIntersectionsGridHeader = () => {
+  const columns = ['Кат. парцела', 'Кат. општина', 'Површина']
+  const columnElements = columns.map(el => <Button key={el} disabled className='data-grid-column' >{el}</Button>)
+  return <ButtonGroup className='data-grid-header' id="grid-header">
+    <Button disabled className='data-grid-index' />
+    {columnElements}
+    <Button disabled style={{ width: '60px' }} />
+  </ButtonGroup>
+}
+
+const _CadIntersectionsGrid = ({ el, rowData }) => {
+  const [isOpen, setOpen] = useState(true);
+  if (rowData.LAND_PARCEL_ID === undefined) return null;
+  const descriptor = rowData.DESCRIPTOR,
+    cadParcelId = rowData.GR_PARCEL,
+    municipality = rowData.MUNICIPALITY_NAME,
+    measurement = Math.round(rowData.CAD_AREA),
+    unit = 'm²'
+
+  return <ButtonGroup className='data-grid-row' key={cadParcelId + measurement} >
+    <Button disabled className='data-grid-index' />
+    <Button disabled className='data-grid-column' >{cadParcelId}</Button>
+    <Button disabled className='data-grid-column' >{municipality}</Button>
+    <Button disabled className='data-grid-column' >{measurement + ' ' + unit}</Button>
+    <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} title='Оди до пресек'>
+      <Icon name='pinpoint-secondary' size='16px' />
+    </Button>
+    <Button className='data-grid-util' onClick={() => {
+      toggleAssetFromMap(el.getId(), descriptor)
+      setOpen(!isOpen)
+    }} title='Прикажи/скриј пресек'>
+      <Icon name={getParcelVisibleIcon(el.getId(), descriptor)} size='16px' />
+    </Button>
+  </ButtonGroup>
+}
+
+const _CadIntersectionsData = ({ parcelOldId, rows }) => {
+  let markup = []
+  if (rows && rows.length > 0) {
+    rows.map((el, i) => {
+      const props = el.feature.properties;
+      if (props.LAND_PARCEL_ID == parcelOldId) {
+        markup.push(<_CadIntersectionsGrid key={`${el.getId()}_${i + 1}`} el={el} rowData={props} />)
+      }
+    })
+  }
+
+  if (markup.length > 0) {
+    return <React.Fragment>
+      <div className='data-grid-pplan mb-2'>
+        <h6 className='data-grid-heading mt-2 mb-2'>Пресеци</h6>
+        <_CadIntersectionsGridHeader />
+        {markup}
+      </div>
+    </React.Fragment>
+  } else {
+    return <React.Fragment>
+      <h6 className='data-grid-heading mt-2'>Пресеци</h6>
+      <_NoData />
+    </React.Fragment>
   }
 }
 
 /* -------------- */
 /*  EXPANDED ROW  */
 /* ---------- --- */
-const _ExpandedRow = ({ id, rowData, unit, actionType, pplanRows }) => {
+const _ExpandedRow = ({ id, rowData, unit, actionType, pplanRows, cadIntersectionRows, showCadParcels }) => {
   const rowId = `expanded-row-${id}`
   return (
     <React.Fragment>
       {strcmp(actionType, 'pplan') && <_PplanData parcelId={id} rows={pplanRows} />}
+      {strcmp(actionType, 'sizp') && showCadParcels && <_CadIntersectionsData parcelOldId={rowData.OLD_ID} rows={cadIntersectionRows} />}
       <div key={rowId} id={rowId} className='data-grid-expanded-row border border-dark rounded' style={{ fontSize: '1.5vh' }}>
         {strcmp(actionType, 'pplan') && <h6 className='data-grid-heading mt-2' style={{ border: 'none' }}>Дополнителни информации за парцелата</h6>}
         <ListGroup className='text-center'>
@@ -248,7 +326,7 @@ const _ExpandedRow = ({ id, rowData, unit, actionType, pplanRows }) => {
 /* -------------- */
 /*      ROWS      */
 /* ---------- --- */
-const _Rows = ({ rows, pplanRows, selectedParcelId, actionType }) => {
+const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionRows, showCadParcels }) => {
   const [rowIsExpanded, expandRow] = useState(false);
   const [selectedRowId, selectRow] = useState('');
   const [isOpen, setOpen] = useState(true);
@@ -325,7 +403,12 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType }) => {
           <Icon name={getParcelVisibleIcon(id)} size={getIconSize()} />
         </Button>
       </ButtonGroup>
-      {rowIsExpanded && selectedRowId === id && <_ExpandedRow id={id} rowData={rowData} unit={unit} actionType={actionType} pplanRows={pplanRows} />}
+      {rowIsExpanded && selectedRowId === id &&
+        <_ExpandedRow
+          id={id} rowData={rowData} unit={unit} actionType={actionType}
+          pplanRows={pplanRows} cadIntersectionRows={cadIntersectionRows} showCadParcels={showCadParcels}
+        />
+      }
     </div>
   });
 };
