@@ -364,7 +364,7 @@ public class ApplicationServices {
 						pc = pc + "/" + dbc.getVal("SUB");
 					if (usermap.get("GR_COD_CC").toString().equals(cc) && usermap.get("GR_COD_DP").toString().equals(dp)
 							&& usermap.get("GR_PARCEL").toString().equals(pc)) {
-						cadParcel = dbo;
+						cadParcel = dbc;
 					}
 
 				}
@@ -441,12 +441,11 @@ public class ApplicationServices {
 					while (lpCadIt.hasNext()) {
 						DbDataObject existing = lpCadIt.next();
 						if (intersection.getVal("EXTERNAL_ID").equals(existing.getVal("EXTERNAL_ID"))) {
-
-							if ((Long) intersection.getVal("AREA") != (Long) existing.getVal("AREA")) {
+							existingFound = true;
+							if (!intersection.getVal("AREA").equals(existing.getVal("AREA"))) {
 								intersection.setObjectId(existing.getObjectId());
-								intersection.setPkid(existing.getObjectId());
+								intersection.setPkid(existing.getPkid());
 								intersections.addDataItem(intersection);
-								existingFound = true;
 							}
 							lpCadIt.remove();
 							break;
