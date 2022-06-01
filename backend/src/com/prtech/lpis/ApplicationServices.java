@@ -382,7 +382,7 @@ public class ApplicationServices {
 					intersection.setVal("PARCEL_ID", dbo.getObjectId());
 					intersection.setVal("CAD_AREA", usermap.get("AREA"));
 					intersection.setVal("FR_AREA", cadParcel.getVal("AREA"));
-					intersection.setVal("AREA", new BigDecimal(geom_intersect.getArea()));
+					intersection.setVal("AREA", Math.round(geom_intersect.getArea()));
 					intersection.setVal("MUNICIPALITY_NAME", cadParcel.getVal("MUNICIPALITY_NAME"));
 
 				}
@@ -453,8 +453,8 @@ public class ApplicationServices {
 						while (lpCadIt.hasNext()) {
 							DbDataObject existing = lpCadIt.next();
 							if (intersection.getVal("EXTERNAL_ID").equals(existing.getVal("EXTERNAL_ID"))) {
-								if (((BigDecimal) intersection.getVal("AREA"))
-										.longValue() != ((BigDecimal) existing.getVal("AREA")).longValue()) {
+
+								if ((Long) intersection.getVal("AREA") != (Long) existing.getVal("AREA")) {
 									intersection.setObjectId(existing.getObjectId());
 									intersection.setPkid(existing.getObjectId());
 									intersections.addDataItem(intersection);
@@ -474,10 +474,13 @@ public class ApplicationServices {
 				// delete non existing intersections
 				svw.deleteObjects(lpCadIntersections);
 				svg.dbCommit();
-				ResponseHandler jrh = new ResponseHandler(MessageType.SUCCESS, "lpis.intersections.calculated");
+				ResponseHandler jrh = new ResponseHandler();
+				jrh.create(MessageType.SUCCESS, "lpis.intersections.calculated", "lpis.intersections.calculated",
+						new JsonObject());
 				response = Response.ok().entity(jrh.getAll().toString()).build();
 			} else {
-				ResponseHandler jrh = new ResponseHandler(MessageType.ERROR, "operation.in.progress");
+				ResponseHandler jrh = new ResponseHandler();
+				jrh.create(MessageType.ERROR, "operation.in.progress", "operation.in.progress", new JsonObject());
 				response = Response.ok().entity(jrh.getAll().toString()).build();
 			}
 		} catch (Exception e) {
