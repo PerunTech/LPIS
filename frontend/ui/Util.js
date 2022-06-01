@@ -1,7 +1,7 @@
 import { redux, createHashHistory, elements } from 'perun-core';
 import { core, data } from '../Spatial';
 import { setAPLabel, setCPLabel } from '.';
-import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
+import { config as apConfig, metadataMain as apFormConfig, cadIntersectionsConfig } from './toolsBar/agriParcel/Config';
 import { config as cpConfig } from './toolsBar/cropParcel/Config';
 
 const history = createHashHistory();
@@ -126,6 +126,38 @@ const getFarmData = objectId => {
         }
     }).catch(err => {
         console.error(err)
+    })
+}
+
+export const getCadIntersections = () => {
+    Map.eachLayer(function (layer) {
+        if (!!layer.toGeoJSON) {
+            if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'lp_cad_intersections')) {
+                Map.removeLayer(layer);
+            }
+        }
+    });
+
+    const farmObjId = store.getState()?.farmRegistry?.farmObjId
+
+    http.call('get-cad-intersections', {
+        url: `/spatial/geometry/get/byparent/{init.token}/LP_CAD_INTERSECTIONS/${farmObjId}`,
+        method: 'get',
+        responseType: 'arraybuffer'
+    }).then(response => {
+        const data = geobuf.decode(protobuf(response))
+        const geojson = factory.geoJSON(data, cadIntersectionsConfig.pathOptions);
+        const layers = geojson.getLayers();
+        layers.forEach(layer => {
+            console.log(layer)
+            layer.addTo(Map);
+        });
+        const prevCropParcels = store.getState().farmRegistry.farmPPlanData;
+        Object.values(prevCropParcels).forEach(v => v.removeFrom && v.removeFrom(Map));
+        store.dispatch({ 'cadIntersections': layers })
+    }).catch(error => {
+        console.error(error)
+        alertUser(true, 'error', 'Настана грешка')
     })
 }
 

@@ -457,6 +457,34 @@ export const fillConfig = {
     }
 }
 
+export const cadIntersectionsConfig = {
+    pathOptions: {
+        weight: 2.0,
+        stroke: true,
+        color: '#E09A29',
+        fillColor: '#E09A29',
+        opacity: 0.9,
+        fillOpacity: 0.25,
+        metadata: {
+            type: 'agri_parcel',
+            namePath: 'options.metadata.schema.properties.PARENT_ID',
+            schema: {
+                'type': 'object',
+                'properties': {
+                    ...metadataMain.schema.properties,
+                    ...metadataAux.schema.properties,
+                    ...metadataAdmin.schema.properties
+                }
+            },
+            uiSchema: {
+                ...metadataMain.uiSchema,
+                ...metadataAux.uiSchema,
+                ...metadataAdmin.uiSchema
+            }
+        }
+    }
+}
+
 export const createAPMsg = [
     'Оберете слободен физички блок за да додадете земјоделска парцела.',
     '1. Притиснете на левото копче од глувчето врз физичкиот блок за да направите избор.',
@@ -521,6 +549,10 @@ export const parcelInfoMsg = [
 
 export const copyAPMsg = [
     'Одберете земјоделска парцела на мапата која сакате да ја копирате.'
+]
+
+export const calculateCadIntersectionsMsg = [
+    'Одберете земјоделска парцела на мапата за која сакате да пресметате пресеци.'
 ]
 
 export const cutAPMsg = [
