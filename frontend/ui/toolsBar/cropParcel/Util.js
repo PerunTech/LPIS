@@ -144,6 +144,7 @@ Map.on('zoomend', ({target}) => {
 
                 props.DESCRIPTOR === 'AGRI_PARCEL' && setAPLabel(layer);
                 props.DESCRIPTOR === 'LAND_USE_PLAN' && setCPLabel(layer);
+                props.DESCRIPTOR === 'LP_CAD_INTERSECTIONS' && setCILabel(layer);
             }
         });
 

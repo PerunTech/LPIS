@@ -37,7 +37,7 @@ export const getCadIntersections = () => {
     if (layers && Array.isArray(layers) && layers.length > 0) {
       layers.forEach(layer => {
         layer.addTo(Map);
-        // setCILabel(layer)
+        setCILabel(layer)
       });
       const msg = 'Истите се прикажани со портокалова боја на мапата. Дополнителни информации за истите има под секоја парцела во табелата лево.'
       alertUser(true, 'success', 'Пресеците се успешно вчитани', msg)
