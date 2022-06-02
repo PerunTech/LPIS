@@ -123,7 +123,7 @@ export const setCILabel = ci => {
     const cnt = String(ci.feature.properties.CENTROID);
     const latLng = Map.untransform(cnt.substring(cnt.indexOf('(') + 1, cnt.indexOf(')')).split(' ').map(s => Number(s)))
 
-    ci.bindTooltip(String(cadParcelId + ' ' + municName), { direction: 'center', permanent: true });
+    ci.bindTooltip(String(cadParcelId + ' ' + municName), { className: 'cad-intersection-tooltip', direction: 'center', permanent: true });
     ci.openTooltip(latLng);
 
     return ci;

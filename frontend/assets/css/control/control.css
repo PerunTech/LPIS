@@ -5,3 +5,7 @@
 #farm-registry-map #dataList {
   max-height: calc(100vh - 370px) !important;
 }
+
+#farm-registry-map .cad-intersection-tooltip {
+  color: #E09A29 !important;
+}
