@@ -93,7 +93,6 @@ public class AgriParcel {
 			isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(geom, ap, svg, true);
 			// prevent farm overlaps
 			geom = preventFarmOverlap(svr, ap);
-
 			SvGeometry.setGeometry(ap, geom);
 
 			// Map form values to dbo fields
@@ -127,8 +126,10 @@ public class AgriParcel {
 			}
 			svg.setAutoCommit(false);
 			Util.calculateGeometryDerivatives(ap);
-			svg.fixMinVertexDistance(geom,
+			geom = svg.fixMinVertexDistance(geom,
 					SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE));
+			SvGeometry.setGeometry(ap, geom);
+
 			result.addDataItem(ap);
 			svg.saveGeometry(ap);
 			svg.dbCommit();
