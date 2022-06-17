@@ -23,6 +23,7 @@ import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
+import com.prtech.svarog.SvParameter;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
@@ -126,6 +127,8 @@ public class AgriParcel {
 			}
 			svg.setAutoCommit(false);
 			Util.calculateGeometryDerivatives(ap);
+			svg.fixMinVertexDistance(geom,
+					SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE));
 			result.addDataItem(ap);
 			svg.saveGeometry(ap);
 			svg.dbCommit();
