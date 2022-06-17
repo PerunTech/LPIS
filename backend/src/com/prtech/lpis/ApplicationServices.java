@@ -98,7 +98,7 @@ public class ApplicationServices {
 			minimumAgriParcelSize = 100;
 		}
 		try {
-			externalIdSequence = SvParameter.getSysParam(CC.MINIMUM_AGRI_PARCEL_SIZE, CC.NO_SEQUENCE);
+			externalIdSequence = SvParameter.getSysParam(CC.EXTERNAL_SEQ_NAME , CC.NO_SEQUENCE);
 		} catch (SvException e) {
 			log4j.error("No external sequence configured", e);
 			externalIdSequence = CC.NO_SEQUENCE;
