@@ -120,8 +120,10 @@ public class AgriParcel {
 						CC.PARENT_ID, ap.getParentId(), true, true, true);
 				createOverlaps(svg, ap, typeId, intersections);
 			}
-			Long extId = getExternalSequence(svr);
-			ap.setVal(CC.OLD_ID, extId);
+			if (ap.getVal(CC.OLD_ID) == null) {
+				Long extId = getExternalSequence(svr);
+				ap.setVal(CC.OLD_ID, extId);
+			}
 			svg.setAutoCommit(false);
 			Util.calculateGeometryDerivatives(ap);
 			result.addDataItem(ap);

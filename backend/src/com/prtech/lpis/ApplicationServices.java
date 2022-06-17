@@ -249,7 +249,6 @@ public class ApplicationServices {
 	@Path("/save/agriParcel/{token}/{objectId}/{parentId}/{opType}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces("application/pbf")
 	public Response saveAgriParcelToFarm(@PathParam("token") String token, @PathParam("objectId") Long objectId,
 			@PathParam("parentId") Long parentId, @PathParam("opType") String opType,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
