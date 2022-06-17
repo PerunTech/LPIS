@@ -82,6 +82,7 @@ import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 public class ApplicationServices {
 
 	static int minimumAgriParcelSize;
+	static String externalIdSequence;
 
 	static final Logger log4j = SvConf.getLogger(ApplicationServices.class);
 	static int precisionScale = 2;
@@ -91,10 +92,16 @@ public class ApplicationServices {
 		String s = Integer.toString(i);
 		precisionScale = s.length();
 		try {
-			SvParameter.getSysParam(CC.MINIMUM_AGRI_PARCEL_SIZE, 100);
+			minimumAgriParcelSize = SvParameter.getSysParam(CC.MINIMUM_AGRI_PARCEL_SIZE, 100);
 		} catch (SvException e) {
 			log4j.error("Minimum Agri parcel size not size, defaulting to 100 sqm", e);
 			minimumAgriParcelSize = 100;
+		}
+		try {
+			externalIdSequence = SvParameter.getSysParam(CC.MINIMUM_AGRI_PARCEL_SIZE, CC.NO_SEQUENCE);
+		} catch (SvException e) {
+			log4j.error("No external sequence configured", e);
+			externalIdSequence = CC.NO_SEQUENCE;
 		}
 	}
 
@@ -202,269 +209,6 @@ public class ApplicationServices {
 			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
 	}
 
-	private DbDataObject getOverlapDbo(DbDataArray existingOverlaps, DbDataObject agriParcel,
-			DbDataObject relatedParcel) throws SvException {
-		DbDataObject overlapDbo = null;
-		Iterator<DbDataObject> it = existingOverlaps.getItems().iterator();
-		while (it.hasNext()) {
-			DbDataObject existingOvr = it.next();
-			if (existingOvr.getVal(CC.FARM_ID1).equals(relatedParcel.getParentId())
-					&& existingOvr.getVal(CC.PARCEL_ID1).equals(relatedParcel.getObjectId())) {
-				overlapDbo = existingOvr;
-				it.remove();
-				break;
-			}
-			if (existingOvr.getVal(CC.FARM_ID2).equals(relatedParcel.getParentId())
-					&& existingOvr.getVal(CC.PARCEL_ID2).equals(relatedParcel.getObjectId())) {
-				overlapDbo = existingOvr;
-				it.remove();
-				break;
-			}
-		}
-		if (overlapDbo == null) {
-			overlapDbo = new DbDataObject(SvCore.getTypeIdByName(CC.AGRI_PARCEL_OVERLAP));
-			overlapDbo.setVal(CC.FARM_ID1, agriParcel.getParentId());
-			overlapDbo.setVal(CC.PARCEL_ID1, agriParcel.getObjectId());
-			overlapDbo.setVal(CC.FARM_ID2, relatedParcel.getParentId());
-			overlapDbo.setVal(CC.PARCEL_ID2, relatedParcel.getObjectId());
-		}
-		return overlapDbo;
-	}
-
-	private DbDataObject updateOverlap(SvCore svg, DbDataObject agriParcel, Geometry related,
-			DbDataArray existingOverlaps, DbDataArray overlapParcels) throws SvException {
-		Geometry geom = SvGeometry.getGeometry(agriParcel);
-
-		List gl = GeometryExtracter.extract(geom.intersection(related), Polygon.class);
-		Geometry overlap = null;
-		if (gl.size() > 0)
-			overlap = SvUtil.sdiFactory.buildGeometry(gl);
-
-		DbDataObject relatedParcel = (DbDataObject) related.getUserData();
-		if (overlap == null || overlap.getArea() < minimumAgriParcelSize)
-			throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), relatedParcel, overlap));
-		DbDataObject overlapDbo = getOverlapDbo(existingOverlaps, agriParcel, relatedParcel);
-		SvGeometry.setGeometry(overlapDbo, overlap);
-		Util.calculateGeometryDerivatives(overlapDbo);
-		relatedParcel.setVal(CC.HAS_OVERLAP, true);
-		relatedParcel.setVal(CC.ALLOWED_AREA, related.getArea() - overlap.getArea());
-		overlapParcels.addDataItem(relatedParcel);
-		return overlapDbo;
-	}
-
-	private void createOverlaps(SvGeometry svg, DbDataObject agriParcel, Long typeId,
-			Collection<Geometry> intersections) throws SvException {
-		DbDataArray overlapDbos = new DbDataArray();
-		DbDataArray overlapParcels = new DbDataArray();
-		// get any existing overlaps we need to update
-		DbDataArray existingOverlaps = getOverlaps(svg, agriParcel);
-		Geometry geom = SvGeometry.getGeometry(agriParcel);
-		DbDataArray assets = null;
-		try (SvReader svr = new SvReader(svg)) {
-			assets = getAssetsList(svr, agriParcel.getParentId(), CC.AGRI_PARCEL);
-			assets.rebuildIndex("OBJECT_ID", true);
-		}
-
-		double overlapArea = 0;
-		for (Geometry related : intersections) {
-			DbDataObject relatedDbo = (DbDataObject) related.getUserData();
-			if (assets.getItemByIdx(relatedDbo.getObjectId().toString()) != null)
-				continue;
-			DbDataObject overlapDbo = updateOverlap(svg, agriParcel, related, existingOverlaps, overlapParcels);
-			overlapArea = +SvGeometry.getGeometry(overlapDbo).getArea();
-			overlapDbos.addDataItem(overlapDbo);
-		}
-		svg.setAutoCommit(false);
-		svg.saveGeometry(overlapDbos);
-		svg.saveGeometry(overlapParcels);
-		if (existingOverlaps.size() > 0)
-			try (SvWriter svw = new SvWriter(svg)) {
-				svw.deleteObjects(existingOverlaps);
-			}
-
-		if (overlapDbos.size() > 0) {
-			agriParcel.setVal(CC.HAS_OVERLAP, true);
-			agriParcel.setVal(CC.ALLOWED_AREA, geom.getArea() - overlapArea);
-		}
-
-	};
-
-	private DbDataArray getOverlaps(SvCore svg, DbDataObject ap) throws SvException {
-		try (SvReader svr = new SvReader(svg);) {
-			DbSearchExpression dbs = new DbSearchExpression();
-			dbs.setNextCritOperand("OR");
-			dbs.addDbSearchItem(new DbSearchCriterion(CC.FARM_ID1, DbCompareOperand.EQUAL, ap.getParentId()));
-			dbs.addDbSearchItem(new DbSearchCriterion(CC.PARCEL_ID1, DbCompareOperand.EQUAL, ap.getObjectId()));
-			DbSearchExpression dbs2 = new DbSearchExpression();
-			dbs2.addDbSearchItem(new DbSearchCriterion(CC.FARM_ID2, DbCompareOperand.EQUAL, ap.getParentId()));
-			dbs2.addDbSearchItem(new DbSearchCriterion(CC.PARCEL_ID2, DbCompareOperand.EQUAL, ap.getObjectId()));
-			DbSearchExpression dbx = new DbSearchExpression();
-			dbx.addDbSearchItem(dbs);
-			dbx.addDbSearchItem(dbs2);
-			return svr.getObjects(dbx, SvCore.getTypeIdByName(CC.AGRI_PARCEL_OVERLAP), null, null, null);
-		}
-	}
-
-	private DbDataArray removeOverlaps(SvGeometry svg, DbDataObject ap) throws SvException {
-		DbDataArray updatedParcels = new DbDataArray();
-		try (SvWriter svw = new SvWriter(svg); SvReader svr = new SvReader(svg)) {
-			DbDataArray overlaps = getOverlaps(svg, ap);
-
-			if (overlaps.size() > 0) {
-				svw.setAutoCommit(false);
-				svw.deleteObjects(overlaps);
-				for (DbDataObject ovr : overlaps.getItems()) {
-					Long otherParcelId;
-					if (ovr.getVal(CC.PARCEL_ID1).equals(ap.getObjectId()))
-						otherParcelId = (Long) ovr.getVal(CC.PARCEL_ID2);
-					else
-						otherParcelId = (Long) ovr.getVal(CC.PARCEL_ID1);
-					DbDataObject dbp = svr.getObjectById(otherParcelId, ap.getObjectType(), null);
-					dbp.setVal(CC.HAS_OVERLAP, false);
-					updatedParcels.addDataItem(dbp);
-				}
-			}
-
-			ap.setVal(CC.HAS_OVERLAP, false);
-		}
-		return updatedParcels;
-	}
-
-	private Geometry preventFarmOverlap(SvReader svr, DbDataObject parcel) throws SvException {
-		DbDataArray assets = getAssetsList(svr, parcel.getParentId(), CC.AGRI_PARCEL);
-		Geometry g = SvGeometry.getGeometry(parcel);
-		for (DbDataObject dbo : assets.getItems()) {
-			Geometry other = SvGeometry.getGeometry(dbo);
-			DbDataObject d = (DbDataObject) other.getUserData();
-			if (parcel.getObjectId().equals(d.getObjectId()))
-				continue;
-			if (g.overlaps(other))
-				g = g.difference(other);
-		}
-		g.setUserData(parcel);
-		return g;
-	}
-
-	DbDataObject calculateIntersection(Geometry g, DbDataObject dbo, DbDataArray cadParcels) {
-		Geometry parcel = SvGeometry.getGeometry(dbo);
-		Geometry geom_intersect = null;
-		DbDataObject intersection = null;
-
-		try {
-			if (g.intersects(parcel)) {
-				geom_intersect = parcel.intersection(g);
-				Map<String, Object> usermap = (Map<String, Object>) g.getUserData();
-				DbDataObject cadParcel = null;
-				// iterate the cadastral parcels looking for a match
-				for (DbDataObject dbc : cadParcels.getItems()) {
-					String dp = (String) dbc.getVal("DEPARTMENT_CODE");
-					String cc = (String) dbc.getVal("NATIONAL_CODE");
-					String pc = (String) dbc.getVal("PARCEL_ID");
-					if (dbc.getVal("SUB") != null && dbc.getVal("SUB") != " ")
-						pc = pc + "/" + dbc.getVal("SUB");
-					if (usermap.get("GR_COD_CC").toString().equals(cc) && usermap.get("GR_COD_DP").toString().equals(dp)
-							&& usermap.get("GR_PARCEL").toString().equals(pc)) {
-						cadParcel = dbc;
-					}
-
-				}
-				// if we have cadastral match, save the intersection
-				if (cadParcel != null) {
-					intersection = new DbDataObject(SvCore.getTypeIdByName("LP_CAD_INTERSECTIONS"));
-					geom_intersect = com.prtech.spatial.Util.verifyGeometryType(intersection, geom_intersect);
-					intersection.setParentId(dbo.getParentId());
-					SvGeometry.setGeometry(intersection, geom_intersect);
-					intersection.setVal("EXTERNAL_ID", usermap.get("ID_PARC"));
-					intersection.setVal("GR_COD_CC", usermap.get("GR_COD_CC"));
-					intersection.setVal("GR_COD_DP", usermap.get("GR_COD_DP"));
-					intersection.setVal("GR_PARCEL", usermap.get("GR_PARCEL").toString());
-					intersection.setVal("LAND_PARCEL_ID", dbo.getVal("OLD_ID"));
-					intersection.setVal("PARCEL_ID", dbo.getObjectId());
-					intersection.setVal("CAD_AREA", usermap.get("AREA"));
-					intersection.setVal("FR_AREA", cadParcel.getVal("AREA"));
-					intersection.setVal("AREA", Math.round(geom_intersect.getArea()));
-					intersection.setVal("MUNICIPALITY_NAME", cadParcel.getVal("MUNICIPALITY_NAME"));
-
-				}
-			}
-			// intersections.addDataItem(intersection);
-
-		} catch (Exception e) {
-			log4j.error("Parcel: " + dbo.getVal("OLD_ID") + " has bad cadastral intersection with:" + g.toString(), e);
-
-		}
-		return intersection;
-	}
-
-	void performCadCalc(SvReader svr, Long objectId, DbDataObject type) throws SvException, ParseException {
-		try (SvGeometry svg = new SvGeometry(svr); SvWriter svw = new SvWriter(svr)) {
-			svr.setIncludeGeometries(true);
-			DbDataObject dbo = svr.getObjectById(objectId, type, null);
-			Geometry parcel = SvGeometry.getGeometry(dbo);
-			String layer = SvConf.getParam("CAD_PARCEL_LAYER_NAME");
-			String epsg = SvConf.getParam("CAD_PARCEL_LAYER_EPSG");
-			String wfsUrl = SvConf.getParam("CAD_PARCEL_LAYER_WFS");
-			String wfsUser = SvConf.getParam("CAD_PARCEL_LAYER_WFS_U");
-			String wfsPass = SvConf.getParam("CAD_PARCEL_LAYER_WFS_P");
-			String sshProxy = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY");
-			String sshProxyUser = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_USER");
-			String sshProxyPass = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_PASS");
-			WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
-			if (log4j.isDebugEnabled())
-				log4j.debug("WFS request:" + wfs.buildWfsRequestUrl(parcel.getEnvelopeInternal()));
-			String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
-			String json = wfs.getWFSResponse(parcel.getEnvelopeInternal(), sshProxy, sshProxyUser, sshProxyPass,
-					wfsUser, wfsPass, extParams);
-			GeometryFactory gf = SvUtil.sdiFactory;
-			GeoJsonReader gjr = new GeoJsonReader(gf);
-			gjr.setUseFeatureType(true);
-			gjr.setUsePropertiesAsUserData(true);
-
-			Geometry geom = gjr.read(json);
-			svg.setAutoCommit(false);
-			svw.setAutoCommit(false);
-			svg.setAllowNullGeometry(true);
-
-			DbDataArray cadParcels = svr.getObjectsByParentId(dbo.getParentId(), SvCore.getTypeIdByName("CAD_PARCEL"),
-					null);
-			DbDataArray lpCadIntersections = svr.getObjectsByParentId(dbo.getParentId(),
-					SvCore.getTypeIdByName("LP_CAD_INTERSECTIONS"), null);
-			DbDataArray intersections = new DbDataArray();
-
-			for (int i = 0; i < geom.getNumGeometries(); i++) {
-				Geometry g = geom.getGeometryN(i);
-				DbDataObject intersection = calculateIntersection(g, dbo, cadParcels);
-
-				if (intersection != null) {
-					boolean existingFound = false;
-					Iterator<DbDataObject> lpCadIt = lpCadIntersections.getItems().iterator();
-					while (lpCadIt.hasNext()) {
-						DbDataObject existing = lpCadIt.next();
-						if (intersection.getVal("EXTERNAL_ID").equals(existing.getVal("EXTERNAL_ID"))) {
-							existingFound = true;
-							if (!intersection.getVal("AREA").equals(existing.getVal("AREA"))) {
-								intersection.setObjectId(existing.getObjectId());
-								intersection.setPkid(existing.getPkid());
-								intersections.addDataItem(intersection);
-							}
-							lpCadIt.remove();
-							break;
-						}
-
-					}
-					if (!existingFound)
-						intersections.addDataItem(intersection);
-				}
-			}
-			// add new or updated
-			svg.saveGeometry(intersections);
-			// delete non existing intersections
-			if (lpCadIntersections.size() > 0)
-				svw.deleteObjects(lpCadIntersections);
-			svg.dbCommit();
-		}
-	}
-
 	@Path("/intersect/{token}/{objectName}/{objectId}/")
 	@GET
 	@Produces("application/pbf")
@@ -477,7 +221,7 @@ public class ApplicationServices {
 			lock = SvLock.getDistributedLock("CAD-INTERSECT-" + objectId.toString());
 
 			if (lock != 0) {
-				performCadCalc(svr, objectId, type);
+				(new AgriParcel()).performCadCalc(svr, objectId, type);
 				ResponseHandler jrh = new ResponseHandler();
 				jrh.create(MessageType.SUCCESS, "lpis.intersections.calculated", "lpis.intersections.calculated",
 						new JsonObject());
@@ -506,93 +250,26 @@ public class ApplicationServices {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/pbf")
-	public StreamingOutput saveAgriParcelToFarm(@PathParam("token") String token, @PathParam("objectId") Long objectId,
+	public Response saveAgriParcelToFarm(@PathParam("token") String token, @PathParam("objectId") Long objectId,
 			@PathParam("parentId") Long parentId, @PathParam("opType") String opType,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try {
+			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, opType, formVals);
 
-		return new StreamingOutput() {
+		} catch (SvException e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
+		}
+
+		StreamingOutput pbfStream = new StreamingOutput() {
 			public void write(OutputStream stream) throws IOException {
 				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
-				DbDataObject ap = null;
-				JsonObject metadata = new JsonObject();
-				try (SvReader svr = new SvReader(token); SvGeometry svg = new SvGeometry(svr);) {
-
-					svr.setIncludeGeometries(true);
-					ap = new DbDataObject();
-					DbDataArray parcelsToSave = new DbDataArray();
-					Geometry geom = null;
-					Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
-					DbDataArray fieldSet = SvCore.getFields(typeId);
-					boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
-					metadata = Util.dataToJson(formVals);
-					geom = Util.jsonToGeometry(metadata.get(Sv.GEOM));
-
-					if (isUpdate) {
-						ap = svr.getObjectById(objectId, typeId, null);
-					} else {
-						ap.setObjectId(0L);
-						ap.setObjectType(typeId);
-						ap.setParentId(parentId);
-					}
-					// prepare the geometry for further processing
-					isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(geom, ap, svg, true);
-					// prevent farm overlaps
-					geom = preventFarmOverlap(svr, ap);
-
-					SvGeometry.setGeometry(ap, geom);
-
-					// Map form values to dbo fields
-					for (DbDataObject field : fieldSet.getItems()) {
-						String fieldName = field.getVal(Sv.FIELD_NAME).toString();
-						if (Util.excludeField(fieldName)
-								&& !"".equalsIgnoreCase(field.getVal(Sv.FIELD_TYPE).toString())) {
-							ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
-						}
-					}
-
-					DbDataArray result = new DbDataArray();
-					if (opType.equals(CC.CUTOFF)) {
-						geom = svg.cutLayerFromGeom(geom, typeId);
-						SvGeometry.setGeometry(ap, geom);
-						if (ap.getVal(CC.HAS_OVERLAP) != null && (boolean) ap.getVal(CC.HAS_OVERLAP))
-							result.setItems(removeOverlaps(svg, ap).getItems());
-					}
-					// check minimum parcel size
-					if (geom.getArea() < minimumAgriParcelSize)
-						throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), ap,
-								minimumAgriParcelSize));
-
-					if (opType.equals(CC.IGNORE)) {
-						Collection<Geometry> intersections = svg.getRelatedGeometries(geom, typeId,
-								SDIRelation.INTERSECTS, CC.PARENT_ID, ap.getParentId(), true, true, true);
-						createOverlaps(svg, ap, typeId, intersections);
-					}
-
-					svg.setAutoCommit(false);
-					Util.calculateGeometryDerivatives(ap);
-					result.addDataItem(ap);
-					svg.saveGeometry(ap);
-					svg.dbCommit();
-					enc.writeDbDataArray(result);
-				} catch (Exception e) {
-					String errMsg = "Failed saving agri parcel. Please see server logs";
-					if (e instanceof SvException)
-						log.error("Failed saving agri parcel. " + ((SvException) e).getFormattedMessage(), e);
-					errMsg = ((SvException) e).getJsonMessage();
-					try {
-						stream.write(errMsg.getBytes(StandardCharsets.UTF_8));
-					} catch (IOException ioe) {
-						log.error("Stream closed, can't write error", ioe);
-					}
-					log.error(errMsg, e);
-				} finally {
-					if (enc != null)
-						enc.close();
-				}
-			}
-
+				enc.writeSvGeometry(result);
+			};
 		};
-	}
+		return Response.ok(pbfStream, "application/pbf").build();
+
+	};
 
 	@POST
 	@Path("/add/farm/{token}/{farmId}/{objectName}/{x}/{y}")
@@ -665,14 +342,14 @@ public class ApplicationServices {
 			else {
 				Geometry gTile = SvGeometry.getTileGeometry(SvGeometry.getCentroid(dbo));
 				SvSDITile svTile = SvGeometry.getTile(objectType, (String) gTile.getUserData(), null);
-				removeOverlaps(svg, dbo);
+				(new AgriParcel()).removeOverlaps(svg, dbo);
 				svw.deleteObject(dbo, false);
 				svw.dbCommit();
 				svTile.setIsTileDirty(true);
 			}
 
 		} catch (SvException e) {
-			com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
 		}
 
 		StreamingOutput pbfStream = new StreamingOutput() {
@@ -976,7 +653,7 @@ public class ApplicationServices {
 		DbDataArray overlaps = new DbDataArray();
 		try (SvReader svr = new SvReader(token)) {
 			DbDataObject parcel = svr.getObjectById(parcelId, SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
-			overlaps = getOverlaps(svr, parcel);
+			overlaps = (new AgriParcel()).getOverlaps(svr, parcel);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.getOverlaps");
 		}
@@ -1287,40 +964,6 @@ public class ApplicationServices {
 		return Response.status(200).entity(result.toString()).build();
 	}
 
-	/**
-	 * Method to get all assets by parent/farm
-	 * 
-	 * @param svr      The reader which is used for the session
-	 * @param objectId The object id of the farm
-	 * @param typeName The type name of the assets
-	 * @return
-	 * @throws SvException
-	 */
-	DbDataArray getAssetsList(SvReader svr, Long objectId, String typeName) throws SvException {
-		DbDataArray result = new DbDataArray();
-
-		// Filter for campaign year and geometry not null, when cp is requested.
-		if (typeName.equalsIgnoreCase("LAND_USE_PLAN")) {
-			svr.setIncludeGeometries(true);
-			DbDataArray dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
-			for (DbDataObject dbo : dbArr.getItems()) {
-				String cYear = (String) dbo.getVal("CAMPAIGN_YEAR");
-				String now = String.valueOf(new DateTime().year().get());
-				Geometry g = SvGeometry.getGeometry(dbo);
-
-				if (cYear != null && cYear.equals(now) && g != null) {
-					result.addDataItem(dbo);
-				}
-			}
-		} else if (typeName.equalsIgnoreCase(CC.AGRI_PARCEL)) {
-			result = new Reader(svr).getParcels(objectId, null, true);
-
-		}
-
-		return result;
-
-	}
-
 	@Path("/get/farmerAssets/{token}/{objectId}/{typeName}")
 	@GET
 	@Produces("application/pbf")
@@ -1329,7 +972,7 @@ public class ApplicationServices {
 
 		final DbDataArray result = new DbDataArray();
 		try (SvReader svr = new SvReader(token)) {
-			result.setItems(getAssetsList(svr, objectId, typeName).getItems());
+			result.setItems((new AgriParcel()).getAssetsList(svr, objectId, typeName).getItems());
 
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
