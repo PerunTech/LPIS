@@ -1,7 +1,7 @@
 import { React, ReactDOM, PropTypes, elements } from 'perun-core';
 import { core, data, ui } from '../../../Spatial';
 import { config } from './Config';
-import { strcmp } from '../../Util'
+import { bufferToString, isJSON, strcmp } from '../../Util'
 
 const { http, store, factory, Map, util } = core;
 const { protobuf, geobuf } = data;
@@ -117,7 +117,20 @@ export const saveAP = (layer, callback) => {
             url: '/lpis/save/agriParcel/{init.token}/' + layer.OBJECT_ID + '/' + parentId + '/' + action,
         })
             .then(response => _succeed(geobuf.decode(protobuf(response)), layer))
-            .catch(() => _fail());
+            .catch((error) => {
+                const { response } = error
+                let title = ''
+                let msg = ''
+                const stringifiedResponse = bufferToString(response?.data)
+                if (isJSON(stringifiedResponse) && Object.keys(JSON.parse(stringifiedResponse)).length > 1) {
+                    const parsedResponse = JSON.parse(stringifiedResponse)
+                    title = parsedResponse?.title || title
+                    msg = parsedResponse?.message || ''
+                    _fail(title, msg)
+                } else {
+                    _fail()
+                }
+            });
     };
 
     // User input for the result of check 1
