@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
 import { config, copyAPMsg } from '../Config';
-import { getFarmMapAssets } from '../../../Util';
+import { getFarmMapAssets, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -15,14 +15,14 @@ const { useReducer } = React;
 const _id = 'copy';
 
 const _Copy = ({ processID, farmObjId, saveIsPending }) => {
-    const [{ layer, data, X, Y, loading, showForm, isGuided }, setState] = useReducer((currState, update) =>
+    const [{ layer, initialLandCoverCode, data, X, Y, loading, showForm, isGuided }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
-        { layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
+        { layer: {}, initialLandCoverCode: '', data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
 
     const disable = () => {
         Map.off('click');
         // Reset state, internal and application-wide.
-        setState({ layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
+        setState({ layer: {}, initialLandCoverCode: '', data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
         store.dispatch({ processID: '' });
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
@@ -49,12 +49,13 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
                 const geojson = factory.geoJSON(buff, config.pathOptions);
 
                 geojson.getLayers().forEach(layer => {
+                    const landCoverCode = layer.feature.properties?.LAND_USE_ID
                     // assign metadata
                     layer.feature.id = 0
-                    layer.feature.properties = { parent_id: farmObjId }
-
+                    layer.feature.properties.parent_id = farmObjId
+                    layer.feature.properties.LAND_COVER_CODE = landCoverCode
                     layer.addTo(Map);
-                    setState({ data: layer.feature.properties, layer: layer })
+                    setState({ data: layer.feature.properties, layer: layer, initialLandCoverCode: landCoverCode })
                 })
             }).catch(err => {
                 console.log(err)
@@ -70,7 +71,7 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
         setState({ data: { ...data, ...formData } });
     }
 
-    const onSubmit = ({ formData }) =>
+    const executeSaveAP = formData => {
         saveAP(JSON.stringify({
             ...data,
             ...formData,
@@ -80,6 +81,17 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
             parent_id: farmObjId,
             OBJECT_ID: 0
         }), disable);
+    }
+
+    const onSubmit = ({ formData }) => {
+        if (!strcmp(formData.LAND_COVER_CODE, initialLandCoverCode)) {
+            const title = 'Избравте различен вредност за Употреба на земјиште'
+            const msg = 'Дали сте сигурни дека сакате да продолжите?'
+            alertUser(true, 'warning', title, msg, () => executeSaveAP(formData), () => { }, true, 'Продолжи', 'Откажи')
+        } else {
+            executeSaveAP(formData)
+        }
+    }
 
     const renderGuideForm = () => {
         return <Guidance id={_id} disable={disable} msg={copyAPMsg} title='Копирај земјоделска парцела' />
