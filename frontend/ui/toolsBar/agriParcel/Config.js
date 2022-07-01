@@ -204,7 +204,7 @@ export const metadataAdmin = {
     uiSchema: {
         ELIGIBILITY_COEF: { 'ui:widget': 'range' },
         COMMON_USE: { 'ui:disabled': true },
-        CERTIFICATE_OF_USE: { 'ui:disabled': true },
+        // CERTIFICATE_OF_USE: { 'ui:disabled': true },
         SOIL_TYPE: { 'ui:disabled': true },
     }
 };
