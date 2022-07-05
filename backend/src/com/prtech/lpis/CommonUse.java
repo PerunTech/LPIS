@@ -106,7 +106,7 @@ public class CommonUse {
 		DbDataArray cus = svr.getObjects(new DbSearchExpression().addDbSearchItem(cr),
 				SvReader.getTypeIdByName(CC.COMMON_USE), null, 0, 0);
 		for (DbDataObject dbo : cus.getItems()) {
-			DbDataObject farm = svr.getObjectById(dbo.getParentId(), SvCore.getTypeIdByName(CC.FARM), null);
+			DbDataObject farm = svr.getObjectById(dbo.getParentId(), SvCore.getTypeIdByName(CC.FARMER), null);
 			dbo.setVal(CC.FIC, farm.getVal(CC.FIC));
 			dbo.setVal(CC.FULL_NAME, farm.getVal(CC.FULL_NAME));
 		}

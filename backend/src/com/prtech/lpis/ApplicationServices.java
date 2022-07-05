@@ -37,6 +37,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.prtech.spatial.SC;
 import com.prtech.spatial.Util;
@@ -80,7 +81,7 @@ import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 
 @Path("/lpis")
 public class ApplicationServices {
-
+	static Geometry municipalities = null;
 	static int minimumAgriParcelSize;
 	static String externalIdSequence;
 
@@ -98,11 +99,70 @@ public class ApplicationServices {
 			minimumAgriParcelSize = 100;
 		}
 		try {
-			externalIdSequence = SvParameter.getSysParam(CC.EXTERNAL_SEQ_NAME , CC.NO_SEQUENCE);
+			externalIdSequence = SvParameter.getSysParam(CC.EXTERNAL_SEQ_NAME, CC.NO_SEQUENCE);
 		} catch (SvException e) {
 			log4j.error("No external sequence configured", e);
 			externalIdSequence = CC.NO_SEQUENCE;
 		}
+	}
+
+	static Geometry getCadMunicipalities() throws SvException, ParseException {
+		if (municipalities == null) {
+			synchronized (ApplicationServices.class) {
+				if (municipalities == null) {
+					String layer = SvConf.getParam("CAD_MUNICIPALITY_LAYER_NAME");
+					String epsg = SvConf.getParam("CAD_PARCEL_LAYER_EPSG");
+					String wfsUrl = SvConf.getParam("CAD_PARCEL_LAYER_WFS");
+					String wfsUser = SvConf.getParam("CAD_PARCEL_LAYER_WFS_U");
+					String wfsPass = SvConf.getParam("CAD_PARCEL_LAYER_WFS_P");
+					String sshProxy = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY");
+					String sshProxyUser = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_USER");
+					String sshProxyPass = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_PASS");
+					WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
+					String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
+					String json = wfs.getWFSResponse(SvGeometry.getSysBoundary().getEnvelope(), sshProxy, sshProxyUser,
+							sshProxyPass, wfsUser, wfsPass, extParams);
+					GeometryFactory gf = SvUtil.sdiFactory;
+					GeoJsonReader gjr = new GeoJsonReader(gf);
+					gjr.setUseFeatureType(true);
+					gjr.setUsePropertiesAsUserData(true);
+
+					Geometry geom = gjr.read(json);
+					municipalities = geom;
+				}
+
+			}
+		}
+		return municipalities;
+	}
+
+	@Path("/get/CadMunicipalities/{token}/{sectorId}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getMunicipalities(@PathParam("token") String token, @PathParam("sectorId") Integer sectorId,
+			@Context HttpServletRequest httpRequest) {
+		ResponseHandler jrh = new ResponseHandler();
+		JsonArray ja = new JsonArray();
+		try (SvGeometry svg = new SvGeometry(token)) {
+			Geometry geom = ApplicationServices.getCadMunicipalities();
+
+			for (int i = 0; i < geom.getNumGeometries(); i++) {
+				Geometry gg = geom.getGeometryN(i);
+				Map<String, Object> js = (Map<String, Object>) gg.getUserData();
+				if (js.get("ODDELENIE").toString().equals(sectorId.toString())) {
+					JsonObject jo = new JsonObject();
+					jo.addProperty(js.get("SIFRA1").toString(), js.get("NAZIV").toString());
+					ja.add(jo);
+				}
+
+			}
+
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
+		}
+		jrh.create(MessageType.ERROR, "operation.in.progress", "operation.in.progress", ja);
+		return Response.ok().entity(jrh.getAll().toString()).build();
+
 	}
 
 	private static final Logger log = LogManager.getLogger(ApplicationServices.class.getName());
@@ -188,7 +248,7 @@ public class ApplicationServices {
 					gi.remove();
 			}
 			// TODO add calculus of overlaps
-			svg.splitMergeGeometryDbUpdate(split, toBeDeleted, true);
+			svg.splitMergeGeometryDbUpdate(split, toBeDeleted, false);
 			result.addAll(split);
 
 			svg.dbCommit();
