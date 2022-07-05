@@ -99,7 +99,7 @@ export const metadataAux = {
     schema: {
         properties: {
             LAND_COVER_CODE_2: {
-                enum: [' ', '200', '210', '300', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500',
+                enum: ['0', '200', '210', '300', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500',
                     '600', '900'],
                 enumNames: [' ', 'Нива (обработливо земјиште)', 'Оранжерии и пластеници на обработливо земјиште',
                     'Постојан тревник', 'Ливада', 'Пасиште', 'Долгогодишни култури (траен насад)', 'Лозов насад',
@@ -109,7 +109,7 @@ export const metadataAux = {
                 maxLength: 50,
                 title: 'Секундарна употреба на земјиште',
                 type: 'string',
-                default: ' '
+                default: '0'
             },
             TERRACE: {
                 title: 'Тераси',
@@ -204,7 +204,7 @@ export const metadataAdmin = {
     uiSchema: {
         ELIGIBILITY_COEF: { 'ui:widget': 'range' },
         COMMON_USE: { 'ui:disabled': true },
-        CERTIFICATE_OF_USE: { 'ui:disabled': true },
+        // CERTIFICATE_OF_USE: { 'ui:disabled': true },
         SOIL_TYPE: { 'ui:disabled': true },
     }
 };
