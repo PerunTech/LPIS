@@ -1,4 +1,4 @@
-import { React } from 'perun-core'
+import { React, elements } from 'perun-core'
 import { core, ui } from '../../Spatial'
 import { Form } from '../toolsBar/agriParcel/Form'
 import { cadastreSearchFormSchema } from './CadastreConfig'
@@ -6,6 +6,7 @@ import { cadastreSearchFormSchema } from './CadastreConfig'
 const { schema: initialSchema, uiSchema: initialUiSchema } = cadastreSearchFormSchema()
 const { http, connect } = core
 const { Button, DrawActions } = ui
+const { alertUser } = elements
 const { useReducer } = React
 
 const _CadastreSearch = () => {
@@ -38,6 +39,7 @@ const _CadastreSearch = () => {
       }
     }).catch(err => {
       console.error(err)
+      alertUser(true, 'error', 'Настана грешка')
     })
   }
 
