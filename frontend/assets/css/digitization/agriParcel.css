@@ -153,3 +153,11 @@
 .permanent-crops-modal .modal-dialog {
   right: 259px !important;
 }
+
+.cadastre-search-form .modal-dialog {
+  left: 150px !important;
+}
+
+.cadastre-search-form .rjsf .field {
+  width: 100% !important;
+}
