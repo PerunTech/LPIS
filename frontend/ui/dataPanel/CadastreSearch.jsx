@@ -55,10 +55,8 @@ const _CadastreSearch = () => {
   const renderComponent = () => {
     const formSchema = Object.values(schema).length > 0 ? schema : initialSchema
     const formUiSchema = Object.values(uiSchema).length > 0 ? uiSchema : initialUiSchema
-    const formKey = data.CADASTRAL_SECTOR || 1000
     const componentToRender = (
       <Form
-        // key={formKey}
         isSimple
         formTitle='Пребарување катастар'
         buttonLabel='Пребарај'
