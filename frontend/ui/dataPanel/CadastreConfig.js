@@ -53,6 +53,10 @@ export const cadastreSearchFormSchema = cadMunicipalities => {
             title: 'Катастарска општина',
             type: 'string',
             default: ''
+          },
+          PARCEL_ID: {
+            title: 'Број на парцела',
+            type: 'string'
           }
         }
       },
