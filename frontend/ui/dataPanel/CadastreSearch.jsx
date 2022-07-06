@@ -77,7 +77,7 @@ const _CadastreSearch = () => {
 
   return (
     <div className='text-center'>
-      <Button block variant='dark' className='ml-2' style={{ width: '97.2%' }} onClick={toggleSearchForm}>Пребарај катастар</Button>
+      <Button block variant='dark' className='mt-1 ml-2' style={{ width: '97.2%' }} onClick={toggleSearchForm}>Пребарај катастар</Button>
       {showForm && renderComponent()}
     </div>
   )
