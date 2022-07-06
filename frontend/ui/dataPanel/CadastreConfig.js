@@ -43,7 +43,7 @@ export const cadastreSearchFormSchema = cadMunicipalities => {
           enum: Object.values(cadSectors),
           enumNames: Object.keys(cadSectors),
           title: 'Катастарско одделение',
-          type: 'string',
+          type: 'number',
           default: ''
         },
         ...cadMunicipalities && {
