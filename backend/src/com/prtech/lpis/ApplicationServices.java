@@ -169,8 +169,8 @@ public class ApplicationServices {
 	@Path("/get/CadParcel/{token}/{sectorId}/{koId}/{parcelId}")
 	@GET
 	@Produces("application/pbf")
-	public Response getParcel(@PathParam("token") String token, @PathParam("sectorId") Integer sectorId,
-			@PathParam("koId") Integer koId,@PathParam("parcelId") String parcelId,
+	public Response getParcel(@PathParam("token") String token, @PathParam("sectorId") String sectorId,
+			@PathParam("koId") String koId,@PathParam("parcelId") String parcelId,
 			@Context HttpServletRequest httpRequest) {
 		final ArrayList<Geometry> geoms= new ArrayList<>();
 		ResponseHandler jrh = new ResponseHandler();
@@ -187,6 +187,7 @@ public class ApplicationServices {
 			WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
 			ArrayList<String> strl = new ArrayList<String>();
 			strl.add(parcelId);
+			koId=koId.substring(2);
 			String filter=wfs.buildOgcFilter(sectorId.toString(),koId.toString(),strl);
 			System.out.println("WFS request:" + wfs.buildWfsRequestUrlFilter(filter));
 			String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
@@ -208,7 +209,7 @@ public class ApplicationServices {
 		StreamingOutput pbfStream = new StreamingOutput() {
 			public void write(OutputStream stream) throws IOException {
 				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
-				enc.writeSvGeometry(null);
+				enc.writeSvGeometry(geoms);
 			};
 		};
 		return Response.ok(pbfStream, "application/pbf").build();
