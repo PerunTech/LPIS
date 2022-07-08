@@ -12,6 +12,7 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
@@ -98,6 +99,29 @@ public class WFSReader {
 
 	}
 
+	public String getWFSResponse(String filter, final String sshServer, final String sshUser, final String sshPass,
+			final String webUser, final String webPass, String extSshParams) {
+		return executeGet(buildWfsRequestUrlFilter(filter), sshServer, sshUser, sshPass, webUser, webPass,
+				extSshParams);
+
+	}
+
+	public String buildOgcFilter(String grCodDp, String grCodCC, List<String> grParcels) {
+
+		StringBuilder filter = new StringBuilder();
+		filter.append("<ogc:Filter xmlns:ogc=\'http://www.opengis.net/ogc\'><ogc:And>"
+				+ "<ogc:And><ogc:PropertyIsEqualTo><ogc:PropertyName>GR_COD_DP</ogc:PropertyName><ogc:Literal>"
+				+ grCodDp + "</ogc:Literal></ogc:PropertyIsEqualTo>"
+				+ "<ogc:PropertyIsEqualTo><ogc:PropertyName>GR_COD_CC</ogc:PropertyName><ogc:Literal>" + grCodCC
+				+ "</ogc:Literal></ogc:PropertyIsEqualTo></ogc:And>" + "<ogc:Or>");
+		for (String grParcel : grParcels) {
+			filter.append("<ogc:PropertyIsEqualTo><ogc:PropertyName>GR_PARCEL</ogc:PropertyName><ogc:Literal>"
+					+ grParcel + "</ogc:Literal></ogc:PropertyIsEqualTo>");
+		}
+		filter.append("</ogc:Or></ogc:And></ogc:Filter>");
+		return filter.toString();
+	}
+
 	public String getWFSResponseByFilter(String filter) {
 		return executeGet(buildWfsRequestUrlFilter(filter), Sv.EMPTY_STRING, 0, Sv.EMPTY_STRING, Sv.EMPTY_STRING);
 
@@ -148,8 +172,8 @@ public class WFSReader {
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		// "http://osspwms.katastar.gov.mk/geoserver/PARCELI/gwc/service/wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=PARCELI:PARCELI_WMS&srs=EPSG:6316&outputFormat=application/json&BBOX=7640026.21,4574935.62,7640698.43,4575335.59\"
 		// -- Linux --
-		String cmd = "sshpass -p " + sshPass + " ssh " + sshUser + "@" + sshServer +" "+extSshParams+" \"wget -q -O - --user " + webUser
-				+ " --password " + webPass + " \\\"" + http_url + "\\\"\"";
+		String cmd = "sshpass -p " + sshPass + " ssh " + sshUser + "@" + sshServer + " " + extSshParams
+				+ " \"wget -q -O - --user " + webUser + " --password " + webPass + " \\\"" + http_url + "\\\"\"";
 		// Run a shell command
 		processBuilder.command("bash", "-c", cmd);
 

@@ -165,6 +165,56 @@ public class ApplicationServices {
 
 	}
 
+	
+	@Path("/get/CadParcel/{token}/{sectorId}/{koId}/{parcelId}")
+	@GET
+	@Produces("application/pbf")
+	public Response getParcel(@PathParam("token") String token, @PathParam("sectorId") Integer sectorId,
+			@PathParam("koId") Integer koId,@PathParam("parcelId") String parcelId,
+			@Context HttpServletRequest httpRequest) {
+		final ArrayList<Geometry> geoms= new ArrayList<>();
+		ResponseHandler jrh = new ResponseHandler();
+		JsonArray ja = new JsonArray();
+		try (SvGeometry svg = new SvGeometry(token)) {
+			String layer = SvConf.getParam("CAD_PARCEL_LAYER_NAME");
+			String epsg = SvConf.getParam("CAD_PARCEL_LAYER_EPSG");
+			String wfsUrl = SvConf.getParam("CAD_PARCEL_LAYER_WFS");
+			String wfsUser = SvConf.getParam("CAD_PARCEL_LAYER_WFS_U");
+			String wfsPass = SvConf.getParam("CAD_PARCEL_LAYER_WFS_P");
+			String sshProxy = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY");
+			String sshProxyUser = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_USER");
+			String sshProxyPass = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_PASS");
+			WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
+			ArrayList<String> strl = new ArrayList<String>();
+			strl.add(parcelId);
+			String filter=wfs.buildOgcFilter(sectorId.toString(),koId.toString(),strl);
+			System.out.println("WFS request:" + wfs.buildWfsRequestUrlFilter(filter));
+			String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
+			String json = wfs.getWFSResponse(filter, sshProxy, sshProxyUser, sshProxyPass, wfsUser,
+					wfsPass, extParams);
+			GeometryFactory gf = SvUtil.sdiFactory;
+			GeoJsonReader gjr = new GeoJsonReader(gf);
+			gjr.setUseFeatureType(true);
+			gjr.setUsePropertiesAsUserData(true);
+		
+			geoms.add(gjr.read(json));
+
+
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
+		}
+		
+
+		StreamingOutput pbfStream = new StreamingOutput() {
+			public void write(OutputStream stream) throws IOException {
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+				enc.writeSvGeometry(null);
+			};
+		};
+		return Response.ok(pbfStream, "application/pbf").build();
+		
+
+	}
 	private static final Logger log = LogManager.getLogger(ApplicationServices.class.getName());
 
 	@Path("/save/physicalBlock/{token}/{objectId}")
