@@ -165,14 +165,13 @@ public class ApplicationServices {
 
 	}
 
-	
 	@Path("/get/CadParcel/{token}/{sectorId}/{koId}/{parcelId}")
 	@GET
 	@Produces("application/pbf")
 	public Response getParcel(@PathParam("token") String token, @PathParam("sectorId") String sectorId,
-			@PathParam("koId") String koId,@PathParam("parcelId") String parcelId,
+			@PathParam("koId") String koId, @PathParam("parcelId") String parcelId,
 			@Context HttpServletRequest httpRequest) {
-		final ArrayList<Geometry> geoms= new ArrayList<>();
+		final ArrayList<Geometry> geoms = new ArrayList<>();
 		ResponseHandler jrh = new ResponseHandler();
 		JsonArray ja = new JsonArray();
 		try (SvGeometry svg = new SvGeometry(token)) {
@@ -187,24 +186,25 @@ public class ApplicationServices {
 			WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
 			ArrayList<String> strl = new ArrayList<String>();
 			strl.add(parcelId);
-			koId=koId.substring(2);
-			String filter=wfs.buildOgcFilter(sectorId.toString(),koId.toString(),strl);
+			koId = koId.substring(2);
+			String filter = wfs.buildOgcFilter(sectorId.toString(), koId.toString(), strl);
 			System.out.println("WFS request:" + wfs.buildWfsRequestUrlFilter(filter));
 			String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
-			String json = wfs.getWFSResponse(filter, sshProxy, sshProxyUser, sshProxyPass, wfsUser,
-					wfsPass, extParams);
+			String json = wfs.getWFSResponse(filter, sshProxy, sshProxyUser, sshProxyPass, wfsUser, wfsPass, extParams);
 			GeometryFactory gf = SvUtil.sdiFactory;
 			GeoJsonReader gjr = new GeoJsonReader(gf);
 			gjr.setUseFeatureType(true);
 			gjr.setUsePropertiesAsUserData(true);
-		
-			geoms.add(gjr.read(json));
-
+			Geometry gc = gjr.read(json);
+			if (gc.getGeometryType().equals("GeometryCollection")) {
+				for (int j = 0; j < gc.getNumGeometries(); j++)
+					geoms.add(gc.getGeometryN(j));
+			} else
+				geoms.add(gc);
 
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
 		}
-		
 
 		StreamingOutput pbfStream = new StreamingOutput() {
 			public void write(OutputStream stream) throws IOException {
@@ -213,9 +213,9 @@ public class ApplicationServices {
 			};
 		};
 		return Response.ok(pbfStream, "application/pbf").build();
-		
 
 	}
+
 	private static final Logger log = LogManager.getLogger(ApplicationServices.class.getName());
 
 	@Path("/save/physicalBlock/{token}/{objectId}")
