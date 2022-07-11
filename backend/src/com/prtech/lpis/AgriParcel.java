@@ -4,10 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MultivaluedMap;
@@ -364,64 +367,88 @@ public class AgriParcel {
 		return intersection;
 	}
 
+	Map<String, List<String>> performFarmCadMapping(DbDataArray cadParcels) throws SvException, ParseException {
+		Map<String, List<String>> map = new HashMap<>();
+		for (DbDataObject dbc : cadParcels.getItems()) {
+			String dp = (String) dbc.getVal("DEPARTMENT_CODE");
+			String cc = (String) dbc.getVal("NATIONAL_CODE");
+			String pc = (String) dbc.getVal("PARCEL_ID");
+			String key = dp + ":" + cc;
+			List<String> parcs = map.get(key);
+			if (parcs == null) {
+				parcs = new ArrayList<>();
+				map.put(key, parcs);
+			}
+			parcs.add(pc);
+		}
+		return map;
+	}
+
+	Geometry performMunicipalityCadCalc(String dp, String cc, List<String> ar) throws SvException, ParseException {
+
+		String layer = SvConf.getParam("CAD_PARCEL_LAYER_NAME");
+		String epsg = SvConf.getParam("CAD_PARCEL_LAYER_EPSG");
+		String wfsUrl = SvConf.getParam("CAD_PARCEL_LAYER_WFS");
+		String wfsUser = SvConf.getParam("CAD_PARCEL_LAYER_WFS_U");
+		String wfsPass = SvConf.getParam("CAD_PARCEL_LAYER_WFS_P");
+		String sshProxy = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY");
+		String sshProxyUser = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_USER");
+		String sshProxyPass = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_PASS");
+		WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
+
+		String filter = wfs.buildOgcFilter(dp, cc, ar);
+		if (log4j.isDebugEnabled())
+			log4j.debug("WFS request:" + wfs.buildWfsRequestUrlFilter(filter));
+		System.out.println("WFS request:" + wfs.buildWfsRequestUrlFilter(filter));
+		String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
+		String json = wfs.getWFSResponse(filter, sshProxy, sshProxyUser, sshProxyPass, wfsUser, wfsPass, extParams);
+
+		GeometryFactory gf = SvUtil.sdiFactory;
+		GeoJsonReader gjr = new GeoJsonReader(gf);
+		gjr.setUseFeatureType(true);
+		gjr.setUsePropertiesAsUserData(true);
+		Geometry geom = gjr.read(json);
+		return geom;
+	}
+
 	void performCadCalc(SvReader svr, Long objectId, DbDataObject type) throws SvException, ParseException {
 		try (SvGeometry svg = new SvGeometry(svr); SvWriter svw = new SvWriter(svr)) {
-			svr.setIncludeGeometries(true);
 			DbDataObject dbo = svr.getObjectById(objectId, type, null);
 			Geometry parcel = SvGeometry.getGeometry(dbo);
-			String layer = SvConf.getParam("CAD_PARCEL_LAYER_NAME");
-			String epsg = SvConf.getParam("CAD_PARCEL_LAYER_EPSG");
-			String wfsUrl = SvConf.getParam("CAD_PARCEL_LAYER_WFS");
-			String wfsUser = SvConf.getParam("CAD_PARCEL_LAYER_WFS_U");
-			String wfsPass = SvConf.getParam("CAD_PARCEL_LAYER_WFS_P");
-			String sshProxy = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY");
-			String sshProxyUser = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_USER");
-			String sshProxyPass = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_PASS");
-			WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
-			if (log4j.isDebugEnabled())
-				log4j.debug("WFS request:" + wfs.buildWfsRequestUrl(parcel.getEnvelopeInternal()));
-			String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
-			String json = wfs.getWFSResponse(parcel.getEnvelopeInternal(), sshProxy, sshProxyUser, sshProxyPass,
-					wfsUser, wfsPass, extParams);
-			GeometryFactory gf = SvUtil.sdiFactory;
-			GeoJsonReader gjr = new GeoJsonReader(gf);
-			gjr.setUseFeatureType(true);
-			gjr.setUsePropertiesAsUserData(true);
-
-			Geometry geom = gjr.read(json);
-			svg.setAutoCommit(false);
-			svw.setAutoCommit(false);
-			svg.setAllowNullGeometry(true);
-
 			DbDataArray cadParcels = svr.getObjectsByParentId(dbo.getParentId(), SvCore.getTypeIdByName("CAD_PARCEL"),
 					null);
+			Map<String, List<String>> cadMap = performFarmCadMapping(cadParcels);
 			DbDataArray lpCadIntersections = svr.getObjectsByParentId(dbo.getParentId(),
 					SvCore.getTypeIdByName("LP_CAD_INTERSECTIONS"), null);
 			DbDataArray intersections = new DbDataArray();
 
-			for (int i = 0; i < geom.getNumGeometries(); i++) {
-				Geometry g = geom.getGeometryN(i);
-				DbDataObject intersection = calculateIntersection(g, dbo, cadParcels);
+			for (Entry<String, List<String>> e : cadMap.entrySet()) {
+				String[] dp_cc = e.getKey().split(":");
+				Geometry geom = performMunicipalityCadCalc(dp_cc[0], dp_cc[1], e.getValue());
+				for (int i = 0; i < geom.getNumGeometries(); i++) {
+					Geometry g = geom.getGeometryN(i);
+					DbDataObject intersection = calculateIntersection(g, dbo, cadParcels);
 
-				if (intersection != null) {
-					boolean existingFound = false;
-					Iterator<DbDataObject> lpCadIt = lpCadIntersections.getItems().iterator();
-					while (lpCadIt.hasNext()) {
-						DbDataObject existing = lpCadIt.next();
-						if (intersection.getVal("EXTERNAL_ID").equals(existing.getVal("EXTERNAL_ID"))) {
-							existingFound = true;
-							if (!intersection.getVal("AREA").equals(existing.getVal("AREA"))) {
-								intersection.setObjectId(existing.getObjectId());
-								intersection.setPkid(existing.getPkid());
-								intersections.addDataItem(intersection);
+					if (intersection != null) {
+						boolean existingFound = false;
+						Iterator<DbDataObject> lpCadIt = lpCadIntersections.getItems().iterator();
+						while (lpCadIt.hasNext()) {
+							DbDataObject existing = lpCadIt.next();
+							if (intersection.getVal("EXTERNAL_ID").equals(existing.getVal("EXTERNAL_ID"))) {
+								existingFound = true;
+								if (!intersection.getVal("AREA").equals(existing.getVal("AREA"))) {
+									intersection.setObjectId(existing.getObjectId());
+									intersection.setPkid(existing.getPkid());
+									intersections.addDataItem(intersection);
+								}
+								lpCadIt.remove();
+								break;
 							}
-							lpCadIt.remove();
-							break;
-						}
 
+						}
+						if (!existingFound)
+							intersections.addDataItem(intersection);
 					}
-					if (!existingFound)
-						intersections.addDataItem(intersection);
 				}
 			}
 			// add new or updated

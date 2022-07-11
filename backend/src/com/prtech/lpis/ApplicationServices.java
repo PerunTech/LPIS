@@ -151,7 +151,10 @@ public class ApplicationServices {
 				Map<String, Object> js = (Map<String, Object>) gg.getUserData();
 				if (js.get("ODDELENIE").toString().equals(sectorId.toString())) {
 					JsonObject jo = new JsonObject();
-					jo.addProperty(js.get("SIFRA1").toString(), js.get("NAZIV").toString());
+					String koId = js.get("SIFRA1").toString();
+					koId = koId.substring(2);
+					koId = Integer.toString(Integer.parseInt(koId));
+					jo.addProperty(koId, js.get("NAZIV").toString());
 					ja.add(jo);
 				}
 
@@ -186,7 +189,6 @@ public class ApplicationServices {
 			WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
 			ArrayList<String> strl = new ArrayList<String>();
 			strl.add(parcelId);
-			koId = koId.substring(2);
 			String filter = wfs.buildOgcFilter(sectorId.toString(), koId.toString(), strl);
 			System.out.println("WFS request:" + wfs.buildWfsRequestUrlFilter(filter));
 			String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
