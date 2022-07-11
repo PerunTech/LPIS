@@ -34,7 +34,7 @@ const cadSectors = {
 export const cadastreSearchFormSchema = cadMunicipalities => {
   let requiredFields = ['CADASTRAL_SECTOR']
   if (cadMunicipalities) {
-    requiredFields.push('CADASTRAL_MUNICIPALITY')
+    requiredFields.push('CADASTRAL_MUNICIPALITY', 'PARCEL_ID')
   }
   return {
     schema: {
@@ -66,5 +66,16 @@ export const cadastreSearchFormSchema = cadMunicipalities => {
     uiSchema: {
 
     }
+  }
+}
+
+export const cadParcelConfig = {
+  pathOptions: {
+    weight: 2.0,
+    stroke: true,
+    color: '#C82D32',
+    fillColor: '#C82D32',
+    opacity: 0.9,
+    fillOpacity: 0.25
   }
 }
