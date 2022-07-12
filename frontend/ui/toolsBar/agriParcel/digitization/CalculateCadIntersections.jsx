@@ -4,40 +4,39 @@ import { calculateCadIntersectionsMsg } from '../Config';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
 import { getCadIntersections } from './CadIntersections';
-import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
+import { getFarmMapAssets, bufferToString, isJSON } from '../../../Util';
 
-const { Map, store, http } = core;
+const { store, http } = core;
 const { Icon } = ui;
 const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'calculateCadIntersections';
 const _iconId = 'area';
 
-const _CalculateCadIntersections = ({ processID, agriParcels }) => {
-  const [{ layer, loading, isGuided }, setState] = useReducer((currState, update) =>
+const _CalculateCadIntersections = ({ processID, agriParcels, farmObjId }) => {
+  const [{ loading, isGuided }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { layer: {}, loading: false, isGuided: false });
+    { loading: false, isGuided: false });
 
-  const disable = () => {
+  const disable = (getIntersections = false) => {
     if (loading) {
       alertUser(true, 'info', 'Процесот е во тек')
     } else {
-      Map.off('click');
       // Reset state, internal and application-wide.
       setState({ layer: {}, loading: false, isGuided: false });
       store.dispatch({ processID: '' });
-      // Remove the working layer & get/refresh the assets
-      layer.removeFrom && layer.removeFrom(Map);
-      getFarmMapAssets();
-      getCadIntersections();
+      if (getIntersections) {
+        // Get/refresh the assets
+        getCadIntersections();
+        getFarmMapAssets();
+      }
     }
   }
 
-  const initCalculation = layer => {
-    setState({ loading: true, layer })
-    const parcelId = layer.feature.id
+  const initCalculation = () => {
+    setState({ loading: true })
     http.call('calculate-cad-intersections', {
-      url: `/lpis/intersect/{init.token}/AGRI_PARCEL/${parcelId}`,
+      url: `/lpis/intersect/{init.token}/FARMER/${farmObjId}`,
       method: 'get',
       responseType: 'arraybuffer'
     }).then(response => {
@@ -49,7 +48,7 @@ const _CalculateCadIntersections = ({ processID, agriParcels }) => {
         const title = parsedResponse?.title || ''
         const msg = parsedResponse?.message || ''
         alertUser(true, type, title, msg)
-        disable()
+        disable(true)
       }
     }).catch(error => {
       setState({ loading: false })
@@ -67,20 +66,11 @@ const _CalculateCadIntersections = ({ processID, agriParcels }) => {
     })
   }
 
-  const _setBlockEvents = (layer, agriParcels) => {
-    layer.on('mouseover', function () { this.setStyle({ color: '#eed000', fillColor: '#000000' }) })
-      .on('mouseout', function () { this.setStyle({ color: '#3399ff', fillColor: '#3388ff' }) })
-      .on('click', function () {
-        initCalculation(this);
-        agriParcels.forEach(ap => ap.off('mouseover mouseout click'))
-      }).bringToFront();
-  }
-
   const enable = () => {
     if (agriParcels.length > 0) {
-      agriParcels.forEach(ap => _setBlockEvents(ap, agriParcels))
       store.dispatch({ processID: _id });
       setState({ isGuided: true })
+      initCalculation()
     } else {
       alertUser(true,
         'warning',
@@ -91,7 +81,7 @@ const _CalculateCadIntersections = ({ processID, agriParcels }) => {
   }
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} msg={calculateCadIntersectionsMsg} title='Пресметај пресеци' />
+    return <Guidance id={_id} disable={disable} msg={calculateCadIntersectionsMsg} title='Пресметување пресеци' />
   }
 
   const renderComponent = () => {
@@ -113,5 +103,5 @@ const _CalculateCadIntersections = ({ processID, agriParcels }) => {
 }
 
 export const CalculateCadIntersections = core.connect(state => ({
-  processID: state.app.processID, agriParcels: state.farmRegistry?.agriParcels
+  processID: state.app.processID, agriParcels: state.farmRegistry?.agriParcels, farmObjId: state.farmRegistry?.farmObjId
 }))(_CalculateCadIntersections)

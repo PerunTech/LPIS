@@ -552,7 +552,7 @@ export const copyAPMsg = [
 ]
 
 export const calculateCadIntersectionsMsg = [
-    'Одберете земјоделска парцела на мапата за која сакате да пресметате пресеци.'
+    'Во тек е процесот за пресметатување на пресеци.'
 ]
 
 export const cutAPMsg = [
