@@ -207,7 +207,7 @@ public class ConfigTest {
 			DbDataObject type = SvCore.getDbtByName("AGRI_PARCEL");
 
 			AgriParcel as = new AgriParcel ();
-			as.performCadCalc(svr, 656559968L, type);
+			as.performCadCalc(svr, 656559968L, type.getObjectId());
 		}
 
 	}
