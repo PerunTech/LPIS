@@ -27,8 +27,8 @@ const _CalculateCadIntersections = ({ processID, agriParcels, farmObjId }) => {
       store.dispatch({ processID: '' });
       if (getIntersections) {
         // Get/refresh the assets
-        getCadIntersections();
         getFarmMapAssets();
+        getCadIntersections();
       }
     }
   }
