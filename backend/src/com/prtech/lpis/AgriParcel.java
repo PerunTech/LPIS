@@ -316,52 +316,57 @@ public class AgriParcel {
 		return updatedParcels;
 	}
 
-	DbDataObject calculateIntersection(Geometry g, DbDataObject dbo, DbDataArray cadParcels) {
-		Geometry parcel = SvGeometry.getGeometry(dbo);
+	DbDataObject calculateIntersection(Geometry g, DbDataArray agriParcels) {
+
 		Geometry geom_intersect = null;
 		DbDataObject intersection = null;
 
 		try {
-			if (g.intersects(parcel)) {
-				geom_intersect = parcel.intersection(g);
-				Map<String, Object> usermap = (Map<String, Object>) g.getUserData();
-				DbDataObject cadParcel = null;
-				// iterate the cadastral parcels looking for a match
-				for (DbDataObject dbc : cadParcels.getItems()) {
-					String dp = (String) dbc.getVal("DEPARTMENT_CODE");
-					String cc = (String) dbc.getVal("NATIONAL_CODE");
-					String pc = (String) dbc.getVal("PARCEL_ID");
-					if (dbc.getVal("SUB") != null && dbc.getVal("SUB") != " ")
-						pc = pc + "/" + dbc.getVal("SUB");
-					if (usermap.get("GR_COD_CC").toString().equals(cc) && usermap.get("GR_COD_DP").toString().equals(dp)
-							&& usermap.get("GR_PARCEL").toString().equals(pc)) {
-						cadParcel = dbc;
+			for (DbDataObject dbc : agriParcels.getItems()) {
+				Geometry parcel = SvGeometry.getGeometry(dbc);
+				if (g.intersects(parcel)) {
+					try {
+						geom_intersect = parcel.intersection(g);
+					} catch (Exception e) {
+						log4j.error("Agri Parcel " + dbc.getVal("OLD_ID") + " has bad cadastral intersection with:"
+								+ g.toString(), e);
+
 					}
 
-				}
-				// if we have cadastral match, save the intersection
-				if (cadParcel != null) {
+					Map<String, Object> usermap = (Map<String, Object>) g.getUserData();
+
 					intersection = new DbDataObject(SvCore.getTypeIdByName("LP_CAD_INTERSECTIONS"));
 					geom_intersect = com.prtech.spatial.Util.verifyGeometryType(intersection, geom_intersect);
-					intersection.setParentId(dbo.getParentId());
+					intersection.setParentId(dbc.getParentId());
 					SvGeometry.setGeometry(intersection, geom_intersect);
 					intersection.setVal("EXTERNAL_ID", usermap.get("ID_PARC"));
 					intersection.setVal("GR_COD_CC", usermap.get("GR_COD_CC"));
 					intersection.setVal("GR_COD_DP", usermap.get("GR_COD_DP"));
 					intersection.setVal("GR_PARCEL", usermap.get("GR_PARCEL").toString());
-					intersection.setVal("LAND_PARCEL_ID", dbo.getVal("OLD_ID"));
-					intersection.setVal("PARCEL_ID", dbo.getObjectId());
+					intersection.setVal("LAND_PARCEL_ID", dbc.getVal("OLD_ID"));
+					intersection.setVal("PARCEL_ID", dbc.getObjectId());
 					intersection.setVal("CAD_AREA", usermap.get("AREA"));
-					intersection.setVal("FR_AREA", cadParcel.getVal("AREA"));
+					intersection.setVal("FR_AREA", usermap.get("AREA"));
 					intersection.setVal("AREA", Math.round(geom_intersect.getArea()));
-					intersection.setVal("MUNICIPALITY_NAME", cadParcel.getVal("MUNICIPALITY_NAME"));
+					Long sector = (Long) usermap.get("GR_COD_DP");
+					List<Geometry> munics = ApplicationServices.getCadMunicipalities(sector.intValue());
+					for (Geometry gg : munics) {
+						Map<String, Object> usermapItem = (Map<String, Object>) gg.getUserData();
+						String koId = usermapItem.get("SIFRA1").toString();
+						koId = koId.substring(2);
+
+						if (usermap.get("GR_COD_CC").equals(Long.parseLong(koId))) {
+							intersection.setVal("MUNICIPALITY_NAME", usermapItem.get("NAZIV").toString());
+							break;
+						}
+					}
 
 				}
 			}
 			// intersections.addDataItem(intersection);
 
 		} catch (Exception e) {
-			log4j.error("Parcel: " + dbo.getVal("OLD_ID") + " has bad cadastral intersection with:" + g.toString(), e);
+			log4j.error("Agri Parcels have bad cadastral intersection with:" + g.toString(), e);
 
 		}
 		return intersection;
@@ -373,6 +378,9 @@ public class AgriParcel {
 			String dp = (String) dbc.getVal("DEPARTMENT_CODE");
 			String cc = (String) dbc.getVal("NATIONAL_CODE");
 			String pc = (String) dbc.getVal("PARCEL_ID");
+			if (dbc.getVal("SUB") != null && !dbc.getVal("SUB").equals(" ")) {
+				pc = pc + "/" + dbc.getVal("SUB");
+			}
 			String key = dp + ":" + cc;
 			List<String> parcs = map.get(key);
 			if (parcs == null) {
@@ -411,14 +419,13 @@ public class AgriParcel {
 		return geom;
 	}
 
-	void performCadCalc(SvReader svr, Long objectId, DbDataObject type) throws SvException, ParseException {
+	void performCadCalc(SvReader svr, Long objectId, Long type) throws SvException, ParseException {
 		try (SvGeometry svg = new SvGeometry(svr); SvWriter svw = new SvWriter(svr)) {
-			DbDataObject dbo = svr.getObjectById(objectId, type, null);
-			Geometry parcel = SvGeometry.getGeometry(dbo);
-			DbDataArray cadParcels = svr.getObjectsByParentId(dbo.getParentId(), SvCore.getTypeIdByName("CAD_PARCEL"),
-					null);
+			DbDataArray cadParcels = svr.getObjectsByParentId(objectId, type, null);
+			svr.setIncludeGeometries(true);
+			DbDataArray agriParcels = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
 			Map<String, List<String>> cadMap = performFarmCadMapping(cadParcels);
-			DbDataArray lpCadIntersections = svr.getObjectsByParentId(dbo.getParentId(),
+			DbDataArray lpCadIntersections = svr.getObjectsByParentId(objectId,
 					SvCore.getTypeIdByName("LP_CAD_INTERSECTIONS"), null);
 			DbDataArray intersections = new DbDataArray();
 
@@ -427,7 +434,7 @@ public class AgriParcel {
 				Geometry geom = performMunicipalityCadCalc(dp_cc[0], dp_cc[1], e.getValue());
 				for (int i = 0; i < geom.getNumGeometries(); i++) {
 					Geometry g = geom.getGeometryN(i);
-					DbDataObject intersection = calculateIntersection(g, dbo, cadParcels);
+					DbDataObject intersection = calculateIntersection(g, agriParcels);
 
 					if (intersection != null) {
 						boolean existingFound = false;

@@ -82,6 +82,7 @@ import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 @Path("/lpis")
 public class ApplicationServices {
 	static Geometry municipalities = null;
+	static Map<Integer, ArrayList<Geometry>> municipalityMap = new HashMap<Integer, ArrayList<Geometry>>();
 	static int minimumAgriParcelSize;
 	static String externalIdSequence;
 
@@ -104,6 +105,27 @@ public class ApplicationServices {
 			log4j.error("No external sequence configured", e);
 			externalIdSequence = CC.NO_SEQUENCE;
 		}
+	}
+
+	static ArrayList<Geometry> getCadMunicipalities(Integer sector) throws SvException, ParseException {
+		ArrayList<Geometry> munics = municipalityMap.get(sector);
+		if (munics == null) {
+			synchronized (ApplicationServices.class) {
+				munics = new ArrayList<Geometry>();
+				municipalityMap.putIfAbsent(sector, munics);
+				Geometry geom = getCadMunicipalities();
+				for (int i = 0; i < geom.getNumGeometries(); i++) {
+					Geometry gg = geom.getGeometryN(i);
+					Map<String, Object> js = (Map<String, Object>) gg.getUserData();
+					Integer tmpSector = Integer.parseInt(js.get("ODDELENIE").toString());
+					if (tmpSector.equals(sector)) {
+						munics.add(gg);
+					}
+
+				}
+			}
+		}
+		return munics;
 	}
 
 	static Geometry getCadMunicipalities() throws SvException, ParseException {
@@ -144,19 +166,16 @@ public class ApplicationServices {
 		ResponseHandler jrh = new ResponseHandler();
 		JsonArray ja = new JsonArray();
 		try (SvGeometry svg = new SvGeometry(token)) {
-			Geometry geom = ApplicationServices.getCadMunicipalities();
+			List<Geometry> geom = ApplicationServices.getCadMunicipalities(sectorId);
 
-			for (int i = 0; i < geom.getNumGeometries(); i++) {
-				Geometry gg = geom.getGeometryN(i);
+			for (Geometry gg : geom) {
 				Map<String, Object> js = (Map<String, Object>) gg.getUserData();
-				if (js.get("ODDELENIE").toString().equals(sectorId.toString())) {
-					JsonObject jo = new JsonObject();
-					String koId = js.get("SIFRA1").toString();
-					koId = koId.substring(2);
-					koId = Integer.toString(Integer.parseInt(koId));
-					jo.addProperty(koId, js.get("NAZIV").toString());
-					ja.add(jo);
-				}
+				JsonObject jo = new JsonObject();
+				String koId = js.get("SIFRA1").toString();
+				koId = koId.substring(2);
+				koId = Integer.toString(Integer.parseInt(koId));
+				jo.addProperty(koId, js.get("NAZIV").toString());
+				ja.add(jo);
 
 			}
 
@@ -332,9 +351,9 @@ public class ApplicationServices {
 		Response response = null;
 		try (SvReader svr = new SvReader(token)) {
 			lock = SvLock.getDistributedLock("CAD-INTERSECT-" + objectId.toString());
-
+			DbDataObject farm = svr.getObjectById(objectId, SvCore.getTypeIdByName(CC.FARMER), null);
 			if (lock != 0) {
-				(new AgriParcel()).performCadCalc(svr, objectId, type);
+				(new AgriParcel()).performCadCalc(svr, farm.getObjectId(), SvCore.getTypeIdByName("CAD_PARCEL"));
 				ResponseHandler jrh = new ResponseHandler();
 				jrh.create(MessageType.SUCCESS, "lpis.intersections.calculated", "lpis.intersections.calculated",
 						new JsonObject());
