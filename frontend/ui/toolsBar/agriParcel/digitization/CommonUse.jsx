@@ -39,6 +39,8 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
           const formData = { commonUseType: 'CLAIMED_RATIO', value, objectId: res.data.object_id }
           setState({ data: formData, isGuided: false, showForm: true, selectedParcel })
         }
+      } else {
+        setState({ isGuided: false, showForm: true, selectedParcel })
       }
     }).catch(err => {
       console.error(err)
