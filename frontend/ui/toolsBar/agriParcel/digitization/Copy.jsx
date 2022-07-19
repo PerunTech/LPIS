@@ -1,5 +1,5 @@
 import { React, Loading, elements } from 'perun-core';
-import { core, ui, data } from '../../../../Spatial';
+import { core, ui, data, tools, config as cfg } from '../../../../Spatial';
 import { config, copyAPMsg } from '../Config';
 import { getFarmMapAssets, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
@@ -7,25 +7,52 @@ import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
 
+const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { Icon, DrawActions } = ui;
+const { edit } = tools;
 const { alertUser } = elements;
 const { useReducer } = React;
+
 const _id = 'copy';
+const _layerGroup = factory.layerGroup();
 
 const _Copy = ({ processID, farmObjId, saveIsPending }) => {
     const [{ layer, initialLandCoverCode, data, X, Y, loading, showForm, isGuided }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
         { layer: {}, initialLandCoverCode: '', data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
 
+    const _editAP = () => {
+        const currZoom = Map.getZoom();
+        // This line ensures no racing codition on the current bounding box.
+        // We set view manually before calling Map.getBBox in _fetchBlocks and bbox will NOT contain a whole country.
+        Map.setView(Map.getCenter(), currZoom < MIN_DIGI_SCALE ? MIN_DIGI_SCALE : currZoom); // zoom is inverse to scale
+        _layerGroup.addTo(Map);
+    }
+
+    const _stopEditAP = () => {
+        _layerGroup.clearLayers().removeFrom(Map);
+        edit.polygon.disable();
+    }
+
+    const initEdit = layer => {
+        // Move map view on top of selected polygon.
+        Map.fitBounds(layer.getBounds());
+        // Activate edit handler on selected polygon
+        edit.polygon.enable(layer, config);
+        // Activate edit event listeners on layer.
+        layer.on('pm:edit', e => setState({ layer: e.target }));
+    }
+
     const disable = () => {
         Map.off('click');
         // Reset state, internal and application-wide.
         setState({ layer: {}, initialLandCoverCode: '', data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
-        store.dispatch({ processID: '' });
+        store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
+        _stopEditAP()
         getFarmMapAssets();
     }
 
@@ -55,6 +82,8 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
                     layer.feature.properties.parent_id = farmObjId
                     layer.feature.properties.LAND_COVER_CODE = landCoverCode
                     layer.addTo(Map);
+                    _editAP()
+                    initEdit(layer)
                     setState({ data: layer.feature.properties, layer: layer, initialLandCoverCode: landCoverCode })
                 })
             }).catch(err => {
