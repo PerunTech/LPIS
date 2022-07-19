@@ -18,6 +18,7 @@ import { CalculateCadIntersections } from './CalculateCadIntersections';
 import { CadIntersections } from './CadIntersections'
 import { PermanentCrops } from './PermanentCrops';
 import { Print } from './Print';
+import { Load } from './Load';
 
 const { ButtonGroup, Divider } = ui;
 
@@ -34,6 +35,8 @@ export const Digitization = () => {
         <Fill />
         <Divider />
         <Refresh />
+        <Divider />
+        <Load />
         <Divider />
         <Assign />
         <CommonUse />

@@ -555,6 +555,10 @@ export const calculateCadIntersectionsMsg = [
     'Во тек е процесот за пресметатување на пресеци.'
 ]
 
+export const loadParcelMsg = [
+    'Одберете земјоделска парцела на мапата која сакате да биде вчитана.'
+]
+
 export const cutAPMsg = [
     'Во изработка',
     ''

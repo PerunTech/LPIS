@@ -13,6 +13,6 @@ export const Refresh = () => {
 
   return <ProcessButton onClick={onClick} title='Освежи податоци'>
     <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Освежи податоци</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>Освежи</span>
   </ProcessButton>
 }
