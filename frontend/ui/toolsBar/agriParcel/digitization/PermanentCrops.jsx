@@ -269,7 +269,7 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
 
   return <ProcessButton id={_id} onClick={enable} >
     <Icon name={_iconId} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Долгогодишни култури</span>
+    <span style={{ display: 'block', marginTop: '5px' }} title='Долгогодишни култури'>Долгогод. култури</span>
     {processID === _id && renderComponent()}
     {loading && <Loading />}
   </ProcessButton>;

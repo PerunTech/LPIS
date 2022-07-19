@@ -106,14 +106,16 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
     })
   };
 
-  const disable = () => {
+  const disable = reloadData => {
     // Remove the Map click event listener
     Map.off('click');
     // Reset state, internal and application-wide.
     setState({ data: {}, loading: false, isGuided: false, showForm: false, selectedParcel: {} });
     store.dispatch({ processID: '' });
-    // Reload the data
-    getFarmMapAssets();
+    if (reloadData) {
+      // Reload the data
+      getFarmMapAssets();
+    }
   };
 
   const submitCommonUse = formData => {
@@ -124,7 +126,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
     http.call(_id, { url, method: 'post', data: formData }).then(res => {
       const responseType = res.data.type || 'INFO'
       const labelCode = res.data.label_code || 'Успешно додадена заедничка употреба'
-      alertUser(true, responseType.toLowerCase(), labelCode, '', () => disable())
+      alertUser(true, responseType.toLowerCase(), labelCode, '', () => disable(true))
     }).catch(err => {
       const { response } = err
       let message = ''
@@ -181,7 +183,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
   return (
     <ProcessButton id={_id} onClick={enable}>
       <Icon name={_iconId} size='30px' />
-      <span style={{ display: "block", marginTop: '5px' }}>Заедничка употреба</span>
+      <span style={{ display: "block", marginTop: '5px' }} title='Заедничка употреба'>Заеднич. употреба</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>
