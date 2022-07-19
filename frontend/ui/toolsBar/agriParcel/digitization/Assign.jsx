@@ -21,14 +21,16 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
     ({ ...currState, ...update }),
     { layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
 
-  const disable = () => {
+  const disable = reloadData => {
     Map.off('click');
     // Reset state, internal and application-wide.
     setState({ layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
     store.dispatch({ processID: '' });
     // We remove the working geometry, save process will add the result.
     layer.removeFrom && layer.removeFrom(Map);
-    getFarmMapAssets();
+    if (reloadData) {
+      getFarmMapAssets();
+    }
   }
 
   const enable = () => {
@@ -47,7 +49,7 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
         // data: JSON.stringify(factory.GeoJSON.fromLayer(e.layer)),
       }).then(response => {
         setState({ loading: false, isGuided: false, showForm: false })
-        alertUser(true, 'success', 'Успешно назначено стопанство', '', () => disable())
+        alertUser(true, 'success', 'Успешно назначено стопанство', '', () => disable(true))
         const proto = protobuf(response);
         const buff = geobuf.decode(proto);
         const geojson = factory.geoJSON(buff, config.pathOptions);
@@ -119,7 +121,7 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
       OBJECT_ID: 0,
       parent_id: farmObjId,
       GEOM: factory.GeoJSON.fromLayer(layer)
-    }), disable);
+    }), () => disable(true));
   }
 
   const handleOverlap = (translatedError, x, y) => {
@@ -170,7 +172,7 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
 
   return <ProcessButton id={_id} onClick={enable} >
     <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Назначи стопанство</span>
+    <span style={{ display: 'block', marginTop: '5px' }} title='Назначи стопанство'>Назначи стопан.</span>
     {processID === _id && renderComponent()}
     {(loading || saveIsPending) && <Loading />}
   </ProcessButton>;
