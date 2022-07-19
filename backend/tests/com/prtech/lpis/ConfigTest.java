@@ -276,7 +276,7 @@ public class ConfigTest {
 		// digit ", i > 1);
 	}
 
-	@Test
+	//@Test
 	public void testMerge() throws SvException {
 		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
 		Gson g = new Gson();

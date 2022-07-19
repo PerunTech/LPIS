@@ -60,8 +60,13 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 
 public class AgriParcel {
+	private Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
 
 	static final Logger log4j = SvConf.getLogger(AgriParcel.class);
+
+	public AgriParcel() throws SvException {
+
+	}
 
 	private Long getExternalSequence(SvCore svc) throws SvException {
 		Long nextId = null;
@@ -106,12 +111,13 @@ public class AgriParcel {
 
 				if (!mergedObjects.contains(g.getUserData())) {
 					result = result.union(g);
-					if(!result.isValid())
+					if (!result.isValid())
 						throw (new SvException(CC.MERGE_GEOM_INVALID, svCONST.systemUser, null, g));
 					mergedObjects.add((DbDataObject) g.getUserData());
 				}
 			}
 		}
+		result = svg.fixPolygonSpikes(result, maxAngle);
 		result.setUserData(resultDbo);
 		return result;
 	}
