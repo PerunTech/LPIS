@@ -52,6 +52,7 @@ import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
@@ -179,6 +180,7 @@ public class AgriParcel {
 			DbDataArray result = new DbDataArray();
 			if (opType.equals(CC.CUTOFF)) {
 				geom = svg.cutLayerFromGeom(geom, typeId);
+				geom = ensurePolygon(geom);
 				SvGeometry.setGeometry(ap, geom);
 				if (ap.getVal(CC.HAS_OVERLAP) != null && (boolean) ap.getVal(CC.HAS_OVERLAP))
 					result.setItems(removeOverlaps(svg, ap).getItems());
@@ -207,6 +209,21 @@ public class AgriParcel {
 			svg.saveGeometry(ap);
 			svg.dbCommit();
 		}
+	}
+
+	private Geometry ensurePolygon(Geometry geom) {
+		Geometry bestCandidate = geom instanceof Polygon ? geom : null;
+		if (geom instanceof GeometryCollection) {
+			for (int i = 0; i < geom.getNumGeometries(); i++) {
+				Geometry g = geom.getGeometryN(i);
+				if (g instanceof Polygon)
+					if (bestCandidate == null || (bestCandidate != null && bestCandidate.getArea() < g.getArea()))
+						bestCandidate = g;
+
+			}
+		}
+		return bestCandidate;
+
 	}
 
 	private Geometry preventFarmOverlap(SvReader svr, DbDataObject parcel) throws SvException {
