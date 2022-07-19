@@ -49,6 +49,7 @@ public class CC {
 	public static final String WFS_NOT_CONFIGURED = "lpis.error.wfs.notconfigured";
 	public static final String NO_SEQUENCE = "NO_SEQUENCE";
 	public static final String EXTERNAL_SEQ_NAME = "EXTERNAL_SEQ_NAME";
+	public static final String MERGE_GEOM_INVALID = "MERGE_GEOM_INVALID";
 	
 
 }

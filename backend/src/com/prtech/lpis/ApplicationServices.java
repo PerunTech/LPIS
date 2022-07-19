@@ -633,6 +633,31 @@ public class ApplicationServices {
 	}
 
 	@POST
+	@Path("/geometry/merge/confirm/{token}/{objectName}/{parentId}")
+	@Produces("application/pbf")
+	public Response mergeGeometryConfirm(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try (SvGeometry svg = new SvGeometry(token)) {
+			LineString lineString = (LineString) Util.getInputGeometry(formVals, null);
+
+			result.addAll(new AgriParcel().mergeGeometryConfirm(svg, objectName, parentId, lineString));
+		} catch (SvException e) {
+			ResponseHandler jrh = new ResponseHandler();
+			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
+		}
+
+		StreamingOutput pbfStream = new StreamingOutput() {
+			public void write(OutputStream stream) throws IOException {
+				GeobufEncoder enc = new GeobufEncoder(stream, ApplicationServices.precisionScale);
+				enc.writeSvGeometry(result);
+			};
+		};
+		return Response.ok(pbfStream, "application/pbf").build();
+	}
+
+	@POST
 	@Path("/overlap/farm/{token}/{farmId}/{objectName}/{x}/{y}")
 	@Produces("application/pbf")
 	public Response overlapFarm(@PathParam("token") final String token, @PathParam("farmId") final Long farmId,

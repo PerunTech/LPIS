@@ -1,5 +1,7 @@
 package com.prtech.lpis;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,18 +9,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.google.gson.JsonObject;
+import com.prtech.spatial.SC;
 import com.prtech.spatial.Util;
 import com.prtech.spatial.geobuf.GeobufEncoder;
 import com.prtech.svarog.Sv;
@@ -30,14 +40,20 @@ import com.prtech.svarog.SvParameter;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
+import com.prtech.svarog.svCONST;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_common.DbSearchCriterion;
 import com.prtech.svarog_common.DbSearchExpression;
+import com.prtech.svarog_common.ResponseHandler;
+import com.prtech.svarog_common.SvCharId;
 import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.util.GeometryExtracter;
 import com.vividsolutions.jts.io.ParseException;
@@ -67,6 +83,54 @@ public class AgriParcel {
 				SvCore.closeResource(ps, svc.getInstanceUser());
 		}
 		return nextId;
+	}
+
+	public Geometry mergeParcels(SvGeometry svg, List<Point> points, Long layerTypeId, List<DbDataObject> mergedObjects,
+			boolean allowMultiGeometries, SvCharId filterFieldName, Object filterValue, boolean reverseFilter)
+			throws SvException {
+
+		if (points.size() < 2)
+			throw (new SvException(Sv.Exceptions.SDI_MERGE_REQUIRES_2PLUS, svCONST.systemUser, null, points));
+
+		Geometry result = svg.getRelatedGeometries(points.get(0), layerTypeId, SDIRelation.INTERSECTS, filterFieldName,
+				filterValue, reverseFilter, false).iterator().next();
+		DbDataObject resultDbo = (DbDataObject) result.getUserData();
+		for (int i = 1; i < points.size(); i++) {
+			Iterator<Geometry> iterator = svg.getRelatedGeometries(points.get(i), layerTypeId, SDIRelation.INTERSECTS,
+					filterFieldName, filterValue, reverseFilter, false).iterator();
+
+			while (iterator.hasNext()) {
+				Geometry g = iterator.next();
+				if (result.disjoint(g))
+					throw (new SvException(Sv.Exceptions.SDI_MERGE_GEOM_DISJOINT, svCONST.systemUser, null, g));
+
+				if (!mergedObjects.contains(g.getUserData())) {
+					result = result.union(g);
+					if(!result.isValid())
+						throw (new SvException(CC.MERGE_GEOM_INVALID, svCONST.systemUser, null, g));
+					mergedObjects.add((DbDataObject) g.getUserData());
+				}
+			}
+		}
+		result.setUserData(resultDbo);
+		return result;
+	}
+
+	public Collection<Geometry> mergeGeometryConfirm(SvGeometry svg, @PathParam("objectName") final String objectName,
+			@PathParam("parentId") final Long parentId, LineString lineString) throws SvException {
+		Set<Geometry> result = new HashSet<Geometry>();
+		ArrayList<Point> p = new ArrayList<>();
+		for (Coordinate c : lineString.getCoordinates())
+			p.add(SvUtil.sdiFactory.createPoint(c));
+		Long layerTypeId = SvCore.getTypeIdByName(objectName);
+
+		List<DbDataObject> toBeDeleted = new ArrayList<DbDataObject>();
+		AgriParcel ap = new AgriParcel();
+		Geometry merge = ap.mergeParcels(svg, p, layerTypeId, toBeDeleted, false, SC.PARENT_ID, parentId, false);
+		result.add(merge);
+		svg.splitMergeGeometryDbUpdate(result, toBeDeleted, true);
+		return result;
+
 	}
 
 	public void saveAgriParcel(String token, Long objectId, Long parentId, String opType,
