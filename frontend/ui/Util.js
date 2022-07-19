@@ -132,7 +132,10 @@ const getFarmData = objectId => {
 export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
-            Map.removeLayer(layer);
+            // This is a check to skip the layers which have been manually loaded by the user using the agriParcel/digitization/Load.jsx component
+            if (!layer?.feature?.properties?.LAYER_DESCRIPTOR) {
+                Map.removeLayer(layer);
+            }
         }
     });
 
