@@ -42,6 +42,8 @@ export const decodeResponse = (response) => {
         if (decodedJSON && Object.keys(decodedJSON).length > 0) {
             if (decodedJSON.Label_Code) {
                 errorMsg = decodedJSON.Label_Code
+            } else if (decodedJSON.title) {
+                errorMsg = decodedJSON.title
             }
         }
     }
