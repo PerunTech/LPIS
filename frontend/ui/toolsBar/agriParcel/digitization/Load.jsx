@@ -29,15 +29,19 @@ const _Load = ({ processID, agriParcels }) => {
   }
 
   const removeLoadedLayers = () => {
-    Map.eachLayer(function (layer) {
-      if (!!layer.toGeoJSON) {
-        if (layer?.feature?.properties?.LAYER_DESCRIPTOR && strcmp(layer?.feature?.properties?.LAYER_DESCRIPTOR, 'LOADED_AGRI_PARCEL')) {
-          Map.removeLayer(layer);
+    if (!parcelsHaveBeenLoaded) {
+      alertUser(true, 'info', 'Не се пронајдени вчитани парцели')
+    } else {
+      Map.eachLayer(function (layer) {
+        if (!!layer.toGeoJSON) {
+          if (layer?.feature?.properties?.LAYER_DESCRIPTOR && strcmp(layer?.feature?.properties?.LAYER_DESCRIPTOR, 'LOADED_AGRI_PARCEL')) {
+            Map.removeLayer(layer);
+          }
         }
-      }
-    });
+      });
 
-    setState({ parcelsHaveBeenLoaded: false })
+      setState({ parcelsHaveBeenLoaded: false })
+    }
   }
 
   const enable = () => {
@@ -110,10 +114,10 @@ const _Load = ({ processID, agriParcels }) => {
         {processID === _id && renderComponent()}
         {loading && <Loading />}
       </ProcessButton>
-      {parcelsHaveBeenLoaded && <ProcessButton id={_secondaryId} onClick={removeLoadedLayers}>
+      <ProcessButton id={_secondaryId} onClick={removeLoadedLayers}>
         <Icon name={_secondaryIconId} size='30px' />
         <span style={{ display: "block", marginTop: '5px' }}>Отстрани</span>
-      </ProcessButton>}
+      </ProcessButton>
     </React.Fragment>
   );
 }
