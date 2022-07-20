@@ -83,8 +83,6 @@ const _Load = ({ processID, agriParcels }) => {
   const disable = () => {
     // Remove the Map click event listener
     Map.off('click');
-    // Remove the previously loaded layers
-    removeLoadedLayers()
     // Reset state, internal and application-wide.
     setState({ loading: false, isGuided: false, parcelsHaveBeenLoaded: false });
     store.dispatch({ processID: '' });
