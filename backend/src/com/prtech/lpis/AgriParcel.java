@@ -135,8 +135,42 @@ public class AgriParcel {
 		AgriParcel ap = new AgriParcel();
 		Geometry merge = ap.mergeParcels(svg, p, layerTypeId, toBeDeleted, false, SC.PARENT_ID, parentId, false);
 		result.add(merge);
-		svg.splitMergeGeometryDbUpdate(result, toBeDeleted, true);
+		splitMergeGeometryDbUpdate(svg, result, toBeDeleted, true);
 		return result;
+
+	}
+
+	/**
+	 * Method which accepts list of new geometries, which are result of merge or
+	 * split, and list of old geometries from the same operation, which should be
+	 * deleted
+	 * 
+	 * @param newGeometries     The list of resulting geometries
+	 * @param deletedGeometries The list of transformed/deleted geometries
+	 * @param autoCommit        If true, the method will commit to the database
+	 * @throws SvException Any underlying exception from the svarog core
+	 */
+	public void splitMergeGeometryDbUpdate(SvGeometry svg, Set<Geometry> newGeometries,
+			List<DbDataObject> deletedGeometries, boolean autoCommit) throws SvException {
+		try (SvWriter svw = new SvWriter(svg)) {
+			DbDataObject dbo = null;
+			// delete the others
+
+			DbDataArray dba = new DbDataArray();
+			dba.setItems((ArrayList) deletedGeometries);
+			svw.deleteObjects(dba, false, false, false);
+
+			DbDataArray newDba = new DbDataArray();
+			for (Geometry g : newGeometries) {
+				dbo = (DbDataObject) g.getUserData();
+				SvGeometry.setGeometry(dbo, g);
+				newDba.addDataItem(dbo);
+			}
+			svg.saveGeometry(newDba, true, false);
+
+			if (autoCommit)
+				svg.dbCommit();
+		}
 
 	}
 

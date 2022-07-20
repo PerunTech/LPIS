@@ -330,7 +330,8 @@ public class ApplicationServices {
 					gi.remove();
 			}
 			// TODO add calculus of overlaps
-			svg.splitMergeGeometryDbUpdate(split, toBeDeleted, false);
+
+			(new AgriParcel()).splitMergeGeometryDbUpdate(svg, split, toBeDeleted, false);
 			result.addAll(split);
 
 			svg.dbCommit();
