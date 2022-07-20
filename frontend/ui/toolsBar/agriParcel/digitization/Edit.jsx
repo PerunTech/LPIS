@@ -169,7 +169,6 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   }
 
   const onSubmit = ({ formData }) => {
-    console.log(factory.GeoJSON.fromLayer(layer))
     saveAP(JSON.stringify({
       ...data,
       ...formData,

@@ -377,7 +377,7 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
     return iconSize
   }
 
-  return rows.map(el => {
+  return rows.map((el, i) => {
     const rowData = el.feature && el.feature.properties;
     if (!rowData) return null;
 
@@ -389,7 +389,7 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
     const unit = el instanceof factory.Polygon ? 'm²' : 'm';
     const homeName = rowData.HOME_NAME || 'Не е наведено';
     return <div className='container' key={id} id={id}>
-      <ButtonGroup className={rowClassNames.join('')} style={{ marginLeft: '0.15rem' }} key={id} onClick={() => onRowClick(id)}>
+      <ButtonGroup className={rowClassNames.join('')} style={{ marginLeft: '0.15rem' }} key={`${id}_${i + 1}`} onClick={() => onRowClick(id)}>
         <Button className='fr-data-grid-column'>{rowData.OLD_ID}</Button>
         <Button className='fr-data-grid-column'>{rowData.LAND_COVER_CODE}</Button>
         <Button className='fr-data-grid-column'>{Math.round(Number(rowData.ALLOWED_AREA || rowData.AREA)) + ` ${unit}`}</Button>
