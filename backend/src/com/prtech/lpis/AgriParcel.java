@@ -150,6 +150,7 @@ public class AgriParcel {
 		}
 		svw.deleteObjects(dba, false, false, autoCommit);
 	}
+
 	/**
 	 * Method which accepts list of new geometries, which are result of merge or
 	 * split, and list of old geometries from the same operation, which should be
@@ -169,7 +170,7 @@ public class AgriParcel {
 			DbDataArray dba = new DbDataArray();
 			dba.setItems((ArrayList) deletedGeometries);
 			deleteGeometry(svw, dba, false);
-			//svw.deleteObjects(dba, false, false, false);
+			// svw.deleteObjects(dba, false, false, false);
 
 			DbDataArray newDba = new DbDataArray();
 			for (Geometry g : newGeometries) {
@@ -248,9 +249,22 @@ public class AgriParcel {
 			Util.calculateGeometryDerivatives(ap);
 			geom = svg.fixMinVertexDistance(geom,
 					SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE));
-			SvGeometry.setGeometry(ap, geom);
 
 			result.addDataItem(ap);
+			boolean hasSpikes = true;
+			// data to geom
+			double angle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
+			while (hasSpikes) {
+				try {
+					svg.testPolygonSpikes(geom, angle);
+					hasSpikes = false;
+				} catch (SvException e) {
+					if (e.getLabelCode().equals(Sv.Exceptions.SDI_SPIKE_DETECTED)) {
+						geom = svg.fixPolygonSpikes(geom, angle);
+					}
+				}
+			}
+			SvGeometry.setGeometry(ap, geom);
 			svg.saveGeometry(ap);
 			svg.dbCommit();
 		}
