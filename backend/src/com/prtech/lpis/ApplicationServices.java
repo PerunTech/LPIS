@@ -1148,7 +1148,7 @@ public class ApplicationServices {
 		final DbDataArray result = new DbDataArray();
 		try (SvReader svr = new SvReader(token)) {
 			result.setItems((new AgriParcel()).getAssetsList(svr, objectId, typeName).getItems());
-			simplify(result);
+			//simplify(result);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToSaveObject");
