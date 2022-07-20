@@ -79,7 +79,9 @@ const _Split = ({ processID, agriParcels, farmObjId }) => {
         // remove old app layers entries, will update with the new geojson set.
         stateData[id] && stateData[id].removeFrom(Map);
       })
-      alertUser(true, 'success', 'Успешно поделена земјоделска парцела', 'Добиени се ' + geojson.getLayers().length + ' нови парцели.', getFarmMapAssets)
+      const numOfNewParcels = geojson.getLayers().length
+      const msg = numOfNewParcels === 1 ? 'Добиена е една нова парцела.' : `Добиени се ${numOfNewParcels} нови парцели.`
+      alertUser(true, 'success', 'Успешно поделена земјоделска парцела', msg, getFarmMapAssets)
     }).catch(error => {
       const { response } = error
       const errorMsg = decodeResponse(response)
