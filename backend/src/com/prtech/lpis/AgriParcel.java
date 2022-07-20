@@ -59,10 +59,11 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.util.GeometryExtracter;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 public class AgriParcel {
 	private Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
-
+	private Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
 	static final Logger log4j = SvConf.getLogger(AgriParcel.class);
 
 	public AgriParcel() throws SvException {
@@ -163,7 +164,7 @@ public class AgriParcel {
 			DbDataArray newDba = new DbDataArray();
 			for (Geometry g : newGeometries) {
 				dbo = (DbDataObject) g.getUserData();
-				SvGeometry.setGeometry(dbo, g);
+				SvGeometry.setGeometry(dbo, TopologyPreservingSimplifier.simplify(g, minPointDistance));
 				newDba.addDataItem(dbo);
 			}
 			svg.saveGeometry(newDba, true, false);
