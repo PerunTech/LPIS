@@ -44,7 +44,8 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
       }
     }).catch(err => {
       console.error(err)
-      alertUser(true, 'error', 'Настана грешка', '', disable)
+      alertUser(true, 'error', 'Настана грешка', '')
+      disable()
     })
   }
 
@@ -74,11 +75,13 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
           if (parentId && Number(parentId) !== 0) {
             if (Number(parentId) !== Number(farmObjId)) {
               const title = 'Парцелата е веќе доделена на земјоделско стопанство и истата не може да се користи за Заедничка употреба'
-              alertUser(true, 'info', title, '', () => disable())
+              alertUser(true, 'info', title)
+              disable()
             } else {
               if (!strcmp(landUseCode, '200')) {
                 const title = 'Само парцели со код на употреба 200 може да се користат за заедничка употреба'
-                alertUser(true, 'warning', title, '', () => disable())
+                alertUser(true, 'warning', title)
+                disable()
               } else {
                 const title = 'Дали сакате парцелата да се промени во парцела со Заедничка употреба?'
                 const confirm = () => setState({ isGuided: false, showForm: true, selectedParcel })
@@ -87,18 +90,21 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
             }
           } else if (!strcmp(landUseCode, '200')) {
             const title = 'Само парцели со код на употреба 200 може да се користат за заедничка употреба'
-            alertUser(true, 'warning', title, '', () => disable())
+            alertUser(true, 'warning', title)
+            disable()
           } else if (hasCommonUse) {
             getCommonUse(parcelId, selectedParcel)
           } else {
             setState({ isGuided: false, showForm: true, selectedParcel })
           }
         } else {
-          alertUser(true, 'info', 'Не е избрана парцела од мапата', '', disable)
+          alertUser(true, 'info', 'Не е избрана парцела од мапата')
+          disable()
         }
       }).catch(err => {
         console.error(err)
-        alertUser(true, 'error', 'Настана грешка', '', disable)
+        alertUser(true, 'error', 'Настана грешка')
+        disable()
         setState({ loading: false, isGuided: false, showForm: false })
       })
 
@@ -126,7 +132,8 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
     http.call(_id, { url, method: 'post', data: formData }).then(res => {
       const responseType = res.data.type || 'INFO'
       const labelCode = res.data.label_code || 'Успешно додадена заедничка употреба'
-      alertUser(true, responseType.toLowerCase(), labelCode, '', () => disable(true))
+      alertUser(true, responseType.toLowerCase(), labelCode)
+      disable(true)
     }).catch(err => {
       const { response } = err
       let message = ''

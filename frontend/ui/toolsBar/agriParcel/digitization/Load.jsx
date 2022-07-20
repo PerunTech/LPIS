@@ -71,11 +71,13 @@ const _Load = ({ processID, agriParcels }) => {
           store.dispatch({ processID: '' })
           setState({ isGuided: false, parcelsHaveBeenLoaded: true })
         } else {
-          alertUser(true, 'info', 'Не е избрана парцела од мапата', '', disable)
+          alertUser(true, 'info', 'Не е избрана парцела од мапата')
+          disable()
         }
       }).catch(err => {
         console.error(err)
-        alertUser(true, 'error', 'Настана грешка', '', disable)
+        alertUser(true, 'error', 'Настана грешка')
+        disable()
         setState({ loading: false, isGuided: false, parcelsHaveBeenLoaded: false })
         store.dispatch({ processID: '' })
       })

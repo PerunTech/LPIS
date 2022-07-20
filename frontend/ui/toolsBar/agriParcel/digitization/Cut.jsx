@@ -74,11 +74,8 @@ const _Cut = ({ processID, farmObjId, saveIsPending }) => {
                 e.layer.removeFrom(Map);
                 let enc = new TextDecoder("utf-8");
                 let errmsg = enc.decode(error.response.data);
-                elements.alertUser(true,
-                    'error',
-                    'Грешка при отсекување земјоделска парцела',
-                    errmsg, disable
-                );
+                elements.alertUser(true, 'error', 'Грешка при отсекување земјоделска парцела', errmsg);
+                disable()
             })
         }
 
