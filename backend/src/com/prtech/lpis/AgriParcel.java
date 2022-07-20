@@ -264,6 +264,19 @@ public class AgriParcel {
 					}
 				}
 			}
+			geom = svg.fixMinVertexDistance(geom,
+					SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE));
+			while (hasSpikes) {
+				try {
+					svg.testPolygonSpikes(geom, angle);
+					hasSpikes = false;
+				} catch (SvException e) {
+					if (e.getLabelCode().equals(Sv.Exceptions.SDI_SPIKE_DETECTED)) {
+						geom = svg.fixPolygonSpikes(geom, angle);
+					}
+				}
+			}
+
 			SvGeometry.setGeometry(ap, geom);
 			svg.saveGeometry(ap);
 			svg.dbCommit();
