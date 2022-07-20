@@ -1,5 +1,5 @@
 import { React, Loading, elements } from 'perun-core';
-import { core, ui, tools, config as cfg } from '../../../../Spatial';
+import { core, data, ui, tools, config as cfg } from '../../../../Spatial';
 import { config, editAPMsg, permanentCropSchema } from '../Config';
 import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
@@ -9,6 +9,7 @@ import { ProcessButton } from '../../ProcessButton';
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory, http } = core;
+const { geobuf, protobuf } = data;
 const { edit } = tools;
 const { Icon, DrawActions, Button, Modal } = ui;
 const { alertUser } = elements;
@@ -32,11 +33,13 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
       setState({ isGuided: true, showForm: false, showPermanentCropForm: false, data: {}, permanentCropData: {}, layer: {}, allPermanentCrops: undefined })
       _editAP()
     } else {
-      alertUser(true,
+      alertUser(
+        true,
         'warning',
         'Не се пронајдени земјоделски парцели.',
         'Додадете земјоделски парцели пред да ја користите алатката за менување.',
-        () => disable());
+      );
+      disable()
     }
   };
 
@@ -101,6 +104,35 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
     // We set view manually before calling Map.getBBox in _fetchBlocks and bbox will NOT contain a whole country.
     Map.setView(Map.getCenter(), currZoom < MIN_DIGI_SCALE ? MIN_DIGI_SCALE : currZoom); // zoom is inverse to scale
     _layerGroup.addTo(Map);
+
+    Map.on('click', e => {
+      const p = Map.transform(e.latlng);
+      setState({ loading: true });
+      const url = `/spatial/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
+      http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
+        setState({ loading: false })
+        const data = geobuf.decode(protobuf(response));
+        const geojson = factory.geoJSON(data, config.pathOptions);
+        const layers = geojson.getLayers();
+        if (layers && Array.isArray(layers) && layers.length > 0) {
+          layers.forEach(layer => {
+            layer.addTo(Map);
+            initEdit(layer)
+          })
+        } else {
+          alertUser(true, 'info', 'Не е избрана парцела од мапата')
+          disable()
+        }
+      }).catch(err => {
+        console.error(err)
+        alertUser(true, 'error', 'Настана грешка')
+        disable()
+        setState({ loading: false, isGuided: false })
+        store.dispatch({ processID: '' })
+      })
+
+      Map.off('click')
+    })
   }
 
   const _stopEditAP = () => {
@@ -112,7 +144,8 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
     layer.on('mouseover', function () { this.setStyle({ color: '#eed000', fillColor: '#000000' }) })
       .on('mouseout', function () { this.setStyle({ color: '#3399ff', fillColor: '#3388ff' }) })
       .on('click', function () {
-        initEdit(this);
+        // This will remove the initial simplified layer from the map and the editable one will be fetched via a WS call
+        this.removeFrom(Map)
         agriParcels.forEach(ap => ap.off('mouseover mouseout click'))
       }).bringToFront();
   }
