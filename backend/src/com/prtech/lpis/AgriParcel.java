@@ -266,6 +266,7 @@ public class AgriParcel {
 			}
 			geom = svg.fixMinVertexDistance(geom,
 					SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE));
+			hasSpikes = true;
 			while (hasSpikes) {
 				try {
 					svg.testPolygonSpikes(geom, angle);
