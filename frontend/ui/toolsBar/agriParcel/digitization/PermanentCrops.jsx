@@ -56,7 +56,8 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
       const title = 'Долгогодишни култури може да се додадат само за следниве употреби на земјиште:'
       const msgOne = 'Долгогодишни култури (траен насад), Лозов насад, Овоштарник, Маслинов насад, Овошен насад'
       const msgTwo = ', Јаткасто овошје, Растенија со брзо растечка маса, Мешани трајни насади'
-      alertUser(true, 'warning', title, msgOne + msgTwo, disable)
+      alertUser(true, 'warning', title, msgOne + msgTwo)
+      disable()
     }
   }
 
@@ -75,11 +76,13 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
       store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
       setState({ isGuided: true, showForm: false, data: {}, allPermanentCrops: undefined })
     } else {
-      alertUser(true,
+      alertUser(
+        true,
         'warning',
         'Не се пронајдени земјоделски парцели.',
-        'Додадете земјоделски парцели пред да ја користите алатката за менување.',
-        () => disable());
+        'Додадете земјоделски парцели пред да ја користите алатката за менување.'
+      );
+      disable()
     }
   }
 
@@ -100,9 +103,11 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
       if (isJSON(parsedResponse)) {
         const jsonResponse = JSON.parse(parsedResponse)
         const resType = jsonResponse.type
-        alertUser(true, resType?.toLowerCase() || 'success', title, '', () => disable())
+        alertUser(true, resType?.toLowerCase() || 'success', title)
+        disable()
       } else {
-        alertUser(true, 'success', title, '', () => disable())
+        alertUser(true, 'success', title)
+        disable()
       }
     }).catch(err => {
       const { response } = err
@@ -114,7 +119,8 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
       } else if (parsedResponse.includes('sumOfPermanentCropsAreaCannotBeBiggerThanParcelArea')) {
         message = 'Збирот на површините со засадена култура не може да биде поголем од површината на парцелата'
       }
-      alertUser(true, 'error', 'Настана грешка', message, () => disable())
+      alertUser(true, 'error', 'Настана грешка', message)
+      disable()
     })
   }
 
@@ -154,14 +160,17 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
       if (res.data) {
         const resType = res.data.type
         if (strcmp(resType, 'success')) {
-          alertUser(true, 'success', 'Избраниот запис е успешно избришан', '', disable)
+          alertUser(true, 'success', 'Избраниот запис е успешно избришан')
+          disable()
         } else if (strcmp(resType, 'error')) {
-          alertUser(true, 'error', 'Настана грешка', 'Избраниот запис не е избришан', disable)
+          alertUser(true, 'error', 'Настана грешка', 'Избраниот запис не е избришан')
+          disable()
         }
       }
     }).catch(err => {
       console.error(err)
-      alertUser(true, 'error', 'Настана грешка', 'Избраниот запис не е избришан', disable)
+      alertUser(true, 'error', 'Настана грешка', 'Избраниот запис не е избришан')
+      disable()
     })
   }
 

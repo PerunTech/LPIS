@@ -53,11 +53,13 @@ const _Split = ({ processID, agriParcels, farmObjId }) => {
       agriParcels.forEach(ap => _handleLayerClick(ap, agriParcels))
       store.dispatch({ processID: _id });
     } else {
-      alertUser(true,
+      alertUser(
+        true,
         'warning',
         'Не се пронајдени земјоделски парцели.',
         'Додадете земјоделски парцели пред да ја користите алатката за делење.',
-        () => disable());
+      );
+      disable()
     }
   };
 
