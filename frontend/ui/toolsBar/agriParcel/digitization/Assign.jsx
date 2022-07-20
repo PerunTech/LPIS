@@ -85,10 +85,12 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
                 }
                 alertUser(true, 'error', 'Невалидна сесија', '', () => logout())
               } else {
-                alertUser(true, 'error', translatedError, '', () => disable())
+                alertUser(true, 'error', translatedError, '')
+                disable()
               }
             } else {
-              alertUser(true, 'error', translatedError, '', () => disable())
+              alertUser(true, 'error', translatedError, '')
+              disable()
             }
           }
         } else {
@@ -98,9 +100,11 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
               alertUser(true, 'error', translatedError, '', () => disable())
             } else if (stringfiedResponse.includes('err.parcel_common_use')) {
               translatedError = 'Парцелата веќе се користи за заедничка употреба'
-              alertUser(true, 'error', translatedError, '', () => disable())
+              alertUser(true, 'error', translatedError, '')
+              disable()
             } else {
-              alertUser(true, 'error', 'Настана грешка', '', () => disable())
+              alertUser(true, 'error', 'Настана грешка', '')
+              disable()
             }
           }
         }
@@ -144,7 +148,8 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
     }).catch(err => {
       const { response } = err
       console.error(response)
-      alertUser(true, 'error', 'Настана грешка', '', () => disable())
+      alertUser(true, 'error', 'Настана грешка', '')
+      disable()
     })
   }
 

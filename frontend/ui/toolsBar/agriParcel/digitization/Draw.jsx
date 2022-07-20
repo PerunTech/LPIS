@@ -85,15 +85,18 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
             if (isJSON(parsedResponse)) {
                 const jsonResponse = JSON.parse(parsedResponse)
                 title = jsonResponse.label_code || title
-                alertUser(true, jsonResponse.type?.toLowerCase() || 'success', title, '', () => disable())
+                alertUser(true, jsonResponse.type?.toLowerCase() || 'success', title)
+                disable()
             } else {
-                alertUser(true, 'success', title, '', () => disable())
+                alertUser(true, 'success', title)
+                disable()
             }
         }).catch(err => {
             const { response } = err
             const parsedResponse = bufferToString(response)
             console.error(parsedResponse)
-            alertUser(true, 'error', 'Настана грешка', '', () => disable())
+            alertUser(true, 'error', 'Настана грешка')
+            disable()
         })
     }
 

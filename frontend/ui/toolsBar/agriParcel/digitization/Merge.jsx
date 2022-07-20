@@ -56,7 +56,7 @@ const _Merge = ({ processID, farmObjId }) => {
         stateData[id] && stateData[id].removeFrom(Map);
       })
       const numOfNewParcels = geojson.getLayers().length
-      const msg = numOfNewParcels === 1 ? 'Добиена е една нова парцела.' : `Добиени се ${geojson.getLayers().length} нови парцели.`
+      const msg = numOfNewParcels === 1 ? 'Добиена е една нова парцела.' : `Добиени се ${numOfNewParcels} нови парцели.`
       alertUser(true, 'success', 'Успешно споени парцели', msg, getFarmMapAssets)
     }).catch(error => {
       setState({ loading: false })

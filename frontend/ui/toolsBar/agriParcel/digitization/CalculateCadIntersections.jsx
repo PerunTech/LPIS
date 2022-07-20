@@ -72,11 +72,8 @@ const _CalculateCadIntersections = ({ processID, agriParcels, farmObjId }) => {
       setState({ isGuided: true })
       initCalculation()
     } else {
-      alertUser(true,
-        'warning',
-        'Не се пронајдени земјоделски парцели.',
-        'Додадете земјоделски парцели пред да ја користите алатката за пресметување пресеци.',
-        () => disable());
+      alertUser(true, 'warning', 'Не се пронајдени земјоделски парцели.', 'Додадете земјоделски парцели пред да ја користите алатката за пресметување пресеци.');
+      disable()
     }
   }
 
