@@ -482,12 +482,12 @@ public class ApplicationServices {
 			if (dbo == null)
 				throw (new SvException(Sv.Exceptions.NULL_OBJECT, svr.getInstanceUser()));
 			else {
-				Geometry gTile = SvGeometry.getTileGeometry(SvGeometry.getCentroid(dbo));
-				SvSDITile svTile = SvGeometry.getTile(objectType, (String) gTile.getUserData(), null);
-				(new AgriParcel()).removeOverlaps(svg, dbo);
-				svw.deleteObject(dbo, false);
+				DbDataArray dba = new DbDataArray();
+				dba.addDataItem(dbo);
+				AgriParcel ap = new AgriParcel();
+				ap.deleteGeometry(svw, dba, false);
+				ap.removeOverlaps(svg, dbo);
 				svw.dbCommit();
-				svTile.setIsTileDirty(true);
 			}
 
 		} catch (SvException e) {

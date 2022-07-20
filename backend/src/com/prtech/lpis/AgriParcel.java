@@ -38,6 +38,7 @@ import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvParameter;
 import com.prtech.svarog.SvReader;
+import com.prtech.svarog.SvSDITile;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
 import com.prtech.svarog.svCONST;
@@ -141,6 +142,14 @@ public class AgriParcel {
 
 	}
 
+	public void deleteGeometry(SvWriter svw, DbDataArray dba, boolean autoCommit) throws SvException {
+		for (DbDataObject dbo : dba.getItems()) {
+			Geometry gTile = SvGeometry.getTileGeometry(SvGeometry.getCentroid(dbo));
+			SvSDITile svTile = SvGeometry.getTile(dbo.getObjectType(), (String) gTile.getUserData(), null);
+			svTile.setIsTileDirty(true);
+		}
+		svw.deleteObjects(dba, false, false, autoCommit);
+	}
 	/**
 	 * Method which accepts list of new geometries, which are result of merge or
 	 * split, and list of old geometries from the same operation, which should be
@@ -159,7 +168,8 @@ public class AgriParcel {
 
 			DbDataArray dba = new DbDataArray();
 			dba.setItems((ArrayList) deletedGeometries);
-			svw.deleteObjects(dba, false, false, false);
+			deleteGeometry(svw, dba, false);
+			//svw.deleteObjects(dba, false, false, false);
 
 			DbDataArray newDba = new DbDataArray();
 			for (Geometry g : newGeometries) {
