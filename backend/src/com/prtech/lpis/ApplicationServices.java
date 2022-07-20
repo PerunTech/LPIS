@@ -78,6 +78,7 @@ import com.vividsolutions.jts.geom.util.GeometryExtracter;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 @Path("/lpis")
 public class ApplicationServices {
@@ -85,6 +86,7 @@ public class ApplicationServices {
 	static Map<Integer, ArrayList<Geometry>> municipalityMap = new HashMap<Integer, ArrayList<Geometry>>();
 	static int minimumAgriParcelSize;
 	static String externalIdSequence;
+	static double simplifyTopoligyLevel;
 
 	static final Logger log4j = SvConf.getLogger(ApplicationServices.class);
 	static int precisionScale = 2;
@@ -93,6 +95,14 @@ public class ApplicationServices {
 		int i = (int) (SvConf.getSDIPrecision() / 10);
 		String s = Integer.toString(i);
 		precisionScale = s.length();
+		try {
+			simplifyTopoligyLevel = SvParameter.getSysParam(CC.SIMPLIFY_LEVEL, 1.0);
+
+		} catch (SvException e) {
+			log4j.error("Simplify level not set", e);
+			simplifyTopoligyLevel = 1.0;
+		}
+
 		try {
 			minimumAgriParcelSize = SvParameter.getSysParam(CC.MINIMUM_AGRI_PARCEL_SIZE, 100);
 		} catch (SvException e) {
@@ -1120,6 +1130,14 @@ public class ApplicationServices {
 		return Response.status(200).entity(result.toString()).build();
 	}
 
+	void simplify(DbDataArray dba) {
+		for (DbDataObject dbo : dba.getItems()) {
+			Geometry g = TopologyPreservingSimplifier.simplify(SvGeometry.getGeometry(dbo), simplifyTopoligyLevel);
+			g.setUserData(dbo);
+			SvGeometry.setGeometry(dbo, g);
+		}
+	}
+
 	@Path("/get/farmerAssets/{token}/{objectId}/{typeName}")
 	@GET
 	@Produces("application/pbf")
@@ -1129,7 +1147,7 @@ public class ApplicationServices {
 		final DbDataArray result = new DbDataArray();
 		try (SvReader svr = new SvReader(token)) {
 			result.setItems((new AgriParcel()).getAssetsList(svr, objectId, typeName).getItems());
-
+			simplify(result);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToSaveObject");
