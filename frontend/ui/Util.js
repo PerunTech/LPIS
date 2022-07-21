@@ -135,7 +135,7 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
             // This is a check to skip the layers which have been manually loaded by the user using the agriParcel/digitization/Load.jsx component
-            if (!layer?.feature?.properties?.LAYER_DESCRIPTOR) {
+            if (!strcmp(layer?.feature?.properties?.DESCRIPTOR, 'LOADED_AGRI_PARCEL')) {
                 Map.removeLayer(layer);
             }
         }
