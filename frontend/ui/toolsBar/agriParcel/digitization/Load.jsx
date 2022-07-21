@@ -3,6 +3,7 @@ import { core, ui, data } from '../../../../Spatial';
 import { config as apConfig, loadParcelMsg } from '../Config';
 import { ProcessButton } from '../../ProcessButton';
 import { Guidance } from '../Guidance';
+import { setLoadedParcelLabel } from '../../cropParcel/Util';
 import { strcmp } from '../../../Util';
 
 const { Map, store, http, factory } = core;
@@ -34,7 +35,7 @@ const _Load = ({ processID, agriParcels }) => {
     } else {
       Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
-          if (layer?.feature?.properties?.LAYER_DESCRIPTOR && strcmp(layer?.feature?.properties?.LAYER_DESCRIPTOR, 'LOADED_AGRI_PARCEL')) {
+          if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'LOADED_AGRI_PARCEL')) {
             Map.removeLayer(layer);
           }
         }
@@ -64,8 +65,9 @@ const _Load = ({ processID, agriParcels }) => {
         if (layers && Array.isArray(layers) && layers.length > 0) {
           layers.forEach(layer => {
             if (layer?.feature?.properties) {
-              layer.feature.properties.LAYER_DESCRIPTOR = 'LOADED_AGRI_PARCEL'
+              layer.feature.properties.DESCRIPTOR = 'LOADED_AGRI_PARCEL'
             }
+            setLoadedParcelLabel(layer)
             layer.addTo(Map)
           });
           store.dispatch({ processID: '' })

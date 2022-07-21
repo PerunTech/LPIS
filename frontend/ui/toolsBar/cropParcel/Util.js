@@ -129,6 +129,18 @@ export const setCILabel = ci => {
     return ci;
 }
 
+export const setLoadedParcelLabel = loadedParcel => {
+    const oldId = loadedParcel.feature.properties.OLD_ID || '';
+    const loc = loadedParcel.feature.properties.HOME_NAME || '';
+    const cnt = String(loadedParcel.feature.properties.CENTROID);
+    const latLng = Map.untransform(cnt.substring(cnt.indexOf('(') + 1, cnt.indexOf(')')).split(' ').map(s => Number(s)))
+
+    loadedParcel.bindTooltip(String(oldId + ' ' + loc), { direction: 'center', permanent: true });
+    loadedParcel.openTooltip(latLng);
+
+    return loadedParcel;
+}
+
 /* Map event listener for label render */
 let lastZoom = MIN_DIGI_SCALE;
 Map.on('zoomend', ({target}) => {
@@ -145,6 +157,7 @@ Map.on('zoomend', ({target}) => {
                 props.DESCRIPTOR === 'AGRI_PARCEL' && setAPLabel(layer);
                 props.DESCRIPTOR === 'LAND_USE_PLAN' && setCPLabel(layer);
                 props.DESCRIPTOR === 'LP_CAD_INTERSECTIONS' && setCILabel(layer);
+                props.DESCRIPTOR === 'LOADED_AGRI_PARCEL' && setLoadedParcelLabel(layer)
             }
         });
 
