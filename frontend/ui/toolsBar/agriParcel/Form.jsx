@@ -4,7 +4,7 @@ import { Main, Aux, Admin } from './Steps';
 
 const { Button, Modal, Wizard } = ui;
 
-export function Form ({ formData, onSubmit, onChange, children, isSimple, className, formTitle, buttonLabel, schema, uiSchema }) {
+export function Form ({ formData, onSubmit, onChange, children, isSimple, className, disableSubmitBtn, formTitle, buttonLabel, schema, uiSchema }) {
     if (!isSimple) {
         return <Modal id='measure-dialog'
             show
@@ -42,7 +42,7 @@ export function Form ({ formData, onSubmit, onChange, children, isSimple, classN
                     formData={{ ...formData }}
                     onSubmit={onSubmit}
                     onChange={onChange} >
-                    <Button type='submit' size='' className='next' >
+                    <Button disabled={disableSubmitBtn} type='submit' size='' className='next' >
                         {btnLabel}
                     </Button>
                 </ui.Form>
@@ -56,6 +56,8 @@ Form.propTypes = {
     onSubmit: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     isSimple: PropTypes.bool,
+    disableSubmitBtn: PropTypes.bool,
+    className: PropTypes.string,
     formTitle: PropTypes.string,
     buttonLabel: PropTypes.string,
     children: PropTypes.node
