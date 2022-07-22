@@ -61,9 +61,9 @@ const _Delete = ({ processID }) => {
         getFarmMapAssets();
     }
 
-    return <ProcessButton id={_id} onClick={() => enable()} >
+    return <ProcessButton id={_id} onClick={() => enable()} title='Избриши парцела'>
         <Icon name={_id} size='30px' />
-        <span style={{ display: 'block', marginTop: '5px' }}>Избриши парцела</span>
+        <span style={{ display: 'block', marginTop: '5px' }}>Избриши</span>
         {processID === _id
             && (isGuided
                 ? <Guidance id={_id} disable={disable} msg={deleteAPMsg} title='Избриши парцела' />
