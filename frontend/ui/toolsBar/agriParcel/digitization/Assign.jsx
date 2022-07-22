@@ -83,6 +83,7 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
                   perunStore.dispatch(logoutUser(url));
                   history.push('/');
                 }
+                store.dispatch({ processID: '' })
                 alertUser(true, 'error', 'Невалидна сесија', '', () => logout())
               } else {
                 alertUser(true, 'error', translatedError, '')

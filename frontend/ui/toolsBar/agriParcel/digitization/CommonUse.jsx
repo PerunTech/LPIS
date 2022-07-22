@@ -16,9 +16,9 @@ const _secondaryId = 'getCommonUse';
 const _iconId = 'drawAP';
 
 const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
-  const [{ data, loading, isGuided, showForm, selectedParcel }, setState] = useReducer((currState, update) =>
+  const [{ data, loading, isGuided, showForm, showDeleteBtn, selectedParcel }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { data: {}, loading: false, isGuided: false, showForm: false, selectedParcel: {} });
+    { data: {}, loading: false, isGuided: false, showForm: false, showDeleteBtn: false, selectedParcel: {} });
 
   const setLayerEvents = (layer, agriParcels) => {
     layer.on('click', function () {
@@ -32,15 +32,15 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
     http.call(_secondaryId, { url }).then(res => {
       if (res.data && Object.keys(res.data).length > 0) {
         if (res.data.ALLOWED_AREA) {
-          const formData = { commonUseType: 'CLAIMED_AREA', value: String(res.data.ALLOWED_AREA), objectId: res.data.object_id }
-          setState({ data: formData, isGuided: false, showForm: true, selectedParcel })
+          const formData = { commonUseType: 'CLAIMED_AREA', value: String(res.data.ALLOWED_AREA), objectId: res.data.object_id, objectTypeId: res.data.object_type }
+          setState({ data: formData, isGuided: false, showForm: true, showDeleteBtn: true, selectedParcel })
         } else if (res.data.PERCENTAGE) {
           const value = `${String(res.data.OWN_PARCEL_PARTS)}/${String(res.data.TOTAL_PARCEL_PARTS)}`
-          const formData = { commonUseType: 'CLAIMED_RATIO', value, objectId: res.data.object_id }
-          setState({ data: formData, isGuided: false, showForm: true, selectedParcel })
+          const formData = { commonUseType: 'CLAIMED_RATIO', value, objectId: res.data.object_id, objectTypeId: res.data.object_type }
+          setState({ data: formData, isGuided: false, showForm: true, showDeleteBtn: true, selectedParcel })
         }
       } else {
-        setState({ isGuided: false, showForm: true, selectedParcel })
+        setState({ isGuided: false, showForm: true, showDeleteBtn: false, selectedParcel })
       }
     }).catch(err => {
       console.error(err)
@@ -84,7 +84,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
                 disable()
               } else {
                 const title = 'Дали сакате парцелата да се промени во парцела со Заедничка употреба?'
-                const confirm = () => setState({ isGuided: false, showForm: true, selectedParcel })
+                const confirm = () => setState({ isGuided: false, showForm: true, showDeleteBtn: false, selectedParcel })
                 alertUser(true, 'info', title, '', confirm, disable, true, 'Да', 'Не')
               }
             }
@@ -95,7 +95,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
           } else if (hasCommonUse) {
             getCommonUse(parcelId, selectedParcel)
           } else {
-            setState({ isGuided: false, showForm: true, selectedParcel })
+            setState({ isGuided: false, showForm: true, showDeleteBtn: false, selectedParcel })
           }
         } else {
           alertUser(true, 'info', 'Не е избрана парцела од мапата')
@@ -105,7 +105,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
         console.error(err)
         alertUser(true, 'error', 'Настана грешка')
         disable()
-        setState({ loading: false, isGuided: false, showForm: false })
+        setState({ loading: false, isGuided: false, showForm: false, showDeleteBtn: false })
       })
 
       Map.off('click')
@@ -116,7 +116,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
     // Remove the Map click event listener
     Map.off('click');
     // Reset state, internal and application-wide.
-    setState({ data: {}, loading: false, isGuided: false, showForm: false, selectedParcel: {} });
+    setState({ data: {}, loading: false, isGuided: false, showForm: false, showDeleteBtn: false, selectedParcel: {} });
     store.dispatch({ processID: '' });
     if (reloadData) {
       // Reload the data
@@ -140,6 +140,8 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
       if (response.data && response.data.title) {
         if (response.data.title?.includes('allowedAreaCannotBeBiggerThanArea')) {
           message = 'Површината за заедничка употреба не може да биде поголема од површината на парцелата'
+        } else {
+          message = response.data.title || response.data.message || ''
         }
       }
       alertUser(true, 'error', 'Грешка при зачувување', message);
@@ -152,6 +154,26 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
   }
 
   const onChange = ({ formData }) => setState({ data: { ...data, ...formData } });
+
+  const deleteCommonUse = () => {
+    const { objectId, objectTypeId } = data
+    http.call('delete-common-use', {
+      url: '/ReactElements/deleteObject/{init.token}',
+      method: 'post',
+      data: JSON.stringify({ OBJECT_ID: objectId, OBJECT_TYPE: objectTypeId })
+    }).then(() => {
+      alertUser(true, 'success', 'Успешно бришење');
+      disable(true)
+    }).catch(() => {
+      alertUser(true, 'error', 'Грешка при бришење');
+      disable()
+    })
+  }
+
+  const deleteCommonUsePrompt = () => {
+    const title = 'Дали сте сигурни дека сакате да ги избришете податоците за заедничка употреба?'
+    alertUser(true, 'warning', title, '', () => deleteCommonUse(), () => { }, true, 'Да', 'Не')
+  }
 
   const renderGuideForm = () => {
     return <GuideForm id={_id} disable={disable} title='Заедничка употреба' msg={commonUseMsg} />
@@ -169,10 +191,25 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
 
     const { schema, uiSchema } = commonUseSchema
 
-    return <Form isSimple formTitle='Заедничка употреба' onSubmit={onSubmit} formData={data} onChange={onChange} schema={schema} uiSchema={uiSchema}>
-      <DrawActions cancel={disable} />
-      {parcelData}
-    </Form>
+    const formProps = {
+      isSimple: true,
+      className: 'common-use-form',
+      formTitle: 'Заедничка употреба',
+      onSubmit,
+      formData: data,
+      onChange,
+      schema,
+      uiSchema,
+      showDeleteBtn,
+      onDeleteFn: deleteCommonUsePrompt
+    }
+
+    return (
+      <Form {...formProps}>
+        <DrawActions cancel={disable} />
+        {parcelData}
+      </Form>
+    )
   }
 
   const renderComponent = () => {
