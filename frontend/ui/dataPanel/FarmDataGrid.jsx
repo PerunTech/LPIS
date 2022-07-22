@@ -14,9 +14,9 @@ const zoomParcel = (id) => {
   Object.values(layers).forEach(l => Number(l.getId()) === Number(id) && Map.fitBounds(l.getBounds()));
 };
 
-let hiddenAssets = [];
-
 const getParcelVisibleIcon = (id, type) => {
+  const hiddenAssets = store.getState().farmRegistry?.hiddenAssets
+  let hiddenAssetsArr = hiddenAssets?.slice() || []
   let iconName = 'eye-on';
   let layers = store.getState().farmRegistry.agriParcels;
   if (type) {
@@ -33,8 +33,8 @@ const getParcelVisibleIcon = (id, type) => {
       }
     }
   });
-  for (let i = 0; i < hiddenAssets.length; i++) {
-    if (Number(hiddenAssets[i].getId()) === Number(id)) {
+  for (let i = 0; i < hiddenAssetsArr.length; i++) {
+    if (Number(hiddenAssetsArr[i].getId()) === Number(id)) {
       iconName = 'eye-off';
     }
   }
@@ -42,6 +42,8 @@ const getParcelVisibleIcon = (id, type) => {
 };
 
 const toggleAssetFromMap = (id, type) => {
+  const hiddenAssets = store.getState().farmRegistry?.hiddenAssets
+  let hiddenAssetsArr = hiddenAssets?.slice() || []
   let layers = store.getState().farmRegistry?.agriParcels;
   if (type) {
     if (strcmp(type, 'land_use_plan')) {
@@ -55,7 +57,8 @@ const toggleAssetFromMap = (id, type) => {
     if (Number(l.getId()) === Number(id)) {
       if (l._map && l.options.fillOpacity === 0.0) {
         l.removeFrom(Map);
-        hiddenAssets.push(l);
+        hiddenAssetsArr.push(l);
+        store.dispatch({ hiddenAssets: hiddenAssetsArr })
         visible = false;
       } else {
         l.setStyle({ fillOpacity: 0 });
@@ -63,11 +66,12 @@ const toggleAssetFromMap = (id, type) => {
     }
   });
   if (visible) {
-    for (let i = 0; i < hiddenAssets.length; i++) {
-      if (Number(hiddenAssets[i].getId()) === Number(id)) {
-        hiddenAssets[i].setStyle({ fillOpacity: 0.25 });
-        hiddenAssets[i].addTo(Map);
-        hiddenAssets.splice(i, 1);
+    for (let i = 0; i < hiddenAssetsArr.length; i++) {
+      if (Number(hiddenAssetsArr[i].getId()) === Number(id)) {
+        hiddenAssetsArr[i].setStyle({ fillOpacity: 0.25 });
+        hiddenAssetsArr[i].addTo(Map);
+        hiddenAssetsArr.splice(i, 1);
+        store.dispatch({ hiddenAssets: hiddenAssetsArr })
       }
     }
   }
