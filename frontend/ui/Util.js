@@ -132,6 +132,7 @@ const getFarmData = objectId => {
 }
 
 export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
+    store.dispatch({ hiddenAssets: [] })
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
             // This is a check to skip the layers which have been manually loaded by the user using the agriParcel/digitization/Load.jsx component
