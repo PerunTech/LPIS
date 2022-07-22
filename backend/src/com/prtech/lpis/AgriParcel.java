@@ -175,9 +175,10 @@ public class AgriParcel {
 			DbDataArray newDba = new DbDataArray();
 			for (Geometry g : newGeometries) {
 				dbo = (DbDataObject) g.getUserData();
-				SvGeometry.setGeometry(dbo, TopologyPreservingSimplifier.simplify(g, minPointDistance));
+				SvGeometry.setGeometry(dbo, autoFixPoly(svg, g));
 				newDba.addDataItem(dbo);
 			}
+
 			svg.saveGeometry(newDba, true, false);
 
 			if (autoCommit)
@@ -247,41 +248,48 @@ public class AgriParcel {
 			}
 			svg.setAutoCommit(false);
 			Util.calculateGeometryDerivatives(ap);
-			geom = svg.fixMinVertexDistance(geom,
-					SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE));
 
-			result.addDataItem(ap);
-			boolean hasSpikes = true;
-			// data to geom
-			double angle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
-			while (hasSpikes) {
-				try {
-					svg.testPolygonSpikes(geom, angle);
-					hasSpikes = false;
-				} catch (SvException e) {
-					if (e.getLabelCode().equals(Sv.Exceptions.SDI_SPIKE_DETECTED)) {
-						geom = svg.fixPolygonSpikes(geom, angle);
-					}
-				}
-			}
-			geom = svg.fixMinVertexDistance(geom,
-					SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE));
-			hasSpikes = true;
-			while (hasSpikes) {
-				try {
-					svg.testPolygonSpikes(geom, angle);
-					hasSpikes = false;
-				} catch (SvException e) {
-					if (e.getLabelCode().equals(Sv.Exceptions.SDI_SPIKE_DETECTED)) {
-						geom = svg.fixPolygonSpikes(geom, angle);
-					}
-				}
-			}
-
+			geom = autoFixPoly(svg, geom);
 			SvGeometry.setGeometry(ap, geom);
+			result.addDataItem(ap);
 			svg.saveGeometry(ap);
 			svg.dbCommit();
 		}
+	}
+
+	private Geometry autoFixPoly(SvGeometry svg, Geometry geom) throws SvException {
+
+		geom = svg.fixMinVertexDistance(geom,
+				SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE));
+
+		boolean hasSpikes = true;
+		// data to geom
+		double angle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
+		while (hasSpikes) {
+			try {
+				svg.testPolygonSpikes(geom, angle);
+				hasSpikes = false;
+			} catch (SvException e) {
+				if (e.getLabelCode().equals(Sv.Exceptions.SDI_SPIKE_DETECTED)) {
+					geom = svg.fixPolygonSpikes(geom, angle);
+				}
+			}
+		}
+		geom = svg.fixMinVertexDistance(geom,
+				SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE));
+		hasSpikes = true;
+		while (hasSpikes) {
+			try {
+				svg.testPolygonSpikes(geom, angle);
+				hasSpikes = false;
+			} catch (SvException e) {
+				if (e.getLabelCode().equals(Sv.Exceptions.SDI_SPIKE_DETECTED)) {
+					geom = svg.fixPolygonSpikes(geom, angle);
+				}
+			}
+		}
+		return geom;
+
 	}
 
 	private Geometry ensurePolygon(Geometry geom) {
