@@ -12,9 +12,9 @@ const { alertUser } = elements
 const { useReducer } = React
 
 const _CadastreSearch = () => {
-  const [{ showForm, loading, schema, uiSchema, data }, setState] = useReducer((currState, update) =>
+  const [{ showForm, loading, disableSearchBtn, schema, uiSchema, data }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { showForm: false, loading: false, schema: {}, uiSchema: {}, data: {} });
+    { showForm: false, loading: false, disableSearchBtn: true, schema: {}, uiSchema: {}, data: {} });
 
   const toggleSearchForm = () => {
     setState({ showForm: true })
@@ -22,7 +22,7 @@ const _CadastreSearch = () => {
 
   const disable = () => {
     removeCadParcels()
-    setState({ showForm: false, loading: false, data: {}, schema: {}, uiSchema: {} })
+    setState({ showForm: false, loading: false, disableSearchBtn: true, data: {}, schema: {}, uiSchema: {} })
   }
 
   const getCadastralMunicipalities = sectorId => {
@@ -38,7 +38,9 @@ const _CadastreSearch = () => {
           }
         })
         const { schema: formSchema, uiSchema: formUiSchema } = cadastreSearchFormSchema(cadMunicipalities)
-        setState({ schema: formSchema, uiSchema: formUiSchema })
+        setState({ schema: formSchema, uiSchema: formUiSchema, disableSearchBtn: false })
+      } else {
+        alertUser(true, 'info', 'Не се пронајдени податоци')
       }
     }).catch(err => {
       console.error(err)
@@ -99,7 +101,8 @@ const _CadastreSearch = () => {
         uiSchema={formUiSchema}
         formData={data}
         onSubmit={onSubmit}
-        onChange={onChange} >
+        onChange={onChange}
+        disableSubmitBtn={disableSearchBtn} >
         <DrawActions cancel={disable} />
       </Form>
     )
