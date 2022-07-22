@@ -136,6 +136,13 @@
 #measure-dialog .modal-body .cancel:hover:not(.disabled) {
   background-color: #e2e6ea;
 }
+.common-use-form .modal-body .cancel {
+  margin-top: 0 !important;
+  float: none !important;
+}
+.common-use-form .modal-content {
+  right: 300px !important;
+}
 
 #measure-dialog .modal-body #deleteAP {
   text-align: left;
