@@ -28,6 +28,7 @@ export const Digitization = () => {
         <Divider />
         <Copy />
         <Draw />
+        <Delete />
         <Edit />
         <Cut />
         <Split />
@@ -44,7 +45,6 @@ export const Digitization = () => {
         <CalculateCadIntersections />
         <CadIntersections />
         <DeleteParcelFromFarm />
-        <Delete />
         <Divider />
         <Print />
     </ButtonGroup>;

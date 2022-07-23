@@ -4,7 +4,10 @@ import { Main, Aux, Admin } from './Steps';
 
 const { Button, Modal, Wizard } = ui;
 
-export function Form ({ formData, onSubmit, onChange, children, isSimple, className, disableSubmitBtn, formTitle, buttonLabel, schema, uiSchema }) {
+export function Form ({
+    formData, onSubmit, onChange, children, isSimple, className, disableSubmitBtn, showDeleteBtn, onDeleteFn,
+    formTitle, buttonLabel, schema, uiSchema
+}) {
     if (!isSimple) {
         return <Modal id='measure-dialog'
             show
@@ -26,6 +29,10 @@ export function Form ({ formData, onSubmit, onChange, children, isSimple, classN
     } else {
         const title = formTitle || 'Пополнете ја формата'
         const btnLabel = buttonLabel || 'Зачувај'
+        let deleteBtn = null
+        if (showDeleteBtn && onDeleteFn) {
+            deleteBtn = <Button onClick={() => { onDeleteFn() }} size='' className='cancel' > Избриши </Button>
+        }
         return <Modal id='measure-dialog' className={className || ''}
             show
             backdrop={false}
@@ -42,9 +49,12 @@ export function Form ({ formData, onSubmit, onChange, children, isSimple, classN
                     formData={{ ...formData }}
                     onSubmit={onSubmit}
                     onChange={onChange} >
-                    <Button disabled={disableSubmitBtn} type='submit' size='' className='next' >
-                        {btnLabel}
-                    </Button>
+                    <React.Fragment>
+                        <Button disabled={disableSubmitBtn} type='submit' size='' className='next' >
+                            {btnLabel}
+                        </Button>
+                        {deleteBtn}
+                    </React.Fragment>
                 </ui.Form>
             </Modal.Body>
         </Modal>;
@@ -57,6 +67,8 @@ Form.propTypes = {
     onChange: PropTypes.func.isRequired,
     isSimple: PropTypes.bool,
     disableSubmitBtn: PropTypes.bool,
+    showDeleteBtn: PropTypes.bool,
+    onDeleteFn: PropTypes.func,
     className: PropTypes.string,
     formTitle: PropTypes.string,
     buttonLabel: PropTypes.string,

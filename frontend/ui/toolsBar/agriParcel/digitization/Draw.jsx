@@ -31,7 +31,7 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
 
         setState({ isGuided: true, showForm: false, data: {}, layer: {} });
         store.dispatch({ processID: _id });
-        polygon.enable(config.pathOptions, 12, 15, false);
+        polygon.enable(config.pathOptions, 12, 18, false);
     };
 
     const reset = () => {
