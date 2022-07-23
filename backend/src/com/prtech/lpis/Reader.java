@@ -25,8 +25,8 @@ public class Reader {
 		try (SvReader svr = new SvReader(svc)) {
 			svr.setIncludeGeometries(includeGeometries);
 			// load parcels, common use and intersections
-			DbDataArray dbArr = svr.getObjectsByParentId(farmId, SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
-			DbDataArray dba = svr.getObjectsByParentId(farmId, SvCore.getTypeIdByName(CC.COMMON_USE), null);
+			DbDataArray dbArr = svr.getObjectsByParentId(farmId, SvCore.getTypeIdByName(CC.AGRI_PARCEL), refDate);
+			DbDataArray dba = svr.getObjectsByParentId(farmId, SvCore.getTypeIdByName(CC.COMMON_USE), refDate);
 			DbDataArray dbIntersect = svr.getObjectsByParentId(farmId, SvCore.getTypeIdByName(CC.LP_CAD_INTERSECTIONS),
 					null);
 
