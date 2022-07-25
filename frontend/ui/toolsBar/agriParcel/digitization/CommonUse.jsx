@@ -2,7 +2,7 @@ import { React, Loading, elements } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
 import { commonUseMsg, commonUseSchema } from '../Config';
 import { ProcessButton } from '../../ProcessButton';
-import { GuideForm } from '../GuideForm';
+import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { getFarmMapAssets, strcmp } from '../../../Util';
 
@@ -176,7 +176,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
   }
 
   const renderGuideForm = () => {
-    return <GuideForm id={_id} disable={disable} title='Заедничка употреба' msg={commonUseMsg} />
+    return <Guidance id={_id} disable={disable} title='Заедничка употреба' msg={commonUseMsg} />
   }
 
   const renderForm = () => {
