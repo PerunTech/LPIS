@@ -80,9 +80,11 @@ public class LPISExecutors implements ISvExecutorGroup {
 		Object result = null;
 		switch (name) {
 		case CC.PARCELS:
-			Long farmId = new Long((Long) params.get("FARM_ID"));
-			DateTime refDate = new DateTime((DateTime) params.get("REFERENCE_DATE"));
-			Boolean inludeGeometries = new Boolean((Boolean) params.get("INCLUDE_GEOMETRIES"));
+			Long farmId = (Long) params.get("FARM_ID");
+			DateTime refDate = params.get("REFERENCE_DATE") != null
+					? new DateTime((DateTime) params.get("REFERENCE_DATE"))
+					: null;
+			Boolean inludeGeometries = (Boolean) params.get("INCLUDE_GEOMETRIES");
 			result = new Reader((SvCore) svCore).getParcels(farmId, refDate, inludeGeometries);
 			break;
 		case CC.IMPORT:
