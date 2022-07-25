@@ -61,7 +61,6 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
           layer.addTo(Map);
         })
       }).catch(err => {
-        console.log(err.response)
         setState({ loading: false, isGuided: false, showForm: false })
         // Get the stringified response from the array buffer
         const stringfiedResponse = bufferToString(err.response.data)
