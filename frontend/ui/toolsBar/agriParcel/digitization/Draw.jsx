@@ -1,9 +1,9 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, tools, config as cfg } from '../../../../Spatial';
-import { config, permanentCropSchema } from '../Config';
+import { config, drawAPMsg, permanentCropSchema } from '../Config';
 import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
-import { GuideForm } from '../GuideForm';
+import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
 
@@ -126,10 +126,11 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
     }
 
     const renderGuideForm = () => {
-        return <GuideForm id={_id} title='Нацртај парцела'
+        return <Guidance id={_id} title='Нацртај парцела'
             finish={() => polygon._finishShape()}
             undo={() => polygon._removeLastVertex()}
             disable={disable}
+            msg={drawAPMsg}
         />
     }
 

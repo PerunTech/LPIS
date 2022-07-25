@@ -15,6 +15,7 @@
         "url": "https://gitlab.prtech.mk/iacs_custom/lpis"
     },
     "dependencies": {
+        "date-fns": "^2.29.1",
         "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core#dev",
         "spatial": "git+https://git@gitlab.prtech.mk/perunv3/spatial#dev"
     },

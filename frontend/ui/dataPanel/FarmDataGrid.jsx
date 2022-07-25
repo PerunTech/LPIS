@@ -1,13 +1,44 @@
 import { React, PropTypes, elements } from 'perun-core';
 import { core, ui } from '../../Spatial';
+import format from 'date-fns/format'
+import mk from 'date-fns/locale/mk'
+import { ParcelHistory } from './ParcelHistory';
 import { getCropLabel } from '../toolsBar/cropParcel/Util';
 import { strcmp, translateBooleanValue } from '../Util';
 
-const { factory, Map, store } = core;
+const { factory, Map, store, http } = core;
 const { ButtonGroup, Button, Icon } = ui;
 const { useState, useEffect } = React;
 const { ListGroup, ProgressBar } = elements.ReactBootstrap;
 const { Item: ListGroupItem } = ListGroup;
+
+const getParcelHistory = (e, parcelId, callback) => {
+  e.stopPropagation()
+  http.call('get-parcel-history', {
+    url: `/table/objectHistory/{init.token}/AGRI_PARCEL/${parcelId}/1`,
+    method: 'get'
+  }).then(res => {
+    let parcelHistory = []
+    if (res.data && res.data.data && Array.isArray(res.data.data) && res.data.data.length > 0) {
+      res.data.data.forEach(el => {
+        const singleHistoryObj = el
+        if (el['AGRI_PARCEL.DT_INSERT']) {
+          const date = new Date(el['AGRI_PARCEL.DT_INSERT'])
+          const formattedDate = format(date, 'do MMMM yyyy', { locale: mk })
+          Reflect.set(singleHistoryObj, 'formattedDate', formattedDate)
+          parcelHistory.push(singleHistoryObj)
+        }
+      })
+      store.dispatch({ parcelHistory })
+      callback(true)
+    } else {
+      alertUser(true, 'info', 'Не се пронајдени податоци за историјата на парцелата')
+    }
+  }).catch(err => {
+    console.error(err)
+    alertUser(true, 'info', 'Не се пронајдени податоци за историјата на парцелата')
+  })
+}
 
 const zoomParcel = (id) => {
   const layers = store.getState().farmRegistry?.agriParcels;
@@ -334,6 +365,7 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
   const [rowIsExpanded, expandRow] = useState(false);
   const [selectedRowId, selectRow] = useState('');
   const [isOpen, setOpen] = useState(true);
+  const [showParcelHistory, setShowParcelHistory] = useState(false);
 
   useEffect(() => {
     if (selectedParcelId) {
@@ -400,6 +432,9 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
         <Button className='fr-data-grid-column' title={homeName}>{homeName}</Button>
         <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.COMMON_USE)}</Button>
         <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.CERTIFICATE_OF_USE)}</Button>
+        <Button className='data-grid-util' onClick={e => getParcelHistory(e, id, setShowParcelHistory)} title='Историја на парцела'>
+          <Icon name='history' size='14px' />
+        </Button>
         <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el)} title='Оди до парцела'>
           <Icon name={getPinpointIconName()} size={getIconSize()} />
         </Button>
@@ -413,6 +448,7 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
           pplanRows={pplanRows} cadIntersectionRows={cadIntersectionRows} showCadParcels={showCadParcels}
         />
       }
+      {showParcelHistory && <ParcelHistory setShowParcelHistory={setShowParcelHistory} />}
     </div>
   });
 };

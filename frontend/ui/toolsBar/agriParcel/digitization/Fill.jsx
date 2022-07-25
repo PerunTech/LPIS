@@ -1,6 +1,6 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
-import { config } from '../Config';
+import { config, fillAPMsg } from '../Config';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -108,7 +108,7 @@ const _Fill = ({ processID, farmObjId, saveIsPending }) => {
             finish={() => polygon._finishShape()}
             undo={() => polygon._removeLastVertex()}
             disable={() => disable()}
-            msg={['', '']}
+            msg={fillAPMsg}
             title='Пополни земјоделска парцела'
         />
     }

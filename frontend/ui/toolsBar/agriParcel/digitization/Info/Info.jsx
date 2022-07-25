@@ -38,11 +38,13 @@ const _Info = ({ processID }) => {
           })
           setState({ isGuided: false, loading: false, farmInfo, parcelInfo, showModal: true })
         } else {
-          alertUser(true, 'error', 'Настана грешка', 'Нема податоци за избраната парцела или не е избрана парцела од мапата', () => disable());
+          alertUser(true, 'info', 'Нема податоци за избраната парцела или не е избрана парцела од мапата');
+          disable();
         }
       }).catch((err) => {
         console.log(err);
-        alertUser(true, 'error', 'Настана грешка', 'Нема податоци за избраната парцела или не е избрана парцела од мапата', () => disable());
+        alertUser(true, 'info', 'Нема податоци за избраната парцела или не е избрана парцела од мапата');
+        disable();
       });
 
       Map.off('click');

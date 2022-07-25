@@ -3,7 +3,7 @@ import { core, data, ui, tools, config as cfg } from '../../../../Spatial';
 import { config, editAPMsg, permanentCropSchema } from '../Config';
 import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
-import { GuideForm } from '../GuideForm';
+import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
 
@@ -228,7 +228,7 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   }
 
   const renderGuideForm = () => {
-    return <GuideForm id={_id} disable={() => disable()} msg={editAPMsg} title='Промени земјоделска парцела' />
+    return <Guidance id={_id} disable={() => disable()} msg={editAPMsg} title='Промени земјоделска парцела' />
   }
 
   const renderForm = () => {
