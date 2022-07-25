@@ -2,6 +2,8 @@ package com.prtech.lpis;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -57,6 +59,7 @@ import com.prtech.svarog.SvSDITile;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvWriter;
+import com.prtech.svarog.svCONST;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.prtech.svarog_common.DbSearchCriterion;
@@ -117,13 +120,13 @@ public class ApplicationServices {
 		}
 	}
 
-	static ArrayList<Geometry> getCadMunicipalities(Integer sector) throws SvException, ParseException {
+	static ArrayList<Geometry> getCadMunicipalities(Integer sector, String token) throws SvException, ParseException {
 		ArrayList<Geometry> munics = municipalityMap.get(sector);
 		if (munics == null) {
 			synchronized (ApplicationServices.class) {
 				munics = new ArrayList<Geometry>();
 				municipalityMap.putIfAbsent(sector, munics);
-				Geometry geom = getCadMunicipalities();
+				Geometry geom = getCadMunicipalities(token);
 				for (int i = 0; i < geom.getNumGeometries(); i++) {
 					Geometry gg = geom.getGeometryN(i);
 					Map<String, Object> js = (Map<String, Object>) gg.getUserData();
@@ -138,29 +141,73 @@ public class ApplicationServices {
 		return munics;
 	}
 
-	static Geometry getCadMunicipalities() throws SvException, ParseException {
-		if (municipalities == null) {
-			synchronized (ApplicationServices.class) {
-				if (municipalities == null) {
-					String layer = SvConf.getParam("CAD_MUNICIPALITY_LAYER_NAME");
-					String epsg = SvConf.getParam("CAD_PARCEL_LAYER_EPSG");
-					String wfsUrl = SvConf.getParam("CAD_PARCEL_LAYER_WFS");
-					String wfsUser = SvConf.getParam("CAD_PARCEL_LAYER_WFS_U");
-					String wfsPass = SvConf.getParam("CAD_PARCEL_LAYER_WFS_P");
-					String sshProxy = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY");
-					String sshProxyUser = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_USER");
-					String sshProxyPass = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_PASS");
-					WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
-					String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
-					String json = wfs.getWFSResponse(SvGeometry.getSysBoundary().getEnvelope(), sshProxy, sshProxyUser,
-							sshProxyPass, wfsUser, wfsPass, extParams);
+	static String loadCadMunicipalitiesRemote() throws SvException, ParseException {
+		Geometry geom;
+		String layer = SvConf.getParam("CAD_MUNICIPALITY_LAYER_NAME");
+		String epsg = SvConf.getParam("CAD_PARCEL_LAYER_EPSG");
+		String wfsUrl = SvConf.getParam("CAD_PARCEL_LAYER_WFS");
+		String wfsUser = SvConf.getParam("CAD_PARCEL_LAYER_WFS_U");
+		String wfsPass = SvConf.getParam("CAD_PARCEL_LAYER_WFS_P");
+		String sshProxy = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY");
+		String sshProxyUser = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_USER");
+		String sshProxyPass = SvConf.getParam("CAD_PARCEL_LAYER_SSH_PROXY_PASS");
+		WFSReader wfs = new WFSReader(layer, epsg, wfsUrl);
+		String extParams = "-oKexAlgorithms=+diffie-hellman-group1-sha1";
+		String json = wfs.getWFSResponse(SvGeometry.getSysBoundary().getEnvelope(), sshProxy, sshProxyUser,
+				sshProxyPass, wfsUser, wfsPass, extParams);
+
+		return json;
+
+	}
+
+	static Geometry loadCadMunicipalities(String token) throws SvException, ParseException {
+		Geometry geom = null;
+		try (SvFileStore svf = new SvFileStore(token)) {
+			DbDataArray files = svf.getFiles(SvCore.getDbtByName(CC.AGRI_PARCEL), "ATTACHMENT", null);
+			for (DbDataObject dbf : files.getItems()) {
+				if (CC.CAD_MUNICIPALITIES_FILENAME.equals(dbf.getVal(Sv.FILE_NAME))) {
+					InputStream is = svf.getFileAsStream(dbf);
+					InputStreamReader targetReader = new InputStreamReader(is);
 					GeometryFactory gf = SvUtil.sdiFactory;
 					GeoJsonReader gjr = new GeoJsonReader(gf);
 					gjr.setUseFeatureType(true);
 					gjr.setUsePropertiesAsUserData(true);
+					geom = gjr.read(targetReader);
 
-					Geometry geom = gjr.read(json);
-					municipalities = geom;
+				}
+			}
+
+		}
+		return geom;
+
+	}
+
+	static void saveCadMunicipalities(String token, String geoJson) throws SvException, ParseException {
+		try (SvFileStore svf = new SvFileStore(token)) {
+			DbDataObject dbo = new DbDataObject(svCONST.OBJECT_TYPE_FILE);
+			dbo.setVal(Sv.FILE_TYPE, "ATTACHMENT");
+			dbo.setVal(Sv.FILE_NAME, CC.CAD_MUNICIPALITIES_FILENAME);
+			byte[] bytes = geoJson.getBytes();
+			dbo.setVal(Sv.FILE_SIZE, bytes.length);
+			svf.saveFile(dbo, SvCore.getDbtByName(CC.AGRI_PARCEL), bytes, true);
+		}
+
+	}
+
+	static Geometry getCadMunicipalities(String token) throws SvException, ParseException {
+		if (municipalities == null) {
+			synchronized (ApplicationServices.class) {
+				if (municipalities == null) {
+					municipalities = loadCadMunicipalities(token);
+					if (municipalities == null) {
+						String json = loadCadMunicipalitiesRemote();
+						GeometryFactory gf = SvUtil.sdiFactory;
+						GeoJsonReader gjr = new GeoJsonReader(gf);
+						gjr.setUseFeatureType(true);
+						gjr.setUsePropertiesAsUserData(true);
+						municipalities = gjr.read(json);
+						saveCadMunicipalities(token, json);
+					}
 				}
 
 			}
@@ -176,7 +223,7 @@ public class ApplicationServices {
 		ResponseHandler jrh = new ResponseHandler();
 		JsonArray ja = new JsonArray();
 		try (SvGeometry svg = new SvGeometry(token)) {
-			List<Geometry> geom = ApplicationServices.getCadMunicipalities(sectorId);
+			List<Geometry> geom = ApplicationServices.getCadMunicipalities(sectorId, token);
 
 			for (Geometry gg : geom) {
 				Map<String, Object> js = (Map<String, Object>) gg.getUserData();
@@ -709,6 +756,50 @@ public class ApplicationServices {
 	}
 
 	@GET
+	@Path("/info/physicalBlock/{token}/{objectName}/{x}/{y}")
+	@Produces("application/pbf")
+	public Response getPBGeometryInfo(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("x") final Double x,
+			@PathParam("y") final Double y) {
+
+		DbDataArray result = new DbDataArray();
+		String errMsg = null;
+		try (SvGeometry svg = new SvGeometry(token); SvReader svr = new SvReader(svg)) {
+			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
+			Long layerTypeId = SvCore.getTypeIdByName(objectName);
+			Collection<Geometry> geomArr = svg.getRelatedGeometries(point, layerTypeId, SDIRelation.INTERSECTS, null,
+					null, false);
+			for (Geometry g : geomArr) {
+				DbDataObject dbo = (DbDataObject) g.getUserData();
+				DbDataObject dbt = SvCore.getDbt(SvCore.getDbt(dbo).getParentId());
+				DbDataObject dboP = null;
+				if (!dbo.getParentId().equals(0L)) {
+					dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
+					if (dboP == null) {
+						if (dbt.getVal(Sv.TABLE_NAME).equals("FARM"))
+							dbt = SvCore.getDbtByName("FARMER");
+						else
+							dbt = SvCore.getDbtByName("FARM");
+						dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
+					}
+				}
+				if (dboP != null)
+					result.addDataItem(dboP);
+				if (dbo != null)
+					result.addDataItem(dbo);
+			}
+		} catch (Exception e) {
+			log.error("Error fetching geometry info", e);
+			errMsg = "Failed fetching geometry set. Please see server logs";
+		}
+		if (errMsg != null)
+			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+		else
+			return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON)
+					.build();
+	}
+
+	@GET
 	@Path("/info/agriParcel/{token}/{objectName}/{x}/{y}")
 	@Produces("application/pbf")
 	public Response getGeometryInfo(@PathParam("token") final String token,
@@ -1148,7 +1239,7 @@ public class ApplicationServices {
 		final DbDataArray result = new DbDataArray();
 		try (SvReader svr = new SvReader(token)) {
 			result.setItems((new AgriParcel()).getAssetsList(svr, objectId, typeName).getItems());
-			//simplify(result);
+			// simplify(result);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToSaveObject");

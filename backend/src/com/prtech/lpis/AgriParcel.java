@@ -103,6 +103,7 @@ public class AgriParcel {
 		Geometry result = svg.getRelatedGeometries(points.get(0), layerTypeId, SDIRelation.INTERSECTS, filterFieldName,
 				filterValue, reverseFilter, false).iterator().next();
 		DbDataObject resultDbo = (DbDataObject) result.getUserData();
+
 		for (int i = 1; i < points.size(); i++) {
 			Iterator<Geometry> iterator = svg.getRelatedGeometries(points.get(i), layerTypeId, SDIRelation.INTERSECTS,
 					filterFieldName, filterValue, reverseFilter, false).iterator();
@@ -288,6 +289,7 @@ public class AgriParcel {
 				}
 			}
 		}
+
 		return geom;
 
 	}
@@ -484,7 +486,7 @@ public class AgriParcel {
 		return updatedParcels;
 	}
 
-	DbDataObject calculateIntersection(Geometry g, DbDataArray agriParcels) {
+	DbDataObject calculateIntersection(Geometry g, DbDataArray agriParcels, SvCore svr) {
 
 		Geometry geom_intersect = null;
 		DbDataObject intersection = null;
@@ -517,7 +519,8 @@ public class AgriParcel {
 					intersection.setVal("FR_AREA", usermap.get("AREA"));
 					intersection.setVal("AREA", Math.round(geom_intersect.getArea()));
 					Long sector = (Long) usermap.get("GR_COD_DP");
-					List<Geometry> munics = ApplicationServices.getCadMunicipalities(sector.intValue());
+					List<Geometry> munics = ApplicationServices.getCadMunicipalities(sector.intValue(),
+							svr.getSessionId());
 					for (Geometry gg : munics) {
 						Map<String, Object> usermapItem = (Map<String, Object>) gg.getUserData();
 						String koId = usermapItem.get("SIFRA1").toString();
@@ -602,7 +605,7 @@ public class AgriParcel {
 				Geometry geom = performMunicipalityCadCalc(dp_cc[0], dp_cc[1], e.getValue());
 				for (int i = 0; i < geom.getNumGeometries(); i++) {
 					Geometry g = geom.getGeometryN(i);
-					DbDataObject intersection = calculateIntersection(g, agriParcels);
+					DbDataObject intersection = calculateIntersection(g, agriParcels, svr);
 
 					if (intersection != null) {
 						boolean existingFound = false;
