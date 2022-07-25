@@ -1,6 +1,6 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
-import { config } from '../Config';
+import { config, mergeAPMsg } from '../Config';
 import { decodeResponse, getFarmMapAssets } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
@@ -88,7 +88,7 @@ const _Merge = ({ processID, farmObjId }) => {
         finish={() => line._finishShape()}
         undo={() => line._removeLastVertex()}
         disable={disable}
-        msg={['', '']}
+        msg={mergeAPMsg}
         title='Спои парцела' />}
   </ProcessButton>;
 };

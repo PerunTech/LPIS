@@ -1,6 +1,6 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
-import { config } from '../Config';
+import { config, cutAPMsg } from '../Config';
 import { getFarmMapAssets } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
@@ -99,7 +99,7 @@ const _Cut = ({ processID, farmObjId, saveIsPending }) => {
             finish={() => polygon._finishShape()}
             undo={() => polygon._removeLastVertex()}
             disable={() => disable()}
-            msg={['', '']}
+            msg={cutAPMsg}
             title='Отсечи земјоделска парцела'
         />
     }
