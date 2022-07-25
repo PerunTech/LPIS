@@ -431,6 +431,7 @@ public class AgriParcel {
 			overlapDbos.addDataItem(overlapDbo);
 		}
 		svg.setAutoCommit(false);
+		svg.setSkipSpatialValidations(true);
 		svg.saveGeometry(overlapDbos);
 		svg.saveGeometry(overlapParcels);
 		if (existingOverlaps.size() > 0)
@@ -630,6 +631,7 @@ public class AgriParcel {
 				}
 			}
 			// add new or updated
+			svg.setSkipSpatialValidations(true);
 			svg.saveGeometry(intersections);
 			// delete non existing intersections
 			if (lpCadIntersections.size() > 0)
