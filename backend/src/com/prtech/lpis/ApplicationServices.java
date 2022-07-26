@@ -122,7 +122,7 @@ public class ApplicationServices {
 
 	static ArrayList<Geometry> getCadMunicipalities(Integer sector, String token) throws SvException, ParseException {
 		ArrayList<Geometry> munics = municipalityMap.get(sector);
-		if (munics == null) {
+		if (munics == null || munics.size() < 1) {
 			synchronized (ApplicationServices.class) {
 				munics = new ArrayList<Geometry>();
 				municipalityMap.putIfAbsent(sector, munics);
