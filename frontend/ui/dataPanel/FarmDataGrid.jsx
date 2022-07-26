@@ -9,6 +9,7 @@ import { strcmp, translateBooleanValue } from '../Util';
 const { factory, Map, store, http } = core;
 const { ButtonGroup, Button, Icon } = ui;
 const { useState, useEffect } = React;
+const { alertUser } = elements
 const { ListGroup, ProgressBar } = elements.ReactBootstrap;
 const { Item: ListGroupItem } = ListGroup;
 
