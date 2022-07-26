@@ -436,6 +436,30 @@ public class ApplicationServices {
 
 	}
 
+	@Path("/save/agriParcel/{token}/{objectId}/{parentId}/{cutPB}/{cutAP}/{alignAP}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response saveAgriParcelToFarmExt(@PathParam("token") String token, @PathParam("objectId") Long objectId,
+			@PathParam("parentId") Long parentId, @PathParam("opType") String opType,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try {
+			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, "CUTOFF", formVals);
+
+		} catch (SvException e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
+		}
+
+		StreamingOutput pbfStream = new StreamingOutput() {
+			public void write(OutputStream stream) throws IOException {
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+				enc.writeSvGeometry(result);
+			};
+		};
+		return Response.ok(pbfStream, "application/pbf").build();
+
+	};
+
 	@Path("/save/agriParcel/{token}/{objectId}/{parentId}/{opType}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
