@@ -139,8 +139,20 @@
   background-color: #232323;
 }
 
-.parcel-info-modal .parcel-info-modal-body {
+.parcel-info-modal .parcel-info-modal-body,
+.parcel-history-info-modal .parcel-history-info-modal-body {
   max-height: 800px !important;
+}
+
+.parcel-history-info-modal .modal-dialog {
+  position: relative;
+  top: 1px !important;
+  right: 500px !important;
+  font-size: larger;
+}
+
+.parcel-history-info-modal .modal-content {
+  width: 1400px !important;
 }
 
 .parcel-info-modal .modal-body .info {
