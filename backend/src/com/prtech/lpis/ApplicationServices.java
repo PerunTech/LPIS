@@ -440,8 +440,9 @@ public class ApplicationServices {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response saveAgriParcelToFarmExt(@PathParam("token") String token, @PathParam("objectId") Long objectId,
-			@PathParam("parentId") Long parentId, @PathParam("opType") String opType,
-			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+			@PathParam("parentId") Long parentId, @PathParam("cutPB") Boolean cutPB, @PathParam("cutAP") Boolean cutAP,
+			@PathParam("alignAP") Boolean alignAP, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try {
 			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, "CUTOFF", formVals);
