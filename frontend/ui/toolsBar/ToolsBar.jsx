@@ -34,7 +34,7 @@ const _ToolsBar = ({ actionType }) => {
         let shouldDisable = false
         switch (tabType) {
             case 'physical-block':
-                if (actionType === 'sizp' || actionType === 'pplan') {
+                if (actionType === 'pplan') {
                     shouldDisable = true
                 }
                 break
