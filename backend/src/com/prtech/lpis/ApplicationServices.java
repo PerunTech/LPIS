@@ -757,51 +757,36 @@ public class ApplicationServices {
 
 	@GET
 	@Path("/info/physicalBlock/{token}/{objectName}/{x}/{y}")
-	@Produces("application/pbf")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getPBGeometryInfo(@PathParam("token") final String token,
 			@PathParam("objectName") final String objectName, @PathParam("x") final Double x,
 			@PathParam("y") final Double y) {
 
-		DbDataArray result = new DbDataArray();
-		String errMsg = null;
-		try (SvGeometry svg = new SvGeometry(token); SvReader svr = new SvReader(svg)) {
+		DbDataObject dbo = null;
+		try (SvReader svr = new SvReader(token);
+				SvWriter svw = new SvWriter(svr);
+				SvGeometry svg = new SvGeometry(svr)) {
+			svr.setIncludeGeometries(true);
 			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
-			Long layerTypeId = SvCore.getTypeIdByName(objectName);
-			Collection<Geometry> geomArr = svg.getRelatedGeometries(point, layerTypeId, SDIRelation.INTERSECTS, null,
-					null, false);
-			for (Geometry g : geomArr) {
-				DbDataObject dbo = (DbDataObject) g.getUserData();
-				DbDataObject dbt = SvCore.getDbt(SvCore.getDbt(dbo).getParentId());
-				DbDataObject dboP = null;
-				if (!dbo.getParentId().equals(0L)) {
-					dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
-					if (dboP == null) {
-						if (dbt.getVal(Sv.TABLE_NAME).equals("FARM"))
-							dbt = SvCore.getDbtByName("FARMER");
-						else
-							dbt = SvCore.getDbtByName("FARM");
-						dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
-					}
+			Collection<Geometry> gg = getPhysicalBlock(svg, point.getEnvelopeInternal(), "ext_lpis.ilpis", "geometry");
+			for (Geometry g : gg) {
+				if (g.covers(point)) {
+					dbo = (DbDataObject) g.getUserData();
 				}
-				if (dboP != null)
-					result.addDataItem(dboP);
-				if (dbo != null)
-					result.addDataItem(dbo);
 			}
 		} catch (Exception e) {
-			log.error("Error fetching geometry info", e);
-			errMsg = "Failed fetching geometry set. Please see server logs";
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.copy");
 		}
-		if (errMsg != null)
-			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+		if (dbo != null)
+			return Response.ok(dbo.toSimpleJson().toString(), MediaType.APPLICATION_JSON).build();
 		else
-			return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON)
+			return Response.status(500).entity("{error:err.no_parcel.selected}").type(MediaType.APPLICATION_JSON)
 					.build();
 	}
 
 	@GET
 	@Path("/info/agriParcel/{token}/{objectName}/{x}/{y}")
-	@Produces("application/pbf")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getGeometryInfo(@PathParam("token") final String token,
 			@PathParam("objectName") final String objectName, @PathParam("x") final Double x,
 			@PathParam("y") final Double y) {
