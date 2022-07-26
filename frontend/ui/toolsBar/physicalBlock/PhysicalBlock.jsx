@@ -11,7 +11,7 @@ const { ButtonGroup, Button, Icon, Divider } = ui
 
 const _PhysicalBlock = ({ processID, actionType }) =>
     <ButtonGroup>
-        <Info />
+        {actionType === 'sizp' && <Info />}
         {actionType !== 'sizp' && (
             <React.Fragment>
                 <createBlock.render processID={processID} />
