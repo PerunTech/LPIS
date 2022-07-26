@@ -168,3 +168,9 @@
 .cadastre-search-form .rjsf .field {
   width: 100% !important;
 }
+
+.ap-checks-modal .modal-content {
+  width: 700px !important;
+  right: 200px !important;
+  font-size: larger !important;
+}
