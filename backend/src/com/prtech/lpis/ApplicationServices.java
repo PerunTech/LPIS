@@ -974,6 +974,35 @@ public class ApplicationServices {
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 
+	@Path("/check/AgriParcel/{token}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response checkAgriParcel(@PathParam("token") String token, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
+
+		Boolean result = false;
+		JsonObject json = new JsonObject();
+
+		ResponseHandler rhs = new ResponseHandler();
+		try (SvGeometry svg = new SvGeometry(token);) {
+
+			json = Util.dataToJson(formVals);
+			Geometry gp = Util.jsonToGeometry(json.get("GEOM"));
+			Set<Geometry> geoms = new HashSet<Geometry>();
+			json.addProperty("physical_block_check", true);
+			json.addProperty("agri_parcel_check", false);
+			json.addProperty("agri_parcel_neighbour", true);
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.copy");
+		}
+		if (json != null)
+			return Response.ok(json.toString(), MediaType.APPLICATION_JSON).build();
+		else
+			return Response.status(500).entity("{error:err.no_parcel.selected}").type(MediaType.APPLICATION_JSON)
+					.build();
+	}
+
 	@Path("/check/PBContainsAP/{token}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
