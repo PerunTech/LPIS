@@ -133,7 +133,8 @@ public class AgriParcel {
 	Polygon mergePolygons(Polygon g1, Polygon g2) throws SvException {
 		ArrayList<LineString> holes = new ArrayList<>(g1.getNumInteriorRing() + g2.getNumInteriorRing());
 		Geometry result = g1.union(g2);
-
+		Geometry buffer = g1.buffer(mergeTolerance).intersection(g2.buffer(mergeTolerance));
+		result.union(buffer);
 		if (result.getGeometryType().equals("MultiPolygon")) {
 			for (int i = 0; i < g1.getNumInteriorRing(); i++)
 				holes.add(g1.getInteriorRingN(i));
