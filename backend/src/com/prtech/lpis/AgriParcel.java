@@ -62,6 +62,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.util.GeometryExtracter;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
+import com.vividsolutions.jts.operation.polygonize.Polygonizer;
 
 public class AgriParcel {
 	private Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
@@ -128,6 +129,38 @@ public class AgriParcel {
 		result = svg.fixPolygonSpikes(result, maxAngle);
 		result.setUserData(resultDbo);
 		return result;
+	}
+
+	public Geometry generatePolygon(SvGeometry svg, LineString line, Long layerTypeId) throws SvException {
+
+		Polygonizer polygonizer = new Polygonizer();
+		polygonizer.add(line);
+		Coordinate[] closeLine = new Coordinate[2];
+		closeLine[0] = line.getEndPoint().getCoordinate();
+		closeLine[1] = line.getStartPoint().getCoordinate();
+		LineString ls = SvUtil.sdiFactory.createLineString(closeLine);
+		polygonizer.add(ls);
+		Geometry tmpResult = null;
+		Iterator<Polygon> polys = polygonizer.getPolygons().iterator();
+		if (polys.hasNext())
+			tmpResult = polys.next();
+		else
+			throw (new SvException(CC.GEOM_INVALID, svCONST.systemUser, null, line));
+
+		Collection<Geometry> gg = svg.getRelatedGeometries(tmpResult, layerTypeId, SDIRelation.INTERSECTS, null, null,
+				false, false);
+
+		Iterator<Geometry> iterator = gg.iterator();
+		while (iterator.hasNext()) {
+			tmpResult = mergePolygons((Polygon) tmpResult, (Polygon) iterator.next());
+		}
+
+		Iterator<Geometry> itdiff = gg.iterator();
+		while (itdiff.hasNext()) {
+			tmpResult = tmpResult.difference(itdiff.next());
+		}
+		tmpResult = ensurePolygon(tmpResult);
+		return tmpResult;
 	}
 
 	Polygon mergePolygons(Polygon g1, Polygon g2) throws SvException {
@@ -224,6 +257,8 @@ public class AgriParcel {
 			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
 			metadata = Util.dataToJson(formVals);
 			geom = Util.jsonToGeometry(metadata.get(Sv.GEOM));
+			if (geom.getGeometryType().equals("LineString"))
+				geom = generatePolygon(svg, (LineString) geom, typeId);
 
 			if (isUpdate) {
 				ap = svr.getObjectById(objectId, typeId, null);
