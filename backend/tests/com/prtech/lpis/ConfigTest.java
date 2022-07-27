@@ -14,6 +14,7 @@ import com.prtech.svarog.SvLock;
 import com.prtech.svarog.SvReader;
 import com.prtech.svarog.SvSecurity;
 import com.prtech.svarog.SvUtil;
+import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -40,6 +41,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 
 public class ConfigTest {
@@ -217,6 +219,36 @@ public class ConfigTest {
 
 	}
 
+	@Test
+	public void testParcelsServ() throws SvException {
+
+		int lock = 0;
+		Response response = null;
+		try (SvReader svr = new SvReader(getUserSessionIdForTestPurpose())) {
+			DateTime dt = DateTime.parse("2021-04-19T09:36:21.583+02:00");
+			DbDataArray result = new Reader((SvCore) svr).getParcels(23971L, dt, true);
+			System.out.println(result);
+		}
+
+	}
+
+	//@Test
+	public void testParcelsMergeDisjoint() throws SvException {
+
+		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7550857.4277,4528950.4667],[7550881.2064,4528947.7444]]}}";
+		// =
+		// "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
+		Gson g = new Gson();
+		JsonObject json = g.fromJson(input, JsonObject.class);
+		LineString lineString = (LineString) Util.jsonToGeometry(json);
+		Response response = null;
+		try (SvGeometry svr = new SvGeometry(getUserSessionIdForTestPurpose())) {
+			Geometry gg = new AgriParcel().mergeGeometryConfirm(svr, "AGRI_PARCEL", 21345L, lineString, false);
+			System.out.println(gg.getArea());
+		}
+
+	}
+
 	// @Test
 	public void getAssets() throws SvException, SQLException, ParseException {
 		ApplicationServices as = new ApplicationServices();
@@ -237,7 +269,7 @@ public class ConfigTest {
 		}
 	}
 
-	//@Test
+	// @Test
 	public void testGetVersion() {
 		Properties properties = new Properties();
 		InputStream is = Config.class.getClassLoader().getResourceAsStream("lpis.properties");
@@ -276,7 +308,7 @@ public class ConfigTest {
 		// digit ", i > 1);
 	}
 
-	//@Test
+	// @Test
 	public void testMerge() throws SvException {
 		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
 		Gson g = new Gson();
@@ -284,7 +316,7 @@ public class ConfigTest {
 		LineString lineString = (LineString) Util.jsonToGeometry(json);
 		Response response = null;
 		try (SvGeometry svr = new SvGeometry(getUserSessionIdForTestPurpose())) {
-			Collection<Geometry> gg = new AgriParcel().mergeGeometryConfirm(svr, "AGRI_PARCEL", 21345L, lineString);
+			Geometry gg = new AgriParcel().mergeGeometryConfirm(svr, "AGRI_PARCEL", 21345L, lineString, false);
 			System.out.println(gg);
 		}
 
