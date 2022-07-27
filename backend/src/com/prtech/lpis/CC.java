@@ -54,5 +54,6 @@ public class CC {
 	public static final Object CAD_MUNICIPALITIES_FILENAME = "CAD_MUNICIPALITIES.JSON";
 	public static final String SDI_MERGE_TOLERANCE = "SDI_MERGE_TOLERANCE";
 	public static final String MERGE_EXCEPTION = "error.cant_merge_parcel";
+	public static final double DEFAULT_MERGE_TOLERANCE = 1.0;
 
 }
