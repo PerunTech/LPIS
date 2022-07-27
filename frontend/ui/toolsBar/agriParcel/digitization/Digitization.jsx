@@ -8,6 +8,7 @@ import { Cut } from './Cut';
 import { Delete } from './Delete';
 import { DeleteParcelFromFarm } from './DeleteParcelFromFarm';
 import { Draw } from './Draw';
+import { DrawWithLine } from './DrawWithLine';
 import { Edit } from './Edit';
 import { Fill } from './Fill';
 import { Info } from './Info/Info';
@@ -28,6 +29,7 @@ export const Digitization = () => {
         <Divider />
         <Copy />
         <Draw />
+        <DrawWithLine />
         <Delete />
         <Edit />
         <Cut />

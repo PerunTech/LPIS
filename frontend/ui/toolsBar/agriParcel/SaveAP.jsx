@@ -1,13 +1,15 @@
 import { React, ReactDOM, PropTypes, elements } from 'perun-core';
 import { core, data, ui } from '../../../Spatial';
-import { config } from './Config';
+import { Form } from './Form'
+import { config, saveAPFormSchema } from './Config';
 import { bufferToString, isJSON, strcmp } from '../../Util'
+
 
 const { http, store, factory, Map, util } = core;
 const { protobuf, geobuf } = data;
-const { Button, Modal, Icon } = ui
+const { Button, Modal, Icon, DrawActions } = ui
 
-export const saveAP = (layer, callback) => {
+export const saveAP = (layer, callback, skipChecks) => {
     // Container for our workflow.
     const container = document.getElementsByClassName('control-topleft')[0];
 
@@ -40,6 +42,20 @@ export const saveAP = (layer, callback) => {
             'Успешно зачувување',
             'Земјоделската парцела е запишана во базата на податоци.', () => callback(layer, geojson.getLayers()))
     };
+
+    const _initChecks = () => {
+        http.call('ap_checks', {
+            data: JSON.stringify(JSON.parse(layer)),
+            url: '/lpis/check/AgriParcel/{init.token}',
+            method: 'post'
+        }).then(response => {
+            if (response?.data) {
+                ReactDOM.render(<APChecksModal data={response.data} />, container)
+            } else {
+                _fail()
+            }
+        }).catch(() => _fail);
+    }
 
     // Check 1, intersection with the underlining physical block.  
     const _checkPB = () => {
@@ -133,6 +149,76 @@ export const saveAP = (layer, callback) => {
             });
     };
 
+    const _saveAgriParcel = data => {
+        store.dispatch({ saveIsPending: true })
+        // Unmount user prompt for the parcel checks manually
+        ReactDOM.unmountComponentAtNode(container);
+        const parsedLayer = JSON.parse(layer)
+        const parentId = parsedLayer.PARENT_ID || parsedLayer.parent_id || 0
+        let cutPB = false
+        let cutAP = false
+        let alignAP = false
+        if (data) {
+            const { physical_block_check, agri_parcel_check, agri_parcel_neighbour } = data
+            cutPB = physical_block_check
+            cutAP = agri_parcel_check
+            alignAP = agri_parcel_neighbour
+        }
+        // Make the call for the final save, with results from the parcel checks prompt.
+        http.call('save_agri_parcel', {
+            data: JSON.stringify(parsedLayer),
+            url: '/lpis/save/agriParcel/{init.token}/' + parsedLayer.OBJECT_ID + '/' + parentId + '/' + cutPB + '/' + cutAP + '/' + alignAP,
+            method: 'post',
+            responseType: 'arraybuffer'
+        })
+            .then(response => _succeed(geobuf.decode(protobuf(response)), layer))
+            .catch((error) => {
+                const { response } = error
+                let title = ''
+                let msg = ''
+                const stringifiedResponse = bufferToString(response?.data)
+                if (isJSON(stringifiedResponse) && Object.keys(JSON.parse(stringifiedResponse)).length > 1) {
+                    const parsedResponse = JSON.parse(stringifiedResponse)
+                    title = parsedResponse?.title || title
+                    msg = parsedResponse?.message || ''
+                    _fail(title, msg)
+                } else {
+                    _fail()
+                }
+            });
+    }
+
+    const APChecksModal = ({ data }) => {
+        const pbCheck = data.physical_block_check
+        const apCheck = data.agri_parcel_check
+        const neighbourCheck = data.agri_parcel_neighbour
+        const { schema, uiSchema } = saveAPFormSchema(pbCheck, apCheck, neighbourCheck)
+
+        const formData = data
+
+        const onSubmit = ({ formData }) => {
+            _saveAgriParcel(formData)
+        }
+
+        const disable = () => {
+            callback()
+            ReactDOM.unmountComponentAtNode(container)
+        }
+
+        return (
+            <Form
+                isSimple
+                formTitle='Проверки'
+                className='ap-checks-modal'
+                schema={schema}
+                uiSchema={uiSchema}
+                formData={formData}
+                onSubmit={onSubmit}>
+                <DrawActions cancel={disable} />
+            </Form>
+        )
+    }
+
     // User input for the result of check 1
     const PBModal = () =>
         <Modal show id='pb-contains-ap-dialog' container={container} >
@@ -178,5 +264,5 @@ export const saveAP = (layer, callback) => {
     // Begin workflow
     // intentional dispatch, disables form on screen, workflow is atomic (will either fail or succeed)
     store.dispatch({ processID: '' });
-    _checkPB();
+    skipChecks ? _saveAgriParcel() : _initChecks();
 }

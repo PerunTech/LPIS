@@ -125,7 +125,7 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
       OBJECT_ID: 0,
       parent_id: farmObjId,
       GEOM: factory.GeoJSON.fromLayer(layer)
-    }), () => disable(true));
+    }), () => disable(true), true);
   }
 
   const handleOverlap = (translatedError, x, y) => {
