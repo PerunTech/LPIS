@@ -154,6 +154,8 @@ public class AgriParcel {
 		while (iterator.hasNext()) {
 			tmpResult = mergePolygons((Polygon) tmpResult, (Polygon) iterator.next());
 		}
+		tmpResult = ensurePolygon(tmpResult);
+		tmpResult = SvUtil.sdiFactory.createPolygon(((Polygon) tmpResult).getExteriorRing().getCoordinates());
 
 		Iterator<Geometry> itdiff = gg.iterator();
 		while (itdiff.hasNext()) {
