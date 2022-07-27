@@ -725,7 +725,7 @@ public class ApplicationServices {
 		try (SvGeometry svg = new SvGeometry(token)) {
 			LineString lineString = (LineString) Util.getInputGeometry(formVals, null);
 
-			result.addAll(new AgriParcel().mergeGeometryConfirm(svg, objectName, parentId, lineString));
+			result.add(new AgriParcel().mergeGeometryConfirm(svg, objectName, parentId, lineString, true));
 		} catch (SvException e) {
 			ResponseHandler jrh = new ResponseHandler();
 			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
@@ -1019,7 +1019,7 @@ public class ApplicationServices {
 			json.addProperty("agri_parcel_check", false);
 			json.addProperty("agri_parcel_neighbour", true);
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.copy");
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.crosscheck");
 		}
 		if (json != null)
 			return Response.ok(json.toString(), MediaType.APPLICATION_JSON).build();

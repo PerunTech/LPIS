@@ -50,11 +50,13 @@ import com.prtech.svarog_common.DbSearchExpression;
 import com.prtech.svarog_common.ResponseHandler;
 import com.prtech.svarog_common.SvCharId;
 import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
+import com.vividsolutions.jts.algorithm.ConvexHull;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.util.GeometryExtracter;
@@ -65,6 +67,7 @@ import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 public class AgriParcel {
 	private Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
 	private Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
+	private Double mergeTolerance = SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, Sv.DEFAULT_MERGE_TOLERANCE);
 	static final Logger log4j = SvConf.getLogger(AgriParcel.class);
 
 	public AgriParcel() throws SvException {
@@ -102,19 +105,21 @@ public class AgriParcel {
 
 		Geometry result = svg.getRelatedGeometries(points.get(0), layerTypeId, SDIRelation.INTERSECTS, filterFieldName,
 				filterValue, reverseFilter, false).iterator().next();
-		DbDataObject resultDbo = (DbDataObject) result.getUserData();
 
+		DbDataObject resultDbo = (DbDataObject) result.getUserData();
+		Geometry geomWithTol = result.buffer(mergeTolerance);
 		for (int i = 1; i < points.size(); i++) {
 			Iterator<Geometry> iterator = svg.getRelatedGeometries(points.get(i), layerTypeId, SDIRelation.INTERSECTS,
 					filterFieldName, filterValue, reverseFilter, false).iterator();
 
 			while (iterator.hasNext()) {
 				Geometry g = iterator.next();
-				if (result.disjoint(g))
+				if (geomWithTol.disjoint(g))
 					throw (new SvException(Sv.Exceptions.SDI_MERGE_GEOM_DISJOINT, svCONST.systemUser, null, g));
 
+				result = mergePolygons((Polygon) result, (Polygon) g);
 				if (!mergedObjects.contains(g.getUserData())) {
-					result = result.union(g);
+
 					if (!result.isValid())
 						throw (new SvException(CC.MERGE_GEOM_INVALID, svCONST.systemUser, null, g));
 					mergedObjects.add((DbDataObject) g.getUserData());
@@ -126,8 +131,26 @@ public class AgriParcel {
 		return result;
 	}
 
-	public Collection<Geometry> mergeGeometryConfirm(SvGeometry svg, @PathParam("objectName") final String objectName,
-			@PathParam("parentId") final Long parentId, LineString lineString) throws SvException {
+	Polygon mergePolygons(Polygon g1, Polygon g2) throws SvException {
+		ArrayList<LineString> holes = new ArrayList<>(g1.getNumInteriorRing() + g2.getNumInteriorRing());
+		Geometry result = g1.union(g2);
+
+		if (result.getGeometryType().equals("MultiPolygon")) {
+			for (int i = 0; i < g1.getNumInteriorRing(); i++)
+				holes.add(g1.getInteriorRingN(i));
+			for (int i = 0; i < g2.getNumInteriorRing(); i++)
+				holes.add(g2.getInteriorRingN(i));
+			ConvexHull ch = new ConvexHull(result);
+			result = ch.getConvexHull();
+		} else if (!result.getGeometryType().equals("Polygon"))
+			throw (new SvException(CC.MERGE_EXCEPTION, svCONST.systemUser, null, result));
+
+		return (Polygon) result;
+
+	}
+
+	public Geometry mergeGeometryConfirm(SvGeometry svg, @PathParam("objectName") final String objectName,
+			@PathParam("parentId") final Long parentId, LineString lineString, boolean autoCommit) throws SvException {
 		Set<Geometry> result = new HashSet<Geometry>();
 		ArrayList<Point> p = new ArrayList<>();
 		for (Coordinate c : lineString.getCoordinates())
@@ -138,8 +161,8 @@ public class AgriParcel {
 		AgriParcel ap = new AgriParcel();
 		Geometry merge = ap.mergeParcels(svg, p, layerTypeId, toBeDeleted, false, SC.PARENT_ID, parentId, false);
 		result.add(merge);
-		splitMergeGeometryDbUpdate(svg, result, toBeDeleted, true);
-		return result;
+		splitMergeGeometryDbUpdate(svg, result, toBeDeleted, autoCommit);
+		return merge;
 
 	}
 
@@ -176,7 +199,7 @@ public class AgriParcel {
 			DbDataArray newDba = new DbDataArray();
 			for (Geometry g : newGeometries) {
 				dbo = (DbDataObject) g.getUserData();
-				SvGeometry.setGeometry(dbo, autoFixPoly(svg, g));
+				SvGeometry.setGeometry(dbo, autoFixPoly(svg, g, 2));
 				newDba.addDataItem(dbo);
 			}
 
@@ -250,7 +273,7 @@ public class AgriParcel {
 			svg.setAutoCommit(false);
 			Util.calculateGeometryDerivatives(ap);
 
-			geom = autoFixPoly(svg, geom);
+			geom = autoFixPoly(svg, geom, 2);
 			SvGeometry.setGeometry(ap, geom);
 			result.addDataItem(ap);
 			svg.saveGeometry(ap);
@@ -258,38 +281,25 @@ public class AgriParcel {
 		}
 	}
 
-	private Geometry autoFixPoly(SvGeometry svg, Geometry geom) throws SvException {
-
-		geom = svg.fixMinVertexDistance(geom,
-				SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE));
+	private Geometry autoFixPoly(SvGeometry svg, Geometry geom, int numberOfRepeats) throws SvException {
 
 		boolean hasSpikes = true;
-		// data to geom
-		double angle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
-		while (hasSpikes) {
-			try {
-				svg.testPolygonSpikes(geom, angle);
-				hasSpikes = false;
-			} catch (SvException e) {
-				if (e.getLabelCode().equals(Sv.Exceptions.SDI_SPIKE_DETECTED)) {
-					geom = svg.fixPolygonSpikes(geom, angle);
+		Object userDate = geom.getUserData();
+		for (int i = 0; i < numberOfRepeats; i++) {
+			while (hasSpikes) {
+				try {
+					svg.testPolygonSpikes(geom, maxAngle);
+					hasSpikes = false;
+				} catch (SvException e) {
+					if (e.getLabelCode().equals(Sv.Exceptions.SDI_SPIKE_DETECTED)) {
+						geom = svg.fixPolygonSpikes(geom, maxAngle);
+					}
 				}
 			}
+			geom = svg.fixMinVertexDistance(geom, minPointDistance);
+			hasSpikes = true;
 		}
-		geom = svg.fixMinVertexDistance(geom,
-				SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE));
-		hasSpikes = true;
-		while (hasSpikes) {
-			try {
-				svg.testPolygonSpikes(geom, angle);
-				hasSpikes = false;
-			} catch (SvException e) {
-				if (e.getLabelCode().equals(Sv.Exceptions.SDI_SPIKE_DETECTED)) {
-					geom = svg.fixPolygonSpikes(geom, angle);
-				}
-			}
-		}
-
+		geom.setUserData(userDate);
 		return geom;
 
 	}

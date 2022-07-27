@@ -52,6 +52,7 @@ public class CC {
 	public static final String MERGE_GEOM_INVALID = "MERGE_GEOM_INVALID";
 	public static final String SIMPLIFY_LEVEL = "SIMPLIFY_LEVEL";
 	public static final Object CAD_MUNICIPALITIES_FILENAME = "CAD_MUNICIPALITIES.JSON";
-	
+	public static final String SDI_MERGE_TOLERANCE = "SDI_MERGE_TOLERANCE";
+	public static final String MERGE_EXCEPTION = "error.cant_merge_parcel";
 
 }
