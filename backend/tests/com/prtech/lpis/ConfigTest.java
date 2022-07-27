@@ -219,7 +219,7 @@ public class ConfigTest {
 
 	}
 
-	@Test
+	//@Test
 	public void testParcelsServ() throws SvException {
 
 		int lock = 0;
