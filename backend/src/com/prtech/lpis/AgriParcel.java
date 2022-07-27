@@ -166,6 +166,10 @@ public class AgriParcel {
 	}
 
 	Polygon mergePolygons(Polygon g1, Polygon g2) throws SvException {
+		Geometry result = g1.union(g2);
+		if (result.getGeometryType().equals("Polygon"))
+			return (Polygon) result;
+
 		// get the buffer zone as overlap of the intersection of the two buffered geoms
 		Geometry buffer = g1.buffer(mergeTolerance).intersection(g2.buffer(mergeTolerance));
 		// intersection the buffer with the original geoms will give us minimal set of
@@ -173,7 +177,7 @@ public class AgriParcel {
 		Geometry cvh = buffer.intersection(g1).union(buffer.intersection(g2));
 		ConvexHull ch = new ConvexHull(cvh);
 		Geometry gapFill = ch.getConvexHull();
-		Geometry result = g1.union(gapFill).union(g2);
+		result = g1.union(gapFill).union(g2);
 
 		if (!result.getGeometryType().equals("Polygon"))
 			throw (new SvException(CC.MERGE_EXCEPTION, svCONST.systemUser, null, result));
