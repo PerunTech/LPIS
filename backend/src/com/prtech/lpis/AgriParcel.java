@@ -296,7 +296,7 @@ public class AgriParcel {
 		return gg;
 	}
 
-	public void parcelAlignment(SvGeometry svg, DbDataObject parcel, boolean cutPB, boolean cutAP, boolean alignAP,
+	public Geometry parcelAlignment(SvGeometry svg, DbDataObject parcel, boolean cutPB, boolean cutAP, boolean alignAP,
 			DbDataArray result) throws SvException, SQLException, ParseException {
 		Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 		Geometry geom = SvGeometry.getGeometry(parcel);
@@ -354,6 +354,8 @@ public class AgriParcel {
 			}
 		}
 		SvGeometry.setGeometry(parcel, geom);
+		geom.setUserData(parcel);
+		return geom;
 	}
 
 	public void saveAgriParcel(String token, Long objectId, Long parentId, boolean cutPB, boolean cutAP,
@@ -395,7 +397,7 @@ public class AgriParcel {
 					ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
 				}
 			}
-			parcelAlignment(svg, ap, cutPB, cutAP, alignAP, result);
+			geom = parcelAlignment(svg, ap, cutPB, cutAP, alignAP, result);
 			// check minimum parcel size
 			if (geom.getArea() < ApplicationServices.minimumAgriParcelSize)
 				throw (new SvException(CC.PARCEL_LESS_THAN_MINIMUM, svg.getInstanceUser(), ap,
