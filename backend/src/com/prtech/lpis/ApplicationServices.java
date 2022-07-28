@@ -1026,12 +1026,17 @@ public class ApplicationServices {
 			gp = SvGeometry.getGeometry(ap);
 			Collection<Geometry> gg = getPBIntersections(svg, gp);
 			boolean pbCover = gg.size() == 1 && gg.iterator().next().covers(gp);
-			json.addProperty("physical_block_check", pbCover);
+			json.addProperty("physical_block_check", !pbCover);
 			AgriParcel aps = new AgriParcel();
-			json.addProperty("agri_parcel_check", aps.overlapsNeighbours(svg, gp, parentId));
+			Collection<Geometry> neighbours = aps.overlappedNeighbours(svg, gp, parentId, typeId);
+
+			json.addProperty("agri_parcel_check", neighbours.size() > 0);
 			Geometry bufferedAP = gp
 					.buffer(SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE));
-			json.addProperty("agri_parcel_neighbour", aps.overlapsNeighbours(svg, bufferedAP, parentId));
+
+			Collection<Geometry> neighboursNearBy = aps.overlappedNeighbours(svg, bufferedAP, parentId, typeId);
+
+			json.addProperty("agri_parcel_neighbour", neighbours.size() == 0 && neighboursNearBy.size() > 0);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.crosscheck");
 		}

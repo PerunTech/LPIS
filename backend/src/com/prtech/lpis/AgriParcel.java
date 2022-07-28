@@ -249,20 +249,27 @@ public class AgriParcel {
 
 	}
 
-	public boolean overlapsNeighbours(SvGeometry svg, Geometry geom, Long parentId) throws SvException {
+	public Collection<Geometry> overlappedNeighbours(SvGeometry svg, Geometry geom, Long parentId, Long typeId)
+			throws SvException {
 		// Perform check if our parcel crosses with neighbouring parcels.
-		Collection<Geometry> neighbourAP = svg.getRelatedGeometries(geom, SvCore.getTypeIdByName("AGRI_PARCEL"),
-				SDIRelation.INTERSECTS, null, null, true, true, true);
+		Collection<Geometry> neighbourAP = svg.getRelatedGeometries(geom, typeId, SDIRelation.INTERSECTS, null, null,
+				true, true, true);
 
-		boolean neighbourAPoverlap = false;
-		for (Geometry ng : neighbourAP) {
+		Iterator<Geometry> gi = neighbourAP.iterator();
+		while (gi.hasNext()) {
+			Geometry ng = gi.next();
 			DbDataObject dbo = (DbDataObject) ng.getUserData();
-			if (geom.overlaps(ng) && !dbo.getParentId().equals(parentId)) {
-				neighbourAPoverlap = true;
-				break;
+			if (!geom.overlaps(ng) || dbo.getParentId().equals(parentId) || !geom.covers(ng) || !geom.coveredBy(ng)) {
+				gi.remove();
 			}
 		}
-		return neighbourAPoverlap;
+		return neighbourAP;
+	}
+
+	public boolean overlapsNeighbours(SvGeometry svg, Geometry geom, Long parentId) throws SvException {
+		// Perform check if our parcel crosses with neighbouring parcels.
+		return overlappedNeighbours(svg, geom, parentId, SvCore.getTypeIdByName("AGRI_PARCEL")).size() > 0;
+
 	}
 
 	public void saveAgriParcel(String token, Long objectId, Long parentId, String opType,
