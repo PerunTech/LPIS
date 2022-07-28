@@ -259,7 +259,7 @@ public class AgriParcel {
 		while (gi.hasNext()) {
 			Geometry ng = gi.next();
 			DbDataObject dbo = (DbDataObject) ng.getUserData();
-			if (!geom.overlaps(ng) || dbo.getParentId().equals(parentId) || !geom.covers(ng) || !geom.coveredBy(ng)) {
+			if (!(geom.overlaps(ng) || geom.covers(ng) || geom.coveredBy(ng)) || dbo.getParentId().equals(parentId)) {
 				gi.remove();
 			}
 		}
