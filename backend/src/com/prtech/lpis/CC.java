@@ -55,6 +55,7 @@ public class CC {
 	public static final String SDI_MERGE_TOLERANCE = "SDI_MERGE_TOLERANCE";
 	public static final String MERGE_EXCEPTION = "error.cant_merge_parcel";
 	public static final double DEFAULT_MERGE_TOLERANCE = 1.0;
-	public static final String GEOM_INVALID =  "error.cant_generate_parcel";
+	public static final String GEOM_INVALID = "error.cant_generate_parcel";
+	public static final String HAS_OVERLAP_PB = "HAS_OVERLAP_PB";
 
 }

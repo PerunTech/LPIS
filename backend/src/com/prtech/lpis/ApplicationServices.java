@@ -443,7 +443,7 @@ public class ApplicationServices {
 			@Context HttpServletRequest httpRequest) {
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try {
-			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, "CUTOFF", formVals);
+			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, cutPB, cutAP, alignAP, formVals);
 
 		} catch (SvException e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
@@ -467,7 +467,7 @@ public class ApplicationServices {
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try {
-			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, opType, formVals);
+			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, true, true, false, formVals);
 
 		} catch (SvException e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
@@ -1023,11 +1023,13 @@ public class ApplicationServices {
 				ap = new DbDataObject(typeId);
 			// prepare the geometry for further processing
 			boolean isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(gp, ap, svg, true);
+			AgriParcel aps = new AgriParcel();
+
 			gp = SvGeometry.getGeometry(ap);
-			Collection<Geometry> gg = getPBIntersections(svg, gp);
+			Collection<Geometry> gg = aps.getPBIntersections(svg, gp);
 			boolean pbCover = gg.size() == 1 && gg.iterator().next().covers(gp);
 			json.addProperty("physical_block_check", !pbCover);
-			AgriParcel aps = new AgriParcel();
+
 			Collection<Geometry> neighbours = aps.overlappedNeighbours(svg, gp, parentId, typeId);
 
 			json.addProperty("agri_parcel_check", neighbours.size() > 0);
@@ -1035,8 +1037,9 @@ public class ApplicationServices {
 					.buffer(SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE));
 
 			Collection<Geometry> neighboursNearBy = aps.overlappedNeighbours(svg, bufferedAP, parentId, typeId);
+			neighboursNearBy.removeAll(neighbours);
 
-			json.addProperty("agri_parcel_neighbour", neighbours.size() == 0 && neighboursNearBy.size() > 0);
+			json.addProperty("agri_parcel_neighbour", neighboursNearBy.size() > 0);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.crosscheck");
 		}
@@ -1045,30 +1048,6 @@ public class ApplicationServices {
 		else
 			return Response.status(500).entity("{error:err.no_parcel.selected}").type(MediaType.APPLICATION_JSON)
 					.build();
-	}
-
-	/**
-	 * Method to return all blocks intersecting a parcel
-	 * 
-	 * @param svg
-	 * @param gp
-	 * @return
-	 * @throws SvException
-	 * @throws SQLException
-	 * @throws ParseException
-	 */
-	public Collection<Geometry> getPBIntersections(SvGeometry svg, Geometry gp)
-			throws SvException, SQLException, ParseException {
-		Collection<Geometry> gg = (new ApplicationServices()).getPhysicalBlock(svg, gp.getEnvelopeInternal(),
-				"ext_lpis.ilpis", "geometry");
-		Iterator<Geometry> i = gg.iterator();
-		while (i.hasNext()) {
-			Geometry g = i.next();
-			if (!gp.overlaps(g) && !g.covers(gp))
-				i.remove();
-		}
-
-		return gg;
 	}
 
 	@Path("/check/PBContainsAP/{token}")
@@ -1086,7 +1065,7 @@ public class ApplicationServices {
 			json = Util.dataToJson(formVals);
 			Geometry gp = Util.jsonToGeometry(json.get("GEOM"));
 			Set<Geometry> geoms = new HashSet<Geometry>();
-			Collection<Geometry> gg = getPBIntersections(svg, gp);
+			Collection<Geometry> gg = (new AgriParcel()).getPBIntersections(svg, gp);
 
 			if (gg.size() > 1) {
 				rhs.create(MessageType.WARNING, "error.intersects_physical_block");

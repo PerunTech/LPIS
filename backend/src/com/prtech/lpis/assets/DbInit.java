@@ -593,7 +593,15 @@ public class DbInit implements IDbInit {
 		dbf31.setSort_order(120);
 		dbf31.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
-		DbDataField[] fieldList = new DbDataField[31];
+		DbDataField dbf32 = new DbDataField();
+		dbf32.setDbFieldName(CC.HAS_OVERLAP_PB);
+		dbf32.setDbFieldType(DbFieldType.BOOLEAN);
+		dbf32.setIsNull(true);		
+		dbf32.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+		dbf32.setLabel_code("agri_parcel.has_overlap_pb");
+		dbf32.setSort_order(120);
+		
+		DbDataField[] fieldList = new DbDataField[32];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
@@ -630,6 +638,7 @@ public class DbInit implements IDbInit {
 		fieldList[28] = dbf29;
 		fieldList[29] = dbf30;
 		fieldList[30] = dbf31;
+		fieldList[31] = dbf32;
 
 		dbt.setDbTableFields(fieldList);
 		
