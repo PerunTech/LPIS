@@ -54,7 +54,7 @@ export const saveAP = (layer, callback, skipChecks) => {
             } else {
                 _fail()
             }
-        }).catch(() => _fail);
+        }).catch(() => _fail());
     }
 
     // Check 1, intersection with the underlining physical block.  
@@ -117,7 +117,7 @@ export const saveAP = (layer, callback, skipChecks) => {
             } else {
                 _saveAP(finalData, 'IGNORE')
             }
-        }).catch(() => _fail);
+        }).catch(() => _fail());
     };
 
     // Final step of the worklfow, saves agri parcel.
