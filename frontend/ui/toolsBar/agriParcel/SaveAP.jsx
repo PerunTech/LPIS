@@ -205,19 +205,23 @@ export const saveAP = (layer, callback, skipChecks) => {
             ReactDOM.unmountComponentAtNode(container)
         }
 
-        return (
-            <Form
-                isSimple
-                formTitle='Проверки'
-                className='ap-checks-modal'
-                schema={schema}
-                uiSchema={uiSchema}
-                formData={formData}
-                onSubmit={onSubmit}>
-                <DrawActions cancel={disable} />
-            </Form>
-        )
-    }
+        if (!pbCheck && !apCheck && !neighbourCheck) {
+          return onSubmit(formData);
+        } else {
+          return (
+              <Form
+                  isSimple
+                  formTitle='Проверки'
+                  className='ap-checks-modal'
+                  schema={schema}
+                  uiSchema={uiSchema}
+                  formData={formData}
+                  onSubmit={onSubmit}>
+                  <DrawActions cancel={disable} />
+              </Form>
+          )
+        }
+  }
 
     // User input for the result of check 1
     const PBModal = () =>
