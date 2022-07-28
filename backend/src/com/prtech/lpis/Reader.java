@@ -1,5 +1,6 @@
 package com.prtech.lpis;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,7 +36,9 @@ public class Reader {
 				DbDataObject dbp = svr.getObjectById((Long) dbo.getVal(CC.PARCEL_ID),
 						SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
 				if (dbp != null) {
-					dbp.setVal(CC.ALLOWED_AREA, dbo.getVal(CC.ALLOWED_AREA));
+					Long allowedArea = ((BigDecimal) dbp.getVal(CC.AREA))
+							.multiply(((BigDecimal) dbo.getVal(CC.PERCENTAGE))).longValue();
+					dbp.setVal(CC.ALLOWED_AREA, allowedArea);
 					dbp.setVal(CC.COMMON_USE, true);
 					dbArr.addDataItem(dbp);
 				}

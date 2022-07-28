@@ -415,8 +415,10 @@ public class AgriParcel {
 
 			geom = autoFixPoly(svg, geom, 2);
 			SvGeometry.setGeometry(ap, geom);
+			ap.setVal(CC.ALLOWED_AREA, geom.getArea());
 			result.addDataItem(ap);
-			svg.saveGeometry(ap);
+			svg.saveGeometry(result);
+
 			if (!cutAP)
 				createOverlaps(svg, ap, typeId, neighbours);
 			svg.dbCommit();
