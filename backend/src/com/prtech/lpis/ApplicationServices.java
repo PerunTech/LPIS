@@ -252,7 +252,6 @@ public class ApplicationServices {
 			@Context HttpServletRequest httpRequest) {
 		final ArrayList<Geometry> geoms = new ArrayList<>();
 		ResponseHandler jrh = new ResponseHandler();
-		JsonArray ja = new JsonArray();
 		try (SvGeometry svg = new SvGeometry(token)) {
 			String layer = SvConf.getParam("CAD_PARCEL_LAYER_NAME");
 			String epsg = SvConf.getParam("CAD_PARCEL_LAYER_EPSG");
@@ -404,7 +403,6 @@ public class ApplicationServices {
 	@Produces("application/pbf")
 	public Response calculateParcelCadIntersection(@PathParam("token") String token,
 			@PathParam("objectId") Long objectId, @PathParam("objectName") String objectName) {
-		DbDataObject type = SvCore.getDbtByName(objectName);
 		int lock = 0;
 		Response response = null;
 		try (SvReader svr = new SvReader(token)) {
@@ -1010,14 +1008,30 @@ public class ApplicationServices {
 		JsonObject json = new JsonObject();
 
 		ResponseHandler rhs = new ResponseHandler();
-		try (SvGeometry svg = new SvGeometry(token);) {
+		try (SvGeometry svg = new SvGeometry(token); SvReader svr = new SvReader(svg)) {
+
+			Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 
 			json = Util.dataToJson(formVals);
 			Geometry gp = Util.jsonToGeometry(json.get("GEOM"));
-			Set<Geometry> geoms = new HashSet<Geometry>();
-			json.addProperty("physical_block_check", true);
-			json.addProperty("agri_parcel_check", false);
-			json.addProperty("agri_parcel_neighbour", true);
+			Long objectId = json.get("OBJECT_ID").getAsLong();
+			Long parentId = json.get("parent_id").getAsLong();
+			DbDataObject ap;
+			if (objectId != null && objectId > 0L)
+				ap = svr.getObjectById(objectId, typeId, null);
+			else
+				ap = new DbDataObject(typeId);
+			// prepare the geometry for further processing
+			boolean isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(gp, ap, svg, true);
+			gp = SvGeometry.getGeometry(ap);
+			Collection<Geometry> gg = getPBIntersections(svg, gp);
+			boolean pbCover = gg.size() == 1 && gg.iterator().next().covers(gp);
+			json.addProperty("physical_block_check", pbCover);
+			AgriParcel aps = new AgriParcel();
+			json.addProperty("agri_parcel_check", aps.overlapsNeighbours(svg, gp, parentId));
+			Geometry bufferedAP = gp
+					.buffer(SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE));
+			json.addProperty("agri_parcel_neighbour", aps.overlapsNeighbours(svg, bufferedAP, parentId));
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.crosscheck");
 		}
@@ -1026,6 +1040,30 @@ public class ApplicationServices {
 		else
 			return Response.status(500).entity("{error:err.no_parcel.selected}").type(MediaType.APPLICATION_JSON)
 					.build();
+	}
+
+	/**
+	 * Method to return all blocks intersecting a parcel
+	 * 
+	 * @param svg
+	 * @param gp
+	 * @return
+	 * @throws SvException
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
+	public Collection<Geometry> getPBIntersections(SvGeometry svg, Geometry gp)
+			throws SvException, SQLException, ParseException {
+		Collection<Geometry> gg = (new ApplicationServices()).getPhysicalBlock(svg, gp.getEnvelopeInternal(),
+				"ext_lpis.ilpis", "geometry");
+		Iterator<Geometry> i = gg.iterator();
+		while (i.hasNext()) {
+			Geometry g = i.next();
+			if (!gp.overlaps(g))
+				i.remove();
+		}
+
+		return gg;
 	}
 
 	@Path("/check/PBContainsAP/{token}")
@@ -1043,13 +1081,7 @@ public class ApplicationServices {
 			json = Util.dataToJson(formVals);
 			Geometry gp = Util.jsonToGeometry(json.get("GEOM"));
 			Set<Geometry> geoms = new HashSet<Geometry>();
-			Collection<Geometry> gg = getPhysicalBlock(svg, gp.getEnvelopeInternal(), "ext_lpis.ilpis", "geometry");
-			Iterator<Geometry> i = gg.iterator();
-			while (i.hasNext()) {
-				Geometry g = i.next();
-				if (!g.intersects(g))
-					i.remove();
-			}
+			Collection<Geometry> gg = getPBIntersections(svg, gp);
 
 			if (gg.size() > 1) {
 				rhs.create(MessageType.WARNING, "error.intersects_physical_block");

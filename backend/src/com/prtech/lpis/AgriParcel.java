@@ -50,6 +50,7 @@ import com.prtech.svarog_common.DbSearchExpression;
 import com.prtech.svarog_common.ResponseHandler;
 import com.prtech.svarog_common.SvCharId;
 import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
+import com.prtech.svarog_common.ResponseHandler.MessageType;
 import com.vividsolutions.jts.algorithm.ConvexHull;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -246,6 +247,22 @@ public class AgriParcel {
 				svg.dbCommit();
 		}
 
+	}
+
+	public boolean overlapsNeighbours(SvGeometry svg, Geometry geom, Long parentId) throws SvException {
+		// Perform check if our parcel crosses with neighbouring parcels.
+		Collection<Geometry> neighbourAP = svg.getRelatedGeometries(geom, SvCore.getTypeIdByName("AGRI_PARCEL"),
+				SDIRelation.INTERSECTS, null, null, true, true, true);
+
+		boolean neighbourAPoverlap = false;
+		for (Geometry ng : neighbourAP) {
+			DbDataObject dbo = (DbDataObject) ng.getUserData();
+			if (geom.overlaps(ng) && !dbo.getParentId().equals(parentId)) {
+				neighbourAPoverlap = true;
+				break;
+			}
+		}
+		return neighbourAPoverlap;
 	}
 
 	public void saveAgriParcel(String token, Long objectId, Long parentId, String opType,
