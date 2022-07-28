@@ -1059,7 +1059,7 @@ public class ApplicationServices {
 		Iterator<Geometry> i = gg.iterator();
 		while (i.hasNext()) {
 			Geometry g = i.next();
-			if (!gp.overlaps(g))
+			if (!gp.overlaps(g) && !g.covers(gp))
 				i.remove();
 		}
 
