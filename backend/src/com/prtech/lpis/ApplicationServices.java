@@ -445,7 +445,7 @@ public class ApplicationServices {
 		try {
 			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, cutPB, cutAP, alignAP, formVals);
 
-		} catch (SvException e) {
+		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
 		}
 
@@ -469,7 +469,7 @@ public class ApplicationServices {
 		try {
 			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, true, true, false, formVals);
 
-		} catch (SvException e) {
+		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
 		}
 

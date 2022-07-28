@@ -354,7 +354,7 @@ public class AgriParcel {
 	}
 
 	public void saveAgriParcel(String token, Long objectId, Long parentId, boolean cutPB, boolean cutAP,
-			boolean alignAP, MultivaluedMap<String, String> formVals) throws SvException {
+			boolean alignAP, MultivaluedMap<String, String> formVals) throws SvException, SQLException, ParseException {
 		DbDataObject ap = null;
 		JsonObject metadata = new JsonObject();
 		DbDataArray result = new DbDataArray();
@@ -392,7 +392,7 @@ public class AgriParcel {
 					ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
 				}
 			}
-
+			parcelAlignment(svg, ap, cutPB, cutAP, alignAP, result);
 			// check minimum parcel size
 			if (geom.getArea() < ApplicationServices.minimumAgriParcelSize)
 				throw (new SvException(CC.PARCEL_LESS_THAN_MINIMUM, svg.getInstanceUser(), ap,
