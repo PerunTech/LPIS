@@ -289,7 +289,7 @@ public class AgriParcel {
 		Iterator<Geometry> i = gg.iterator();
 		while (i.hasNext()) {
 			Geometry g = i.next();
-			if (!gp.overlaps(g) && !g.covers(gp))
+			if (!gp.overlaps(g) && !g.covers(gp) && !g.coveredBy(gp))
 				i.remove();
 		}
 
