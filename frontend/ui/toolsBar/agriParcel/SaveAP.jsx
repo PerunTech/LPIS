@@ -220,7 +220,8 @@ export const saveAP = (layer, callback, skipChecks) => {
                   <DrawActions cancel={disable} />
               </Form>
           )
-    }
+        }
+  }
 
     // User input for the result of check 1
     const PBModal = () =>
