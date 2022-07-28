@@ -302,11 +302,15 @@ public class AgriParcel {
 		Geometry geom = SvGeometry.getGeometry(parcel);
 		if (cutPB) {
 			Collection<Geometry> gg = this.getPBIntersections(svg, geom);
+			Geometry tmpGeom = null;
 			for (Geometry pb : gg) {
-				if (pb.overlaps(geom))
-					geom = geom.intersection(pb);
+				if (pb.overlaps(geom)) {
+					Geometry g = geom.intersection(pb);
+					if (tmpGeom == null || g.getArea() > tmpGeom.getArea())
+						tmpGeom = g;
+				}
 			}
-			geom = ensurePolygon(geom);
+			geom = ensurePolygon(tmpGeom);
 			SvGeometry.setGeometry(parcel, geom);
 		} else {
 			parcel.setVal(CC.HAS_OVERLAP_PB, true);
