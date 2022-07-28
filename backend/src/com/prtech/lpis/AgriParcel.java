@@ -304,7 +304,7 @@ public class AgriParcel {
 			Collection<Geometry> gg = this.getPBIntersections(svg, geom);
 			for (Geometry pb : gg) {
 				if (pb.overlaps(geom))
-					geom=geom.difference(pb);
+					geom = geom.intersection(pb);
 			}
 			geom = ensurePolygon(geom);
 			SvGeometry.setGeometry(parcel, geom);
@@ -315,9 +315,8 @@ public class AgriParcel {
 		if (cutAP) {
 			for (Geometry nap : neighbours) {
 				if (nap.overlaps(geom))
-					geom=geom.difference(nap);
+					geom = geom.difference(nap);
 			}
-			geom = svg.cutLayerFromGeom(geom, typeId);
 			geom = ensurePolygon(geom);
 			SvGeometry.setGeometry(parcel, geom);
 			if (parcel.getVal(CC.HAS_OVERLAP) != null && (boolean) parcel.getVal(CC.HAS_OVERLAP))
@@ -341,13 +340,13 @@ public class AgriParcel {
 				Geometry cvh = buffer.intersection(geom).union(buffer.intersection(nap));
 				ConvexHull ch = new ConvexHull(cvh);
 				Geometry gapFill = ch.getConvexHull();
-				geom=geom.union(gapFill);
+				geom = geom.union(gapFill);
 			}
 
 		} else {
 			for (Geometry nap : neighboursNearBy) {
 				Geometry alignOn = nap.buffer(mergeTolerance);
-				geom=geom.difference(alignOn);
+				geom = geom.difference(alignOn);
 			}
 		}
 		SvGeometry.setGeometry(parcel, geom);
