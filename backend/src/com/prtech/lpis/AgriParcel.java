@@ -259,7 +259,7 @@ public class AgriParcel {
 		while (gi.hasNext()) {
 			Geometry ng = gi.next();
 			DbDataObject dbo = (DbDataObject) ng.getUserData();
-			if (!(geom.overlaps(ng) || geom.covers(ng) || geom.coveredBy(ng)) || dbo.getParentId().equals(parentId)) {
+			if (!(geom.overlaps(ng) || geom.covers(ng) || geom.coveredBy(ng))) {
 				gi.remove();
 			}
 		}
@@ -326,7 +326,7 @@ public class AgriParcel {
 			if (parcel.getVal(CC.HAS_OVERLAP) != null && (boolean) parcel.getVal(CC.HAS_OVERLAP))
 				result.setItems(removeOverlaps(svg, parcel).getItems());
 		} else {
-			createOverlaps(svg, parcel, typeId, neighbours);
+			// createOverlaps(svg, parcel, typeId, neighbours);
 		}
 		Geometry bufferedAP = geom.buffer(mergeTolerance);
 
@@ -397,6 +397,9 @@ public class AgriParcel {
 					ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
 				}
 			}
+			if (ap.getObjectId().equals(0L))
+				ap.setVal(CC.OLD_ID, null);
+			Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, ap.getParentId(), typeId);
 			geom = parcelAlignment(svg, ap, cutPB, cutAP, alignAP, result);
 			// check minimum parcel size
 			if (geom.getArea() < ApplicationServices.minimumAgriParcelSize)
@@ -414,6 +417,8 @@ public class AgriParcel {
 			SvGeometry.setGeometry(ap, geom);
 			result.addDataItem(ap);
 			svg.saveGeometry(ap);
+			if (!cutAP)
+				createOverlaps(svg, ap, typeId, neighbours);
 			svg.dbCommit();
 		}
 	}
