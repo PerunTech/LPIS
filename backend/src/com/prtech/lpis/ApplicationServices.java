@@ -1011,9 +1011,13 @@ public class ApplicationServices {
 		try (SvGeometry svg = new SvGeometry(token); SvReader svr = new SvReader(svg)) {
 
 			Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
+			AgriParcel aps = new AgriParcel();
 
 			json = Util.dataToJson(formVals);
-			Geometry gp = Util.jsonToGeometry(json.get("GEOM"));
+			Geometry geom = Util.jsonToGeometry(json.get("GEOM"));
+			if (geom.getGeometryType().equals("LineString"))
+				geom = aps.generatePolygon(svg, (LineString) geom, typeId);
+
 			Long objectId = json.get("OBJECT_ID").getAsLong();
 			Long parentId = json.get("parent_id").getAsLong();
 			DbDataObject ap;
@@ -1022,18 +1026,17 @@ public class ApplicationServices {
 			else
 				ap = new DbDataObject(typeId);
 			// prepare the geometry for further processing
-			boolean isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(gp, ap, svg, true);
-			AgriParcel aps = new AgriParcel();
+			boolean isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(geom, ap, svg, true);
 
-			gp = SvGeometry.getGeometry(ap);
-			Collection<Geometry> gg = aps.getPBIntersections(svg, gp);
-			boolean pbCover = gg.size() == 1 && gg.iterator().next().covers(gp);
+			geom = SvGeometry.getGeometry(ap);
+			Collection<Geometry> gg = aps.getPBIntersections(svg, geom);
+			boolean pbCover = gg.size() == 1 && gg.iterator().next().covers(geom);
 			json.addProperty("physical_block_check", !pbCover);
 
-			Collection<Geometry> neighbours = aps.overlappedNeighbours(svg, gp, parentId, typeId);
+			Collection<Geometry> neighbours = aps.overlappedNeighbours(svg, geom, parentId, typeId);
 
 			json.addProperty("agri_parcel_check", neighbours.size() > 0);
-			Geometry bufferedAP = gp
+			Geometry bufferedAP = geom
 					.buffer(SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE));
 
 			Collection<Geometry> neighboursNearBy = aps.overlappedNeighbours(svg, bufferedAP, parentId, typeId);

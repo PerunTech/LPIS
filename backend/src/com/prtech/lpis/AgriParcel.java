@@ -344,7 +344,7 @@ public class AgriParcel {
 				Geometry cvh = buffer.intersection(geom).union(buffer.intersection(nap));
 				ConvexHull ch = new ConvexHull(cvh);
 				Geometry gapFill = ch.getConvexHull();
-				geom = geom.union(gapFill);
+				geom = geom.union(gapFill).difference(nap);
 			}
 
 		} else {
