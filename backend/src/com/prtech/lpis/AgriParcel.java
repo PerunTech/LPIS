@@ -623,7 +623,7 @@ public class AgriParcel {
 		DbDataArray updatedParcels = new DbDataArray();
 		try (SvWriter svw = new SvWriter(svg); SvReader svr = new SvReader(svg)) {
 			DbDataArray overlaps = getOverlaps(svg, ap);
-
+			svr.setIncludeGeometries(true);
 			if (overlaps.size() > 0) {
 				svw.setAutoCommit(false);
 				svw.deleteObjects(overlaps);
