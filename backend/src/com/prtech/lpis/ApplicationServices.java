@@ -557,11 +557,16 @@ public class ApplicationServices {
 				AgriParcel ap = new AgriParcel();
 				ap.deleteGeometry(svw, dba, false);
 				svg.setSkipSpatialValidations(true);
-				svg.saveGeometry(ap.removeOverlaps(svg, dbo));
-				svw.dbCommit();
+				DbDataArray dbr = ap.removeOverlaps(svg, dbo);
+				try {
+					svg.saveGeometry(dbr);
+					svw.dbCommit();
+				} catch (Exception e) {
+					log4j.error("Error update overlap", e);
+				}
 			}
 
-		} catch (SvException e) {
+		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
 		}
 
