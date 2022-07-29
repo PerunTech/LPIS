@@ -262,6 +262,8 @@ public class AgriParcel {
 			if (!(geom.overlaps(ng) || geom.covers(ng) || geom.coveredBy(ng))) {
 				gi.remove();
 			}
+			if (dbo.getParentId().equals(parentId))
+				gi.remove();
 		}
 		return neighbourAP;
 	}
