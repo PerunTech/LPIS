@@ -596,6 +596,7 @@ public class AgriParcel {
 		if (overlapDbos.size() > 0) {
 			agriParcel.setVal(CC.HAS_OVERLAP, true);
 			agriParcel.setVal(CC.ALLOWED_AREA, geom.getArea() - overlapArea);
+			svg.saveGeometry(agriParcel);
 		}
 
 	};
