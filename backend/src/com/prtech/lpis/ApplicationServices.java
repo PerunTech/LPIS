@@ -556,6 +556,7 @@ public class ApplicationServices {
 				dba.addDataItem(dbo);
 				AgriParcel ap = new AgriParcel();
 				ap.deleteGeometry(svw, dba, false);
+				svg.setSkipSpatialValidations(true);
 				svg.saveGeometry(ap.removeOverlaps(svg, dbo));
 				svw.dbCommit();
 			}
