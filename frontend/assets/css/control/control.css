@@ -3,7 +3,7 @@
 }
 
 #farm-registry-map #dataList {
-  max-height: calc(100vh - 400px) !important;
+  max-height: calc(100vh - 430px) !important;
 }
 
 #farm-registry-map .cad-intersection-tooltip {
