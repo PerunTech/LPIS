@@ -1,5 +1,6 @@
 import { React, elements } from 'perun-core'
 import { translateBooleanValue, translateLandCoverCode } from '../../../../Util';
+import { truncate } from '../../../../dataPanel/Util';
 
 const { ReactBootstrap } = elements;
 const { ListGroup, ProgressBar } = ReactBootstrap;
@@ -7,6 +8,14 @@ const { Item: ListGroupItem } = ListGroup;
 
 export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
   const translatedLandCoverCode = translateLandCoverCode(parcelInfo.LAND_COVER_CODE)
+  let finalUserName = farmInfo?.FULL_NAME || '/'
+  const userName = parcelInfo.USER_NAME
+  const userId = parcelInfo.USER_ID
+  if (userName && (typeof userName === 'string' || userName instanceof String)) {
+    finalUserName = truncate(userName, 20, true)
+  } else if (userId && (typeof userId === 'string' || userId instanceof String)) {
+    finalUserName = truncate(userId, 20, true)
+  }
   return <ListGroup className='text-center mb-2' style={{ height: '650px' }}>
     <ListGroupItem className='p-2'>
       Целосно име: <span className='font-weight-bold'>{farmInfo?.FULL_NAME || '/'}</span>
@@ -71,6 +80,27 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       Тип на почва: <span className='font-weight-bold'>{parcelInfo.SOIL_TYPE || 'Не е наведено'}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Корисничко име: <span className='font-weight-bold'>{finalUserName}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Подрачна единица: <span className='font-weight-bold'>{parcelInfo.ORG_UNIT_NAME || '/'}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Забелешка од оператор:
+      <br />
+      <span className='font-weight-bold'>{parcelInfo.NOTE_INSERT || '/'}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Забелешка од земјоделец:
+      <br />
+      <span className='font-weight-bold'>{parcelInfo.NOTE_FARMER || '/'}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Забелешка од организација:
+      <br />
+      <span className='font-weight-bold'>{parcelInfo.NOTE_ORGANISATION || '/'}</span>
     </ListGroupItem>
   </ListGroup>
 }
