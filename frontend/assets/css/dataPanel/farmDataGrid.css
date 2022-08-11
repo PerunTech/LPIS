@@ -159,3 +159,11 @@
   color: #114cb8 !important;
   border: 1px solid #114cb8 !important;
 }
+
+.lpis-search-form-delete-btn {
+  margin-top: 0 !important;
+  float: left !important;
+  margin-left: 8px !important;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}

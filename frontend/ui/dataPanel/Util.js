@@ -24,3 +24,13 @@ export const removeCadParcels = () => {
     }
   });
 }
+
+export const removeSearchedParcels = () => {
+  Map.eachLayer(function (layer) {
+    if (!!layer.toGeoJSON) {
+      if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'SEARCHED_LPIS_PARCEL')) {
+        Map.removeLayer(layer);
+      }
+    }
+  });
+}
