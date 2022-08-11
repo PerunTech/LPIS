@@ -16,12 +16,19 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
   } else if (userId && (typeof userId === 'string' || userId instanceof String)) {
     finalUserName = truncate(userId, 20, true)
   }
+
   return <ListGroup className='text-center mb-2' style={{ height: '650px' }}>
     <ListGroupItem className='p-2'>
       Целосно име: <span className='font-weight-bold'>{farmInfo?.FULL_NAME || '/'}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       ИДБР: <span className='font-weight-bold'>{farmInfo?.FIC || '/'}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Подрачна единица: <span className='font-weight-bold'>{farmInfo?.ORG_UNIT_NAME || '/'}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Корисничко име: <span className='font-weight-bold'>{finalUserName}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       СИЗП број: <span className='font-weight-bold'>{parcelInfo.OLD_ID}</span>
@@ -80,12 +87,6 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       Тип на почва: <span className='font-weight-bold'>{parcelInfo.SOIL_TYPE || 'Не е наведено'}</span>
-    </ListGroupItem>
-    <ListGroupItem className='p-2'>
-      Корисничко име: <span className='font-weight-bold'>{finalUserName}</span>
-    </ListGroupItem>
-    <ListGroupItem className='p-2'>
-      Подрачна единица: <span className='font-weight-bold'>{parcelInfo.ORG_UNIT_NAME || '/'}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       Забелешка од оператор:
