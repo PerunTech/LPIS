@@ -4,6 +4,7 @@ import { DataList, DataListUtils } from '..';
 import { FarmDataGridInfoHeader } from './FarmDataGridInfoHeader';
 import { FarmDataGridHeader } from './FarmDataGridHeader';
 import { CadastreSearch } from './CadastreSearch';
+import { LpisSearch } from './LpisSearch';
 
 /* Root nodes in the data panel tree. */
 const dataCategories = (function () {
@@ -33,7 +34,12 @@ const _DataPanel = ({ categories, actionType }) => {
 
     return <div id='data-panel' >
         <DataListUtils setData={setData} />
-        {actionType === 'sizp' && <CadastreSearch />}
+        {actionType === 'sizp' && (
+            <React.Fragment>
+                <CadastreSearch />
+                <LpisSearch />
+            </React.Fragment>
+        )}
         {(actionType === 'sizp' || actionType === 'pplan') &&
             <React.Fragment>
                 <FarmDataGridInfoHeader />

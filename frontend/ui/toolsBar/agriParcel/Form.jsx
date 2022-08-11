@@ -5,7 +5,7 @@ import { Main, Aux, Admin } from './Steps';
 const { Button, Modal, Wizard } = ui;
 
 export function Form ({
-    formData, onSubmit, onChange, children, isSimple, className, disableSubmitBtn, showDeleteBtn, onDeleteFn,
+    formData, onSubmit, onChange, children, isSimple, className, disableSubmitBtn, showDeleteBtn, onDeleteFn, deleteBtnLabel, deleteBtnClassName,
     formTitle, buttonLabel, schema, uiSchema
 }) {
     if (!isSimple) {
@@ -31,7 +31,9 @@ export function Form ({
         const btnLabel = buttonLabel || 'Зачувај'
         let deleteBtn = null
         if (showDeleteBtn && onDeleteFn) {
-            deleteBtn = <Button onClick={() => { onDeleteFn() }} size='' className='cancel' > Избриши </Button>
+            const deleteLabel = deleteBtnLabel || 'Избриши'
+            const deleteClassName = deleteBtnClassName || 'cancel'
+            deleteBtn = <Button onClick={() => { onDeleteFn() }} size='' className={deleteClassName} >{deleteLabel}</Button>
         }
         return <Modal id='measure-dialog' className={className || ''}
             show
@@ -69,6 +71,8 @@ Form.propTypes = {
     disableSubmitBtn: PropTypes.bool,
     showDeleteBtn: PropTypes.bool,
     onDeleteFn: PropTypes.func,
+    deleteBtnLabel: PropTypes.string,
+    deleteBtnClassName: PropTypes.string,
     className: PropTypes.string,
     formTitle: PropTypes.string,
     buttonLabel: PropTypes.string,
