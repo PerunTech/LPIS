@@ -681,6 +681,34 @@ public class ApplicationServices {
 	}
 
 	@POST
+	@Path("/get/parcel/{token}/{sizpId}")
+	@Produces("application/pbf")
+	public Response copyFromLayer(@PathParam("token") final String token, @PathParam("sizpId") final Long sizpId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
+		final DbDataArray result = new DbDataArray();
+		try (SvReader svr = new SvReader(token)) {
+			result.setItems(new AgriParcel().searchParcelBySIZP(svr, sizpId).getItems());
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.search_parcel");
+		}
+
+		if (!result.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+					enc.writeDbDataArray(result);
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity("{error:err.no_parcel.found}").type(MediaType.APPLICATION_JSON).build();
+
+//		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
+
+	}
+
+	@POST
 	@Path("/copy/parcel/{token}/{objectName}/{x}/{y}")
 	@Produces("application/pbf")
 	public Response copyFromLayer(@PathParam("token") final String token,

@@ -45,6 +45,7 @@ import com.prtech.svarog.svCONST;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
+import com.prtech.svarog_common.DbQueryObject;
 import com.prtech.svarog_common.DbSearchCriterion;
 import com.prtech.svarog_common.DbSearchExpression;
 import com.prtech.svarog_common.ResponseHandler;
@@ -562,6 +563,14 @@ public class AgriParcel {
 		relatedParcel.setVal(CC.ALLOWED_AREA, related.getArea() - overlap.getArea());
 		overlapParcels.addDataItem(relatedParcel);
 		return overlapDbo;
+	}
+
+	DbDataArray searchParcelBySIZP(SvReader svr, Long sizpId) throws SvException {
+		svr.setIncludeGeometries(true);
+		DbSearchCriterion dbc = new DbSearchCriterion(CC.OLD_ID, DbCompareOperand.EQUAL, sizpId);
+		DbQueryObject dbq = new DbQueryObject(SvCore.getDbtByName(CC.AGRI_PARCEL), dbc, null, null);
+		DbDataArray dba = svr.getObjects(dbq, null, null);
+		return dba;
 	}
 
 	private void createOverlaps(SvGeometry svg, DbDataObject agriParcel, Long typeId,
