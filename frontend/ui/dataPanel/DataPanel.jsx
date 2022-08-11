@@ -36,8 +36,10 @@ const _DataPanel = ({ categories, actionType }) => {
         <DataListUtils setData={setData} />
         {actionType === 'sizp' && (
             <React.Fragment>
-                <CadastreSearch />
-                <LpisSearch />
+                <div className='d-flex flex-row justify-content-center align-items-center' style={{ gap: '1vh' }}>
+                    <CadastreSearch />
+                    <LpisSearch />
+                </div>
             </React.Fragment>
         )}
         {(actionType === 'sizp' || actionType === 'pplan') &&

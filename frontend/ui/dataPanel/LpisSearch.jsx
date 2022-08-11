@@ -101,11 +101,11 @@ const _LpisSearch = () => {
   }
 
   return (
-    <div className='text-center'>
-      <Button block variant='dark' className='mt-1 ml-2' style={{ width: '97.2%' }} onClick={toggleSearchForm}>Пребарај СИЗП</Button>
+    <React.Fragment>
+      <Button variant='dark' className='mt-1' onClick={toggleSearchForm}>Пребарај СИЗП</Button>
       {showForm && renderComponent()}
       {loading && <Loading />}
-    </div>
+    </React.Fragment>
   )
 }
 
