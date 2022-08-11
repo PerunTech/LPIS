@@ -1,6 +1,7 @@
 import { React, elements } from 'perun-core'
 import { core, ui } from '../../Spatial'
 import { translateLandCoverCode } from '../Util'
+import { truncate } from './Util'
 
 const { store, connect } = core
 const { Modal, Button, DrawActions } = ui
@@ -21,7 +22,10 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory }) => {
   }
 
   const renderTable = () => {
-    const headingsArr = ['Датум', 'СИЗП број', 'Површина', 'Употреба на земјиште', 'Место викано', 'Заедничка употреба', 'Право на користење', 'Вкупна површина']
+    const headingsArr = [
+      'Датум', 'Корис. име', 'Подрач. един.', 'СИЗП број', 'Површина', 'Употреба на земјиште',
+      'Место викано', 'Заедничка употреба', 'Право на користење', 'Вкупна површина'
+    ]
 
     return (
       <Table striped bordered>
@@ -31,9 +35,21 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory }) => {
         <tbody>
           {parcelHistory.map((historyEl) => {
             const translatedLandCoverCode = translateLandCoverCode(historyEl['AGRI_PARCEL.LAND_COVER_CODE'])
+            let finalUserName = '/'
+            const userName = historyEl['AGRI_PARCEL.USER_NAME']
+            const userId = historyEl['AGRI_PARCEL.USER_ID']
+            if (userName && (typeof userName === 'string' || userName instanceof String)) {
+              finalUserName = truncate(historyEl['AGRI_PARCEL.USER_ID'], 20, true)
+            } else if (userId && (typeof userId === 'string' || userId instanceof String)) {
+              finalUserName = truncate(historyEl['AGRI_PARCEL.USER_ID'], 20, true)
+            } else {
+              finalUserName = userId
+            }
             return (
               <tr>
                 <td>{historyEl.formattedDate}</td>
+                <td title={historyEl['AGRI_PARCEL.USER_NAME'] || historyEl['AGRI_PARCEL.USER_ID']}>{finalUserName}</td>
+                <td>{historyEl['AGRI_PARCEL.ORG_UNIT_NAME'] || '/'}</td>
                 <td>{historyEl['AGRI_PARCEL.OLD_ID']}</td>
                 <td>{`${Math.round(Number(historyEl['AGRI_PARCEL.ALLOWED_AREA'] || historyEl['AGRI_PARCEL.AREA']))} m²`}</td>
                 <td>{translatedLandCoverCode}</td>
