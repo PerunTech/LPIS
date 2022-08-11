@@ -41,6 +41,7 @@ import org.joda.time.DateTime;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.prtech.perun_core.ws.Rc;
 import com.prtech.spatial.SC;
 import com.prtech.spatial.Util;
 import com.prtech.spatial.geobuf.GeobufEncoder;
@@ -680,15 +681,55 @@ public class ApplicationServices {
 		return result;
 	}
 
-	@POST
+	@GET
 	@Path("/get/parcel/{token}/{sizpId}")
 	@Produces("application/pbf")
-	public Response copyFromLayer(@PathParam("token") final String token, @PathParam("sizpId") final Long sizpId,
+	public Response getParcelBySIZP(@PathParam("token") final String token, @PathParam("sizpId") final Long sizpId,
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		final DbDataArray result = new DbDataArray();
 		try (SvReader svr = new SvReader(token)) {
 			result.setItems(new AgriParcel().searchParcelBySIZP(svr, sizpId).getItems());
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.search_parcel");
+		}
+
+		if (!result.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+					enc.writeDbDataArray(result);
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity("{error:err.no_parcel.found}").type(MediaType.APPLICATION_JSON).build();
+
+//		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
+
+	}
+
+	@GET
+	@Path("/get/parcelHistory/{token}/{tableName}/{objectId}")
+	@Produces("application/pbf")
+	public Response getParcelHistory(@PathParam("token") final String token,
+			@PathParam("tableName") final String tableName, @PathParam("objectId") final Long objectId,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
+		final DbDataArray result = new DbDataArray();
+		try (SvReader svr = new SvReader(token)) {
+			svr.setIncludeGeometries(true);
+			DbSearchCriterion cr1 = new DbSearchCriterion(Rc.OBJECT_ID, DbCompareOperand.EQUAL, objectId);
+			DbSearchExpression expr = new DbSearchExpression().addDbSearchItem(cr1);
+			DbDataArray dbArray = svr.getObjectsHistory(expr, SvReader.getTypeIdByName(tableName), 0, 0);
+
+			for (DbDataObject dbo : dbArray.getItems()) {
+				DbDataObject user = svr.getObjectById(dbo.getUserId(), svCONST.OBJECT_TYPE_USER, null);
+				dbo.setVal(Sv.USER_NAME, user.getVal(Sv.USER_NAME));
+				DbDataObject farm = svr.getObjectById(dbo.getParentId(), SvCore.getTypeIdByName(CC.FARMER), null);
+				attachOrgUnitName(svr, farm);
+				dbo.setVal(CC.ORG_UNIT_NAME, farm.getVal(CC.ORG_UNIT_NAME));
+			}
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.search_parcel");
 		}
@@ -841,6 +882,14 @@ public class ApplicationServices {
 					.build();
 	}
 
+	void attachOrgUnitName(SvReader svr, DbDataObject dboP) throws SvException {
+		DbDataObject dbl = SvCore.getLinkType("POA", svCONST.OBJECT_TYPE_ORG_UNITS, dboP.getObjectType());
+		DbDataArray ous = svr.getObjectsByLinkedId(dboP.getObjectId(), dboP.getObjectType(), dbl,
+				svCONST.OBJECT_TYPE_ORG_UNITS, true, null, 0, 0, "VALID");
+		String name = ous.size() > 0 ? (String) ous.get(0).getVal("NAME") : null;
+		dboP.setVal(CC.ORG_UNIT_NAME, name);
+	}
+
 	@GET
 	@Path("/info/agriParcel/{token}/{objectName}/{x}/{y}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -868,6 +917,9 @@ public class ApplicationServices {
 							dbt = SvCore.getDbtByName("FARM");
 						dboP = svr.getObjectById(dbo.getParentId(), dbt, null);
 					}
+					if (dboP != null)
+						attachOrgUnitName(svr, dboP);
+
 				}
 				if (dboP != null)
 					result.addDataItem(dboP);
