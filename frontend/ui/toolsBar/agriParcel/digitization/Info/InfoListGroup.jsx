@@ -72,5 +72,20 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
     <ListGroupItem className='p-2'>
       Тип на почва: <span className='font-weight-bold'>{parcelInfo.SOIL_TYPE || 'Не е наведено'}</span>
     </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Забелешка од оператор:
+      <br />
+      <span className='font-weight-bold'>{parcelInfo.NOTE_INSERT || '/'}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Забелешка од земјоделец:
+      <br />
+      <span className='font-weight-bold'>{parcelInfo.NOTE_FARMER || '/'}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Забелешка од организација:
+      <br />
+      <span className='font-weight-bold'>{parcelInfo.NOTE_ORGANISATION || '/'}</span>
+    </ListGroupItem>
   </ListGroup>
 }
