@@ -1,6 +1,6 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, tools, config as cfg } from '../../../../Spatial';
-import { config, editAPMsg, permanentCropSchema } from '../Config';
+import { config, permanentCropSchema } from '../Config';
 import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
@@ -18,11 +18,11 @@ const _id = 'editAP';
 const _layerGroup = factory.layerGroup();
 
 const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
-  const [{ layer, geojson, data, permanentCropData, loading, isGuided, showForm, showPermanentCropForm, allPermanentCrops }, setState] = useReducer(
+  const [{ layer, geojson, data, permanentCropData, loading, isGuided, showForm, showGuidanceButton, showPermanentCropForm, allPermanentCrops }, setState] = useReducer(
     (currState, update) => ({ ...currState, ...update }),
     {
       layer: {}, data: {}, geojson: {}, permanentCropData: {}, loading: false,
-      isGuided: false, showForm: false, showPermanentCropForm: false, allPermanentCrops: undefined
+      isGuided: false, showForm: false, showGuidanceButton: false, showPermanentCropForm: false, allPermanentCrops: undefined
     });
 
   const enable = () => {
@@ -47,7 +47,7 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
     // Reset state, internal and application-wide.
     setState({
       layer: {}, data: {}, geojson: {}, permanentCropData: {}, isGuided: false,
-      showForm: false, showPermanentCropForm: false, loading: false, allPermanentCrops: undefined
+      showForm: false, showGuidanceButton: false, showPermanentCropForm: false, loading: false, allPermanentCrops: undefined
     });
     store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
     // We remove the working geometry, save process will add the result.
@@ -124,9 +124,13 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
     Map.fitBounds(layer.getBounds());
     // Activate edit handler on selected polygon
     edit.polygon.enable(layer, config);
-    setState({ layer: layer, data: layer.feature.properties, isGuided: false, showForm: true });
+    setState({ layer: layer, data: layer.feature.properties, showGuidanceButton: true });
     // Activate edit event listeners on layer.
     layer.on('pm:edit', e => setState({ layer: e.target }));
+  }
+
+  const handleShowForm = () => {
+    setState({ isGuided: false, showForm: true })
   }
 
   const onChange = ({ formData }) => {
@@ -197,7 +201,15 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   }
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={() => disable()} msg={editAPMsg} title='Промени земјоделска парцела' />
+    return (
+      <Guidance id={_id} disable={() => disable()} msg={['Одберете земјоделска парцела на мапата која сакате да ја промените.', '']} title='Промени земјоделска парцела'>
+        {showGuidanceButton && <div className='mt-2'>
+          <Button className='next' size='' onClick={handleShowForm}>
+            Прикажи форма
+          </Button>
+        </div>}
+      </Guidance>
+    )
   }
 
   const renderForm = () => {
@@ -284,12 +296,14 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} title='Промени парцела' className='mr-2'>
-    <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Промени</span>
-    {processID === _id && renderComponent()}
-    {(loading || saveIsPending) && <Loading />}
-  </ProcessButton>;
+  return (
+    <ProcessButton id={_id} onClick={enable} title='Промени парцела' className='mr-2'>
+      <Icon name={_id} size='30px' />
+      <span style={{ display: 'block', marginTop: '5px' }}>Промени</span>
+      {processID === _id && renderComponent()}
+      {(loading || saveIsPending) && <Loading />}
+    </ProcessButton>
+  );
 }
 
 export const Edit = core.connect(state => ({
