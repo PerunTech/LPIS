@@ -3,7 +3,7 @@ import { ui } from '../../../Spatial';
 
 const { Button, Modal, DrawActions } = ui;
 
-export function Guidance ({ id, title, msg, disable, finish, undo }) {
+export function Guidance ({ id, title, msg, disable, finish, undo, children }) {
     return <Modal id='measure-dialog'
         show
         backdrop={false}
@@ -17,6 +17,7 @@ export function Guidance ({ id, title, msg, disable, finish, undo }) {
             <div id={id} >
                 {msg.map((text, i) => <div key={i}>{text}</div>)}
             </div>
+            {children}
         </Modal.Body>
     </Modal>;
 }
@@ -27,5 +28,6 @@ Guidance.propTypes = {
     msg: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
     disable: PropTypes.func,
     finish: PropTypes.func,
-    undo: PropTypes.func
+    undo: PropTypes.func,
+    children: PropTypes.node
 }
