@@ -1,13 +1,15 @@
 import { React, Loading, elements } from 'perun-core';
-import { core, ui, tools, config as cfg } from '../../../../Spatial';
-import { config, drawAPMsg, permanentCropSchema } from '../Config';
+import { core, ui, data, tools, config as cfg } from '../../../../Spatial';
+import { config, permanentCropSchema } from '../Config';
 import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
+import { setLoadedParcelLabel } from '../../cropParcel/Util';
 
 const { Map, store, factory, http } = core;
+const { geobuf, protobuf } = data;
 const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
 const { MAP_CONFIG } = cfg;
@@ -29,6 +31,31 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
             Map.off('new_shape');
         });
 
+        Map.on('contextmenu', e => {
+            const p = Map.transform(e.latlng);
+            const url = `/spatial/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
+            http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
+                const data = geobuf.decode(protobuf(response));
+                const geojson = factory.geoJSON(data, config.pathOptions);
+                const layers = geojson.getLayers();
+                if (layers && Array.isArray(layers) && layers.length > 0) {
+                    layers.forEach(layer => {
+                        if (layer?.feature?.properties) {
+                            layer.feature.properties.DESCRIPTOR = 'LOADED_AGRI_PARCEL'
+                        }
+                        setLoadedParcelLabel(layer)
+                        layer.addTo(Map)
+                    });
+                    store.dispatch({ parcelsHaveBeenLoaded: true })
+                } else {
+                    alertUser(true, 'info', 'Не е избрана парцела од мапата')
+                }
+            }).catch(err => {
+                console.error(err)
+                alertUser(true, 'error', 'Настана грешка')
+            })
+        })
+
         setState({ isGuided: true, showForm: false, data: {}, layer: {} });
         store.dispatch({ processID: _id });
         polygon.enable(config.pathOptions, 12, 18, false);
@@ -42,6 +69,8 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
         layer.removeFrom && layer.removeFrom(Map);
         // Disable draw handler.
         polygon.disable('force');
+        // Disable the contextmenu event
+        Map.off('contextmenu');
         // Refresh the data
         getFarmMapAssets();
     }
@@ -130,7 +159,7 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
             finish={() => polygon._finishShape()}
             undo={() => polygon._removeLastVertex()}
             disable={disable}
-            msg={drawAPMsg}
+            msg={['', '']}
         />
     }
 
