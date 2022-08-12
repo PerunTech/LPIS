@@ -10,7 +10,7 @@ import { ProcessButton } from '../../ProcessButton';
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
-const { Icon, DrawActions } = ui;
+const { Icon, Button, DrawActions } = ui;
 const { edit } = tools;
 const { alertUser } = elements;
 const { useReducer } = React;
@@ -19,9 +19,9 @@ const _id = 'copy';
 const _layerGroup = factory.layerGroup();
 
 const _Copy = ({ processID, farmObjId, saveIsPending }) => {
-    const [{ layer, initialLandCoverCode, data, X, Y, loading, showForm, isGuided }, setState] = useReducer((currState, update) =>
+    const [{ layer, initialLandCoverCode, data, X, Y, loading, showForm, isGuided, showGuidanceButton }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
-        { layer: {}, initialLandCoverCode: '', data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
+        { layer: {}, initialLandCoverCode: '', data: {}, X: 0, Y: 0, loading: false, isGuided: false, showGuidanceButton: false, showForm: false });
 
     const _editAP = () => {
         const currZoom = Map.getZoom();
@@ -48,7 +48,7 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
     const disable = () => {
         Map.off('click');
         // Reset state, internal and application-wide.
-        setState({ layer: {}, initialLandCoverCode: '', data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
+        setState({ layer: {}, initialLandCoverCode: '', data: {}, X: 0, Y: 0, loading: false, isGuided: false, showGuidanceButton: false, showForm: false });
         store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
@@ -70,7 +70,7 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
                 method: 'post',
                 responseType: 'arraybuffer',
             }).then(response => {
-                setState({ loading: false, isGuided: false, showForm: true })
+                setState({ loading: false, showGuidanceButton: true })
                 const proto = protobuf(response);
                 const buff = geobuf.decode(proto);
                 const geojson = factory.geoJSON(buff, config.pathOptions);
@@ -122,8 +122,20 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
         }
     }
 
+    const handleShowForm = () => {
+        setState({ isGuided: false, showForm: true })
+    }
+
     const renderGuideForm = () => {
-        return <Guidance id={_id} disable={disable} msg={copyAPMsg} title='Копирај земјоделска парцела' />
+        return (
+            <Guidance id={_id} disable={disable} msg={copyAPMsg} title='Копирај земјоделска парцела'>
+                {showGuidanceButton && <div className='mt-2'>
+                    <Button className='next' size='' onClick={handleShowForm}>
+                        Прикажи форма
+                    </Button>
+                </div>}
+            </Guidance>
+        )
     }
 
     const renderForm = () => {
@@ -144,12 +156,14 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
         return componentToRender
     }
 
-    return <ProcessButton id={_id} onClick={enable} title='Копирај парцела' className='mr-2' >
-        <Icon name={_id} size='30px' />
-        <span style={{ display: 'block', marginTop: '5px' }}>Копирај</span>
-        {processID === _id && componentToRender()}
-        {(loading || saveIsPending) && <Loading />}
-    </ProcessButton>;
+    return (
+        <ProcessButton id={_id} onClick={enable} title='Копирај парцела' className='mr-2' >
+            <Icon name={_id} size='30px' />
+            <span style={{ display: 'block', marginTop: '5px' }}>Копирај</span>
+            {processID === _id && componentToRender()}
+            {(loading || saveIsPending) && <Loading />}
+        </ProcessButton>
+    );
 };
 
 export const Copy = core.connect(state => ({
