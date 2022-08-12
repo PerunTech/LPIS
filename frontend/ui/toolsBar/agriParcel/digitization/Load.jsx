@@ -17,7 +17,7 @@ const _secondaryId = 'removeLoadedParcels';
 const _iconId = 'copy';
 const _secondaryIconId = 'erase';
 
-const _Load = ({ processID, agriParcels }) => {
+const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenLoadedStore }) => {
   const [{ loading, isGuided, parcelsHaveBeenLoaded }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
     { loading: false, isGuided: false, parcelsHaveBeenLoaded: false });
@@ -30,7 +30,7 @@ const _Load = ({ processID, agriParcels }) => {
   }
 
   const removeLoadedLayers = () => {
-    if (!parcelsHaveBeenLoaded) {
+    if (!parcelsHaveBeenLoaded && !parcelsHaveBeenLoadedStore) {
       alertUser(true, 'info', 'Не се пронајдени вчитани парцели')
     } else {
       Map.eachLayer(function (layer) {
@@ -42,6 +42,7 @@ const _Load = ({ processID, agriParcels }) => {
       });
 
       setState({ parcelsHaveBeenLoaded: false })
+      store.dispatch({ parcelsHaveBeenLoadedStore: false })
     }
   }
 
@@ -70,7 +71,7 @@ const _Load = ({ processID, agriParcels }) => {
             setLoadedParcelLabel(layer)
             layer.addTo(Map)
           });
-          store.dispatch({ processID: '' })
+          store.dispatch({ processID: '', parcelsHaveBeenLoadedStore: true })
           setState({ isGuided: false, parcelsHaveBeenLoaded: true })
         } else {
           alertUser(true, 'info', 'Не е избрана парцела од мапата')
@@ -81,7 +82,7 @@ const _Load = ({ processID, agriParcels }) => {
         alertUser(true, 'error', 'Настана грешка')
         disable()
         setState({ loading: false, isGuided: false, parcelsHaveBeenLoaded: false })
-        store.dispatch({ processID: '' })
+        store.dispatch({ processID: '', parcelsHaveBeenLoaded: false })
       })
 
       Map.off('click')
@@ -93,7 +94,7 @@ const _Load = ({ processID, agriParcels }) => {
     Map.off('click');
     // Reset state, internal and application-wide.
     setState({ loading: false, isGuided: false, parcelsHaveBeenLoaded: false });
-    store.dispatch({ processID: '' });
+    store.dispatch({ processID: '', parcelsHaveBeenLoaded: false });
   };
 
   const renderGuideForm = () => {
@@ -130,4 +131,5 @@ export const Load = core.connect((state) => ({
   processID: state.app.processID,
   farmObjId: state.farmRegistry?.farmObjId,
   agriParcels: state.farmRegistry?.agriParcels,
+  parcelsHaveBeenLoaded: state.farmRegistry?.parcelsHaveBeenLoaded,
 }))(_Load);
