@@ -8,15 +8,22 @@ import { setSearchedParcelLabel } from '../toolsBar/cropParcel/Util'
 import { bufferToString, strcmp } from '../Util'
 
 const { schema, uiSchema } = lpisSearchFormSchema()
-const { http, factory, Map, connect } = core
+const { http, factory, Map, store, connect } = core
 const { geobuf, protobuf } = data
 const { Button, DrawActions } = ui
 const { alertUser } = elements
-const { useReducer } = React
+const { useReducer, useEffect } = React
 
-const _LpisSearch = () => {
+const _LpisSearch = ({ theSearchedParcelWasRemoved }) => {
   const [{ showForm, showDeleteBtn, loading, data }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }), { showForm: false, showDeleteBtn: false, loading: false, data: {} });
+
+  useEffect(() => {
+    if (showForm && theSearchedParcelWasRemoved) {
+      setState({ showDeleteBtn: false })
+      store.dispatch({ theSearchedParcelWasRemoved: false })
+    }
+  }, [showForm, theSearchedParcelWasRemoved])
 
   const toggleSearchForm = () => {
     setState({ showForm: true })
@@ -110,4 +117,4 @@ const _LpisSearch = () => {
 }
 
 export const LpisSearch = connect(state =>
-  ({ actionType: state.farmRegistry?.actionType }))(_LpisSearch)
+  ({ actionType: state.farmRegistry?.actionType, theSearchedParcelWasRemoved: state.farmRegistry?.theSearchedParcelWasRemoved }))(_LpisSearch)
