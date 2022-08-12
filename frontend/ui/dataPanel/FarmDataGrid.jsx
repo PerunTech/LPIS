@@ -433,9 +433,11 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
         <Button className='fr-data-grid-column' title={homeName}>{homeName}</Button>
         <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.COMMON_USE)}</Button>
         <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.CERTIFICATE_OF_USE)}</Button>
-        <Button className='data-grid-util' onClick={e => getParcelHistory(e, id, setShowParcelHistory)} title='Историја на парцела'>
-          <Icon name='history' size='14px' />
-        </Button>
+        {strcmp(actionType, 'sizp') && (
+          <Button className='data-grid-util' onClick={e => getParcelHistory(e, id, setShowParcelHistory)} title='Историја на парцела'>
+            <Icon name='history' size='14px' />
+          </Button>
+        )}
         <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el)} title='Оди до парцела'>
           <Icon name={getPinpointIconName()} size={getIconSize()} />
         </Button>
