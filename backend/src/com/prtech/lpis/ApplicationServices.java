@@ -275,10 +275,20 @@ public class ApplicationServices {
 			gjr.setUsePropertiesAsUserData(true);
 			Geometry gc = gjr.read(json);
 			if (gc.getGeometryType().equals("GeometryCollection")) {
-				for (int j = 0; j < gc.getNumGeometries(); j++)
-					geoms.add(gc.getGeometryN(j));
-			} else
+				for (int j = 0; j < gc.getNumGeometries(); j++) {
+					Geometry g = gc.getGeometryN(j);
+					if (g.getUserData() != null && g.getUserData() instanceof DbDataObject) {
+						SvGeometry.setCentroid((DbDataObject) g.getUserData(), g.getCentroid());
+					}
+					geoms.add(g);
+
+				}
+			} else {
+				if (gc.getUserData() != null && gc.getUserData() instanceof DbDataObject) {
+					SvGeometry.setCentroid((DbDataObject) gc.getUserData(), gc.getCentroid());
+				}
 				geoms.add(gc);
+			}
 
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
