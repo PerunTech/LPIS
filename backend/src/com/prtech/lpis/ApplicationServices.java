@@ -740,6 +740,7 @@ public class ApplicationServices {
 				attachOrgUnitName(svr, farm);
 				dbo.setVal(CC.ORG_UNIT_NAME, farm.getVal(CC.ORG_UNIT_NAME));
 			}
+			result.getItems().addAll(dbArray.getItems());
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.search_parcel");
 		}
