@@ -450,11 +450,11 @@ public class ApplicationServices {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response saveAgriParcelToFarmExt(@PathParam("token") String token, @PathParam("objectId") Long objectId,
 			@PathParam("parentId") Long parentId, @PathParam("cutPB") Boolean cutPB, @PathParam("cutAP") Boolean cutAP,
-			@PathParam("alignAP") Boolean alignAP, MultivaluedMap<String, String> formVals,
+			@PathParam("alignAP") Integer alignAP, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try {
-			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, cutPB, cutAP, alignAP, formVals);
+			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, cutPB, cutAP, alignAP.equals(0), formVals);
 
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
