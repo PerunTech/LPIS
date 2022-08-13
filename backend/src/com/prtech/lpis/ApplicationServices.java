@@ -735,7 +735,7 @@ public class ApplicationServices {
 
 			for (DbDataObject dbo : dbArray.getItems()) {
 				DbDataObject user = svr.getObjectById(dbo.getUserId(), svCONST.OBJECT_TYPE_USER, null);
-				dbo.setVal(Sv.USER_NAME, user.getVal(Sv.USER_NAME));
+				dbo.setVal(Sv.USER_NAME, user != null ? user.getVal(Sv.USER_NAME) : dbo.getUserId());
 				DbDataObject farm = svr.getObjectById(dbo.getParentId(), SvCore.getTypeIdByName(CC.FARMER), null);
 				attachOrgUnitName(svr, farm);
 				dbo.setVal(CC.ORG_UNIT_NAME, farm.getVal(CC.ORG_UNIT_NAME));
