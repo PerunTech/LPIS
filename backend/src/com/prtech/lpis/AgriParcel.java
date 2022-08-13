@@ -417,6 +417,14 @@ public class AgriParcel {
 			Util.calculateGeometryDerivatives(ap);
 
 			geom = autoFixPoly(svg, geom, 2);
+
+			if (geom.isSimple() && geom.isValid() && !geom.isEmpty()) {
+				Geometry negativeTest = geom.buffer(-1.0);
+				if (!negativeTest.isSimple() || !negativeTest.isValid() || negativeTest.isEmpty())
+					throw (new SvException(CC.GEOM_INVALID, svr.getInstanceUser()));
+
+			}
+
 			SvGeometry.setGeometry(ap, geom);
 			ap.setVal(CC.ALLOWED_AREA, geom.getArea());
 			result.addDataItem(ap);
