@@ -66,7 +66,7 @@ export function Form ({
 Form.propTypes = {
     formData: PropTypes.object,
     onSubmit: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
     isSimple: PropTypes.bool,
     disableSubmitBtn: PropTypes.bool,
     showDeleteBtn: PropTypes.bool,
