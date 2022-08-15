@@ -5,6 +5,7 @@ import { FarmDataGridInfoHeader } from './FarmDataGridInfoHeader';
 import { FarmDataGridHeader } from './FarmDataGridHeader';
 import { CadastreSearch } from './CadastreSearch';
 import { LpisSearch } from './LpisSearch';
+import { ParcelInfo } from './ParcelInfo';
 
 /* Root nodes in the data panel tree. */
 const dataCategories = (function () {
@@ -29,14 +30,15 @@ const dataCategories = (function () {
  * 
  * @param {*} props 
  */
-const _DataPanel = ({ categories, actionType }) => {
+const _DataPanel = ({ categories, actionType, showParcelInfoContainer }) => {
     const [data, setData] = React.useState(categories);
 
-    return <div id='data-panel' >
+    return <div id='data-panel' style={{ width: '555px' }}>
         <DataListUtils setData={setData} />
         {actionType === 'sizp' && (
             <React.Fragment>
                 <div className='d-flex flex-row justify-content-center align-items-center' style={{ gap: '1vh' }}>
+                    <ParcelInfo />
                     <CadastreSearch />
                     <LpisSearch />
                 </div>
@@ -45,7 +47,7 @@ const _DataPanel = ({ categories, actionType }) => {
         {(actionType === 'sizp' || actionType === 'pplan') &&
             <React.Fragment>
                 <FarmDataGridInfoHeader />
-                <FarmDataGridHeader gridType='agri_parcel' />
+                {!showParcelInfoContainer && <FarmDataGridHeader gridType='agri_parcel' />}
             </React.Fragment>
         }
         <DataList data={data} setData={setData} />
@@ -62,5 +64,7 @@ _DataPanel.propTypes = {
     actionType: PropTypes.string
 }
 
-export const DataPanel = core.connect(state =>
-    ({ processID: state.app.processID, actionType: state.farmRegistry?.actionType }))(_DataPanel);
+export const DataPanel = core.connect(state => ({
+    processID: state.app.processID, actionType: state.farmRegistry?.actionType,
+    showParcelInfoContainer: state.farmRegistry?.showParcelInfoContainer
+}))(_DataPanel);

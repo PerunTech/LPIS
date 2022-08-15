@@ -59,7 +59,8 @@ export const farmRegLpis = () => {
     store.addState('farmRegistry', {
         'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'farmObjId': '', 'farmObjTypeId': '', 'actionType': '',
         'fic': '', 'fullName': '', 'tableName': '', 'selectedParcelId': '', 'selectedCropParcelId': '', 'saveIsPending': false,
-        'showCadParcels': false, 'hiddenAssets': [], 'parcelHistory': [], 'theSearchedParcelWasRemoved': false, 'parcelsHaveBeenLoaded': false
+        'showCadParcels': false, 'hiddenAssets': [], 'parcelHistory': [], 'theSearchedParcelWasRemoved': false, 'parcelsHaveBeenLoaded': false,
+        'showParcelInfoContainer': false, 'farmInfo': undefined, 'parcelInfo': undefined
     })
     const _token = redux.store.getState().security.svSession;
     getFarmMapAssets(true)
