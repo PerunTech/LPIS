@@ -68,10 +68,10 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
                 ...neighbourCheck && {
                     agri_parcel_neighbour: {
                         title: 'Соседна земјоделска парцела',
-                        type: 'boolean',
-                        enum: [true, false],
-                        enumNames: ['Прилепи до соседна парцела', 'Остави простор помеѓу парцелите'],
-                        default: true
+                        type: 'string',
+                        enum: ['0', '1', '2'],
+                        enumNames: ['Прилепи до соседна парцела', 'Остави простор помеѓу парцелите', 'Задржи ја постоечката определба'],
+                        default: '2'
                     }
                 }
             }
@@ -176,7 +176,7 @@ export const metadataAux = {
                 default: false
             },
             LANDSCAPE_FEATURES: {
-                title: 'Пејсажни карактеристики',
+                title: 'Пејсажни обележја',
                 type: 'boolean',
                 default: false
             },

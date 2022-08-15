@@ -157,12 +157,12 @@ export const saveAP = (layer, callback, skipChecks) => {
         const parentId = parsedLayer.PARENT_ID || parsedLayer.parent_id || 0
         let cutPB = false
         let cutAP = false
-        let alignAP = false
+        let alignAP = '2'
         if (data) {
             const { physical_block_check, agri_parcel_check, agri_parcel_neighbour } = data
-            cutPB = physical_block_check
-            cutAP = agri_parcel_check
-            alignAP = agri_parcel_neighbour
+            cutPB = physical_block_check || false
+            cutAP = agri_parcel_check || false
+            alignAP = agri_parcel_neighbour || '2'
         }
         // Make the call for the final save, with results from the parcel checks prompt.
         http.call('save_agri_parcel', {
@@ -206,22 +206,21 @@ export const saveAP = (layer, callback, skipChecks) => {
         }
 
         if (!pbCheck && !apCheck && !neighbourCheck) {
-          return onSubmit(formData);
+            return onSubmit(formData);
         } else {
-          return (
-              <Form
-                  isSimple
-                  formTitle='Проверки'
-                  className='ap-checks-modal'
-                  schema={schema}
-                  uiSchema={uiSchema}
-                  formData={formData}
-                  onSubmit={onSubmit}>
-                  <DrawActions cancel={disable} />
-              </Form>
-          )
+            return (
+                <Form
+                    isSimple
+                    formTitle='Проверки'
+                    className='ap-checks-modal'
+                    schema={schema}
+                    uiSchema={uiSchema}
+                    onSubmit={onSubmit}>
+                    <DrawActions cancel={disable} />
+                </Form>
+            )
         }
-  }
+    }
 
     // User input for the result of check 1
     const PBModal = () =>
