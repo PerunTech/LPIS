@@ -54,7 +54,7 @@ public class ConfigTest {
 			String userName = "ADMIN";
 			String password = "welcome";
 			if (SvConf.getParam("conn.string").equals("jdbc:oracle:thin:@192.168.9.60:1521:orclte19")) {
-				password = "lpistest";
+				password = "welcome";
 			}
 			sessionId = svc.logon(userName, SvUtil.getMD5(password));
 		} catch (Exception e) {
@@ -219,7 +219,7 @@ public class ConfigTest {
 
 	}
 
-	//@Test
+	// @Test
 	public void testParcelsServ() throws SvException {
 
 		int lock = 0;
@@ -232,7 +232,7 @@ public class ConfigTest {
 
 	}
 
-	//@Test
+	@Test
 	public void testParcelsMergeDisjoint() throws SvException {
 
 		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7550857.4277,4528950.4667],[7550881.2064,4528947.7444]]}}";
@@ -249,14 +249,33 @@ public class ConfigTest {
 
 	}
 
-	// @Test
+	@Test
+	public void testPolyFromLine() throws SvException {
+		 
+		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7551828.7821,4527439.2274],[7551826.5822,4527428.5511],[7551807.2683,4527406.8712],[7551788.1915,4527411.2895],[7551771.4982,4527448.151],[7551741.9278,4527506.5762],[7551741.8589,4527516.348],[7551772.4135,4527521.4498]]}}";
+		 
+		// =
+		// "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
+		Gson g = new Gson();
+		JsonObject json = g.fromJson(input, JsonObject.class);
+		LineString lineString = (LineString) Util.jsonToGeometry(json);
+		Response response = null;
+		try (SvGeometry svr = new SvGeometry(getUserSessionIdForTestPurpose())) {
+			Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
+			Geometry gg = new AgriParcel().generatePolygon(svr, (LineString) lineString, typeId);
+			System.out.println(gg);
+		}
+
+	}
+
+	//@Test
 	public void getAssets() throws SvException, SQLException, ParseException {
 		ApplicationServices as = new ApplicationServices();
 
 		String token = getUserSessionIdForTestPurpose();
 		if (!token.equals(CC.EMPTY_STRING)) {
 			try (SvReader svr = new SvReader(token)) {
-				DbDataArray rs = (new AgriParcel()).getAssetsList(svr, 673774999L, CC.AGRI_PARCEL);
+				DbDataArray rs = (new AgriParcel()).getAssetsList(svr, 21345L, CC.AGRI_PARCEL);
 				for (DbDataObject dbp : rs.getItems()) {
 					Geometry gp = SvGeometry.getGeometry(dbp);
 
@@ -265,6 +284,9 @@ public class ConfigTest {
 					log.error(gg.toString());
 				}
 				log.error(rs.toSimpleJson().toString());
+				rs = (new AgriParcel()).getAssetsList(svr, 21345L, CC.LP_CAD_INTERSECTIONS);
+				log.error(rs.toSimpleJson().toString());
+
 			}
 		}
 	}
