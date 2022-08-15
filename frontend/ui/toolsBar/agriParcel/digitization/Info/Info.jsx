@@ -27,7 +27,7 @@ const _Info = ({ processID }) => {
       const url = `/lpis/info/agriParcel/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
       http.call('get-parcel-info', { url }).then((response) => {
         if (response.data.items && Array.isArray(response.data.items) && response.data?.items.length >= 1) {
-          let farmInfo
+          let farmInfo = {}
           let parcelInfo
           response.data.items.forEach(item => {
             if (item.FIC) {
