@@ -61,7 +61,7 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
       Наводнување: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.IRRIGATION)}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
-      Пејсажни карактеристики: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.LANDSCAPE_FEATURES)}</span>
+      Пејсажни обележја: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.LANDSCAPE_FEATURES)}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       Невидлива граница: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.INVISIBLE_BORDER)}</span>
