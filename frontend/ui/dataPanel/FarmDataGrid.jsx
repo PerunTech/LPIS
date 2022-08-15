@@ -326,7 +326,7 @@ const _ExpandedRow = ({ id, rowData, unit, actionType, pplanRows, cadIntersectio
             Наводнување: <span className='font-weight-bold'>{translateBooleanValue(rowData.IRRIGATION)}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Пејсажни карактеристики: <span className='font-weight-bold'>{translateBooleanValue(rowData.LANDSCAPE_FEATURES)}</span>
+            Пејсажни обележја: <span className='font-weight-bold'>{translateBooleanValue(rowData.LANDSCAPE_FEATURES)}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
             Невидлива граница: <span className='font-weight-bold'>{translateBooleanValue(rowData.INVISIBLE_BORDER)}</span>
