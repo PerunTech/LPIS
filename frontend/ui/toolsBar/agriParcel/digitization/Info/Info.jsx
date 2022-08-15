@@ -18,11 +18,12 @@ const _Info = ({ processID }) => {
     { isGuided: false, loading: false, farmInfo: {}, parcelInfo: {}, showModal: false });
 
   const enable = () => {
-    setState({ isGuided: true })
+    setState({ isGuided: true, showModal: false })
     store.dispatch({ processID: _id });
     Map.on('click', (e) => {
       const p = Map.transform(e.latlng);
       setState({ X: p.x, Y: p.y, loading: true });
+      store.dispatch({ farmInfo: undefined, parcelInfo: undefined, showParcelInfoContainer: false })
       const url = `/lpis/info/agriParcel/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
       http.call('get-parcel-info', { url }).then((response) => {
         if (response.data.items && Array.isArray(response.data.items) && response.data?.items.length >= 1) {
@@ -37,6 +38,7 @@ const _Info = ({ processID }) => {
             }
           })
           setState({ isGuided: false, loading: false, farmInfo, parcelInfo, showModal: true })
+          store.dispatch({ farmInfo, parcelInfo, showParcelInfoContainer: true, processID: '' })
         } else {
           alertUser(true, 'info', 'Нема податоци за избраната парцела или не е избрана парцела од мапата');
           disable();
@@ -89,18 +91,20 @@ const _Info = ({ processID }) => {
     if (isGuided && !showModal) {
       componentToRender = renderGuideForm()
     } else if (showModal && !isGuided) {
-      componentToRender = renderModal()
+      componentToRender = null
     }
 
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} title='Информации за парцела'>
-    <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Информации</span>
-    {processID === _id && renderComponent()}
-    {loading && <Loading />}
-  </ProcessButton>
+  return (
+    <ProcessButton id={_id} onClick={enable} title='Информации за парцела'>
+      <Icon name={_id} size='30px' />
+      <span style={{ display: 'block', marginTop: '5px' }}>Информации</span>
+      {processID === _id && renderComponent()}
+      {loading && <Loading />}
+    </ProcessButton>
+  )
 };
 
 export const Info = core.connect((state) => ({ processID: state.app.processID, farmObjId: state.farmRegistry?.farmObjId }))(_Info);
