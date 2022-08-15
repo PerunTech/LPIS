@@ -3,14 +3,14 @@ import { core, ui } from '../../../../../Spatial';
 import { permanentCropSchema } from '../../Config';
 import { InfoListGroup } from './InfoListGroup';
 
-const { http } = core;
+const { http, connect } = core;
 const { Button } = ui;
 const { alertUser, ReactBootstrap } = elements;
 const { useEffect, useReducer } = React;
 const { ListGroup } = ReactBootstrap;
 const { Item: ListGroupItem } = ListGroup;
 
-export const InfoList = ({ farmInfo, parcelInfo }) => {
+const _InfoList = ({ farmInfo, parcelInfo }) => {
   const [{ overlaps, commonUses, canHavePermanentCrops, permanentCrops }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }), { overlaps: undefined, commonUses: undefined, canHavePermanentCrops: false, permanentCrops: undefined });
 
@@ -20,6 +20,17 @@ export const InfoList = ({ farmInfo, parcelInfo }) => {
       setState({ canHavePermanentCrops: true })
     }
   }, [])
+
+  useEffect(() => {
+    if (farmInfo && parcelInfo) {
+      const landCoverCode = parcelInfo.LAND_COVER_CODE
+      if (Number(landCoverCode) >= 400 && Number(landCoverCode) < 500) {
+        setState({ canHavePermanentCrops: true })
+      } else {
+        setState({ canHavePermanentCrops: false })
+      }
+    }
+  }, [farmInfo, parcelInfo])
 
   const getCommonUse = () => {
     const parcelId = parcelInfo.object_id
@@ -126,31 +137,40 @@ export const InfoList = ({ farmInfo, parcelInfo }) => {
   }
 
   const componentToRender = () => {
-    return <React.Fragment>
-      {parcelInfo && parcelInfo.COMMON_USE && <Button className='mb-3 p-2 info' onClick={getCommonUse}>
-        Информации за заедничка употреба
-      </Button>}
-      {commonUses && Array.isArray(commonUses) && commonUses.length > 0 && <div id='commonUses' className='mb-2'>
-        <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Заедничка употреба</p>
-        {commonUsesContainer()}
-      </div>}
-      {parcelInfo && parcelInfo.HAS_OVERLAP && !overlaps && <Button className='mb-3 p-2 info' onClick={getOverlaps}>
-        Информации за преклопи
-      </Button>}
-      {overlaps && Array.isArray(overlaps) && overlaps.length > 0 && <div id='overlaps' className='mb-2'>
-        <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Преклопи</p>
-        {overlapsContainer()}
-      </div>}
-      {canHavePermanentCrops && !permanentCrops && <Button className='mb-3 p-2 info' onClick={getPermanentCrops}>
-        Информации за долгогодишни култури
-      </Button>}
-      {permanentCrops && Array.isArray(permanentCrops) && permanentCrops.length > 0 && <div id='permanentCrops' className='mb-2'>
-        <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Долгогодишни култури</p>
-        {permanentCropsContainer()}
-      </div>}
-      <InfoListGroup farmInfo={farmInfo} parcelInfo={parcelInfo} />
-    </React.Fragment>
+    return (
+      <React.Fragment>
+        {farmInfo && parcelInfo ?
+          <div className='mt-1 text-center border-top selected-parcel-info'>
+            {parcelInfo && parcelInfo.COMMON_USE && <Button className='mb-1 p-2 info' onClick={getCommonUse}>
+              Информации за заедничка употреба
+            </Button>}
+            {commonUses && Array.isArray(commonUses) && commonUses.length > 0 && <div id='commonUses' className='mb-2'>
+              <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Заедничка употреба</p>
+              {commonUsesContainer()}
+            </div>}
+            {parcelInfo && parcelInfo.HAS_OVERLAP && !overlaps && <Button className='mb-1 p-2 info' onClick={getOverlaps}>
+              Информации за преклопи
+            </Button>}
+            {overlaps && Array.isArray(overlaps) && overlaps.length > 0 && <div id='overlaps' className='mb-2'>
+              <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Преклопи</p>
+              {overlapsContainer()}
+            </div>}
+            {canHavePermanentCrops && !permanentCrops && <Button className='mb-1 p-2 info' onClick={getPermanentCrops}>
+              Информации за долгогодишни култури
+            </Button>}
+            {permanentCrops && Array.isArray(permanentCrops) && permanentCrops.length > 0 && <div id='permanentCrops' className='mb-2'>
+              <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Долгогодишни култури</p>
+              {permanentCropsContainer()}
+            </div>}
+            <InfoListGroup farmInfo={farmInfo} parcelInfo={parcelInfo} />
+          </div> : <div className='mt-1 text-center'>Нема информации</div>}
+      </React.Fragment>
+    )
   }
 
   return componentToRender()
 }
+
+export const InfoList = connect(state => ({
+  farmInfo: state.farmRegistry?.farmInfo, parcelInfo: state.farmRegistry?.parcelInfo,
+}))(_InfoList)

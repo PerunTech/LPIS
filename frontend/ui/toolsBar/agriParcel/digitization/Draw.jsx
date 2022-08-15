@@ -28,7 +28,7 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
                 setState({ layer: e.layer, isGuided: false, showForm: true, showPermanentCropForm: false })
                 e.layer.addTo(Map)
             }
-            Map.off('new_shape');
+            Map.off('new_shape contextmenu');
         });
 
         Map.on('contextmenu', e => {

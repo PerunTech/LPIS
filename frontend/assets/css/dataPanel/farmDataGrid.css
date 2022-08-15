@@ -128,6 +128,15 @@
   margin-left: 20px;
 }
 
+.selected-parcel-info .progress-bar {
+  background-color: #232323;
+}
+
+.selected-parcel-info .info {
+  color: #114cb8 !important;
+  border: 1px solid #114cb8 !important;
+}
+
 .parcel-info-modal .modal-dialog {
   position: relative;
   right: 0 !important;
