@@ -6,6 +6,9 @@ export { ProcessButton } from './toolsBar/ProcessButton';
 /* physical block  */
 export { PhysicalBlock } from './toolsBar/physicalBlock/PhysicalBlock';
 
+/* landscape features */
+export { LandscapeFeatures } from './toolsBar/landscapeFeatures/LandscapeFeatures';
+
 /* agricultural parcel */
 export { AgriParcel } from './toolsBar/agriParcel/AgriParcel';
 

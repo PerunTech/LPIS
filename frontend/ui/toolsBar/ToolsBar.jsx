@@ -1,6 +1,6 @@
 import { React, PropTypes, redux, createHashHistory } from 'perun-core';
 import { ui, core } from '../../Spatial';
-import { PhysicalBlock, AgriParcel, CropParcel, IO } from '..';
+import { PhysicalBlock, LandscapeFeatures, AgriParcel, CropParcel, IO } from '..';
 import { Digitization } from './agriParcel/digitization/Digitization';
 
 const { Tab, Tabs, Button, Icon, Selection, Measurement } = ui;
@@ -38,6 +38,11 @@ const _ToolsBar = ({ actionType }) => {
                     shouldDisable = true
                 }
                 break
+            case 'landscape-features':
+                if (actionType === 'pplan') {
+                    shouldDisable = true
+                }
+                break
             case 'agri-parcel':
                 if (actionType === 'pplan') {
                     shouldDisable = true
@@ -64,6 +69,9 @@ const _ToolsBar = ({ actionType }) => {
         <Tabs defaultActiveKey={getDefaultActiveKey} >
             <Tab eventKey='physical-block' title='Физички блокови' disabled={disableTab('physical-block')} >
                 <PhysicalBlock />
+            </Tab>
+            <Tab eventKey='landscape-features' title='Пејсажни обележја' disabled={disableTab('landscape-features')} >
+                <LandscapeFeatures />
             </Tab>
             <Tab eventKey='agri-parcel' title='Земјоделски Парцели' disabled={disableTab('agri-parcel')} >
                 {actionType === 'sizp' ? <Digitization /> : <AgriParcel />}
