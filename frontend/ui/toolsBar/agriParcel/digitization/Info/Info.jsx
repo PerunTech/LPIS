@@ -23,7 +23,7 @@ const _Info = ({ processID }) => {
     Map.on('click', (e) => {
       const p = Map.transform(e.latlng);
       setState({ X: p.x, Y: p.y, loading: true });
-      store.dispatch({ farmInfo: undefined, parcelInfo: undefined, showParcelInfoContainer: false })
+      store.dispatch({ farmInfo: undefined, parcelInfo: undefined })
       const url = `/lpis/info/agriParcel/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
       http.call('get-parcel-info', { url }).then((response) => {
         if (response.data.items && Array.isArray(response.data.items) && response.data?.items.length >= 1) {
@@ -41,11 +41,13 @@ const _Info = ({ processID }) => {
           store.dispatch({ farmInfo, parcelInfo, showParcelInfoContainer: true, processID: '' })
         } else {
           alertUser(true, 'info', 'Нема податоци за избраната парцела или не е избрана парцела од мапата');
+          store.dispatch({ showParcelInfoContainer: false })
           disable();
         }
       }).catch((err) => {
         console.log(err);
         alertUser(true, 'info', 'Нема податоци за избраната парцела или не е избрана парцела од мапата');
+        store.dispatch({ showParcelInfoContainer: false })
         disable();
       });
 

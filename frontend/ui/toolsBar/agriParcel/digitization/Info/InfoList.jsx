@@ -21,6 +21,17 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
     }
   }, [])
 
+  useEffect(() => {
+    if (farmInfo && parcelInfo) {
+      const landCoverCode = parcelInfo.LAND_COVER_CODE
+      if (Number(landCoverCode) >= 400 && Number(landCoverCode) < 500) {
+        setState({ canHavePermanentCrops: true })
+      } else {
+        setState({ canHavePermanentCrops: false })
+      }
+    }
+  }, [farmInfo, parcelInfo])
+
   const getCommonUse = () => {
     const parcelId = parcelInfo.object_id
     const url = `/lpis/get/commonUse/{init.token}/0/${parcelId}`
