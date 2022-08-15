@@ -232,7 +232,7 @@ public class ConfigTest {
 
 	}
 
-	@Test
+	//@Test
 	public void testParcelsMergeDisjoint() throws SvException {
 
 		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7550857.4277,4528950.4667],[7550881.2064,4528947.7444]]}}";
@@ -249,7 +249,7 @@ public class ConfigTest {
 
 	}
 
-	@Test
+	//@Test
 	public void testPolyFromLine() throws SvException {
 		 
 		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7551828.7821,4527439.2274],[7551826.5822,4527428.5511],[7551807.2683,4527406.8712],[7551788.1915,4527411.2895],[7551771.4982,4527448.151],[7551741.9278,4527506.5762],[7551741.8589,4527516.348],[7551772.4135,4527521.4498]]}}";
