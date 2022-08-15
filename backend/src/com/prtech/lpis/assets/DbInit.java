@@ -805,7 +805,7 @@ public class DbInit implements IDbInit {
 				+ "\"resizable\":true,\"editable\":false}}");
 
 		DbDataField dbf6 = new DbDataField();
-		dbf6.setDbFieldName("FR_AREA");
+		dbf6.setDbFieldName(CC.FR_AREA);
 		dbf6.setDbFieldType(DbFieldType.NUMERIC);
 		dbf6.setDbFieldSize(18);
 		dbf6.setIsNull(false);
@@ -814,7 +814,7 @@ public class DbInit implements IDbInit {
 				+ "\"resizable\":true,\"editable\":false}}");
 
 		DbDataField dbf7 = new DbDataField();
-		dbf7.setDbFieldName("AREA");
+		dbf7.setDbFieldName(Sv.AREA);
 		dbf7.setDbFieldType(DbFieldType.NUMERIC);
 		dbf7.setDbFieldSize(18);
 		dbf7.setIsNull(false);
@@ -824,7 +824,7 @@ public class DbInit implements IDbInit {
 
 
 		DbDataField dbf8 = new DbDataField();
-		dbf8.setDbFieldName("CAD_AREA");
+		dbf8.setDbFieldName(CC.CAD_AREA);
 		dbf8.setDbFieldType(DbFieldType.NUMERIC);
 		dbf8.setDbFieldSize(18);
 		dbf8.setIsNull(false);
@@ -833,7 +833,7 @@ public class DbInit implements IDbInit {
 				+ "\"resizable\":true,\"editable\":false}}");
 		
 		DbDataField dbf24 = new DbDataField();
-		dbf24.setDbFieldName("GR_PARCEL");
+		dbf24.setDbFieldName(CC.GR_PARCEL);
 		dbf24.setDbFieldType(DbFieldType.NVARCHAR);
 		dbf24.setDbFieldSize(50);
 		dbf24.setIsNull(true);

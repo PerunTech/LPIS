@@ -517,6 +517,9 @@ public class AgriParcel {
 		} else if (typeName.equalsIgnoreCase(CC.AGRI_PARCEL)) {
 			result = new Reader(svr).getParcels(objectId, null, true);
 
+		} else if (typeName.equalsIgnoreCase(CC.LP_CAD_INTERSECTIONS)) {
+			result = new Reader(svr).getParcels(objectId, null, true, true);
+
 		}
 
 		return result;

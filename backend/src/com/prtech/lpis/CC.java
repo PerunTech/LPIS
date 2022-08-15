@@ -58,5 +58,10 @@ public class CC {
 	public static final String GEOM_INVALID = "error.cant_generate_parcel";
 	public static final String HAS_OVERLAP_PB = "HAS_OVERLAP_PB";
 	public static final String ORG_UNIT_NAME = "ORG_UNIT_NAME";
+	public static final String FR_AREA = "FR_AREA";
+	public static final String CAD_AREA = "CAD_AREA";
+	public static final String GR_PARCEL = "GR_PARCEL";
+	public static final String OVERLAP_AREA = "OVERLAP_AREA";
+	public static final String MUNICIPALITY_NAME = "MUNICIPALITY_NAME";
 
 }
