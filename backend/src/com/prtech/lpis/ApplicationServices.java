@@ -250,16 +250,8 @@ public class ApplicationServices {
 	void setMetaData(Geometry g) {
 		if (g.getUserData() != null) {
 			if (g.getUserData() instanceof Map) {
-				DbDataObject dbo = new DbDataObject();
-				dbo.setValuesMap(new LinkedHashMap<>((Map) g.getUserData()));
-				g.setUserData(dbo);
+				((Map) g.getUserData()).put("CENTROID", g.getCentroid());
 			}
-			if (g.getUserData() instanceof DbDataObject) {
-				DbDataObject dbo = (DbDataObject) g.getUserData();
-				SvGeometry.setGeometry(dbo, g);
-				SvGeometry.setCentroid(dbo, g.getCentroid());
-			}
-
 		}
 	}
 
