@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -38,6 +39,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
+import org.json.simple.JSONObject;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -245,6 +247,22 @@ public class ApplicationServices {
 
 	}
 
+	void setMetaData(Geometry g) {
+		if (g.getUserData() != null) {
+			if (g.getUserData() instanceof Map) {
+				DbDataObject dbo = new DbDataObject();
+				dbo.setValuesMap(new LinkedHashMap<>((Map) g.getUserData()));
+				g.setUserData(dbo);
+			}
+			if (g.getUserData() instanceof DbDataObject) {
+				DbDataObject dbo = (DbDataObject) g.getUserData();
+				SvGeometry.setGeometry(dbo, g);
+				SvGeometry.setCentroid(dbo, g.getCentroid());
+			}
+
+		}
+	}
+
 	@Path("/get/CadParcel/{token}/{sectorId}/{koId}/{parcelId}")
 	@GET
 	@Produces("application/pbf")
@@ -277,16 +295,12 @@ public class ApplicationServices {
 			if (gc.getGeometryType().equals("GeometryCollection")) {
 				for (int j = 0; j < gc.getNumGeometries(); j++) {
 					Geometry g = gc.getGeometryN(j);
-					if (g.getUserData() != null && g.getUserData() instanceof DbDataObject) {
-						SvGeometry.setCentroid((DbDataObject) g.getUserData(), g.getCentroid());
-					}
+					setMetaData(g);
 					geoms.add(g);
 
 				}
 			} else {
-				if (gc.getUserData() != null && gc.getUserData() instanceof DbDataObject) {
-					SvGeometry.setCentroid((DbDataObject) gc.getUserData(), gc.getCentroid());
-				}
+				setMetaData(gc);
 				geoms.add(gc);
 			}
 
