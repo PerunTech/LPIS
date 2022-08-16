@@ -28,16 +28,19 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
       Подрачна единица: <span className='font-weight-bold'>{farmInfo?.ORG_UNIT_NAME || '/'}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
-      Корисничко име: <span className='font-weight-bold'>{finalUserName}</span>
+      СИЗП број: <span className='font-weight-bold'>{parcelInfo.OLD_ID}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
-      СИЗП број: <span className='font-weight-bold'>{parcelInfo.OLD_ID}</span>
+      Употреба на земјиште: <span className='font-weight-bold'>{translatedLandCoverCode}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Место викано: <span className='font-weight-bold'>{parcelInfo.HOME_NAME || 'Не е наведено'}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       Површина: <span className='font-weight-bold'>{`${Math.round(Number(parcelInfo.ALLOWED_AREA || parcelInfo.AREA))} m²`}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
-      Употреба на земјиште: <span className='font-weight-bold'>{translatedLandCoverCode}</span>
+      Вкупна површина: <span className='font-weight-bold'>{Math.round(parcelInfo.AREA)} m²</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       Заедничка употреба: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.COMMON_USE)}</span>
@@ -46,10 +49,19 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
       Право на користење: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.CERTIFICATE_OF_USE)}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
-      Вкупна површина: <span className='font-weight-bold'>{Math.round(parcelInfo.AREA)} m²</span>
+      Забелешка од оператор:
+      <br />
+      <span className='font-weight-bold'>{parcelInfo.NOTE_INSERT || '/'}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
-      Место викано: <span className='font-weight-bold'>{parcelInfo.HOME_NAME || 'Не е наведено'}</span>
+      Забелешка од земјоделец:
+      <br />
+      <span className='font-weight-bold'>{parcelInfo.NOTE_FARMER || '/'}</span>
+    </ListGroupItem>
+    <ListGroupItem className='p-2'>
+      Забелешка од организација:
+      <br />
+      <span className='font-weight-bold'>{parcelInfo.NOTE_ORGANISATION || '/'}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
       Преклоп: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.HAS_OVERLAP)}</span>
@@ -89,19 +101,7 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
       Тип на почва: <span className='font-weight-bold'>{parcelInfo.SOIL_TYPE || 'Не е наведено'}</span>
     </ListGroupItem>
     <ListGroupItem className='p-2'>
-      Забелешка од оператор:
-      <br />
-      <span className='font-weight-bold'>{parcelInfo.NOTE_INSERT || '/'}</span>
-    </ListGroupItem>
-    <ListGroupItem className='p-2'>
-      Забелешка од земјоделец:
-      <br />
-      <span className='font-weight-bold'>{parcelInfo.NOTE_FARMER || '/'}</span>
-    </ListGroupItem>
-    <ListGroupItem className='p-2'>
-      Забелешка од организација:
-      <br />
-      <span className='font-weight-bold'>{parcelInfo.NOTE_ORGANISATION || '/'}</span>
+      Корисничко име: <span className='font-weight-bold'>{finalUserName}</span>
     </ListGroupItem>
   </ListGroup>
 }

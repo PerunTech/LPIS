@@ -23,6 +23,7 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
 
   useEffect(() => {
     if (farmInfo && parcelInfo) {
+      setState({ overlaps: undefined, commonUses: undefined, permanentCrops: undefined })
       const landCoverCode = parcelInfo.LAND_COVER_CODE
       if (Number(landCoverCode) >= 400 && Number(landCoverCode) < 500) {
         setState({ canHavePermanentCrops: true })
