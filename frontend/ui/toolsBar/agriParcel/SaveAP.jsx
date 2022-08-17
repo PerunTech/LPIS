@@ -50,7 +50,16 @@ export const saveAP = (layer, callback, skipChecks) => {
             method: 'post'
         }).then(response => {
             if (response?.data) {
-                ReactDOM.render(<APChecksModal data={response.data} />, container)
+                const pbCheck = response?.data.physical_block_check
+                const apCheck = response?.data.agri_parcel_check
+                const neighbourCheck = response?.data.agri_parcel_neighbour
+
+                // If none of the checks are returned, skip the modal for them
+                if (!pbCheck && !apCheck && !neighbourCheck) {
+                    _saveAgriParcel()
+                } else {
+                    ReactDOM.render(<APChecksModal data={response.data} />, container)
+                }
             } else {
                 _fail()
             }
@@ -194,8 +203,6 @@ export const saveAP = (layer, callback, skipChecks) => {
         const neighbourCheck = data.agri_parcel_neighbour
         const { schema, uiSchema } = saveAPFormSchema(pbCheck, apCheck, neighbourCheck)
 
-        const formData = data
-
         const onSubmit = ({ formData }) => {
             _saveAgriParcel(formData)
         }
@@ -205,21 +212,17 @@ export const saveAP = (layer, callback, skipChecks) => {
             ReactDOM.unmountComponentAtNode(container)
         }
 
-        if (!pbCheck && !apCheck && !neighbourCheck) {
-            return onSubmit(formData);
-        } else {
-            return (
-                <Form
-                    isSimple
-                    formTitle='Проверки'
-                    className='ap-checks-modal'
-                    schema={schema}
-                    uiSchema={uiSchema}
-                    onSubmit={onSubmit}>
-                    <DrawActions cancel={disable} />
-                </Form>
-            )
-        }
+        return (
+            <Form
+                isSimple
+                formTitle='Проверки'
+                className='ap-checks-modal'
+                schema={schema}
+                uiSchema={uiSchema}
+                onSubmit={onSubmit}>
+                <DrawActions cancel={disable} />
+            </Form>
+        )
     }
 
     // User input for the result of check 1
