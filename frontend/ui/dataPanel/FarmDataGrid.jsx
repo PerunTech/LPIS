@@ -1,12 +1,12 @@
 import { React, PropTypes, elements } from 'perun-core';
-import { core, ui } from '../../Spatial';
-import format from 'date-fns/format'
-import mk from 'date-fns/locale/mk'
+import { core, data, ui } from '../../Spatial';
 import { ParcelHistory } from './ParcelHistory';
 import { getCropLabel } from '../toolsBar/cropParcel/Util';
 import { strcmp, translateBooleanValue } from '../Util';
+import { parcelHistoryConfig } from '../toolsBar/agriParcel/Config';
 
 const { factory, Map, store, http } = core;
+const { geobuf, protobuf } = data;
 const { ButtonGroup, Button, Icon } = ui;
 const { useState, useEffect } = React;
 const { alertUser } = elements
@@ -16,20 +16,16 @@ const { Item: ListGroupItem } = ListGroup;
 const getParcelHistory = (e, parcelId, callback) => {
   e.stopPropagation()
   http.call('get-parcel-history', {
-    url: `/table/objectHistory/{init.token}/AGRI_PARCEL/${parcelId}/1`,
-    method: 'get'
+    url: `/lpis/get/parcelHistory/{init.token}/AGRI_PARCEL/${parcelId}`,
+    method: 'get',
+    responseType: 'arraybuffer'
   }).then(res => {
+    const data = geobuf.decode(protobuf(res));
+    const geojson = factory.geoJSON(data, parcelHistoryConfig.pathOptions);
+    const layers = geojson.getLayers();
     let parcelHistory = []
-    if (res.data && res.data.data && Array.isArray(res.data.data) && res.data.data.length > 0) {
-      res.data.data.forEach(el => {
-        const singleHistoryObj = el
-        if (el['AGRI_PARCEL.DT_INSERT']) {
-          const date = new Date(el['AGRI_PARCEL.DT_INSERT'])
-          const formattedDate = format(date, 'do MMMM yyyy', { locale: mk })
-          Reflect.set(singleHistoryObj, 'formattedDate', formattedDate)
-          parcelHistory.push(singleHistoryObj)
-        }
-      })
+    if (layers && Array.isArray(layers) && layers.length > 0) {
+      layers.forEach(el => parcelHistory.push(el))
       store.dispatch({ parcelHistory })
       callback(true)
     } else {

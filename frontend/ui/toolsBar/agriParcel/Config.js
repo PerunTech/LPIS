@@ -539,6 +539,34 @@ export const cadIntersectionsConfig = {
     }
 }
 
+export const parcelHistoryConfig = {
+    pathOptions: {
+        weight: 2.0,
+        stroke: true,
+        color: '#000000',
+        fillColor: '#000000',
+        opacity: 0.9,
+        fillOpacity: 0.25,
+        metadata: {
+            type: 'agri_parcel',
+            namePath: 'options.metadata.schema.properties.PARENT_ID',
+            schema: {
+                'type': 'object',
+                'properties': {
+                    ...metadataMain.schema.properties,
+                    ...metadataAux.schema.properties,
+                    ...metadataAdmin.schema.properties
+                }
+            },
+            uiSchema: {
+                ...metadataMain.uiSchema,
+                ...metadataAux.uiSchema,
+                ...metadataAdmin.uiSchema
+            }
+        }
+    }
+}
+
 export const createAPMsg = [
     'Оберете слободен физички блок за да додадете земјоделска парцела.',
     '1. Притиснете на левото копче од глувчето врз физичкиот блок за да направите избор.',
