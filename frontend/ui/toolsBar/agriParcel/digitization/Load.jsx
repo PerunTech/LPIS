@@ -71,8 +71,8 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
             setLoadedParcelLabel(layer)
             layer.addTo(Map)
           });
-          store.dispatch({ processID: '', parcelsHaveBeenLoadedStore: true })
-          setState({ isGuided: false, parcelsHaveBeenLoaded: true })
+          store.dispatch({ parcelsHaveBeenLoadedStore: true })
+          setState({ parcelsHaveBeenLoaded: true })
         } else {
           alertUser(true, 'info', 'Не е избрана парцела од мапата')
           disable()
@@ -84,8 +84,6 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
         setState({ loading: false, isGuided: false, parcelsHaveBeenLoaded: false })
         store.dispatch({ processID: '', parcelsHaveBeenLoaded: false })
       })
-
-      Map.off('click')
     })
   }
 
@@ -93,8 +91,8 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
     // Remove the Map click event listener
     Map.off('click');
     // Reset state, internal and application-wide.
-    setState({ loading: false, isGuided: false, parcelsHaveBeenLoaded: false });
-    store.dispatch({ processID: '', parcelsHaveBeenLoaded: false });
+    setState({ loading: false, isGuided: false });
+    store.dispatch({ processID: '' });
   };
 
   const renderGuideForm = () => {
