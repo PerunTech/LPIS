@@ -153,6 +153,17 @@ export const setSearchedParcelLabel = ap => {
     return ap;
 }
 
+export const setCadParcelLabel = cadParcel => {
+    const cadParcelId = cadParcel.feature.properties.GR_PARCEL || cadParcel.feature.properties.ID || '';
+    const cnt = String(cadParcel.feature.properties.CENTROID);
+    const latLng = Map.untransform(cnt.substring(cnt.indexOf('(') + 1, cnt.indexOf(')')).split(' ').map(s => Number(s)))
+    
+    cadParcel.bindTooltip(String(cadParcelId), { direction: 'center', permanent: true });
+    cadParcel.openTooltip(latLng);
+  
+    return cadParcel;
+}
+
 /* Map event listener for label render */
 let lastZoom = MIN_DIGI_SCALE;
 Map.on('zoomend', ({target}) => {

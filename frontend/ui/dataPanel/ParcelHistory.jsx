@@ -1,9 +1,9 @@
 import { React, elements } from 'perun-core'
 import { core, ui } from '../../Spatial'
-import { translateLandCoverCode } from '../Util'
+import { strcmp, translateBooleanValue, translateLandCoverCode } from '../Util'
 import { truncate } from './Util'
 
-const { store, connect } = core
+const { Map, store, connect } = core
 const { Modal, Button, DrawActions } = ui
 const { useEffect } = React
 const { ReactBootstrap } = elements
@@ -17,14 +17,31 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory }) => {
   }, [])
 
   const disable = () => {
+    removeParcelHistoryLayers()
     store.dispatch({ parcelHistory: [] })
     setShowParcelHistory(false)
   }
 
+  const removeParcelHistoryLayers = () => {
+    Map.eachLayer(function (layer) {
+      if (!!layer.toGeoJSON) {
+        if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'PARCEL_HISTORY')) {
+          Map.removeLayer(layer);
+        }
+      }
+    });
+  }
+
+  const showGeometry = layer => {
+    removeParcelHistoryLayers()
+    layer.feature.properties.DESCRIPTOR = 'PARCEL_HISTORY'
+    layer.addTo(Map)
+  }
+
   const renderTable = () => {
     const headingsArr = [
-      'Датум', 'Корис. име', 'Подрач. един.', 'СИЗП број', 'Површина', 'Употреба на земјиште',
-      'Место викано', 'Заедничка употреба', 'Право на користење', 'Вкупна површина'
+      'Корис. име', 'Подрач. един.', 'СИЗП број', 'Површина', 'Употреба на земјиште',
+      'Место викано', 'Заедничка употреба', 'Право на користење', 'Вкупна површина', 'Геометрија'
     ]
 
     return (
@@ -33,30 +50,31 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory }) => {
           {headingsArr.map(heading => <th>{heading}</th>)}
         </thead>
         <tbody>
-          {parcelHistory.map((historyEl) => {
-            const translatedLandCoverCode = translateLandCoverCode(historyEl['AGRI_PARCEL.LAND_COVER_CODE'])
+          {parcelHistory.map((historyEl, i) => {
+            const properties = historyEl.feature.properties
+            const parcelId = `${properties.id}_${i + 1}`
+            const translatedLandCoverCode = translateLandCoverCode(properties.LAND_COVER_CODE)
             let finalUserName = '/'
-            const userName = historyEl['AGRI_PARCEL.USER_NAME']
-            const userId = historyEl['AGRI_PARCEL.USER_ID']
+            const userName = properties.USER_NAME
             if (userName && (typeof userName === 'string' || userName instanceof String)) {
-              finalUserName = truncate(historyEl['AGRI_PARCEL.USER_ID'], 20, true)
-            } else if (userId && (typeof userId === 'string' || userId instanceof String)) {
-              finalUserName = truncate(historyEl['AGRI_PARCEL.USER_ID'], 20, true)
-            } else {
-              finalUserName = userId
+              finalUserName = truncate(userName, 20, true)
             }
             return (
-              <tr>
-                <td>{historyEl.formattedDate}</td>
-                <td title={historyEl['AGRI_PARCEL.USER_NAME'] || historyEl['AGRI_PARCEL.USER_ID']}>{finalUserName}</td>
-                <td>{historyEl['AGRI_PARCEL.ORG_UNIT_NAME'] || '/'}</td>
-                <td>{historyEl['AGRI_PARCEL.OLD_ID']}</td>
-                <td>{`${Math.round(Number(historyEl['AGRI_PARCEL.ALLOWED_AREA'] || historyEl['AGRI_PARCEL.AREA']))} m²`}</td>
+              <tr key={parcelId}>
+                <td title={userName || '/'}>{finalUserName}</td>
+                <td>{properties.ORG_UNIT_NAME || '/'}</td>
+                <td>{properties.OLD_ID}</td>
+                <td>{`${Math.round(Number(properties.ALLOWED_AREA || properties.AREA))} m²`}</td>
                 <td>{translatedLandCoverCode}</td>
-                <td>{historyEl['AGRI_PARCEL.HOME_NAME'] || 'Не е наведено'}</td>
-                <td>{historyEl['AGRI_PARCEL.COMMON_USE']}</td>
-                <td>{historyEl['AGRI_PARCEL.CERTIFICATE_OF_USE']}</td>
-                <td>{Math.round(historyEl['AGRI_PARCEL.AREA'])} m²</td>
+                <td>{properties.HOME_NAME || 'Не е наведено'}</td>
+                <td>{translateBooleanValue(properties.COMMON_USE)}</td>
+                <td>{translateBooleanValue(properties.CERTIFICATE_OF_USE)}</td>
+                <td>{Math.round(properties.AREA)} m²</td>
+                <td>
+                  <Button onClick={() => showGeometry(historyEl)}>
+                    Прикажи геометрија
+                  </Button>
+                </td>
               </tr>
             )
           })}
