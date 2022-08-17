@@ -142,6 +142,7 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   }
 
   const onSubmit = ({ formData }) => {
+    _stopEditAP()
     saveAP(JSON.stringify({
       ...data,
       ...formData,
@@ -201,9 +202,17 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   }
 
   const renderGuideForm = () => {
+    let msg = ['Одберете земјоделска парцела на мапата која сакате да ја промените.', '']
+    if (showGuidanceButton) {
+      msg = ['', '']
+    }
+
     return (
-      <Guidance id={_id} disable={() => disable()} msg={['Одберете земјоделска парцела на мапата која сакате да ја промените.', '']} title='Промени земјоделска парцела'>
+      <Guidance id={_id} disable={() => disable()} msg={msg} title='Промени земјоделска парцела'>
         {showGuidanceButton && <div className='mt-2'>
+          <Button className='next' size='' onClick={onSubmit}>
+            Зачувај
+          </Button>
           <Button className='next' size='' onClick={handleShowForm}>
             Прикажи форма
           </Button>
