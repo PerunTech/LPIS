@@ -1113,6 +1113,7 @@ public class ApplicationServices {
 		ResponseHandler rhs = new ResponseHandler();
 		try (SvGeometry svg = new SvGeometry(token); SvReader svr = new SvReader(svg)) {
 
+			svr.setIncludeGeometries(true);
 			Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 			AgriParcel aps = new AgriParcel();
 

@@ -87,7 +87,7 @@ public class AgriParcel {
 			if (rs.next())
 				nextId = rs.getLong(1);
 		} catch (Exception e) {
-			throw (new SvException(Sv.Exceptions.SQL_ERR, svc.getInstanceUser(), null,
+			throw (new SvException(CC.NO_SEQUENCE, svc.getInstanceUser(), null,
 					ApplicationServices.externalIdSequence));
 		} finally {
 			if (rs != null)
