@@ -3,6 +3,7 @@ import { core, ui, data } from '../../Spatial'
 import { Form } from '../toolsBar/agriParcel/Form'
 import { removeCadParcels } from './Util'
 import { cadastreSearchFormSchema, cadParcelConfig } from './CadastreConfig'
+import { setCadParcelLabel } from '../toolsBar/cropParcel/Util'
 
 const { schema: initialSchema, uiSchema: initialUiSchema } = cadastreSearchFormSchema()
 const { http, factory, Map, connect } = core
@@ -23,7 +24,6 @@ const _CadastreSearch = () => {
   const disable = () => {
     removeCadParcels()
     setState({ showForm: false, loading: false, disableSearchBtn: true, data: {}, schema: {}, uiSchema: {} })
-    Map.off('moveend')
   }
 
   const getCadastralMunicipalities = sectorId => {
@@ -66,16 +66,10 @@ const _CadastreSearch = () => {
       if (Array.isArray(layers) && layers.length > 0) {
         layers.forEach(layer => {
           layer.addTo(Map)
-          layer.feature.properties = {
-            ID: parcelId,
-            DESCRIPTOR: 'CAD_PARCEL'
-          }
+          setCadParcelLabel(layer)
+          layer.feature.properties.ID = parcelId
+          layer.feature.properties.DESCRIPTOR = 'CAD_PARCEL'
           Map.fitBounds(layer.getBounds())
-        })
-
-        // Remove the loaded cadastral parcels when the user pans or zooms in or out on the map
-        Map.on('moveend', function () {
-          disable()
         })
       } else {
         alertUser(true, 'info', 'Не се пронајдени катастарски парцели')
