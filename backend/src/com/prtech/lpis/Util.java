@@ -25,15 +25,15 @@ import com.vividsolutions.jts.io.svarog_geojson.GeoJsonWriter;
 public class Util {
 	private static final Logger log = LogManager.getLogger(Util.class.getName());
 
-	public static Boolean excludeField (String fieldName) {
+	public static Boolean excludeField(String fieldName) {
 		if ("PKID".equalsIgnoreCase(fieldName) || "GUI_METADATA".equalsIgnoreCase(fieldName)
 				|| "CENTROID".equalsIgnoreCase(fieldName) || "GEOM".equalsIgnoreCase(fieldName)) {
 			return false;
 		}
-			
+
 		return true;
 	}
-	
+
 	public static boolean coversWithTolerance(Geometry g1, Geometry g2, double tolerance) {
 		if (g2.getGeometryType().equals(g1.getGeometryType())) {
 			Geometry intersection = g2.intersection(g1);
@@ -56,23 +56,19 @@ public class Util {
 		}
 		return false;
 	}
-	public static DbDataObject addValueToDataObject (
-			DbDataObject dbo, 
-			String fieldName, 
-			DbDataObject fieldObject,
+
+	public static DbDataObject addValueToDataObject(DbDataObject dbo, String fieldName, DbDataObject fieldObject,
 			JsonObject jsonData) {
-		
+
 		String fieldType = fieldObject.getVal("FIELD_TYPE").toString();
 		Long scale = (Long) fieldObject.getVal("FIELD_SCALE");
 		Gson gson = new Gson();
 		JsonObject jsonObjRet = jsonData;
 		JsonObject guiMetadata = null;
-		
+
 		try {
 			if (fieldObject.getVal("GUI_METADATA") != null) {
-				guiMetadata = gson.fromJson(
-						fieldObject.getVal("GUI_METADATA").toString(), 
-						JsonObject.class);
+				guiMetadata = gson.fromJson(fieldObject.getVal("GUI_METADATA").toString(), JsonObject.class);
 			}
 		} catch (Exception e) {
 			log.debug(e);
@@ -116,11 +112,11 @@ public class Util {
 			} else
 				dbo.setVal(fieldName, null);
 		}
-		
+
 		return dbo;
 	}
-	
-	public static JsonObject dataToJson (MultivaluedMap<String, String> data) {
+
+	public static JsonObject dataToJson(MultivaluedMap<String, String> data) {
 		String formData = "";
 		JsonObject json = null;
 
@@ -133,42 +129,45 @@ public class Util {
 					formData = key;
 				}
 			}
-			
+
 			json = gson.fromJson(formData, JsonObject.class);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
+
 		return json;
 	}
-	
-	public static String geometryToJson (Geometry g) {
+
+	public static String geometryToJson(Geometry g) {
 		GeoJsonWriter gjw = new GeoJsonWriter();
 		return gjw.write(g);
 	}
 
-	public static Geometry jsonToGeometry (JsonElement el) {
+	public static Geometry jsonToGeometry(JsonElement el) {
+		return jsonToGeometry(el, SvUtil.sdiFactory);
+	}
+
+	public static Geometry jsonToGeometry(JsonElement el, GeometryFactory gf) {
 		Geometry geom = null;
-		
+
 		try {
-			GeometryFactory gf = SvUtil.sdiFactory;
 			GeoJsonReader gjr = new GeoJsonReader(gf);
 			geom = gjr.read(el.toString());
-			
+
 			String polyType = geom.getGeometryType();
-			//if ("Polygon".equalsIgnoreCase(polyType))
-			//	geom = gf.createMultiPolygon(new Polygon[] { (Polygon) geom });
+			// if ("Polygon".equalsIgnoreCase(polyType))
+			// geom = gf.createMultiPolygon(new Polygon[] { (Polygon) geom });
 		} catch (Exception e) {
 			log.error("Failed parsing geometry. " + e);
 		}
-		
+
 		return geom;
 	}
-	
-	public static void calculateGeometryDerivatives (DbDataObject dbo) {
+
+	public static void calculateGeometryDerivatives(DbDataObject dbo) {
 		Geometry geom = SvGeometry.getGeometry(dbo);
 		DecimalFormat df = new DecimalFormat("#.####");
-		
+
 		dbo.setVal("AREA", Double.parseDouble(df.format(geom.getArea()).replace(",", ".")));
 		dbo.setVal("PERIMETER", Double.parseDouble(df.format(geom.getLength()).replace(",", ".")));
 	}

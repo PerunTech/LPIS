@@ -60,6 +60,7 @@ import org.joda.time.DateTime;
 import org.junit.Assert;
 
 public class ConfigTest {
+	GeometryFactory gf = new GeometryFactory(new PrecisionModel(100));
 	private static final Logger log = LogManager.getLogger(Config.class.getName());
 
 	static String getUserSessionIdForTestPurpose() {
@@ -153,6 +154,12 @@ public class ConfigTest {
 	}
 
 	@Test
+	public void testcheck() {
+		String js = "{\"TERRACE\":false,\"DESCRIPTOR\":\"AGRI_PARCEL\",\"EXPOSITION_AVG\":0,\"COMMON_USE\":false,\"ALLOWED_AREA\":\"3518.7148\",\"CHANGED_BORDER\":false,\"IRRIGATION\":false,\"ORGANIC\":false,\"type\":\"574968807\",\"OLD_ID\":4228002,\"Z_AVG\":\"0\",\"SLOPE_AVG\":0,\"LANDSCAPE_FEATURES\":false,\"CERTIFICATE_OF_USE\":false,\"AREA\":\"3518.7148\",\"LAND_COVER_CODE_2\":\"0\",\"parent_id\":\"21345\",\"LAND_COVER_CODE\":\"200\",\"ELIGIBILITY_COEF\":100,\"CENTROID\":\"POINT (7551276.52 4528820.48)\",\"status\":\"VALID\",\"PERIMETER\":\"263.6252\",\"INVISIBLE_BORDER\":false,\"OBJECT_ID\":711305535,\"GEOM\":{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[7551245.3668,4528861.8856],[7551256.3599,4528856.1879],[7551296.3156,4528829.4824],[7551324.5958,4528809.6914],[7551308.3115,4528776.818],[7551228.3062,4528831.561],[7551229.9408,4528838.7906],[7551245.3668,4528861.8856]]]},\"id\":\"711305535\",\"properties\":{\"TERRACE\":false,\"DESCRIPTOR\":\"AGRI_PARCEL\",\"EXPOSITION_AVG\":0,\"COMMON_USE\":false,\"ALLOWED_AREA\":\"3518.7148\",\"CHANGED_BORDER\":false,\"IRRIGATION\":false,\"ORGANIC\":false,\"type\":\"574968807\",\"OLD_ID\":4228002,\"Z_AVG\":\"0\",\"SLOPE_AVG\":0,\"LANDSCAPE_FEATURES\":false,\"CERTIFICATE_OF_USE\":false,\"AREA\":\"3518.7148\",\"LAND_COVER_CODE_2\":\"0\",\"parent_id\":\"21345\",\"LAND_COVER_CODE\":\"200\",\"ELIGIBILITY_COEF\":100,\"CENTROID\":\"POINT (7551276.52 4528820.48)\",\"status\":\"VALID\",\"PERIMETER\":\"263.6252\",\"INVISIBLE_BORDER\":false}}}";
+
+	}
+
+	//@Test
 	public void testProjectInfo() {
 		String group = Config.getProjectGroup();
 		String name = Config.getProjectName();
@@ -168,7 +175,7 @@ public class ConfigTest {
 				+ "Since it is not defined properly, expect nothing to work.", (name != null && name.length() > 1));
 	}
 
-	@Test
+	//@Test
 	public void testAccessCard() {
 		String icon = Config.getCardIcon();
 		String permissionCode = Config.getPermissionCode();
@@ -329,7 +336,7 @@ public class ConfigTest {
 		// "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
 		Gson g = new Gson();
 		JsonObject json = g.fromJson(input, JsonObject.class);
-		LineString lineString = (LineString) Util.jsonToGeometry(json);
+		LineString lineString = (LineString) com.prtech.lpis.Util.jsonToGeometry(json, gf);
 		Response response = null;
 		try (SvGeometry svr = new SvGeometry(getUserSessionIdForTestPurpose())) {
 			Geometry gg = new AgriParcel().mergeGeometryConfirm(svr, "AGRI_PARCEL", 21345L, lineString, false);
@@ -347,7 +354,7 @@ public class ConfigTest {
 		// "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
 		Gson g = new Gson();
 		JsonObject json = g.fromJson(input, JsonObject.class);
-		LineString lineString = (LineString) Util.jsonToGeometry(json);
+		LineString lineString = (LineString) com.prtech.lpis.Util.jsonToGeometry(json, gf);
 		Response response = null;
 		try (SvGeometry svr = new SvGeometry(getUserSessionIdForTestPurpose())) {
 			Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
@@ -357,12 +364,12 @@ public class ConfigTest {
 
 	}
 
-	@Test
+	//@Test
 	public void testMap() throws IOException {
 		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
 		Gson gs = new Gson();
 		JsonObject json = gs.fromJson(input, JsonObject.class);
-		Geometry g = (LineString) Util.jsonToGeometry(json);
+		Geometry g = (LineString) com.prtech.lpis.Util.jsonToGeometry(json, gf);
 		HashMap<String, Object> mp = new HashMap<>();
 		mp.put("1", 1);
 		mp.put("CENTROID", "SSSSSSSSSSSSSSSSSSSSSSSSS");
@@ -377,7 +384,7 @@ public class ConfigTest {
 
 	}
 
-	@Test
+	//@Test
 	public void getAssets() throws SvException, SQLException, ParseException {
 		ApplicationServices as = new ApplicationServices();
 
@@ -457,7 +464,7 @@ public class ConfigTest {
 		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
 		Gson g = new Gson();
 		JsonObject json = g.fromJson(input, JsonObject.class);
-		LineString lineString = (LineString) Util.jsonToGeometry(json);
+		LineString lineString = (LineString) com.prtech.lpis.Util.jsonToGeometry(json, gf);
 		Response response = null;
 		try (SvGeometry svr = new SvGeometry(getUserSessionIdForTestPurpose())) {
 			Geometry gg = new AgriParcel().mergeGeometryConfirm(svr, "AGRI_PARCEL", 21345L, lineString, false);
