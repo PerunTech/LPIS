@@ -256,15 +256,16 @@ public class AgriParcel {
 		Collection<Geometry> neighbourAP = svg.getRelatedGeometries(geom, typeId, SDIRelation.INTERSECTS, null, null,
 				true, true, true);
 
+		List<Geometry> gl = new ArrayList<Geometry>(neighbourAP);
 		Iterator<Geometry> gi = neighbourAP.iterator();
 		while (gi.hasNext()) {
 			Geometry ng = gi.next();
 			DbDataObject dbo = (DbDataObject) ng.getUserData();
-			if (!(com.prtech.lpis.Util.overlapsWithTolerance(ng, geom, 0.01)) || dbo.getParentId().equals(parentId)) {
-				gi.remove();
+			if ((com.prtech.lpis.Util.overlapsWithTolerance(ng, geom, 0.01)) && !dbo.getParentId().equals(parentId)) {
+				gl.add(ng);
 			}
 		}
-		return neighbourAP;
+		return gl;
 	}
 
 	public boolean overlapsNeighbours(SvGeometry svg, Geometry geom, Long parentId) throws SvException {
