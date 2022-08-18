@@ -24,6 +24,7 @@ const _CadastreSearch = () => {
   const disable = () => {
     removeCadParcels()
     setState({ showForm: false, loading: false, disableSearchBtn: true, data: {}, schema: {}, uiSchema: {} })
+    Map.off('movestart moveend')
   }
 
   const getCadastralMunicipalities = sectorId => {
@@ -70,6 +71,19 @@ const _CadastreSearch = () => {
           layer.feature.properties.ID = parcelId
           layer.feature.properties.DESCRIPTOR = 'CAD_PARCEL'
           Map.fitBounds(layer.getBounds())
+        })
+
+        // When the moveend event is fired (ex. when the map fits the bounds)
+        Map.on('moveend', () => {
+          // Remove the event listener immediately
+          Map.off('moveend')
+          // Set the opposite event from the one above
+          Map.on('movestart', () => {
+            // Remove the parcels when some movement starts, with a delay of half a second
+            setTimeout(() => removeCadParcels(), 500)
+            // Remove the event listener in the end
+            Map.off('movestart')
+          })
         })
       } else {
         alertUser(true, 'info', 'Не се пронајдени катастарски парцели')
