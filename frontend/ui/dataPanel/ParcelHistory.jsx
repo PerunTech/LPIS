@@ -36,6 +36,7 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory }) => {
     removeParcelHistoryLayers()
     layer.feature.properties.DESCRIPTOR = 'PARCEL_HISTORY'
     layer.addTo(Map)
+    Map.fitBounds(layer.getBounds())
   }
 
   const renderTable = () => {
