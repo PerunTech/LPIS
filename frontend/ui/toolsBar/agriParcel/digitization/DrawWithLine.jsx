@@ -1,13 +1,15 @@
 import { React, Loading, elements } from 'perun-core';
-import { core, ui, tools, config as cfg } from '../../../../Spatial';
+import { core, ui, data, tools, config as cfg } from '../../../../Spatial';
 import { config, drawAPMsg, permanentCropSchema } from '../Config';
 import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
+import { setLoadedParcelLabel } from '../../cropParcel/Util';
 
 const { Map, store, factory, http } = core;
+const { geobuf, protobuf } = data;
 const { draw: { line } } = tools;
 const { Icon, DrawActions } = ui;
 const { MAP_CONFIG } = cfg;
@@ -27,8 +29,33 @@ const _DrawWithLine = ({ processID, farmObjId, saveIsPending }) => {
         setState({ layer: e.layer, isGuided: false, showForm: true, showPermanentCropForm: false })
         e.layer.addTo(Map)
       }
-      Map.off('new_shape');
+      Map.off('new_shape contextmenu');
     });
+
+    Map.on('contextmenu', e => {
+      const p = Map.transform(e.latlng);
+      const url = `/spatial/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
+      http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
+        const data = geobuf.decode(protobuf(response));
+        const geojson = factory.geoJSON(data, config.pathOptions);
+        const layers = geojson.getLayers();
+        if (layers && Array.isArray(layers) && layers.length > 0) {
+          layers.forEach(layer => {
+            if (layer?.feature?.properties) {
+              layer.feature.properties.DESCRIPTOR = 'LOADED_AGRI_PARCEL'
+            }
+            setLoadedParcelLabel(layer)
+            layer.addTo(Map)
+          });
+          store.dispatch({ parcelsHaveBeenLoaded: true })
+        } else {
+          alertUser(true, 'info', 'Не е избрана парцела од мапата')
+        }
+      }).catch(err => {
+        console.error(err)
+        alertUser(true, 'error', 'Настана грешка')
+      })
+    })
 
     setState({ isGuided: true, showForm: false, data: {}, layer: {} });
     store.dispatch({ processID: _id });
@@ -43,6 +70,8 @@ const _DrawWithLine = ({ processID, farmObjId, saveIsPending }) => {
     layer.removeFrom && layer.removeFrom(Map);
     // Disable draw handler.
     line.disable('force');
+    // Disable the contextmenu event
+    Map.off('contextmenu');
     // Refresh the data
     getFarmMapAssets();
   }
