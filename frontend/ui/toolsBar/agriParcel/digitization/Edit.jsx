@@ -1,14 +1,16 @@
 import { React, Loading, elements } from 'perun-core';
-import { core, ui, tools, config as cfg } from '../../../../Spatial';
+import { core, data, ui, tools, config as cfg } from '../../../../Spatial';
 import { config, permanentCropSchema } from '../Config';
 import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
+import { setLoadedParcelLabel } from '../../cropParcel/Util';
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { Map, store, factory, http } = core;
+const { geobuf, protobuf } = data;
 const { edit } = tools;
 const { Icon, DrawActions, Button, Modal } = ui;
 const { alertUser } = elements;
@@ -31,6 +33,31 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
       store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
       setState({ isGuided: true, showForm: false, showPermanentCropForm: false, data: {}, permanentCropData: {}, layer: {}, allPermanentCrops: undefined })
       _editAP()
+
+      Map.on('contextmenu', e => {
+        const p = Map.transform(e.latlng);
+        const url = `/spatial/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
+        http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
+          const data = geobuf.decode(protobuf(response));
+          const geojson = factory.geoJSON(data, config.pathOptions);
+          const layers = geojson.getLayers();
+          if (layers && Array.isArray(layers) && layers.length > 0) {
+            layers.forEach(layer => {
+              if (layer?.feature?.properties) {
+                layer.feature.properties.DESCRIPTOR = 'LOADED_AGRI_PARCEL'
+              }
+              setLoadedParcelLabel(layer)
+              layer.addTo(Map)
+            });
+            store.dispatch({ parcelsHaveBeenLoaded: true })
+          } else {
+            alertUser(true, 'info', 'Не е избрана парцела од мапата')
+          }
+        }).catch(err => {
+          console.error(err)
+          alertUser(true, 'error', 'Настана грешка')
+        })
+      })
     } else {
       alertUser(
         true,
@@ -43,7 +70,7 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   };
 
   const reset = () => {
-    Map.off('click');
+    Map.off('click contextmenu');
     // Reset state, internal and application-wide.
     setState({
       layer: {}, data: {}, geojson: {}, permanentCropData: {}, isGuided: false,
@@ -108,6 +135,7 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   const _stopEditAP = () => {
     _layerGroup.clearLayers().removeFrom(Map);
     edit.polygon.disable();
+    Map.off('contextmenu')
   }
 
   const _setBlockEvents = (layer, agriParcels) => {
@@ -130,6 +158,7 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   }
 
   const handleShowForm = () => {
+    Map.off('contextmenu')
     setState({ isGuided: false, showForm: true })
   }
 
