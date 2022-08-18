@@ -260,11 +260,9 @@ public class AgriParcel {
 		while (gi.hasNext()) {
 			Geometry ng = gi.next();
 			DbDataObject dbo = (DbDataObject) ng.getUserData();
-			if (!(com.prtech.lpis.Util.overlapsWithTolerance(ng, geom, 0.01))) {
+			if (!(com.prtech.lpis.Util.overlapsWithTolerance(ng, geom, 0.01)) || dbo.getParentId().equals(parentId)) {
 				gi.remove();
 			}
-			if (dbo.getParentId().equals(parentId))
-				gi.remove();
 		}
 		return neighbourAP;
 	}
