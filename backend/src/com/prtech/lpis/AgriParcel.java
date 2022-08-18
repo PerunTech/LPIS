@@ -256,7 +256,7 @@ public class AgriParcel {
 		Collection<Geometry> neighbourAP = svg.getRelatedGeometries(geom, typeId, SDIRelation.INTERSECTS, null, null,
 				true, true, true);
 
-		List<Geometry> gl = new ArrayList<Geometry>(neighbourAP);
+		List<Geometry> gl = new ArrayList<Geometry>();
 		Iterator<Geometry> gi = neighbourAP.iterator();
 		while (gi.hasNext()) {
 			Geometry ng = gi.next();
