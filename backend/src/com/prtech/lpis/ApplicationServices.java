@@ -460,7 +460,7 @@ public class ApplicationServices {
 			@Context HttpServletRequest httpRequest) {
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try {
-			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, cutPB, cutAP, alignAP.equals(0), formVals);
+			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, cutPB, cutAP, alignAP, formVals);
 
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
@@ -484,7 +484,7 @@ public class ApplicationServices {
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try {
-			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, true, true, false, formVals);
+			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, true, true, 0, formVals);
 
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");

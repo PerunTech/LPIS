@@ -298,46 +298,61 @@ public class AgriParcel {
 		return gg;
 	}
 
-	public Geometry parcelAlignment(SvGeometry svg, DbDataObject parcel, boolean cutPB, boolean cutAP, boolean alignAP,
-			DbDataArray result) throws SvException, SQLException, ParseException {
-		Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
+	/**
+	 * Method to align a new parcel against the physical block
+	 * 
+	 * @param svg
+	 * @param parcel
+	 * @param cutPB
+	 * @return
+	 * @throws SvException
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
+	public Geometry parcelPBAlignment(SvGeometry svg, DbDataObject parcel, boolean cutPB)
+			throws SvException, SQLException, ParseException {
 		Geometry geom = SvGeometry.getGeometry(parcel);
+		Geometry selectedPb = null;
+		Collection<Geometry> gg = this.getPBIntersections(svg, geom);
 		if (cutPB) {
-			Collection<Geometry> gg = this.getPBIntersections(svg, geom);
 			Geometry tmpGeom = null;
 			for (Geometry pb : gg) {
-				if (pb.overlaps(geom)) {
+				if (com.prtech.lpis.Util.coversWithTolerance(pb, geom, 0.01)) {
 					Geometry g = geom.intersection(pb);
-					if (tmpGeom == null || g.getArea() > tmpGeom.getArea())
+					if (tmpGeom == null || g.getArea() > tmpGeom.getArea()) {
 						tmpGeom = g;
+						selectedPb = pb;
+					}
 				}
 			}
 			geom = ensurePolygon(tmpGeom);
 			SvGeometry.setGeometry(parcel, geom);
 		} else {
-			parcel.setVal(CC.HAS_OVERLAP_PB, true);
-		}
-		Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, parcel.getParentId(), typeId);
-		if (cutAP) {
-			for (Geometry nap : neighbours) {
-				if (nap.overlaps(geom))
-					geom = geom.difference(nap);
+			Boolean isInsiderPB = false;
+			for (Geometry pb : gg) {
+				if (com.prtech.lpis.Util.coversWithTolerance(pb, geom, 0.01)) {
+					isInsiderPB = true;
+					selectedPb = pb;
+					break;
+				}
 			}
-			geom = ensurePolygon(geom);
-			SvGeometry.setGeometry(parcel, geom);
-			if (parcel.getVal(CC.HAS_OVERLAP) != null && (boolean) parcel.getVal(CC.HAS_OVERLAP))
-				result.setItems(removeOverlaps(svg, parcel).getItems());
-		} else {
-			// createOverlaps(svg, parcel, typeId, neighbours);
+
+			parcel.setVal(CC.HAS_OVERLAP_PB, !isInsiderPB);
 		}
+		return selectedPb;
+	}
+
+	public void parcelNBAlignment(SvGeometry svg, DbDataObject parcel, int alignNB, Geometry currentBlock,
+			Collection<Geometry> alreadAligned) throws SvException {
+		Geometry geom = SvGeometry.getGeometry(parcel);
 		Geometry bufferedAP = geom.buffer(mergeTolerance);
 
 		Collection<Geometry> neighboursNearBy = this.overlappedNeighbours(svg, bufferedAP, parcel.getParentId(),
-				typeId);
-		// remove the previously overlapped ones
-		neighboursNearBy.removeAll(neighbours);
+				SvCore.getTypeIdByName(CC.AGRI_PARCEL));
+		// remove the previously aligned ones
+		neighboursNearBy.removeAll(alreadAligned);
 
-		if (alignAP) {
+		if (alignNB == 0) {
 			for (Geometry nap : neighboursNearBy) {
 				// get the buffer zone as overlap of the intersection of the two buffered geoms
 				Geometry buffer = geom.buffer(mergeTolerance).intersection(nap.buffer(mergeTolerance));
@@ -349,19 +364,40 @@ public class AgriParcel {
 				geom = geom.union(gapFill).difference(nap);
 			}
 
-		} else {
+		} else if (alignNB == 1) {
 			for (Geometry nap : neighboursNearBy) {
 				Geometry alignOn = nap.buffer(mergeTolerance);
 				geom = geom.difference(alignOn);
 			}
 		}
 		SvGeometry.setGeometry(parcel, geom);
+	}
+
+	public Geometry parcelAlignment(SvGeometry svg, DbDataObject parcel, boolean cutPB, boolean cutAP, int alignNB,
+			DbDataArray result) throws SvException, SQLException, ParseException {
+		Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
+		Geometry currentBlock = parcelPBAlignment(svg, parcel, cutPB);
+		Geometry geom = SvGeometry.getGeometry(parcel);
+		Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, parcel.getParentId(), typeId);
+		if (cutAP) {
+			for (Geometry nap : neighbours) {
+				if (nap.overlaps(geom))
+					geom = geom.difference(nap);
+			}
+			geom = ensurePolygon(geom);
+			SvGeometry.setGeometry(parcel, geom);
+			if (parcel.getVal(CC.HAS_OVERLAP) != null && (boolean) parcel.getVal(CC.HAS_OVERLAP))
+				result.setItems(removeOverlaps(svg, parcel).getItems());
+		}
+
+		parcelNBAlignment(svg, parcel, alignNB, currentBlock, neighbours);
+
 		geom.setUserData(parcel);
 		return geom;
 	}
 
 	public void saveAgriParcel(String token, Long objectId, Long parentId, boolean cutPB, boolean cutAP,
-			boolean alignAP, MultivaluedMap<String, String> formVals) throws SvException, SQLException, ParseException {
+			int alignNB, MultivaluedMap<String, String> formVals) throws SvException, SQLException, ParseException {
 		DbDataObject ap = null;
 		JsonObject metadata = new JsonObject();
 		DbDataArray result = new DbDataArray();
@@ -402,7 +438,7 @@ public class AgriParcel {
 			if (ap.getObjectId().equals(0L))
 				ap.setVal(CC.OLD_ID, null);
 			Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, ap.getParentId(), typeId);
-			geom = parcelAlignment(svg, ap, cutPB, cutAP, alignAP, result);
+			geom = parcelAlignment(svg, ap, cutPB, cutAP, alignNB, result);
 			// check minimum parcel size
 			if (geom.getArea() < ApplicationServices.minimumAgriParcelSize)
 				throw (new SvException(CC.PARCEL_LESS_THAN_MINIMUM, svg.getInstanceUser(), ap,
