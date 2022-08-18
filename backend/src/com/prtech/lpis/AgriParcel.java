@@ -260,7 +260,7 @@ public class AgriParcel {
 		while (gi.hasNext()) {
 			Geometry ng = gi.next();
 			DbDataObject dbo = (DbDataObject) ng.getUserData();
-			if (!(geom.overlaps(ng) || geom.covers(ng) || geom.coveredBy(ng))) {
+			if (!(com.prtech.lpis.Util.overlapsWithTolerance(ng, geom, 0.01))) {
 				gi.remove();
 			}
 			if (dbo.getParentId().equals(parentId))
@@ -292,7 +292,7 @@ public class AgriParcel {
 		Iterator<Geometry> i = gg.iterator();
 		while (i.hasNext()) {
 			Geometry g = i.next();
-			if (!gp.overlaps(g) && !g.covers(gp) && !g.coveredBy(gp))
+			if (!gp.intersects(gp))
 				i.remove();
 		}
 

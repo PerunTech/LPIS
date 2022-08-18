@@ -1134,7 +1134,14 @@ public class ApplicationServices {
 
 			geom = SvGeometry.getGeometry(ap);
 			Collection<Geometry> gg = aps.getPBIntersections(svg, geom);
-			boolean pbCover = gg.size() == 1 && gg.iterator().next().covers(geom);
+			boolean pbCover = false;
+			for (Geometry pb : gg) {
+				if (com.prtech.lpis.Util.coversWithTolerance(pb, geom, 0.01)) {
+					pbCover = true;
+					break;
+				}
+			}
+
 			json.addProperty("physical_block_check", !pbCover);
 
 			Collection<Geometry> neighbours = aps.overlappedNeighbours(svg, geom, parentId, typeId);

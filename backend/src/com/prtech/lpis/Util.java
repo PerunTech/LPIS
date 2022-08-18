@@ -34,6 +34,28 @@ public class Util {
 		return true;
 	}
 	
+	public static boolean coversWithTolerance(Geometry g1, Geometry g2, double tolerance) {
+		if (g2.getGeometryType().equals(g1.getGeometryType())) {
+			Geometry intersection = g2.intersection(g1);
+			if (intersection.getGeometryType().equals(g1.getGeometryType())) {
+				if (Math.abs(intersection.getArea() - g2.getArea()) < tolerance)
+
+					return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean overlapsWithTolerance(Geometry g1, Geometry g2, double tolerance) {
+		if (g2.getGeometryType().equals(g1.getGeometryType())) {
+			Geometry intersection = g2.intersection(g1);
+			if (intersection.getGeometryType().equals(g1.getGeometryType())) {
+				if (Math.abs(intersection.getArea()) > tolerance)
+					return true;
+			}
+		}
+		return false;
+	}
 	public static DbDataObject addValueToDataObject (
 			DbDataObject dbo, 
 			String fieldName, 
