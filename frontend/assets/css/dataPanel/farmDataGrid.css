@@ -156,8 +156,9 @@
 .parcel-history-info-modal .modal-dialog {
   position: relative;
   top: 1px !important;
-  right: 700px !important;
+  right: 750px !important;
   font-size: larger;
+  max-height: 90vh !important;
 }
 
 .parcel-history-info-modal .modal-content {
