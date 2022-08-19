@@ -34,3 +34,13 @@ export const removeSearchedParcels = () => {
     }
   });
 }
+
+export const removeParcelHistoryLayers = () => {
+  Map.eachLayer(function (layer) {
+    if (!!layer.toGeoJSON) {
+      if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'PARCEL_HISTORY')) {
+        Map.removeLayer(layer);
+      }
+    }
+  });
+}

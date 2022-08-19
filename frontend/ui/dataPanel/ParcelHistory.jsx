@@ -1,7 +1,7 @@
 import { React, elements } from 'perun-core'
 import { core, ui } from '../../Spatial'
-import { strcmp, translateBooleanValue, translateLandCoverCode } from '../Util'
-import { truncate } from './Util'
+import { translateBooleanValue, translateLandCoverCode } from '../Util'
+import { removeParcelHistoryLayers, truncate } from './Util'
 
 const { Map, store, connect } = core
 const { Modal, Button, DrawActions } = ui
@@ -20,16 +20,6 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory }) => {
     removeParcelHistoryLayers()
     store.dispatch({ parcelHistory: [] })
     setShowParcelHistory(false)
-  }
-
-  const removeParcelHistoryLayers = () => {
-    Map.eachLayer(function (layer) {
-      if (!!layer.toGeoJSON) {
-        if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'PARCEL_HISTORY')) {
-          Map.removeLayer(layer);
-        }
-      }
-    });
   }
 
   const showGeometry = layer => {
@@ -88,6 +78,7 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory }) => {
     const modalProps = {
       show: true,
       backdrop: false,
+      scrollable: true,
       enforceFocus: false,
       id: 'measure-dialog',
       className: 'parcel-history-info-modal',
