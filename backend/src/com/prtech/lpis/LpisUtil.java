@@ -22,8 +22,8 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonWriter;
 
-public class Util {
-	private static final Logger log = LogManager.getLogger(Util.class.getName());
+public class LpisUtil {
+	private static final Logger log = LogManager.getLogger(LpisUtil.class.getName());
 
 	public static Boolean excludeField(String fieldName) {
 		if ("PKID".equalsIgnoreCase(fieldName) || "GUI_METADATA".equalsIgnoreCase(fieldName)

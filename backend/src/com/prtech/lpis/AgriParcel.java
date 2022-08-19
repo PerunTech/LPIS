@@ -261,7 +261,8 @@ public class AgriParcel {
 		while (gi.hasNext()) {
 			Geometry ng = gi.next();
 			DbDataObject dbo = (DbDataObject) ng.getUserData();
-			if ((com.prtech.lpis.Util.overlapsWithTolerance(ng, geom, 0.01)) && !dbo.getParentId().equals(parentId)) {
+			if ((com.prtech.lpis.LpisUtil.overlapsWithTolerance(ng, geom, 0.01))
+					&& !dbo.getParentId().equals(parentId)) {
 				gl.add(ng);
 			}
 		}
@@ -291,7 +292,7 @@ public class AgriParcel {
 		Iterator<Geometry> i = gg.iterator();
 		while (i.hasNext()) {
 			Geometry g = i.next();
-			if (!gp.intersects(gp))
+			if (!LpisUtil.overlapsWithTolerance(g, gp, 0.01))
 				i.remove();
 		}
 
@@ -314,10 +315,10 @@ public class AgriParcel {
 		Geometry geom = SvGeometry.getGeometry(parcel);
 		Geometry selectedPb = null;
 		Collection<Geometry> gg = this.getPBIntersections(svg, geom);
-		if (cutPB==0) {
+		if (cutPB == 0) {
 			Geometry tmpGeom = null;
 			for (Geometry pb : gg) {
-				if (com.prtech.lpis.Util.coversWithTolerance(pb, geom, 0.01)) {
+				if (com.prtech.lpis.LpisUtil.overlapsWithTolerance(pb, geom, 0.01)) {
 					Geometry g = geom.intersection(pb);
 					if (tmpGeom == null || g.getArea() > tmpGeom.getArea()) {
 						tmpGeom = g;
@@ -327,10 +328,10 @@ public class AgriParcel {
 			}
 			geom = ensurePolygon(tmpGeom);
 			SvGeometry.setGeometry(parcel, geom);
-		} else if(cutPB>=1){
+		} else if (cutPB >= 1) {
 			Boolean isInsiderPB = false;
 			for (Geometry pb : gg) {
-				if (com.prtech.lpis.Util.coversWithTolerance(pb, geom, 0.01)) {
+				if (com.prtech.lpis.LpisUtil.coversWithTolerance(pb, geom, 0.01)) {
 					isInsiderPB = true;
 					selectedPb = pb;
 					break;
@@ -379,7 +380,7 @@ public class AgriParcel {
 		Geometry currentBlock = parcelPBAlignment(svg, parcel, cutPB);
 		Geometry geom = SvGeometry.getGeometry(parcel);
 		Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, parcel.getParentId(), typeId);
-		if (cutAP==0) {
+		if (cutAP == 0) {
 			for (Geometry nap : neighbours) {
 				if (nap.overlaps(geom))
 					geom = geom.difference(nap);
@@ -396,8 +397,8 @@ public class AgriParcel {
 		return geom;
 	}
 
-	public void saveAgriParcel(String token, Long objectId, Long parentId, int cutPB, int cutAP,
-			int alignNB, MultivaluedMap<String, String> formVals) throws SvException, SQLException, ParseException {
+	public void saveAgriParcel(String token, Long objectId, Long parentId, int cutPB, int cutAP, int alignNB,
+			MultivaluedMap<String, String> formVals) throws SvException, SQLException, ParseException {
 		DbDataObject ap = null;
 		JsonObject metadata = new JsonObject();
 		DbDataArray result = new DbDataArray();
@@ -465,7 +466,7 @@ public class AgriParcel {
 			result.addDataItem(ap);
 			svg.saveGeometry(result);
 
-			if (cutAP==1)
+			if (cutAP == 1)
 				createOverlaps(svg, ap, typeId, neighbours);
 			svg.dbCommit();
 		}
@@ -517,7 +518,7 @@ public class AgriParcel {
 			DbDataObject d = (DbDataObject) other.getUserData();
 			if (parcel.getObjectId().equals(d.getObjectId()))
 				continue;
-			if (g.overlaps(other))
+			if (LpisUtil.overlapsWithTolerance(g, other, 0.01))// TODO
 				g = g.difference(other);
 		}
 		g.setUserData(parcel);

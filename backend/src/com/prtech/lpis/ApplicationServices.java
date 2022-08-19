@@ -463,7 +463,7 @@ public class ApplicationServices {
 			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, cutPB, cutAP, alignAP, formVals);
 
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.saveParcel");
 		}
 
 		StreamingOutput pbfStream = new StreamingOutput() {
@@ -1136,7 +1136,7 @@ public class ApplicationServices {
 			Collection<Geometry> gg = aps.getPBIntersections(svg, geom);
 			boolean pbCover = false;
 			for (Geometry pb : gg) {
-				if (com.prtech.lpis.Util.coversWithTolerance(pb, geom, 0.01)) {
+				if (com.prtech.lpis.LpisUtil.coversWithTolerance(pb, geom, 0.01)) {
 					pbCover = true;
 					break;
 				}

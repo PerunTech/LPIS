@@ -44,6 +44,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,18 +99,18 @@ public class ConfigTest {
 			env = pb2.getEnvelope().buffer(10);
 			Geometry apInter2 = env.intersection(pb2);
 
-			System.out.println("ap overlaps pb1:" + com.prtech.lpis.Util.overlapsWithTolerance(pb1, ap, 0.01));
-			System.out.println("ap overlaps pb2:" + com.prtech.lpis.Util.overlapsWithTolerance(pb2, ap, 0.01));
+			System.out.println("ap overlaps pb1:" + com.prtech.lpis.LpisUtil.overlapsWithTolerance(pb1, ap, 0.01));
+			System.out.println("ap overlaps pb2:" + com.prtech.lpis.LpisUtil.overlapsWithTolerance(pb2, ap, 0.01));
 
 			System.out
-					.println("apInter1 overlaps pb1:" + com.prtech.lpis.Util.overlapsWithTolerance(pb1, apInter, 0.01));
+					.println("apInter1 overlaps pb1:" + com.prtech.lpis.LpisUtil.overlapsWithTolerance(pb1, apInter, 0.01));
 			System.out
-					.println("apInter1 overlaps pb2:" + com.prtech.lpis.Util.overlapsWithTolerance(pb2, apInter, 0.01));
+					.println("apInter1 overlaps pb2:" + com.prtech.lpis.LpisUtil.overlapsWithTolerance(pb2, apInter, 0.01));
 
 			System.out.println(
-					"apInter2 overlaps pb1:" + com.prtech.lpis.Util.overlapsWithTolerance(pb1, apInter2, 0.01));
+					"apInter2 overlaps pb1:" + com.prtech.lpis.LpisUtil.overlapsWithTolerance(pb1, apInter2, 0.01));
 			System.out.println(
-					"apInter2 overlaps pb2:" + com.prtech.lpis.Util.overlapsWithTolerance(pb2, apInter2, 0.01));
+					"apInter2 overlaps pb2:" + com.prtech.lpis.LpisUtil.overlapsWithTolerance(pb2, apInter2, 0.01));
 
 		} catch (Exception e) {
 			fail("exception was raised " + e.getMessage());
@@ -137,14 +138,14 @@ public class ConfigTest {
 			env = pb2.getEnvelope().buffer(10);
 			Geometry apInter2 = env.intersection(pb2);
 
-			System.out.println("ap covers pb1:" + com.prtech.lpis.Util.coversWithTolerance(pb1, ap, 0.01));
-			System.out.println("ap covers pb2:" + com.prtech.lpis.Util.coversWithTolerance(pb2, ap, 0.01));
+			System.out.println("ap covers pb1:" + com.prtech.lpis.LpisUtil.coversWithTolerance(pb1, ap, 0.01));
+			System.out.println("ap covers pb2:" + com.prtech.lpis.LpisUtil.coversWithTolerance(pb2, ap, 0.01));
 
-			System.out.println("apInter1 covers pb1:" + com.prtech.lpis.Util.coversWithTolerance(pb1, apInter, 0.01));
-			System.out.println("apInter1 covers pb2:" + com.prtech.lpis.Util.coversWithTolerance(pb2, apInter, 0.01));
+			System.out.println("apInter1 covers pb1:" + com.prtech.lpis.LpisUtil.coversWithTolerance(pb1, apInter, 0.01));
+			System.out.println("apInter1 covers pb2:" + com.prtech.lpis.LpisUtil.coversWithTolerance(pb2, apInter, 0.01));
 
-			System.out.println("apInter2 covers pb1:" + com.prtech.lpis.Util.coversWithTolerance(pb1, apInter2, 0.01));
-			System.out.println("apInter2 covers pb2:" + com.prtech.lpis.Util.coversWithTolerance(pb2, apInter2, 0.01));
+			System.out.println("apInter2 covers pb1:" + com.prtech.lpis.LpisUtil.coversWithTolerance(pb1, apInter2, 0.01));
+			System.out.println("apInter2 covers pb2:" + com.prtech.lpis.LpisUtil.coversWithTolerance(pb2, apInter2, 0.01));
 
 		} catch (Exception e) {
 			fail("exception was raised " + e.getMessage());
@@ -173,6 +174,21 @@ public class ConfigTest {
 				+ "Project name is used as the http context, thus all web assets are requested via an URL that contains this value.\n"
 				+ "It evaluates to the maven artifactId.\n"
 				+ "Since it is not defined properly, expect nothing to work.", (name != null && name.length() > 1));
+	}
+	@Test
+	public void overlapTest() throws SvException
+	{
+		String token = getUserSessionIdForTestPurpose();
+		if (!token.equals(CC.EMPTY_STRING)) {
+			try (SvGeometry svr = new SvGeometry(token)) {
+				String input = "{\"type\":\"Polygon\",\"coordinates\":[[[7551245.3668,4528861.8856],[7551256.3599,4528856.1879],[7551296.3156,4528829.4824],[7551324.5958,4528809.6914],[7551308.3115,4528776.818],[7551228.3062,4528831.561],[7551229.9408,4528838.7906],[7551245.3668,4528861.8856]]]}";
+				Gson g = new Gson();
+				JsonObject json = g.fromJson(input, JsonObject.class);
+				Geometry geom = com.prtech.lpis.LpisUtil.jsonToGeometry(json, gf);
+				Collection<Geometry> neighbours = (new AgriParcel()).overlappedNeighbours(svr, geom, 21345L, SvCore.getTypeIdByName(CC.AGRI_PARCEL));
+				System.out.println(neighbours.toString());
+			}
+		}
 	}
 
 	//@Test
@@ -336,7 +352,7 @@ public class ConfigTest {
 		// "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
 		Gson g = new Gson();
 		JsonObject json = g.fromJson(input, JsonObject.class);
-		LineString lineString = (LineString) com.prtech.lpis.Util.jsonToGeometry(json, gf);
+		LineString lineString = (LineString) com.prtech.lpis.LpisUtil.jsonToGeometry(json, gf);
 		Response response = null;
 		try (SvGeometry svr = new SvGeometry(getUserSessionIdForTestPurpose())) {
 			Geometry gg = new AgriParcel().mergeGeometryConfirm(svr, "AGRI_PARCEL", 21345L, lineString, false);
@@ -354,7 +370,7 @@ public class ConfigTest {
 		// "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
 		Gson g = new Gson();
 		JsonObject json = g.fromJson(input, JsonObject.class);
-		LineString lineString = (LineString) com.prtech.lpis.Util.jsonToGeometry(json, gf);
+		LineString lineString = (LineString) com.prtech.lpis.LpisUtil.jsonToGeometry(json, gf);
 		Response response = null;
 		try (SvGeometry svr = new SvGeometry(getUserSessionIdForTestPurpose())) {
 			Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
@@ -369,7 +385,7 @@ public class ConfigTest {
 		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
 		Gson gs = new Gson();
 		JsonObject json = gs.fromJson(input, JsonObject.class);
-		Geometry g = (LineString) com.prtech.lpis.Util.jsonToGeometry(json, gf);
+		Geometry g = (LineString) com.prtech.lpis.LpisUtil.jsonToGeometry(json, gf);
 		HashMap<String, Object> mp = new HashMap<>();
 		mp.put("1", 1);
 		mp.put("CENTROID", "SSSSSSSSSSSSSSSSSSSSSSSSS");
@@ -464,7 +480,7 @@ public class ConfigTest {
 		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7549677.4457,4530304.3899],[7549695.3881,4530279.6366]]}}";
 		Gson g = new Gson();
 		JsonObject json = g.fromJson(input, JsonObject.class);
-		LineString lineString = (LineString) com.prtech.lpis.Util.jsonToGeometry(json, gf);
+		LineString lineString = (LineString) com.prtech.lpis.LpisUtil.jsonToGeometry(json, gf);
 		Response response = null;
 		try (SvGeometry svr = new SvGeometry(getUserSessionIdForTestPurpose())) {
 			Geometry gg = new AgriParcel().mergeGeometryConfirm(svr, "AGRI_PARCEL", 21345L, lineString, false);
