@@ -309,12 +309,12 @@ public class AgriParcel {
 	 * @throws SQLException
 	 * @throws ParseException
 	 */
-	public Geometry parcelPBAlignment(SvGeometry svg, DbDataObject parcel, boolean cutPB)
+	public Geometry parcelPBAlignment(SvGeometry svg, DbDataObject parcel, int cutPB)
 			throws SvException, SQLException, ParseException {
 		Geometry geom = SvGeometry.getGeometry(parcel);
 		Geometry selectedPb = null;
 		Collection<Geometry> gg = this.getPBIntersections(svg, geom);
-		if (cutPB) {
+		if (cutPB==0) {
 			Geometry tmpGeom = null;
 			for (Geometry pb : gg) {
 				if (com.prtech.lpis.Util.coversWithTolerance(pb, geom, 0.01)) {
@@ -327,7 +327,7 @@ public class AgriParcel {
 			}
 			geom = ensurePolygon(tmpGeom);
 			SvGeometry.setGeometry(parcel, geom);
-		} else {
+		} else if(cutPB>=1){
 			Boolean isInsiderPB = false;
 			for (Geometry pb : gg) {
 				if (com.prtech.lpis.Util.coversWithTolerance(pb, geom, 0.01)) {
@@ -373,13 +373,13 @@ public class AgriParcel {
 		SvGeometry.setGeometry(parcel, geom);
 	}
 
-	public Geometry parcelAlignment(SvGeometry svg, DbDataObject parcel, boolean cutPB, boolean cutAP, int alignNB,
+	public Geometry parcelAlignment(SvGeometry svg, DbDataObject parcel, int cutPB, int cutAP, int alignNB,
 			DbDataArray result) throws SvException, SQLException, ParseException {
 		Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 		Geometry currentBlock = parcelPBAlignment(svg, parcel, cutPB);
 		Geometry geom = SvGeometry.getGeometry(parcel);
 		Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, parcel.getParentId(), typeId);
-		if (cutAP) {
+		if (cutAP==0) {
 			for (Geometry nap : neighbours) {
 				if (nap.overlaps(geom))
 					geom = geom.difference(nap);
@@ -396,7 +396,7 @@ public class AgriParcel {
 		return geom;
 	}
 
-	public void saveAgriParcel(String token, Long objectId, Long parentId, boolean cutPB, boolean cutAP,
+	public void saveAgriParcel(String token, Long objectId, Long parentId, int cutPB, int cutAP,
 			int alignNB, MultivaluedMap<String, String> formVals) throws SvException, SQLException, ParseException {
 		DbDataObject ap = null;
 		JsonObject metadata = new JsonObject();
@@ -465,7 +465,7 @@ public class AgriParcel {
 			result.addDataItem(ap);
 			svg.saveGeometry(result);
 
-			if (!cutAP)
+			if (cutAP==1)
 				createOverlaps(svg, ap, typeId, neighbours);
 			svg.dbCommit();
 		}
