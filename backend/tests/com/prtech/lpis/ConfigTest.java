@@ -175,7 +175,7 @@ public class ConfigTest {
 				+ "It evaluates to the maven artifactId.\n"
 				+ "Since it is not defined properly, expect nothing to work.", (name != null && name.length() > 1));
 	}
-	@Test
+	//@Test
 	public void overlapTest() throws SvException
 	{
 		String token = getUserSessionIdForTestPurpose();
