@@ -164,13 +164,13 @@ export const saveAP = (layer, callback, skipChecks) => {
         ReactDOM.unmountComponentAtNode(container);
         const parsedLayer = JSON.parse(layer)
         const parentId = parsedLayer.PARENT_ID || parsedLayer.parent_id || 0
-        let cutPB = false
-        let cutAP = false
+        let cutPB = '2'
+        let cutAP = '2'
         let alignAP = '2'
         if (data) {
             const { physical_block_check, agri_parcel_check, agri_parcel_neighbour } = data
-            cutPB = physical_block_check || false
-            cutAP = agri_parcel_check || false
+            cutPB = physical_block_check || '2'
+            cutAP = agri_parcel_check || '2'
             alignAP = agri_parcel_neighbour || '2'
         }
         // Make the call for the final save, with results from the parcel checks prompt.
