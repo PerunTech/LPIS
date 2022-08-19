@@ -44,25 +44,25 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
                 ...pbCheck && {
                     physical_block_check: {
                         title: 'Земјоделската парцела не е комплетно опфатена од еден и единствен физички блок',
-                        type: 'boolean',
-                        enum: [true, false],
+                        type: 'string',
+                        enum: ['0', '1'],
                         enumNames: [
                             'Отсечи ја земјоделската парцела според границите на физичкиот блок',
                             'Задржи ја просторната определба (системот ќе покрене барање за контрола на терен)'
                         ],
-                        default: true
+                        default: '0'
                     }
                 },
                 ...apCheck && {
                     agri_parcel_check: {
                         title: 'Земјоделската парцела се пресекува со соседните земјоделски парцели',
-                        type: 'boolean',
-                        enum: [true, false],
+                        type: 'string',
+                        enum: ['0', '1'],
                         enumNames: [
                             'Отсечи ја работната земјоделската парцела според границите на соседните земјоделски парцели',
                             'Задржи ја просторната определба (системот ќе покрене барање за контрола на терен)'
                         ],
-                        default: true
+                        default: '0'
                     }
                 },
                 ...neighbourCheck && {
