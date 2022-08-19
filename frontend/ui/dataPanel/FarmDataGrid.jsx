@@ -4,6 +4,7 @@ import { ParcelHistory } from './ParcelHistory';
 import { getCropLabel } from '../toolsBar/cropParcel/Util';
 import { strcmp, translateBooleanValue } from '../Util';
 import { parcelHistoryConfig } from '../toolsBar/agriParcel/Config';
+import { removeParcelHistoryLayers } from './Util';
 
 const { factory, Map, store, http } = core;
 const { geobuf, protobuf } = data;
@@ -15,6 +16,7 @@ const { Item: ListGroupItem } = ListGroup;
 
 const getParcelHistory = (e, parcelId, callback) => {
   e.stopPropagation()
+  removeParcelHistoryLayers()
   http.call('get-parcel-history', {
     url: `/lpis/get/parcelHistory/{init.token}/AGRI_PARCEL/${parcelId}`,
     method: 'get',
