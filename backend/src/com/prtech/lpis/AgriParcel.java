@@ -269,6 +269,25 @@ public class AgriParcel {
 		return gl;
 	}
 
+	public Collection<Geometry> touchingNeighbours(SvGeometry svg, Geometry geom, Long parentId, Long typeId)
+			throws SvException {
+		// Perform check if our parcel crosses with neighbouring parcels.
+		Collection<Geometry> neighbourAP = svg.getRelatedGeometries(geom, typeId, SDIRelation.INTERSECTS, null, null,
+				true, true, true);
+
+		List<Geometry> gl = new ArrayList<Geometry>();
+		Iterator<Geometry> gi = neighbourAP.iterator();
+		while (gi.hasNext()) {
+			Geometry ng = gi.next();
+			DbDataObject dbo = (DbDataObject) ng.getUserData();
+			if ((com.prtech.lpis.LpisUtil.touchesWithTolerance(ng, geom, 0.01))
+					&& !dbo.getParentId().equals(parentId)) {
+				gl.add(ng);
+			}
+		}
+		return gl;
+	}
+
 	public boolean overlapsNeighbours(SvGeometry svg, Geometry geom, Long parentId) throws SvException {
 		// Perform check if our parcel crosses with neighbouring parcels.
 		return overlappedNeighbours(svg, geom, parentId, SvCore.getTypeIdByName("AGRI_PARCEL")).size() > 0;

@@ -57,6 +57,19 @@ public class LpisUtil {
 		return false;
 	}
 
+	public static boolean touchesWithTolerance(Geometry g1, Geometry g2, double tolerance) {
+		if (g2.getGeometryType().equals(g1.getGeometryType())) {
+			Geometry intersection = g2.intersection(g1);
+			if (intersection.getDimension() < 2)
+				return true;
+			if (intersection.getGeometryType().equals(g1.getGeometryType())) {
+				if (Math.abs(intersection.getArea()) < tolerance)
+					return true;
+			}
+		}
+		return false;
+	}
+
 	public static DbDataObject addValueToDataObject(DbDataObject dbo, String fieldName, DbDataObject fieldObject,
 			JsonObject jsonData) {
 

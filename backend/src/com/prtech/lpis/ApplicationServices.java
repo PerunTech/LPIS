@@ -1152,7 +1152,8 @@ public class ApplicationServices {
 
 			Collection<Geometry> neighboursNearBy = aps.overlappedNeighbours(svg, bufferedAP, parentId, typeId);
 			neighboursNearBy.removeAll(neighbours);
-
+			Collection<Geometry> neighboursTouching = aps.touchingNeighbours(svg, geom, parentId, typeId);
+			neighboursNearBy.removeAll(neighboursTouching);
 			json.addProperty("agri_parcel_neighbour", neighboursNearBy.size() > 0);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.crosscheck");
