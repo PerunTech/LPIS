@@ -362,7 +362,7 @@ public class AgriParcel {
 		return selectedPb;
 	}
 
-	public void parcelNBAlignment(SvGeometry svg, DbDataObject parcel, int alignNB, Geometry currentBlock,
+	public Geometry parcelNBAlignment(SvGeometry svg, DbDataObject parcel, int alignNB, Geometry currentBlock,
 			Collection<Geometry> alreadAligned) throws SvException {
 		Geometry geom = SvGeometry.getGeometry(parcel);
 		Geometry bufferedAP = geom.buffer(mergeTolerance);
@@ -391,6 +391,7 @@ public class AgriParcel {
 			}
 		}
 		SvGeometry.setGeometry(parcel, geom);
+		return geom;
 	}
 
 	public Geometry parcelAlignment(SvGeometry svg, DbDataObject parcel, int cutPB, int cutAP, int alignNB,
@@ -410,18 +411,17 @@ public class AgriParcel {
 				result.setItems(removeOverlaps(svg, parcel).getItems());
 		}
 
-		parcelNBAlignment(svg, parcel, alignNB, currentBlock, neighbours);
+		geom = parcelNBAlignment(svg, parcel, alignNB, currentBlock, neighbours);
 
 		geom.setUserData(parcel);
 		return geom;
 	}
 
-	public void saveAgriParcel(String token, Long objectId, Long parentId, int cutPB, int cutAP, int alignNB,
-			MultivaluedMap<String, String> formVals) throws SvException, SQLException, ParseException {
+	public void saveAgriParcel(SvCore core, Long objectId, Long parentId, int cutPB, int cutAP, int alignNB,
+			JsonObject metadata, boolean autoCommit) throws SvException, SQLException, ParseException {
 		DbDataObject ap = null;
-		JsonObject metadata = new JsonObject();
 		DbDataArray result = new DbDataArray();
-		try (SvReader svr = new SvReader(token); SvGeometry svg = new SvGeometry(svr);) {
+		try (SvReader svr = new SvReader(core); SvGeometry svg = new SvGeometry(svr);) {
 
 			svr.setIncludeGeometries(true);
 			ap = new DbDataObject();
@@ -430,7 +430,7 @@ public class AgriParcel {
 			Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 			DbDataArray fieldSet = SvCore.getFields(typeId);
 			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
-			metadata = Util.dataToJson(formVals);
+
 			geom = Util.jsonToGeometry(metadata.get(Sv.GEOM));
 			if (geom.getGeometryType().equals("LineString"))
 				geom = generatePolygon(svg, (LineString) geom, typeId);
@@ -487,7 +487,8 @@ public class AgriParcel {
 
 			if (cutAP == 1)
 				createOverlaps(svg, ap, typeId, neighbours);
-			svg.dbCommit();
+			if (autoCommit)
+				svg.dbCommit();
 		}
 	}
 

@@ -84,6 +84,7 @@ import com.vividsolutions.jts.geom.util.GeometryExtracter;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
+import com.vividsolutions.jts.operation.distance.DistanceOp;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 @Path("/lpis")
@@ -459,35 +460,13 @@ public class ApplicationServices {
 			@PathParam("alignAP") Integer alignAP, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
 		final Set<Geometry> result = new HashSet<Geometry>();
-		try {
-			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, cutPB, cutAP, alignAP, formVals);
+		try (SvReader svr = new SvReader(token)) {
+
+			JsonObject metadata = Util.dataToJson(formVals);
+			(new AgriParcel()).saveAgriParcel(svr, objectId, parentId, cutPB, cutAP, alignAP, metadata, true);
 
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.saveParcel");
-		}
-
-		StreamingOutput pbfStream = new StreamingOutput() {
-			public void write(OutputStream stream) throws IOException {
-				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
-				enc.writeSvGeometry(result);
-			};
-		};
-		return Response.ok(pbfStream, "application/pbf").build();
-
-	};
-
-	@Path("/save/agriParcel/{token}/{objectId}/{parentId}/{opType}")
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response saveAgriParcelToFarm(@PathParam("token") String token, @PathParam("objectId") Long objectId,
-			@PathParam("parentId") Long parentId, @PathParam("opType") String opType,
-			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
-		final Set<Geometry> result = new HashSet<Geometry>();
-		try {
-			(new AgriParcel()).saveAgriParcel(token, objectId, parentId, 2, 2, 2, formVals);
-
-		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
 		}
 
 		StreamingOutput pbfStream = new StreamingOutput() {
@@ -1100,24 +1079,12 @@ public class ApplicationServices {
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
 	}
 
-	@Path("/check/AgriParcel/{token}")
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response checkAgriParcel(@PathParam("token") String token, MultivaluedMap<String, String> formVals,
-			@Context HttpServletRequest httpRequest) {
-
-		Boolean result = false;
-		JsonObject json = new JsonObject();
-
-		ResponseHandler rhs = new ResponseHandler();
+	public JsonObject parcelChecks(String token, JsonObject json) throws SvException, SQLException, ParseException {
 		try (SvGeometry svg = new SvGeometry(token); SvReader svr = new SvReader(svg)) {
-
 			svr.setIncludeGeometries(true);
 			Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 			AgriParcel aps = new AgriParcel();
 
-			json = Util.dataToJson(formVals);
 			Geometry geom = Util.jsonToGeometry(json.get("GEOM"));
 			if (geom.getGeometryType().equals("LineString"))
 				geom = aps.generatePolygon(svg, (LineString) geom, typeId);
@@ -1142,11 +1109,11 @@ public class ApplicationServices {
 				}
 			}
 
-			json.addProperty("physical_block_check", !pbCover);
+			json.addProperty(CC.PHYSICAL_BLOCK_CHECK, !pbCover);
 
 			Collection<Geometry> neighbours = aps.overlappedNeighbours(svg, geom, parentId, typeId);
 
-			json.addProperty("agri_parcel_check", neighbours.size() > 0);
+			json.addProperty(CC.AGRI_PARCEL_CHECK, neighbours.size() > 0);
 			Geometry bufferedAP = geom
 					.buffer(SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE));
 
@@ -1154,7 +1121,33 @@ public class ApplicationServices {
 			neighboursNearBy.removeAll(neighbours);
 			Collection<Geometry> neighboursTouching = aps.touchingNeighbours(svg, geom, parentId, typeId);
 			neighboursNearBy.removeAll(neighboursTouching);
-			json.addProperty("agri_parcel_neighbour", neighboursNearBy.size() > 0);
+			Iterator<Geometry> git = neighboursNearBy.iterator();
+			while (git.hasNext()) {
+				Geometry nearBy = git.next();
+				if (DistanceOp.distance(geom, nearBy) < 0.01)
+					git.remove();
+			}
+			json.addProperty(CC.AGRI_PARCEL_NEIGHBOUR, neighboursNearBy.size() > 0);
+		}
+		return json;
+	}
+
+	@Path("/check/AgriParcel/{token}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response checkAgriParcel(@PathParam("token") String token, MultivaluedMap<String, String> formVals,
+			@Context HttpServletRequest httpRequest) {
+
+		Boolean result = false;
+		JsonObject json = new JsonObject();
+
+		ResponseHandler rhs = new ResponseHandler();
+		try {
+
+			json = Util.dataToJson(formVals);
+			json = parcelChecks(token, json);
+
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.crosscheck");
 		}
