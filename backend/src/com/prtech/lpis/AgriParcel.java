@@ -376,11 +376,12 @@ public class AgriParcel {
 			for (Geometry nap : neighboursNearBy) {
 				// get the buffer zone as overlap of the intersection of the two buffered geoms
 				ArrayList<Geometry> gg = new ArrayList<>();
-				Geometry buffer = geom.buffer(mergeTolerance).intersection(nap.buffer(mergeTolerance));
+				Geometry buffer1 = geom.buffer(mergeTolerance).intersection(nap);
+				Geometry buffer2= nap.buffer(mergeTolerance).intersection(geom);
 				// intersection the buffer with the original geoms will give us minimal set of
 				// points for convex hull
-				gg.add(buffer.intersection(geom));
-				gg.add(buffer.intersection(nap));
+				gg.add(buffer1);
+				gg.add(buffer2);
 				Geometry cvh = SvUtil.sdiFactory.createGeometryCollection(gg.toArray(new Geometry[gg.size()]));
 				ConvexHull ch = new ConvexHull(cvh);
 				Geometry gapFill = ch.getConvexHull();

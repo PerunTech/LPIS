@@ -49,7 +49,7 @@ public class LpisUtil {
 	public static boolean overlapsWithTolerance(Geometry g1, Geometry g2, double tolerance) {
 		if (g2.getGeometryType().equals(g1.getGeometryType())) {
 			Geometry intersection = g2.intersection(g1);
-			if (intersection.getGeometryType().equals(g1.getGeometryType())) {
+			if (intersection.getDimension() >= 2) {
 				if (Math.abs(intersection.getArea()) > tolerance)
 					return true;
 			}
@@ -62,7 +62,7 @@ public class LpisUtil {
 			Geometry intersection = g2.intersection(g1);
 			if (intersection.getDimension() < 2)
 				return true;
-			if (intersection.getGeometryType().equals(g1.getGeometryType())) {
+			if (intersection.getDimension() >= 2) {
 				if (Math.abs(intersection.getArea()) < tolerance)
 					return true;
 			}
