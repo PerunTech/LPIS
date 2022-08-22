@@ -377,7 +377,7 @@ public class AgriParcel {
 				// get the buffer zone as overlap of the intersection of the two buffered geoms
 				ArrayList<Geometry> gg = new ArrayList<>();
 				Geometry buffer1 = geom.buffer(mergeTolerance).intersection(nap);
-				Geometry buffer2= nap.buffer(mergeTolerance).intersection(geom);
+				Geometry buffer2 = nap.buffer(mergeTolerance).intersection(geom);
 				// intersection the buffer with the original geoms will give us minimal set of
 				// points for convex hull
 				gg.add(buffer1);
@@ -386,6 +386,14 @@ public class AgriParcel {
 				ConvexHull ch = new ConvexHull(cvh);
 				Geometry gapFill = ch.getConvexHull();
 				geom = geom.union(gapFill).difference(nap);
+				geom = geom.intersection(currentBlock);
+
+				for (Geometry nap1 : alreadAligned) {
+					if (nap1.overlaps(geom))
+						geom = geom.difference(nap1);
+				}
+				geom = ensurePolygon(geom);
+				SvGeometry.setGeometry(parcel, geom);
 			}
 
 		} else if (alignNB == 1) {
@@ -401,9 +409,11 @@ public class AgriParcel {
 	public Geometry parcelAlignment(SvGeometry svg, DbDataObject parcel, int cutPB, int cutAP, int alignNB,
 			DbDataArray result) throws SvException, SQLException, ParseException {
 		Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
-		Geometry currentBlock = parcelPBAlignment(svg, parcel, cutPB);
 		Geometry geom = SvGeometry.getGeometry(parcel);
 		Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, parcel.getParentId(), typeId);
+
+		Geometry currentBlock = parcelPBAlignment(svg, parcel, cutPB);
+
 		if (cutAP == 0) {
 			for (Geometry nap : neighbours) {
 				if (nap.overlaps(geom))
