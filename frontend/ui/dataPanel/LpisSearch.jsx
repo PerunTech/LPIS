@@ -57,10 +57,11 @@ const _LpisSearch = ({ theSearchedParcelWasRemoved }) => {
         })
       } else {
         alertUser(true, 'info', 'Не се пронајдени СИЗП парцели')
+        setState({ showDeleteBtn: false })
       }
     }).catch(err => {
       console.error(err)
-      setState({ loading: false })
+      setState({ loading: false, showDeleteBtn: false })
       const stringfiedResponse = bufferToString(err.response.data)
       if (strcmp(typeof stringfiedResponse, 'string')) {
         if (stringfiedResponse.includes('err.no_parcel.found')) {
