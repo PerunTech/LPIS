@@ -408,6 +408,8 @@ public class AgriParcel {
 
 	public Geometry parcelAlignment(SvGeometry svg, DbDataObject parcel, int cutPB, int cutAP, int alignNB,
 			DbDataArray result) throws SvException, SQLException, ParseException {
+		if (cutAP == 1 && alignNB == 0)
+			throw (new SvException("error.params_not_compatible", svg.getInstanceUser()));
 		Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 		Geometry geom = SvGeometry.getGeometry(parcel);
 		Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, parcel.getParentId(), typeId);
