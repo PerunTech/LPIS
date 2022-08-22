@@ -156,13 +156,16 @@
 .parcel-history-info-modal .modal-dialog {
   position: relative;
   top: 1px !important;
-  right: 750px !important;
+  right: 670px !important;
   font-size: larger;
   max-height: 90vh !important;
+  max-width: none !important;
+  width: 560px !important;
 }
 
 .parcel-history-info-modal .modal-content {
-  width: 500px !important;
+  max-width: none !important;
+  width: 600px !important;
 }
 
 .parcel-info-modal .modal-body .info {
