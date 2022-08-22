@@ -1,4 +1,6 @@
 import { React, elements } from 'perun-core'
+import format from 'date-fns/format'
+import mk from 'date-fns/locale/mk'
 import { core, ui } from '../../Spatial'
 import { translateBooleanValue, translateLandCoverCode } from '../Util'
 import { removeParcelHistoryLayers, truncate } from './Util'
@@ -31,7 +33,7 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory }) => {
 
   const renderTable = () => {
     const headingsArr = [
-      'Корис. име', 'Подрач. един.', 'СИЗП број', 'Површина', 'Употреба на земјиште',
+      'Датум', 'Корис. име', 'Подрач. един.', 'СИЗП број', 'Површина', 'Употреба на земјиште',
       'Место викано', 'Заедничка употреба', 'Право на користење', 'Вкупна површина', 'Геометрија'
     ]
 
@@ -50,8 +52,15 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory }) => {
             if (userName && (typeof userName === 'string' || userName instanceof String)) {
               finalUserName = truncate(userName, 20, true)
             }
+            let finalDate = '/'
+            const dateOfInsert = properties.DT_INSERT
+            if (dateOfInsert) {
+              const date = new Date(dateOfInsert)
+              finalDate = format(date, 'do MMMM yyyy', { locale: mk })
+            }
             return (
               <tr key={parcelId}>
+                <td title={finalDate}>{finalDate}</td>
                 <td title={userName || '/'}>{finalUserName}</td>
                 <td>{properties.ORG_UNIT_NAME || '/'}</td>
                 <td>{properties.OLD_ID}</td>
