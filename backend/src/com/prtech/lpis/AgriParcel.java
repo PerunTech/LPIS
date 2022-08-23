@@ -416,7 +416,7 @@ public class AgriParcel {
 		Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, parcel.getParentId(), typeId);
 
 		Geometry currentBlock = parcelPBAlignment(svg, parcel, cutPB);
-
+		geom = SvGeometry.getGeometry(parcel);
 		if (cutAP == 0) {
 			for (Geometry nap : neighbours) {
 				if (nap.intersects(geom))
