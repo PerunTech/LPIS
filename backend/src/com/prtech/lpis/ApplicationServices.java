@@ -724,6 +724,8 @@ public class ApplicationServices {
 				DbDataObject farm = svr.getObjectById(dbo.getParentId(), SvCore.getTypeIdByName(CC.FARMER), null);
 				attachOrgUnitName(svr, farm);
 				dbo.setVal(CC.ORG_UNIT_NAME, farm.getVal(CC.ORG_UNIT_NAME));
+				dbo.setVal("DT_INSERT", dbo.getDtInsert());
+
 			}
 			result.getItems().addAll(dbArray.getItems());
 		} catch (Exception e) {
