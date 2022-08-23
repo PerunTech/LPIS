@@ -165,7 +165,7 @@ export const saveAP = (layer, callback, skipChecks) => {
         const parsedLayer = JSON.parse(layer)
         const parentId = parsedLayer.PARENT_ID || parsedLayer.parent_id || 0
         let cutPB = '2'
-        let cutAP = '2'
+        let cutAP = '1'
         let alignAP = '2'
         if (data) {
             const { physical_block_check, agri_parcel_check, agri_parcel_neighbour } = data
