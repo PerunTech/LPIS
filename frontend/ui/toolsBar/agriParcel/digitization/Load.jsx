@@ -10,7 +10,7 @@ const { Map, store, http, factory } = core;
 const { geobuf, protobuf } = data;
 const { Icon } = ui;
 const { alertUser } = elements;
-const { useReducer } = React;
+const { useEffect, useReducer } = React;
 
 const _id = 'load';
 const _secondaryId = 'removeLoadedParcels';
@@ -21,6 +21,12 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
   const [{ loading, isGuided, parcelsHaveBeenLoaded }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
     { loading: false, isGuided: false, parcelsHaveBeenLoaded: false });
+  
+  useEffect(() => {
+    return () => {
+      store.dispatch({ parcelsHaveBeenLoaded: false })
+    }
+  }, [])
 
   const setLayerEvents = (layer, agriParcels) => {
     layer.on('click', function () {

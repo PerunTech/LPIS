@@ -17,6 +17,28 @@ const _CadastreSearch = () => {
     ({ ...currState, ...update }),
     { showForm: false, loading: false, disableSearchBtn: true, schema: {}, uiSchema: {}, data: {} });
 
+  const handleMoveStart = () => {
+    // Remove the parcels when some movement starts, with a delay of half a second
+    setTimeout(() => removeCadParcels(), 500)
+    // Remove the event listener in the end
+    removeMoveStartEvent()
+  }
+
+  const handleMoveEnd = () => {
+    // Remove the event listener immediately
+    Map.off('moveend', removeMoveEndEvent)
+    // Set the opposite event from the one above
+    Map.on('movestart', handleMoveStart)
+  }
+
+  const removeMoveStartEvent = () => {
+    Map.off('movestart', handleMoveStart)
+  }
+
+  const removeMoveEndEvent = () => {
+    Map.off('moveend', handleMoveEnd)
+  }
+
   const toggleSearchForm = () => {
     setState({ showForm: true })
   }
@@ -24,7 +46,8 @@ const _CadastreSearch = () => {
   const disable = () => {
     removeCadParcels()
     setState({ showForm: false, loading: false, disableSearchBtn: true, data: {}, schema: {}, uiSchema: {} })
-    Map.off('movestart moveend')
+    removeMoveStartEvent()
+    removeMoveEndEvent()
   }
 
   const getCadastralMunicipalities = sectorId => {
@@ -73,18 +96,8 @@ const _CadastreSearch = () => {
           Map.fitBounds(layer.getBounds())
         })
 
-        // When the moveend event is fired (ex. when the map fits the bounds)
-        Map.on('moveend', () => {
-          // Remove the event listener immediately
-          Map.off('moveend')
-          // Set the opposite event from the one above
-          Map.on('movestart', () => {
-            // Remove the parcels when some movement starts, with a delay of half a second
-            setTimeout(() => removeCadParcels(), 500)
-            // Remove the event listener in the end
-            Map.off('movestart')
-          })
-        })
+        // Add an event listener when the moveend event is fired (ex. when the map fits the bounds)
+        Map.on('moveend', handleMoveEnd)
       } else {
         alertUser(true, 'info', 'Не се пронајдени катастарски парцели')
       }

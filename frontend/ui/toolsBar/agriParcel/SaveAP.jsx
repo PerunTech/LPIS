@@ -166,11 +166,14 @@ export const saveAP = (layer, callback, skipChecks) => {
         const parentId = parsedLayer.PARENT_ID || parsedLayer.parent_id || 0
         let cutPB = '2'
         let cutAP = '2'
+        if (skipChecks) {
+            cutAP = '1'
+        }
         let alignAP = '2'
         if (data) {
             const { physical_block_check, agri_parcel_check, agri_parcel_neighbour } = data
             cutPB = physical_block_check || '2'
-            cutAP = agri_parcel_check || '1'
+            cutAP = agri_parcel_check || '2'
             alignAP = agri_parcel_neighbour || '2'
         }
         // Make the call for the final save, with results from the parcel checks prompt.

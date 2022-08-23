@@ -9,6 +9,7 @@ const { factory, store, connect, http, Map } = core;
 const { geobuf, protobuf } = data;
 const { Icon } = ui;
 const { alertUser } = elements;
+const { useEffect } = React;
 const _iconId = 'selection-polygon';
 
 const removeCadIntersections = (resetState = false) => {
@@ -54,6 +55,12 @@ export const getCadIntersections = () => {
 }
 
 export const _CadIntersections = ({ showCadParcels }) => {
+  useEffect(() => {
+    return () => {
+        store.dispatch({ 'cadIntersections': {}, showCadParcels: false })
+    }
+}, [])
+
   const label = showCadParcels ? 'Скриј пресеци' : 'Прикажи пресеци'
   const onClick = () => showCadParcels ? removeCadIntersections(true) : getCadIntersections()
   return <ProcessButton onClick={onClick} title={label}>
