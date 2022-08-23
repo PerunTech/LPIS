@@ -14,13 +14,20 @@ const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
 const { MAP_CONFIG } = cfg;
 const { alertUser } = elements;
-const { useReducer } = React;
+const { useEffect, useReducer } = React;
 const _id = 'drawAP';
 
 const _Draw = ({ processID, farmObjId, saveIsPending }) => {
     const [{ layer, data, geojson, isGuided, showForm, showPermanentCropForm, permanentCropData }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
         { layer: {}, data: {}, geojson: {}, isGuided: false, showForm: false, showPermanentCropForm: false, permanentCropData: {} });
+    
+    useEffect(() => {
+        return () => {
+            polygon.disable('force');
+            Map.off('new_shape contextmenu');
+        }
+    }, [])
 
     const enable = () => {
         Map.on('new_shape', e => {
