@@ -14,7 +14,7 @@ const { geobuf, protobuf } = data;
 const { edit } = tools;
 const { Icon, DrawActions, Button, Modal } = ui;
 const { alertUser } = elements;
-const { useReducer } = React;
+const { useEffect, useReducer } = React;
 
 const _id = 'editAP';
 const _layerGroup = factory.layerGroup();
@@ -26,6 +26,14 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
       layer: {}, data: {}, geojson: {}, permanentCropData: {}, loading: false,
       isGuided: false, showForm: false, showGuidanceButton: false, showPermanentCropForm: false, allPermanentCrops: undefined
     });
+  
+  useEffect(() => {
+    return () => {
+      Map.off('click');
+      _stopEditAP();
+      store.dispatch({ minZoom: MAP_CONFIG.minZoom });
+    }
+  }, [])
 
   const enable = () => {
     if (agriParcels.length > 0) {

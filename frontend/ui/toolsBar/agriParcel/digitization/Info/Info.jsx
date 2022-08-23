@@ -9,13 +9,19 @@ import { strcmp } from '../../../../Util';
 const { Map, store, http } = core;
 const { Icon, Modal, Button, DrawActions } = ui;
 const { alertUser } = elements;
-const { useReducer } = React;
+const { useEffect, useReducer } = React;
 const _id = 'help';
 
 const _Info = ({ processID }) => {
   const [{ isGuided, loading, farmInfo, parcelInfo, showModal }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
     { isGuided: false, loading: false, farmInfo: {}, parcelInfo: {}, showModal: false });
+  
+    useEffect(() => {
+      return () => {
+        store.dispatch({ showParcelInfoContainer: false, farmInfo: undefined, parcelInfo: undefined })
+      }
+    }, [])
 
   const enable = () => {
     setState({ isGuided: true, showModal: false })
