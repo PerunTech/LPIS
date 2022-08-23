@@ -726,6 +726,8 @@ public class AgriParcel {
 					else
 						otherParcelId = (Long) ovr.getVal(CC.PARCEL_ID1);
 					DbDataObject dbp = svr.getObjectById(otherParcelId, ap.getObjectType(), null);
+					Long l = (Long)dbp.getVal(CC.ALLOWED_AREA);
+					dbp.setVal(CC.ALLOWED_AREA, (l!=null?l:0L)+(Long)ovr.getVal(CC.AREA));
 					dbp.setVal(CC.HAS_OVERLAP, false);
 					updatedParcels.addDataItem(dbp);
 				}
