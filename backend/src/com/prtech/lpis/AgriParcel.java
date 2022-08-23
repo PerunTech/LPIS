@@ -418,7 +418,7 @@ public class AgriParcel {
 
 		if (cutAP == 0) {
 			for (Geometry nap : neighbours) {
-				if (nap.overlaps(geom))
+				if (nap.intersects(geom))
 					geom = geom.difference(nap);
 			}
 			geom = ensurePolygon(geom);
