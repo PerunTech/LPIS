@@ -2,6 +2,7 @@ package com.prtech.lpis;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -726,8 +727,8 @@ public class AgriParcel {
 					else
 						otherParcelId = (Long) ovr.getVal(CC.PARCEL_ID1);
 					DbDataObject dbp = svr.getObjectById(otherParcelId, ap.getObjectType(), null);
-					Long l = (Long)dbp.getVal(CC.ALLOWED_AREA);
-					dbp.setVal(CC.ALLOWED_AREA, (l!=null?l:0L)+(Long)ovr.getVal(CC.AREA));
+					BigDecimal l = (BigDecimal)dbp.getVal(CC.ALLOWED_AREA);
+					dbp.setVal(CC.ALLOWED_AREA, l.add((BigDecimal)ovr.getVal(CC.AREA)));
 					dbp.setVal(CC.HAS_OVERLAP, false);
 					updatedParcels.addDataItem(dbp);
 				}
