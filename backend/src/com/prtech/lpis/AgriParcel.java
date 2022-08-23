@@ -496,12 +496,7 @@ public class AgriParcel {
 					throw (new SvException(CC.GEOM_INVALID, svr.getInstanceUser()));
 
 			}
-
-			SvGeometry.setGeometry(ap, geom);
 			ap.setVal(CC.ALLOWED_AREA, geom.getArea());
-			result.addDataItem(ap);
-			svg.saveGeometry(result);
-
 			if (cutAP == 1) {
 				Iterator<Geometry> itg = neighbours.iterator();
 				while (itg.hasNext()) {
@@ -512,11 +507,16 @@ public class AgriParcel {
 					}
 				}
 				SvGeometry.setGeometry(ap, geom);
-				if(neighbours.size()>1)
+				if (neighbours.size() > 0)
 					createOverlaps(svg, ap, typeId, neighbours);
 				else
 					throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), ap, null));
 			}
+			SvGeometry.setGeometry(ap, geom);
+			result.addDataItem(ap);
+			svg.setSkipSpatialValidations(true);
+			svg.saveGeometry(result);
+
 			if (autoCommit)
 				svg.dbCommit();
 		}
@@ -537,7 +537,8 @@ public class AgriParcel {
 					}
 				}
 			}
-			geom = svg.fixMinVertexDistance(geom, minPointDistance);
+
+			geom = Util.deduplicatePolygon((Polygon) geom, minPointDistance);
 			hasSpikes = true;
 		}
 		geom.setUserData(userDate);

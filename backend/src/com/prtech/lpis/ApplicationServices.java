@@ -1387,13 +1387,7 @@ public class ApplicationServices {
 		return Response.status(200).entity(result.toString()).build();
 	}
 
-	void simplify(DbDataArray dba) {
-		for (DbDataObject dbo : dba.getItems()) {
-			Geometry g = TopologyPreservingSimplifier.simplify(SvGeometry.getGeometry(dbo), simplifyTopoligyLevel);
-			g.setUserData(dbo);
-			SvGeometry.setGeometry(dbo, g);
-		}
-	}
+
 
 	@Path("/get/farmerAssets/{token}/{objectId}/{typeName}")
 	@GET
