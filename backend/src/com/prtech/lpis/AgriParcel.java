@@ -502,8 +502,21 @@ public class AgriParcel {
 			result.addDataItem(ap);
 			svg.saveGeometry(result);
 
-			if (cutAP == 1)
-				createOverlaps(svg, ap, typeId, neighbours);
+			if (cutAP == 1) {
+				Iterator<Geometry> itg = neighbours.iterator();
+				while (itg.hasNext()) {
+					Geometry ol = itg.next();
+					if (ol.intersection(geom).getArea() < ApplicationServices.minimumAgriParcelSize) {
+						itg.remove();
+						geom = geom.difference(ol);
+					}
+				}
+				SvGeometry.setGeometry(ap, geom);
+				if(neighbours.size()>1)
+					createOverlaps(svg, ap, typeId, neighbours);
+				else
+					throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), ap, null));
+			}
 			if (autoCommit)
 				svg.dbCommit();
 		}
@@ -727,8 +740,8 @@ public class AgriParcel {
 					else
 						otherParcelId = (Long) ovr.getVal(CC.PARCEL_ID1);
 					DbDataObject dbp = svr.getObjectById(otherParcelId, ap.getObjectType(), null);
-					BigDecimal l = (BigDecimal)dbp.getVal(CC.ALLOWED_AREA);
-					dbp.setVal(CC.ALLOWED_AREA, l.add((BigDecimal)ovr.getVal(CC.AREA)));
+					BigDecimal l = (BigDecimal) dbp.getVal(CC.ALLOWED_AREA);
+					dbp.setVal(CC.ALLOWED_AREA, l.add((BigDecimal) ovr.getVal(CC.AREA)));
 					dbp.setVal(CC.HAS_OVERLAP, false);
 					updatedParcels.addDataItem(dbp);
 				}
