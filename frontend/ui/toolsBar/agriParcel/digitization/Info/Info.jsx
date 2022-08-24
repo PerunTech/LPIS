@@ -12,9 +12,9 @@ const { useEffect, useReducer } = React;
 const _id = 'help';
 
 const _Info = ({ processID }) => {
-  const [{ isGuided, loading, farmInfo: farmInfoState, parcelInfo: parcelInfoState }, setState] = useReducer((currState, update) =>
+  const [{ isGuided, loading }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { isGuided: false, loading: false, farmInfo: {}, parcelInfo: {} });
+    { isGuided: false, loading: false });
 
   useEffect(() => {
     return () => {
@@ -42,7 +42,7 @@ const _Info = ({ processID }) => {
               parcelInfo = item
             }
           })
-          setState({ loading: false, farmInfo, parcelInfo })
+          setState({ loading: false })
           store.dispatch({ farmInfo, parcelInfo, showParcelInfoContainer: true })
         } else {
           setState({ loading: false })
