@@ -66,5 +66,6 @@ public class CC {
 	public static final String PHYSICAL_BLOCK_CHECK = "physical_block_check";
 	public static final String AGRI_PARCEL_CHECK = "agri_parcel_check";
 	public static final String AGRI_PARCEL_NEIGHBOUR = "agri_parcel_neighbour";
+	public static final String NEIGHBOUR_DUPLICATE_POINTS = "NEIGHBOUR_DUPLICATE_POINTS";
 
 }

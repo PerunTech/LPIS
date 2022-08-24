@@ -527,6 +527,13 @@ public class AgriParcel {
 			else
 				throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), ap, null));
 		} else {
+			Iterator<Geometry> itg = neighbours.iterator();
+			while (itg.hasNext()) {
+				Geometry ol = itg.next();
+				geom = geom.difference(ol);
+			}
+			if(Util.hasDuplicates((Polygon)geom, minPointDistance))
+				ap.setStatus("INVALID");
 
 		}
 		SvGeometry.setGeometry(ap, geom);
