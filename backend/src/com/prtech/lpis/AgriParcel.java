@@ -66,6 +66,7 @@ import com.vividsolutions.jts.geom.util.GeometryExtracter;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 import com.vividsolutions.jts.operation.polygonize.Polygonizer;
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 public class AgriParcel {
 	private Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
@@ -497,22 +498,8 @@ public class AgriParcel {
 
 			}
 			ap.setVal(CC.ALLOWED_AREA, geom.getArea());
-			if (cutAP == 1) {
-				Iterator<Geometry> itg = neighbours.iterator();
-				while (itg.hasNext()) {
-					Geometry ol = itg.next();
-					if (ol.intersection(geom).getArea() < ApplicationServices.minimumAgriParcelSize) {
-						itg.remove();
-						geom = geom.difference(ol);
-					}
-				}
-				SvGeometry.setGeometry(ap, geom);
-				if (neighbours.size() > 0)
-					createOverlaps(svg, ap, typeId, neighbours);
-				else
-					throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), ap, null));
-			}
 			SvGeometry.setGeometry(ap, geom);
+			verifyOverlaps(svg, cutAP, ap, typeId);
 			result.addDataItem(ap);
 			svg.setSkipSpatialValidations(true);
 			svg.saveGeometry(result);
@@ -520,6 +507,30 @@ public class AgriParcel {
 			if (autoCommit)
 				svg.dbCommit();
 		}
+	}
+
+	private void verifyOverlaps(SvGeometry svg, int cutAP, DbDataObject ap, Long typeId) throws SvException {
+		Geometry geom = SvGeometry.getGeometry(ap);
+		Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, ap.getParentId(), typeId);
+		if (cutAP == 1) {
+			Iterator<Geometry> itg = neighbours.iterator();
+			while (itg.hasNext()) {
+				Geometry ol = itg.next();
+				if (ol.intersection(geom).getArea() < ApplicationServices.minimumAgriParcelSize) {
+					itg.remove();
+					geom = geom.difference(ol);
+				}
+			}
+			SvGeometry.setGeometry(ap, geom);
+			if (neighbours.size() > 0)
+				createOverlaps(svg, ap, typeId, neighbours);
+			else
+				throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), ap, null));
+		} else {
+
+		}
+		SvGeometry.setGeometry(ap, geom);
+
 	}
 
 	private Geometry autoFixPoly(SvGeometry svg, Geometry geom, int numberOfRepeats) throws SvException {
@@ -537,8 +548,11 @@ public class AgriParcel {
 					}
 				}
 			}
-
-			geom = Util.deduplicatePolygon((Polygon) geom, minPointDistance);
+			int passNo = 1;
+			while (Util.hasDuplicates((Polygon) geom, minPointDistance)) {
+				geom = TopologyPreservingSimplifier.simplify(geom, minPointDistance * (double) passNo / 10);
+				passNo++;
+			}
 			hasSpikes = true;
 		}
 		geom.setUserData(userDate);
