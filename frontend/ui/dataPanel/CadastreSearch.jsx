@@ -17,26 +17,26 @@ const _CadastreSearch = () => {
     ({ ...currState, ...update }),
     { showForm: false, loading: false, disableSearchBtn: true, schema: {}, uiSchema: {}, data: {} });
 
-  const handleMoveStart = () => {
+  const handleDragStart = () => {
     // Remove the parcels when some movement starts, with a delay of half a second
     setTimeout(() => removeCadParcels(), 500)
     // Remove the event listener in the end
-    removeMoveStartEvent()
+    removeDragStartEvent()
   }
 
-  const handleMoveEnd = () => {
+  const handleDragEnd = () => {
     // Remove the event listener immediately
-    Map.off('moveend', removeMoveEndEvent)
+    Map.off('dragend', removeDragEndEvent)
     // Set the opposite event from the one above
-    Map.on('movestart', handleMoveStart)
+    Map.on('dragstart', handleDragStart)
   }
 
-  const removeMoveStartEvent = () => {
-    Map.off('movestart', handleMoveStart)
+  const removeDragStartEvent = () => {
+    Map.off('dragstart', handleDragStart)
   }
 
-  const removeMoveEndEvent = () => {
-    Map.off('moveend', handleMoveEnd)
+  const removeDragEndEvent = () => {
+    Map.off('dragend', handleDragEnd)
   }
 
   const toggleSearchForm = () => {
@@ -46,8 +46,8 @@ const _CadastreSearch = () => {
   const disable = () => {
     removeCadParcels()
     setState({ showForm: false, loading: false, disableSearchBtn: true, data: {}, schema: {}, uiSchema: {} })
-    removeMoveStartEvent()
-    removeMoveEndEvent()
+    removeDragStartEvent()
+    removeDragEndEvent()
   }
 
   const getCadastralMunicipalities = sectorId => {
@@ -96,8 +96,8 @@ const _CadastreSearch = () => {
           Map.fitBounds(layer.getBounds())
         })
 
-        // Add an event listener when the moveend event is fired (ex. when the map fits the bounds)
-        Map.on('moveend', handleMoveEnd)
+        // Add an event listener when the dragend event is fired
+        Map.on('dragend', handleDragEnd)
       } else {
         alertUser(true, 'info', 'Не се пронајдени катастарски парцели')
       }
