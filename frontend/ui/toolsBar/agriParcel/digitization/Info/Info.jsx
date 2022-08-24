@@ -3,38 +3,37 @@ import { core, ui } from '../../../../../Spatial';
 import { parcelInfoMsg } from '../../Config';
 import { ProcessButton } from '../../../ProcessButton';
 import { Guidance } from '../../Guidance';
-import { InfoList } from './InfoList';
 import { strcmp } from '../../../../Util';
 
 const { Map, store, http } = core;
-const { Icon, Modal, Button, DrawActions } = ui;
+const { Icon } = ui;
 const { alertUser } = elements;
 const { useEffect, useReducer } = React;
 const _id = 'help';
 
 const _Info = ({ processID }) => {
-  const [{ isGuided, loading, farmInfo, parcelInfo, showModal }, setState] = useReducer((currState, update) =>
+  const [{ isGuided, loading, farmInfo: farmInfoState, parcelInfo: parcelInfoState }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { isGuided: false, loading: false, farmInfo: {}, parcelInfo: {}, showModal: false });
-  
-    useEffect(() => {
-      return () => {
-        store.dispatch({ showParcelInfoContainer: false, farmInfo: undefined, parcelInfo: undefined })
-      }
-    }, [])
+    { isGuided: false, loading: false, farmInfo: {}, parcelInfo: {} });
+
+  useEffect(() => {
+    return () => {
+      store.dispatch({ showParcelInfoContainer: false, farmInfo: undefined, parcelInfo: undefined })
+    }
+  }, [])
 
   const enable = () => {
-    setState({ isGuided: true, showModal: false })
+    setState({ isGuided: true })
     store.dispatch({ processID: _id });
     Map.on('click', (e) => {
       const p = Map.transform(e.latlng);
       setState({ X: p.x, Y: p.y, loading: true });
-      store.dispatch({ farmInfo: undefined, parcelInfo: undefined })
       const url = `/lpis/info/agriParcel/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
       http.call('get-parcel-info', { url }).then((response) => {
         if (response.data.items && Array.isArray(response.data.items) && response.data?.items.length >= 1) {
+          store.dispatch({ farmInfo: undefined, parcelInfo: undefined })
           let farmInfo = {}
-          let parcelInfo
+          let parcelInfo = {}
           response.data.items.forEach(item => {
             if (item.FIC) {
               farmInfo = item
@@ -43,28 +42,24 @@ const _Info = ({ processID }) => {
               parcelInfo = item
             }
           })
-          setState({ isGuided: false, loading: false, farmInfo, parcelInfo, showModal: true })
-          store.dispatch({ farmInfo, parcelInfo, showParcelInfoContainer: true, processID: '' })
+          setState({ loading: false, farmInfo, parcelInfo })
+          store.dispatch({ farmInfo, parcelInfo, showParcelInfoContainer: true })
         } else {
+          setState({ loading: false })
           alertUser(true, 'info', 'Нема податоци за избраната парцела или не е избрана парцела од мапата');
-          store.dispatch({ showParcelInfoContainer: false })
-          disable();
         }
       }).catch((err) => {
         console.log(err);
+        setState({ loading: false })
         alertUser(true, 'info', 'Нема податоци за избраната парцела или не е избрана парцела од мапата');
-        store.dispatch({ showParcelInfoContainer: false })
-        disable();
       });
-
-      Map.off('click');
     });
   };
 
   const disable = () => {
     Map.off('click');
     // Reset state, internal and application-wide.
-    setState({ loading: false, isGuided: false, showModal: false, farmInfo: {}, parcelInfo: {} });
+    setState({ loading: false, isGuided: false });
     store.dispatch({ processID: '' });
   };
 
@@ -72,33 +67,12 @@ const _Info = ({ processID }) => {
     return <Guidance id={_id} disable={disable} msg={parcelInfoMsg} title='Информации за парцела' />
   }
 
-  const renderModal = () => {
-    const modalProps = {
-      show: true,
-      backdrop: false,
-      enforceFocus: false,
-      id: 'measure-dialog',
-      className: 'parcel-info-modal',
-      container: document.getElementsByClassName('control-map')[0]
-    }
-
-    return <Modal {...modalProps}>
-      <Modal.Title>
-        <Button disabled className='as-label ap-modal-title' >Информации за парцела</Button>
-        <DrawActions cancel={disable} />
-      </Modal.Title>
-      <Modal.Body className='parcel-info-modal-body'>
-        <InfoList farmInfo={farmInfo} parcelInfo={parcelInfo} />
-      </Modal.Body>
-    </Modal>
-  }
-
   const renderComponent = () => {
     let componentToRender = null
 
-    if (isGuided && !showModal) {
+    if (isGuided) {
       componentToRender = renderGuideForm()
-    } else if (showModal && !isGuided) {
+    } else {
       componentToRender = null
     }
 
@@ -115,4 +89,4 @@ const _Info = ({ processID }) => {
   )
 };
 
-export const Info = core.connect((state) => ({ processID: state.app.processID, farmObjId: state.farmRegistry?.farmObjId }))(_Info);
+export const Info = core.connect((state) => ({ processID: state.app.processID }))(_Info);
