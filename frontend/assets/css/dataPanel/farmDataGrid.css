@@ -34,6 +34,21 @@
   flex: 0 0 22px;
 }
 
+.fr-data-grid-column-index {
+  background-color: transparent !important;
+  border: none !important;
+  flex: 0 0 10px !important;
+}
+
+.fr-data-grid-row-column-index {
+  flex: 0 0 10px !important;
+}
+
+.fr-data-grid-row-column-invalid-parcel {
+  background-color: #f83e3e !important;
+  height: 30px !important;
+}
+
 .fr-data-grid-header .fr-data-grid-column {
   flex: 0 0 78px;
   text-align: center;

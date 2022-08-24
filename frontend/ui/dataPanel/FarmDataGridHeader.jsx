@@ -5,7 +5,7 @@ const { ButtonGroup, Button } = ui;
 
 export const FarmDataGridHeader = ({ gridType }) => {
   const colEnum = {
-    agri_parcel: ['СИЗП Број', 'Класа', 'Површина', 'Место викано', 'Заедничка употр.', 'Право на корист.', '']
+    agri_parcel: ['', 'СИЗП Број', 'Класа', 'Површина', 'Место викано', 'Заедничка употр.', 'Право на корист.', '']
   };
 
   const generateHeader = () => {
@@ -13,7 +13,13 @@ export const FarmDataGridHeader = ({ gridType }) => {
     const columns = colEnum[type];
     return (
       <ButtonGroup className='fr-data-grid-header' id='grid-header'>
-        {columns.map((c, i) => <Button key={i} disabled className='fr-data-grid-column'>{c}</Button>)}
+        {columns.map((c, i) => {
+          let className = 'fr-data-grid-column'
+          if (i === 0) {
+            className = 'fr-data-grid-column-index'
+          }
+          return <Button key={i} disabled className={className}>{c}</Button>
+        })}
       </ButtonGroup>
     );
   };
