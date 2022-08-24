@@ -304,6 +304,7 @@ const _CadIntersectionsData = ({ parcelOldId, rows }) => {
 /* ---------- --- */
 const _ExpandedRow = ({ id, rowData, unit, actionType, pplanRows, cadIntersectionRows, showCadParcels }) => {
   const rowId = `expanded-row-${id}`
+  const status = rowData.status
   return (
     <React.Fragment>
       {strcmp(actionType, 'pplan') && <_PplanData parcelId={id} rows={pplanRows} />}
@@ -311,6 +312,9 @@ const _ExpandedRow = ({ id, rowData, unit, actionType, pplanRows, cadIntersectio
       <div key={rowId} id={rowId} className='data-grid-expanded-row border border-dark rounded' style={{ fontSize: '1.5vh' }}>
         {strcmp(actionType, 'pplan') && <h6 className='data-grid-heading mt-2' style={{ border: 'none' }}>Дополнителни информации за парцелата</h6>}
         <ListGroup className='text-center'>
+          {strcmp(status, 'invalid') && <ListGroupItem className='p-1'>
+            <span className='font-weight-bold'>Парцелата има тополошки грешки</span>
+          </ListGroupItem>}
           <ListGroupItem className='p-1'>
             Вкупна површина: <span className='font-weight-bold'>{Math.round(Number(rowData.AREA)) + ` ${unit}`}</span>
           </ListGroupItem>
@@ -416,40 +420,50 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
     const rowData = el.feature && el.feature.properties;
     if (!rowData) return null;
 
-    const id = el.feature.id;
+    const id = el.feature.id
+    const status = rowData.status
     let rowClassNames = ['fr-data-grid-row']
     if (rowIsExpanded && selectedRowId === id) {
       rowClassNames.push(' fr-data-grid-row-focused')
     }
+    let indexColumnClassNames = ['fr-data-grid-row-column-index']
+    let indexColumnTitle = ''
+    if (strcmp(status, 'invalid')) {
+      indexColumnClassNames.push(' fr-data-grid-row-column-invalid-parcel')
+      indexColumnTitle = 'Парцелата има тополошки грешки'
+    }
     const unit = el instanceof factory.Polygon ? 'm²' : 'm';
     const homeName = rowData.HOME_NAME || 'Не е наведено';
-    return <div className='container' key={id} id={id}>
-      <ButtonGroup className={rowClassNames.join('')} style={{ marginLeft: '0.15rem' }} key={`${id}_${i + 1}`} onClick={() => onRowClick(id)}>
-        <Button className='fr-data-grid-column'>{rowData.OLD_ID}</Button>
-        <Button className='fr-data-grid-column'>{rowData.LAND_COVER_CODE}</Button>
-        <Button className='fr-data-grid-column'>{Math.round(Number(rowData.ALLOWED_AREA || rowData.AREA)) + ` ${unit}`}</Button>
-        <Button className='fr-data-grid-column' title={homeName}>{homeName}</Button>
-        <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.COMMON_USE)}</Button>
-        <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.CERTIFICATE_OF_USE)}</Button>
-        {strcmp(actionType, 'sizp') && (
-          <Button className='data-grid-util' onClick={e => getParcelHistory(e, id, setShowParcelHistory)} title='Историја на парцела'>
-            <Icon name='history' size='14px' />
+    return (
+      <div className='container' key={id} id={id}>
+        <ButtonGroup className={rowClassNames.join('')} style={{ marginLeft: '0.15rem' }} key={`${id}_${i + 1}`} onClick={() => onRowClick(id)}>
+          <Button className={indexColumnClassNames.join('')} title={indexColumnTitle} />
+          <Button className='fr-data-grid-column'>{rowData.OLD_ID}</Button>
+          <Button className='fr-data-grid-column'>{rowData.LAND_COVER_CODE}</Button>
+          <Button className='fr-data-grid-column'>{Math.round(Number(rowData.ALLOWED_AREA || rowData.AREA)) + ` ${unit}`}</Button>
+          <Button className='fr-data-grid-column' title={homeName}>{homeName}</Button>
+          <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.COMMON_USE)}</Button>
+          <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.CERTIFICATE_OF_USE)}</Button>
+          {strcmp(actionType, 'sizp') && (
+            <Button className='data-grid-util' onClick={e => getParcelHistory(e, id, setShowParcelHistory)} title='Историја на парцела'>
+              <Icon name='history' size='14px' />
+            </Button>
+          )}
+          <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el)} title='Оди до парцела'>
+            <Icon name={getPinpointIconName()} size={getIconSize()} />
           </Button>
-        )}
-        <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el)} title='Оди до парцела'>
-          <Icon name={getPinpointIconName()} size={getIconSize()} />
-        </Button>
-        <Button className='data-grid-util' onClick={e => toggleAssetFromMapAction(e, el)} title='Прикажи/Скриј парцела'>
-          <Icon name={getParcelVisibleIcon(id)} size={getIconSize()} />
-        </Button>
-      </ButtonGroup>
-      {rowIsExpanded && selectedRowId === id &&
-        <_ExpandedRow
-          id={id} rowData={rowData} unit={unit} actionType={actionType}
-          pplanRows={pplanRows} cadIntersectionRows={cadIntersectionRows} showCadParcels={showCadParcels}
-        />
-      }
-      {showParcelHistory && <ParcelHistory setShowParcelHistory={setShowParcelHistory} />}
-    </div>
+          <Button className='data-grid-util' onClick={e => toggleAssetFromMapAction(e, el)} title='Прикажи/Скриј парцела'>
+            <Icon name={getParcelVisibleIcon(id)} size={getIconSize()} />
+          </Button>
+        </ButtonGroup>
+        {rowIsExpanded && selectedRowId === id &&
+          <_ExpandedRow
+            id={id} rowData={rowData} unit={unit} actionType={actionType}
+            pplanRows={pplanRows} cadIntersectionRows={cadIntersectionRows} showCadParcels={showCadParcels}
+          />
+        }
+        {showParcelHistory && <ParcelHistory setShowParcelHistory={setShowParcelHistory} />}
+      </div>
+    )
   });
 };
