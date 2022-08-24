@@ -21,7 +21,7 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
   const [{ loading, isGuided, parcelsHaveBeenLoaded }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
     { loading: false, isGuided: false, parcelsHaveBeenLoaded: false });
-  
+
   useEffect(() => {
     return () => {
       store.dispatch({ parcelsHaveBeenLoaded: false })
@@ -48,7 +48,7 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
       });
 
       setState({ parcelsHaveBeenLoaded: false })
-      store.dispatch({ parcelsHaveBeenLoadedStore: false })
+      store.dispatch({ parcelsHaveBeenLoaded: false })
     }
   }
 
@@ -77,7 +77,7 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
             setLoadedParcelLabel(layer)
             layer.addTo(Map)
           });
-          store.dispatch({ parcelsHaveBeenLoadedStore: true })
+          store.dispatch({ parcelsHaveBeenLoaded: true })
           setState({ parcelsHaveBeenLoaded: true })
         } else {
           alertUser(true, 'info', 'Не е избрана парцела од мапата')
