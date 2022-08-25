@@ -534,7 +534,8 @@ public class AgriParcel {
 			}
 			if(Util.hasDuplicates((Polygon)geom, minPointDistance))
 				ap.setStatus("INVALID");
-
+			else 
+				ap.setStatus("INVALID");
 		}
 		SvGeometry.setGeometry(ap, geom);
 
