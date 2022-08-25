@@ -1042,6 +1042,7 @@ public class ApplicationServices {
 				SvWriter svw = new SvWriter(svr);
 				SvGeometry svg = new SvGeometry(svr)) {
 			svr.setIncludeGeometries(true);
+			svg.setSkipSpatialValidations(true);
 			cu = new CommonUse();
 			metadata = Util.dataToJson(formVals);
 			Long typeId = SvCore.getTypeIdByName(CC.COMMON_USE);
