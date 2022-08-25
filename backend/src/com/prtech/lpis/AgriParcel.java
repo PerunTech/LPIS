@@ -376,6 +376,7 @@ public class AgriParcel {
 
 		if (alignNB == 0) {
 			for (Geometry nap : neighboursNearBy) {
+				geom = alignOnNeighbour((Polygon) geom, (Polygon) nap);
 				// get the buffer zone as overlap of the intersection of the two buffered geoms
 				ArrayList<Geometry> gg = new ArrayList<>();
 				Geometry buffer1 = geom.buffer(mergeTolerance).intersection(nap);
