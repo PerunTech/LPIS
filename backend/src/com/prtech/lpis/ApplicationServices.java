@@ -499,10 +499,11 @@ public class ApplicationServices {
 					null, false);
 			if (geomArr.size() == 1) {
 				DbDataObject dbo = (DbDataObject) geomArr.iterator().next().getUserData();
-				if ((boolean) dbo.getVal(CC.COMMON_USE))
+				if ((boolean) dbo.getVal(CC.COMMON_USE) && CommonUse.isParcelCU(dbo.getObjectId(), svr)) {
 					errMsg = "{error:'err.parcel_common_use'}";
-				else if (dbo.getParentId().equals(0L)) {
+				} else if (dbo.getParentId().equals(0L)) {
 					dbo.setParentId(farmId);
+					dbo.setVal(CC.COMMON_USE, false);
 					svg.setSkipSpatialValidations(true);
 					svg.saveGeometry(dbo);
 					result.add(SvGeometry.getGeometry(dbo));

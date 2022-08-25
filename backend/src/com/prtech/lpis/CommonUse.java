@@ -19,20 +19,15 @@ import com.prtech.svarog_common.DbSearchExpression;
 import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
 
 public class CommonUse {
-	
+
 	/**
 	 * Method that fills the COMMON_USE object fields
 	 * 
-	 * @param dbo
-	 *            DbDataObject of COMMON_USE
-	 * @param parcelId
-	 *            Object ID of AGRI_PARCEL object
-	 * @param formVals
-	 *            MultivaluedMap with form data values
-	 * @param metadata
-	 *            Key of the MultiValuedMap as JSON object
-	 * @param svr
-	 *            SvReader instance
+	 * @param dbo      DbDataObject of COMMON_USE
+	 * @param parcelId Object ID of AGRI_PARCEL object
+	 * @param formVals MultivaluedMap with form data values
+	 * @param metadata Key of the MultiValuedMap as JSON object
+	 * @param svr      SvReader instance
 	 * @throws SvException
 	 */
 	public void createCommonUseObject(DbDataObject dbo, Long parcelId, MultivaluedMap<String, String> formVals,
@@ -89,14 +84,20 @@ public class CommonUse {
 		}
 	}
 
+	public static boolean isParcelCU(Long parcelId, SvReader svr) throws SvException {
+		DbSearchCriterion cr = new DbSearchCriterion(CC.PARCEL_ID, DbCompareOperand.EQUAL, parcelId);
+
+		DbDataArray cus = svr.getObjects(new DbSearchExpression().addDbSearchItem(cr),
+				SvReader.getTypeIdByName(CC.COMMON_USE), null, 0, 0);
+		return cus.size() > 0;
+	}
+
 	/**
-	 * Method that return DbDataArray of COMMON_USE. Additionally, adds the FIC
-	 * and FULL_NAME of the FARM as fields.
+	 * Method that return DbDataArray of COMMON_USE. Additionally, adds the FIC and
+	 * FULL_NAME of the FARM as fields.
 	 * 
-	 * @param parcelId
-	 *            Object ID of the AGRI_PARCEL
-	 * @param svr
-	 *            SvReader instance
+	 * @param parcelId Object ID of the AGRI_PARCEL
+	 * @param svr      SvReader instance
 	 * @return DbDataArray of DbDataObject (COMMON_USE)
 	 * @throws SvException
 	 */
@@ -117,22 +118,14 @@ public class CommonUse {
 	 * Method that saves the COMMON_USE object. Additionally, updates the
 	 * AGRI_PARCEL object
 	 * 
-	 * @param dbo
-	 *            DbDataObject of COMMON_USE
-	 * @param parentId
-	 *            Object ID of FARMER object
-	 * @param parcelId
-	 *            Object ID of AGRI_PARCEL object
-	 * @param formVals
-	 *            MultivaluedMap with form data values
-	 * @param metadata
-	 *            Key of the MultiValuedMap as JSON object
-	 * @param svg
-	 *            SvGeometry instance
-	 * @param svw
-	 *            SvWriter instance
-	 * @param svr
-	 *            SvReader instance
+	 * @param dbo      DbDataObject of COMMON_USE
+	 * @param parentId Object ID of FARMER object
+	 * @param parcelId Object ID of AGRI_PARCEL object
+	 * @param formVals MultivaluedMap with form data values
+	 * @param metadata Key of the MultiValuedMap as JSON object
+	 * @param svg      SvGeometry instance
+	 * @param svw      SvWriter instance
+	 * @param svr      SvReader instance
 	 * @throws SvException
 	 */
 	public void saveCommonUseObject(DbDataObject dbo, Long parentId, Long parcelId,
@@ -176,15 +169,12 @@ public class CommonUse {
 	}
 
 	/**
-	 * Method that checks some conditions before saving a COMMON_USE object.
-	 * Updates the AGRI_PARCEL parent ID
+	 * Method that checks some conditions before saving a COMMON_USE object. Updates
+	 * the AGRI_PARCEL parent ID
 	 * 
-	 * @param parcelId
-	 *            Object ID of AGRI_PARCEL object
-	 * @param farmId
-	 *            Object ID of FARM object
-	 * @param svr
-	 *            SvReader instance
+	 * @param parcelId Object ID of AGRI_PARCEL object
+	 * @param farmId   Object ID of FARM object
+	 * @param svr      SvReader instance
 	 * @return
 	 * @throws SvException
 	 */
@@ -211,13 +201,11 @@ public class CommonUse {
 	}
 
 	/**
-	 * Method that checks if ALLOWED_AREA from COMMON_USE is bigger than AREA
-	 * from AGRI_PARCEL
+	 * Method that checks if ALLOWED_AREA from COMMON_USE is bigger than AREA from
+	 * AGRI_PARCEL
 	 * 
-	 * @param commonUse
-	 *            DbDataObject of COMMON_USE
-	 * @param svr
-	 *            SvReader instance
+	 * @param commonUse DbDataObject of COMMON_USE
+	 * @param svr       SvReader instance
 	 * @throws SvException
 	 */
 	public static void checkIfAllowedAreaIsBiggerThanArea(DbDataObject commonUse, SvReader svr) throws SvException {
