@@ -74,6 +74,10 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
             if (layer?.feature?.properties) {
               layer.feature.properties.DESCRIPTOR = 'LOADED_AGRI_PARCEL'
             }
+            if (!strcmp(layer.feature.properties.status, 'VALID')) {
+              layer.options.color = '#FFA500'
+              layer.options.fillColor = '#FFA500'
+            }
             setLoadedParcelLabel(layer)
             layer.addTo(Map)
           });
