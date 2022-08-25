@@ -531,14 +531,44 @@ public class AgriParcel {
 			while (itg.hasNext()) {
 				Geometry ol = itg.next();
 				geom = geom.difference(ol);
+				geom = alignOnNeighbour((Polygon) geom, (Polygon) ol);
 			}
-			if(Util.hasDuplicates((Polygon)geom, minPointDistance))
+			if (Util.hasDuplicates((Polygon) geom, minPointDistance))
 				ap.setStatus("INVALID");
-			else 
+			else
 				ap.setStatus("VALID");
 		}
 		SvGeometry.setGeometry(ap, geom);
 
+	}
+
+	private Geometry alignOnNeighbour(Polygon geometry, Polygon neighbour) {
+		LineString lsg = geometry.getExteriorRing();
+
+		LineString lsn = neighbour.getExteriorRing();
+		ArrayList<Coordinate> newCoords = new ArrayList<>(geometry.getCoordinates().length - 1);
+		Coordinate nbCoord, cuurentCoord, prevCoord = null;
+		for (int i = 1; i < lsg.getCoordinates().length - 1; i++) {
+			cuurentCoord = lsg.getCoordinateN(i);
+			nbCoord = null;
+			for (int j = 1; j < lsn.getCoordinates().length; j++) {
+				nbCoord = lsn.getCoordinateN(j);
+				if (cuurentCoord.equals2D(nbCoord, this.minPointDistance))
+					break;
+
+			}
+			if (!cuurentCoord.equals2D(prevCoord, this.minPointDistance)) {
+				if (nbCoord == null)
+					prevCoord = cuurentCoord;
+				else
+					prevCoord = nbCoord;
+				newCoords.add(prevCoord);
+			}
+
+		}
+		// after we iterated to the end, we add the current coordinate
+		newCoords.add(newCoords.get(0));
+		return SvUtil.sdiFactory.createPolygon(newCoords.toArray(new Coordinate[newCoords.size()]));
 	}
 
 	private Geometry autoFixPoly(SvGeometry svg, Geometry geom, int numberOfRepeats) throws SvException {
