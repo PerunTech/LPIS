@@ -474,6 +474,9 @@ public class AgriParcel {
 					ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
 				}
 			}
+			if((boolean) ap.getVal(CC.COMMON_USE) && !ap.getVal(CC.LAND_COVER_CODE).equals(CC.LAND_COVER_CODE_200))
+				throw (new SvException(CC.COMMON_USE_PARCEL_MUST_BE_200, svg.getInstanceUser()));
+				
 			if (ap.getObjectId().equals(0L))
 				ap.setVal(CC.OLD_ID, null);
 			Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, ap.getParentId(), typeId);

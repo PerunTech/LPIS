@@ -67,5 +67,7 @@ public class CC {
 	public static final String AGRI_PARCEL_CHECK = "agri_parcel_check";
 	public static final String AGRI_PARCEL_NEIGHBOUR = "agri_parcel_neighbour";
 	public static final String NEIGHBOUR_DUPLICATE_POINTS = "NEIGHBOUR_DUPLICATE_POINTS";
+	public static final String COMMON_USE_PARCEL_MUST_BE_200 = "COMMON_USE_PARCEL_MUST_BE_200";
+	public static final String TOPO_ERR = "TOPO_ERR";
 
 }

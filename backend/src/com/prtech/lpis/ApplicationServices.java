@@ -91,6 +91,7 @@ import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 public class ApplicationServices {
 	static Geometry municipalities = null;
 	static Map<Integer, ArrayList<Geometry>> municipalityMap = new HashMap<Integer, ArrayList<Geometry>>();
+
 	static int minimumAgriParcelSize;
 	static String externalIdSequence;
 	static double simplifyTopoligyLevel;
@@ -1313,6 +1314,45 @@ public class ApplicationServices {
 		return Response.status(200).entity(json.toString()).build();
 	}
 
+	@GET
+	@Path("/geometry/get/point/{token}/{objectName}/{x}/{y}")
+	@Produces("application/pbf")
+	public StreamingOutput getGeometry(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("x") final Double x,
+			@PathParam("y") final Double y) {
+
+		return new StreamingOutput() {
+			public void write(OutputStream stream) {
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+				try (SvGeometry svg = new SvGeometry(token)) {
+					Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
+					Long layerTypeId = SvCore.getTypeIdByName(objectName);
+					Set<Geometry> geomArr = svg.getRelatedGeometries(point, layerTypeId, SDIRelation.INTERSECTS, null,
+							null, false);
+					double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE,
+							Sv.DEFAULT_MIN_POINT_DISTANCE);
+					for (Geometry g : geomArr) {
+						DbDataObject prc = (DbDataObject) g.getUserData();
+						if (!g.isSimple() || !g.isValid() || Util.hasDuplicates((Polygon) g, minPointDistance))
+							prc.setStatus(CC.TOPO_ERR);
+					}
+
+					enc.writeSvGeometry(geomArr);
+				} catch (Exception e) {
+					String errMsg = "Failed fetching geometry set. Please see server logs";
+					if (e instanceof SvException)
+						errMsg = ((SvException) e).getJsonMessage();
+					try {
+						stream.write(errMsg.getBytes(StandardCharsets.UTF_8));
+					} catch (IOException ioe) {
+						log.error("Stream closed, can't write error", ioe);
+					}
+					log.error(errMsg, e);
+				}
+			};
+		};
+	}
+
 	@Path("/check/APIntersectsAP/{token}/{isContained}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -1401,7 +1441,7 @@ public class ApplicationServices {
 		final DbDataArray result = new DbDataArray();
 		try (SvReader svr = new SvReader(token)) {
 			result.setItems((new AgriParcel()).getAssetsList(svr, objectId, typeName).getItems());
-			// simplify(result);
+			topoVerify(result);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToSaveObject");
@@ -1415,6 +1455,15 @@ public class ApplicationServices {
 		};
 		return Response.ok(pbfStream, "application/pbf").build();
 
+	}
+
+	void topoVerify(DbDataArray result) throws SvException {
+		double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
+		for (DbDataObject prc : result.getItems()) {
+			Geometry g = SvGeometry.getGeometry(prc);
+			if (!g.isSimple() || !g.isValid() || Util.hasDuplicates((Polygon) g, minPointDistance))
+				prc.setStatus(CC.TOPO_ERR);
+		}
 	}
 
 	/**
