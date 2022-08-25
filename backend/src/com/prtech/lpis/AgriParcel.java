@@ -548,23 +548,29 @@ public class AgriParcel {
 		LineString lsn = neighbour.getExteriorRing();
 		ArrayList<Coordinate> newCoords = new ArrayList<>(geometry.getCoordinates().length - 1);
 		Coordinate nbCoord, cuurentCoord, prevCoord = null;
-		for (int i = 1; i < lsg.getCoordinates().length - 1; i++) {
+		for (int i = 0; i < lsg.getCoordinates().length - 1; i++) {
 			cuurentCoord = lsg.getCoordinateN(i);
 			nbCoord = null;
-			for (int j = 1; j < lsn.getCoordinates().length; j++) {
+			for (int j = 0; j < lsn.getCoordinates().length; j++) {
 				nbCoord = lsn.getCoordinateN(j);
 				if (cuurentCoord.equals2D(nbCoord, this.minPointDistance))
 					break;
-
-			}
-			if (!cuurentCoord.equals2D(prevCoord, this.minPointDistance)) {
-				if (nbCoord == null)
-					prevCoord = cuurentCoord;
 				else
-					prevCoord = nbCoord;
-				newCoords.add(prevCoord);
-			}
+					nbCoord = null;
 
+			}
+			// if the current coordinate is also duplicate with the previous one we added,
+			// just skip
+			if (prevCoord != null && cuurentCoord.equals2D(prevCoord, this.minPointDistance))
+				continue;
+
+			// if current coordinate was not matched to the neighbour take it, otherwise get
+			// from the neighbour
+			if (nbCoord == null)
+				prevCoord = cuurentCoord;
+			else
+				prevCoord = nbCoord;
+			newCoords.add(prevCoord);
 		}
 		// after we iterated to the end, we add the current coordinate
 		newCoords.add(newCoords.get(0));
