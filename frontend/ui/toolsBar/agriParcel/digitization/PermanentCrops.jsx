@@ -124,7 +124,7 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
           alertUser(true, 'error', 'Настана грешка', message)
         } else {
           if (parsedResponse && Object.keys(parsedResponse).length > 0) {
-            message = parsedResponse.title || parsedResponse.message || 'Настана грешка'
+            message = parsedResponse.title || parsedResponse.message || ''
             alertUser(true, 'error', 'Настана грешка', message)
           } else {
             alertUser(true, 'error', 'Настана грешка')
