@@ -163,6 +163,7 @@ public class CommonUse {
 					if (agriParcel != null && agriParcel.getVal(CC.COMMON_USE) != null
 							&& !(boolean) agriParcel.getVal(CC.COMMON_USE)) {
 						agriParcel.setVal(CC.COMMON_USE, true);
+						svg.setSkipSpatialValidations(true);
 						svg.saveGeometry(agriParcel);
 					}
 				}

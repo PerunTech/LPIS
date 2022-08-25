@@ -503,6 +503,7 @@ public class ApplicationServices {
 					errMsg = "{error:'err.parcel_common_use'}";
 				else if (dbo.getParentId().equals(0L)) {
 					dbo.setParentId(farmId);
+					svg.setSkipSpatialValidations(true);
 					svg.saveGeometry(dbo);
 					result.add(SvGeometry.getGeometry(dbo));
 				} else
@@ -555,6 +556,7 @@ public class ApplicationServices {
 				svg.setSkipSpatialValidations(true);
 				DbDataArray dbr = ap.removeOverlaps(svg, dbo);
 				try {
+					svg.setSkipSpatialValidations(true);
 					svg.saveGeometry(dbr);
 					svw.dbCommit();
 				} catch (Exception e) {
@@ -621,6 +623,7 @@ public class ApplicationServices {
 
 				} else {// not common use, just simple remove
 					dbo.setParentId(0L);
+					svg.setSkipSpatialValidations(true);
 					svg.saveGeometry(dbo);
 				}
 				svTile.setIsTileDirty(true);
@@ -1386,8 +1389,6 @@ public class ApplicationServices {
 
 		return Response.status(200).entity(result.toString()).build();
 	}
-
-
 
 	@Path("/get/farmerAssets/{token}/{objectId}/{typeName}")
 	@GET
