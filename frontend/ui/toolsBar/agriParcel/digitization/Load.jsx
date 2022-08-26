@@ -19,6 +19,51 @@ const _iconId = 'copy';
 const _secondaryIconId = 'erase';
 const _layerGroup = factory.layerGroup();
 
+export function getParcelInfo (p, callback, setState) {
+  const url = `/lpis/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
+  http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
+    if (setState) {
+      setState({ loading: false })
+    }
+    const data = geobuf.decode(protobuf(response));
+    const geojson = factory.geoJSON(data, apConfig.pathOptions);
+    const layers = geojson.getLayers();
+    if (layers && Array.isArray(layers) && layers.length > 0) {
+      layers.forEach(layer => {
+        if (layer?.feature?.properties) {
+          layer.feature.properties.DESCRIPTOR = 'LOADED_AGRI_PARCEL'
+        }
+        if (!strcmp(layer.feature.properties.status, 'VALID')) {
+          layer.options.color = '#f83e3e'
+          layer.options.fillColor = '#f83e3e'
+        }
+        setLoadedParcelLabel(layer)
+        layer.addTo(Map)
+        markerPoints.enable(layer, apConfig);
+      });
+      store.dispatch({ parcelsHaveBeenLoaded: true })
+      if (setState) {
+        setState({ parcelsHaveBeenLoaded: true })
+      }
+    } else {
+      alertUser(true, 'info', 'Не е избрана парцела од мапата')
+      if (callback) {
+        callback()
+      }
+    }
+  }).catch(err => {
+    console.error(err)
+    alertUser(true, 'error', 'Настана грешка')
+    if (callback) {
+      callback()
+    }
+    if (setState) {
+      setState({ loading: false, isGuided: false, parcelsHaveBeenLoaded: false })
+    }
+    store.dispatch({ processID: '', parcelsHaveBeenLoaded: false })
+  })
+}
+
 const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenLoadedStore }) => {
   const [{ loading, isGuided, parcelsHaveBeenLoaded }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
@@ -70,38 +115,7 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
     Map.on('click', e => {
       const p = Map.transform(e.latlng);
       setState({ loading: true });
-      const url = `/lpis/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
-      http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
-        setState({ loading: false })
-        const data = geobuf.decode(protobuf(response));
-        const geojson = factory.geoJSON(data, apConfig.pathOptions);
-        const layers = geojson.getLayers();
-        if (layers && Array.isArray(layers) && layers.length > 0) {
-          layers.forEach(layer => {
-            if (layer?.feature?.properties) {
-              layer.feature.properties.DESCRIPTOR = 'LOADED_AGRI_PARCEL'
-            }
-            if (!strcmp(layer.feature.properties.status, 'VALID')) {
-              layer.options.color = '#f83e3e'
-              layer.options.fillColor = '#f83e3e'
-            }
-            setLoadedParcelLabel(layer)
-            layer.addTo(Map)
-            markerPoints.enable(layer, apConfig);
-          });
-          store.dispatch({ parcelsHaveBeenLoaded: true })
-          setState({ parcelsHaveBeenLoaded: true })
-        } else {
-          alertUser(true, 'info', 'Не е избрана парцела од мапата')
-          disable()
-        }
-      }).catch(err => {
-        console.error(err)
-        alertUser(true, 'error', 'Настана грешка')
-        disable()
-        setState({ loading: false, isGuided: false, parcelsHaveBeenLoaded: false })
-        store.dispatch({ processID: '', parcelsHaveBeenLoaded: false })
-      })
+      getParcelInfo(p, disable, setState)
     })
   }
 
