@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, data, ui, tools, config as cfg } from '../../../../Spatial';
 import { config, permanentCropSchema } from '../Config';
-import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
+import { bufferToString, getFarmMapAssets, isJSON, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -26,7 +26,7 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
       layer: {}, data: {}, geojson: {}, permanentCropData: {}, loading: false,
       isGuided: false, showForm: false, showGuidanceButton: false, showPermanentCropForm: false, allPermanentCrops: undefined
     });
-  
+
   useEffect(() => {
     return () => {
       Map.off('click');
@@ -53,6 +53,10 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
             layers.forEach(layer => {
               if (layer?.feature?.properties) {
                 layer.feature.properties.DESCRIPTOR = 'LOADED_AGRI_PARCEL'
+              }
+              if (!strcmp(layer.feature.properties.status, 'VALID')) {
+                layer.options.color = '#FFA500'
+                layer.options.fillColor = '#FFA500'
               }
               setLoadedParcelLabel(layer)
               layer.addTo(Map)

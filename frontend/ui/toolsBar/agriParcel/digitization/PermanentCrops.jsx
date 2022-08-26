@@ -111,16 +111,26 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
       }
     }).catch(err => {
       const { response } = err
-      const parsedResponse = bufferToString(response.data)
-      console.error(parsedResponse)
-      let message = ''
-      if (parsedResponse.includes('plantAreaCannotBeBiggerThanArea')) {
-        message = 'Површината со засадена култура не може да биде поголема од површината на парцелата'
-      } else if (parsedResponse.includes('sumOfPermanentCropsAreaCannotBeBiggerThanParcelArea')) {
-        message = 'Збирот на површините со засадена култура не може да биде поголем од површината на парцелата'
+      const stringifiedResponse = bufferToString(response.data)
+      if (isJSON(stringifiedResponse) && Object.keys(JSON.parse(stringifiedResponse)).length > 1) {
+        const parsedResponse = JSON.parse(stringifiedResponse)
+        const title = parsedResponse.title || parsedResponse.message
+        let message = ''
+        if (title.includes('plantAreaCannotBeBiggerThanArea')) {
+          message = 'Површината со засадена култура не може да биде поголема од површината на парцелата'
+          alertUser(true, 'error', 'Настана грешка', message)
+        } else if (title.includes('sumOfPermanentCropsAreaCannotBeBiggerThanParcelArea')) {
+          message = 'Збирот на површините со засадена култура не може да биде поголем од површината на парцелата'
+          alertUser(true, 'error', 'Настана грешка', message)
+        } else {
+          if (parsedResponse && Object.keys(parsedResponse).length > 0) {
+            message = parsedResponse.title || parsedResponse.message || ''
+            alertUser(true, 'error', 'Настана грешка', message)
+          } else {
+            alertUser(true, 'error', 'Настана грешка')
+          }
+        }
       }
-      alertUser(true, 'error', 'Настана грешка', message)
-      disable()
     })
   }
 
@@ -130,27 +140,27 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
 
   const onSubmit = ({ formData }) => {
     // Clone the object first, don't use it directly as a function argument
-    const data = formData
+    const formDataObj = JSON.parse(JSON.stringify(formData))
     const parcelId = layer.feature.id
     const oldId = layer.feature.properties.OLD_ID || 0
-    const isEmpty = Object.values(data).every(v => v === null || v === undefined || v === '')
+    const isEmpty = Object.values(formDataObj).every(v => v === null || v === undefined || v === '')
     // If the object is empty, alert the user
     if (isEmpty) {
       alertUser(true, 'info', 'Внесете вредности и обидете се повторно')
     } else {
       // Parse every value as an integer and remove the empty ones
-      Object.keys(data).forEach(k => {
-        if (data[k]) {
-          data[k] = parseInt(data[k])
+      Object.keys(formDataObj).forEach(k => {
+        if (formDataObj[k]) {
+          formDataObj[k] = parseInt(formDataObj[k])
         } else {
-          delete data[k]
+          delete formDataObj[k]
         }
       })
-      const permanentCropObjId = data.object_id || 0
+      const permanentCropObjId = formDataObj.object_id || 0
       // Append the parcel object ID & the OLD ID to the form data object
-      Reflect.set(data, 'PARCEL_ID', Number(parcelId))
-      Reflect.set(data, 'LPIS_PARCEL_ID', Number(oldId))
-      submitPermanentCrop(JSON.stringify(data), permanentCropObjId)
+      Reflect.set(formDataObj, 'PARCEL_ID', Number(parcelId))
+      Reflect.set(formDataObj, 'LPIS_PARCEL_ID', Number(oldId))
+      submitPermanentCrop(JSON.stringify(formDataObj), permanentCropObjId)
     }
   }
 
