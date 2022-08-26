@@ -312,7 +312,7 @@ const _ExpandedRow = ({ id, rowData, unit, actionType, pplanRows, cadIntersectio
       <div key={rowId} id={rowId} className='data-grid-expanded-row border border-dark rounded' style={{ fontSize: '1.5vh' }}>
         {strcmp(actionType, 'pplan') && <h6 className='data-grid-heading mt-2' style={{ border: 'none' }}>Дополнителни информации за парцелата</h6>}
         <ListGroup className='text-center'>
-          {strcmp(status, 'invalid') && <ListGroupItem className='p-1'>
+          {!strcmp(status, 'VALID') && <ListGroupItem className='p-1'>
             <span className='font-weight-bold'>Парцелата има тополошки грешки</span>
           </ListGroupItem>}
           <ListGroupItem className='p-1'>
