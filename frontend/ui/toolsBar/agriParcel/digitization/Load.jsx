@@ -1,5 +1,5 @@
 import { React, Loading, elements } from 'perun-core';
-import { core, ui, data } from '../../../../Spatial';
+import { core, ui, data, tools } from '../../../../Spatial';
 import { config as apConfig, loadParcelMsg } from '../Config';
 import { ProcessButton } from '../../ProcessButton';
 import { Guidance } from '../Guidance';
@@ -9,6 +9,7 @@ import { strcmp } from '../../../Util';
 const { Map, store, http, factory } = core;
 const { geobuf, protobuf } = data;
 const { Icon } = ui;
+const { markerPoints } = tools;
 const { alertUser } = elements;
 const { useEffect, useReducer } = React;
 
@@ -16,6 +17,7 @@ const _id = 'load';
 const _secondaryId = 'removeLoadedParcels';
 const _iconId = 'copy';
 const _secondaryIconId = 'erase';
+const _layerGroup = factory.layerGroup();
 
 const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenLoadedStore }) => {
   const [{ loading, isGuided, parcelsHaveBeenLoaded }, setState] = useReducer((currState, update) =>
@@ -30,9 +32,10 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
 
   const setLayerEvents = (layer, agriParcels) => {
     layer.on('click', function () {
-      setState({ data: layer.feature.properties })
       agriParcels.forEach(ap => ap.off('mouseover mouseout click'))
     })
+
+    _layerGroup.addTo(Map);
   }
 
   const removeLoadedLayers = () => {
@@ -43,10 +46,14 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
         if (!!layer.toGeoJSON) {
           if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'LOADED_AGRI_PARCEL')) {
             Map.removeLayer(layer);
+          } else if (layer?.options?.name && strcmp(layer.options.name, 'marker-point')) {
+            Map.removeLayer(layer);
           }
         }
       });
 
+      _layerGroup.clearLayers().removeFrom(Map);
+      markerPoints.disable();
       setState({ parcelsHaveBeenLoaded: false })
       store.dispatch({ parcelsHaveBeenLoaded: false })
     }
@@ -80,6 +87,7 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
             }
             setLoadedParcelLabel(layer)
             layer.addTo(Map)
+            markerPoints.enable(layer, apConfig);
           });
           store.dispatch({ parcelsHaveBeenLoaded: true })
           setState({ parcelsHaveBeenLoaded: true })
