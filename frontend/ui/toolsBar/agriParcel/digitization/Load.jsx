@@ -53,7 +53,7 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
       });
 
       _layerGroup.clearLayers().removeFrom(Map);
-      markerPoints.disable();
+      // markerPoints.disable();
       setState({ parcelsHaveBeenLoaded: false })
       store.dispatch({ parcelsHaveBeenLoaded: false })
     }
