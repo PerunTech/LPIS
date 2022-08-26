@@ -272,7 +272,8 @@ export const commonUseSchema = {
                 type: 'string',
                 title: 'Одбери тип на дел:',
                 enum: ['CLAIMED_AREA', 'CLAIMED_RATIO'],
-                enumNames: ['Површина', 'Идеален дел']
+                enumNames: ['Површина', 'Идеален дел'],
+                default: 'CLAIMED_AREA'
             },
             value: {
                 type: 'string',
