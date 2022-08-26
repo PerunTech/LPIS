@@ -11,14 +11,12 @@ import com.prtech.svarog_common.DbSearchExpression;
 import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
 
 public class PermanentCrop {
-	
+
 	/**
 	 * Method that return list of PERMANENT_CROP objects
 	 * 
-	 * @param parcelId
-	 *            Object ID of AGRI_PARCEL object
-	 * @param svr
-	 *            SvReader instance
+	 * @param parcelId Object ID of AGRI_PARCEL object
+	 * @param svr      SvReader instance
 	 * @return
 	 * @throws SvException
 	 */
@@ -27,14 +25,12 @@ public class PermanentCrop {
 		return svr.getObjects(new DbSearchExpression().addDbSearchItem(cr), SvReader.getTypeIdByName(CC.PERMANENT_CROP),
 				null, 0, 0);
 	}
-	
+
 	/**
 	 * Method that checks some conditions before saving a PERMANENT_CROP object
 	 * 
-	 * @param permanentCrop
-	 *            DbDataObject of PERMANENT_CROP
-	 * @param svr
-	 *            SvReader instance
+	 * @param permanentCrop DbDataObject of PERMANENT_CROP
+	 * @param svr           SvReader instance
 	 * @throws SvException
 	 */
 	public void checkBeforeSavePermanentCrop(DbDataObject permanentCrop, SvReader svr) throws SvException {
@@ -45,7 +41,7 @@ public class PermanentCrop {
 			DbDataArray permanentCrops = getPermanentCrops(agriParcel.getObjectId(), svr);
 			if (permanentCrops != null && !permanentCrops.getItems().isEmpty()) {
 				for (DbDataObject tempPermanentCrop : permanentCrops.getItems()) {
-					sumOfParcels += (Long) tempPermanentCrop.getVal(CC.PLANT_AREA);
+					sumOfParcels += ((BigDecimal) agriParcel.getVal(CC.PLANT_AREA)).longValue();
 				}
 				if (sumOfParcels > ((BigDecimal) agriParcel.getVal(CC.AREA)).longValue()) {
 					throw new SvException("lpis.error.sumOfPermanentCropsAreaCannotBeBiggerThanParcelArea",
@@ -56,13 +52,11 @@ public class PermanentCrop {
 	}
 
 	/**
-	 * Method that checks if ALLOWED_AREA from PERMANENT_CROP is bigger than
-	 * AREA from AGRI_PARCEL
+	 * Method that checks if ALLOWED_AREA from PERMANENT_CROP is bigger than AREA
+	 * from AGRI_PARCEL
 	 * 
-	 * @param permanentCrop
-	 *            DbDataObject of PERMANENT_CROP
-	 * @param svr
-	 *            SvReader instance
+	 * @param permanentCrop DbDataObject of PERMANENT_CROP
+	 * @param svr           SvReader instance
 	 * @throws SvException
 	 */
 	public static void checkIfPlantAreaIsBiggerThanArea(DbDataObject permanentCrop, SvReader svr) throws SvException {
