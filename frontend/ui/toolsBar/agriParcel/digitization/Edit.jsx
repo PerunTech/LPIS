@@ -55,8 +55,8 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
                 layer.feature.properties.DESCRIPTOR = 'LOADED_AGRI_PARCEL'
               }
               if (!strcmp(layer.feature.properties.status, 'VALID')) {
-                layer.options.color = '#FFA500'
-                layer.options.fillColor = '#FFA500'
+                layer.options.color = '#f83e3e'
+                layer.options.fillColor = '#f83e3e'
               }
               setLoadedParcelLabel(layer)
               layer.addTo(Map)
