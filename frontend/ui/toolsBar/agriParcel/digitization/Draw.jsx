@@ -40,7 +40,7 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
 
         Map.on('contextmenu', e => {
             const p = Map.transform(e.latlng);
-            const url = `/spatial/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
+            const url = `/lpis/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
             http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
                 const data = geobuf.decode(protobuf(response));
                 const geojson = factory.geoJSON(data, config.pathOptions);
