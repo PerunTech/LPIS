@@ -63,7 +63,7 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
     Map.on('click', e => {
       const p = Map.transform(e.latlng);
       setState({ loading: true });
-      const url = `/spatial/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
+      const url = `/lpis/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
       http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
         setState({ loading: false })
         const data = geobuf.decode(protobuf(response));
