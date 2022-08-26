@@ -1,15 +1,14 @@
 import { React, Loading, elements } from 'perun-core';
-import { core, ui, data, tools, config as cfg } from '../../../../Spatial';
+import { core, ui, tools, config as cfg } from '../../../../Spatial';
 import { config, permanentCropSchema } from '../Config';
-import { bufferToString, getFarmMapAssets, isJSON, strcmp } from '../../../Util';
+import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
-import { setLoadedParcelLabel } from '../../cropParcel/Util';
+import { getParcelInfo } from './Load';
 
 const { Map, store, factory, http } = core;
-const { geobuf, protobuf } = data;
 const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
 const { MAP_CONFIG } = cfg;
@@ -40,31 +39,7 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
 
         Map.on('contextmenu', e => {
             const p = Map.transform(e.latlng);
-            const url = `/lpis/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
-            http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
-                const data = geobuf.decode(protobuf(response));
-                const geojson = factory.geoJSON(data, config.pathOptions);
-                const layers = geojson.getLayers();
-                if (layers && Array.isArray(layers) && layers.length > 0) {
-                    layers.forEach(layer => {
-                        if (layer?.feature?.properties) {
-                            layer.feature.properties.DESCRIPTOR = 'LOADED_AGRI_PARCEL'
-                        }
-                        if (!strcmp(layer.feature.properties.status, 'VALID')) {
-                            layer.options.color = '#f83e3e'
-                            layer.options.fillColor = '#f83e3e'
-                        }
-                        setLoadedParcelLabel(layer)
-                        layer.addTo(Map)
-                    });
-                    store.dispatch({ parcelsHaveBeenLoaded: true })
-                } else {
-                    alertUser(true, 'info', 'Не е избрана парцела од мапата')
-                }
-            }).catch(err => {
-                console.error(err)
-                alertUser(true, 'error', 'Настана грешка')
-            })
+            getParcelInfo(p)
         })
 
         setState({ isGuided: true, showForm: false, data: {}, layer: {} });
