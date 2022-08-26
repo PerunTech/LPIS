@@ -428,7 +428,7 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
     }
     let indexColumnClassNames = ['fr-data-grid-row-column-index']
     let indexColumnTitle = ''
-    if (strcmp(status, 'invalid')) {
+    if (!strcmp(status, 'VALID')) {
       indexColumnClassNames.push(' fr-data-grid-row-column-invalid-parcel')
       indexColumnTitle = 'Парцелата има тополошки грешки'
     }
