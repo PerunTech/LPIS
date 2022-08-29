@@ -1,15 +1,104 @@
-import { React } from 'perun-core';
-import { core, ui } from '../../../Spatial';
+import { React, Loading } from 'perun-core'
+import { core, ui } from '../../../Spatial'
+import { Form } from '../agriParcel/Form'
+import { Guidance } from '../agriParcel/Guidance'
+import { ProcessButton } from '../ProcessButton'
+import { landscapeFeaturesSchema } from './Config'
+const { schema, uiSchema } = landscapeFeaturesSchema
 
-const { connect } = core;
-const { Button, Icon } = ui
+const { Map, factory, connect, store } = core
+const { DrawActions, Icon } = ui
+const { useReducer } = React
 
-const _Point = () => {
+const _id = 'landscapeFeaturesPoint'
+
+const _Point = ({ processID }) => {
+  const [{ data, X, Y, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }),
+    { data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
+
+  const enable = () => {
+    store.dispatch({ processID: _id })
+    setState({ isGuided: true, showForm: false })
+    Map.on('click', e => {
+      const latLng = e.latlng
+      // Get the correct coordinates for the current CRS
+      const point = Map.transform(latLng)
+      setState({ X: point.x, Y: point.y, isGuided: false, showForm: true })
+      // Create a marker & add it to the map
+      const markerConfig = { icon: factory.divIcon({ className: 'marker-icon' }) }
+      const marker = factory.marker(latLng, markerConfig)
+      marker.addTo(Map)
+    })
+  }
+
+  const disable = () => {
+    Map.off('click')
+    store.dispatch({ processID: '' })
+    setState({ data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false })
+    // This will remove the point when disabling the action
+    Map.eachLayer(layer => {
+      if (layer?.options?.icon) {
+        layer.removeFrom(Map)
+      }
+    })
+  }
+
+  const renderGuideForm = () => {
+    return (
+      <Guidance
+        id={_id}
+        disable={disable}
+        title='Пејсажни обележја - Точка'
+        msg={['', '']}
+      />
+    )
+  }
+
+  const onSubmit = ({ formData }) => {
+    console.log(formData)
+    console.log(X, Y)
+  }
+
+  const onChange = ({ formData }) => {
+    setState({ data: { ...data, ...formData } });
+  }
+
+  const renderForm = () => {
+    const form = (
+      <Form
+        isSimple
+        schema={schema}
+        uiSchema={uiSchema}
+        formData={data}
+        onSubmit={onSubmit}
+        onChange={onChange} >
+        <DrawActions cancel={disable} />
+      </Form>
+    )
+
+    return form
+  }
+
+  const renderComponent = () => {
+    let componentToRender = null
+
+    if (isGuided && !showForm) {
+      componentToRender = renderGuideForm()
+    } else if (showForm && !isGuided) {
+      componentToRender = renderForm()
+    }
+
+    return componentToRender
+  }
+
   return (
-    <Button disabled >
+    <ProcessButton id={_id} onClick={enable}>
       <Icon name='selection' size='30px' />
       <span style={{ display: 'block', marginTop: '5px' }}>Точка</span>
-    </Button>
+      {processID === _id && renderComponent()}
+      {loading && <Loading />}
+    </ProcessButton>
   )
 }
 

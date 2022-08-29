@@ -1,10 +1,9 @@
 import { React, Loading } from 'perun-core'
 import { core, ui, tools } from '../../../Spatial'
-import { config } from '../agriParcel/Config';
 import { Form } from '../agriParcel/Form'
 import { Guidance } from '../agriParcel/Guidance'
 import { ProcessButton } from '../ProcessButton';
-import { landscapeFeaturesSchema } from './Config'
+import { config, landscapeFeaturesSchema } from './Config'
 const { schema, uiSchema } = landscapeFeaturesSchema
 
 const { Map, store, connect } = core
@@ -90,7 +89,7 @@ const _Line = ({ processID }) => {
   }
 
   return (
-    <ProcessButton onClick={enable}>
+    <ProcessButton id={_id} onClick={enable}>
       <Icon name='length' size='30px' />
       <span style={{ display: 'block', marginTop: '5px' }}>Линија</span>
       {processID === _id && renderComponent()}
