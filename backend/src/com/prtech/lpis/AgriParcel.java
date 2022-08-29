@@ -542,6 +542,8 @@ public class AgriParcel {
 			else
 				ap.setStatus("VALID");
 		}
+		if(this.overlappedNeighbours(svg, geom, ap.getParentId(), typeId).size()>0)
+			throw (new SvException(CC.GEOM_INVALID, svg.getInstanceUser(), ap, null));
 		SvGeometry.setGeometry(ap, geom);
 
 	}
@@ -596,13 +598,9 @@ public class AgriParcel {
 					}
 				}
 			}
-			int passNo = 1;
-			while (Util.hasDuplicates((Polygon) geom, minPointDistance)) {
-				geom = TopologyPreservingSimplifier.simplify(geom, minPointDistance * (double) passNo / 10);
-				passNo++;
-			}
 			hasSpikes = true;
 		}
+		geom = TopologyPreservingSimplifier.simplify(geom, minPointDistance);
 		geom.setUserData(userDate);
 		return geom;
 
