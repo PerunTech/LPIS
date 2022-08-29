@@ -112,16 +112,14 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
     })
   };
 
-  const disable = reloadData => {
+  const disable = () => {
     // Remove the Map click event listener
     Map.off('click');
     // Reset state, internal and application-wide.
     setState({ data: {}, loading: false, isGuided: false, showForm: false, showDeleteBtn: false, selectedParcel: {} });
     store.dispatch({ processID: '' });
-    if (reloadData) {
-      // Reload the data
-      getFarmMapAssets();
-    }
+    // Reload the data
+    getFarmMapAssets();
   };
 
   const submitCommonUse = formData => {
@@ -133,7 +131,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
       const responseType = res.data.type || 'INFO'
       const labelCode = res.data.label_code || 'Успешно додадена заедничка употреба'
       alertUser(true, responseType.toLowerCase(), labelCode)
-      disable(true)
+      disable()
     }).catch(err => {
       const { response } = err
       let message = ''
@@ -163,7 +161,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
       data: JSON.stringify({ OBJECT_ID: objectId, OBJECT_TYPE: objectTypeId })
     }).then(() => {
       alertUser(true, 'success', 'Успешно бришење');
-      disable(true)
+      disable()
     }).catch(() => {
       alertUser(true, 'error', 'Грешка при бришење');
       disable()
