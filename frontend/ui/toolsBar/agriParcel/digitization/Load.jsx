@@ -64,7 +64,7 @@ export function getParcelInfo (p, callback, setState) {
   })
 }
 
-const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenLoadedStore }) => {
+const _Load = ({ processID, parcelsHaveBeenLoaded: parcelsHaveBeenLoadedStore }) => {
   const [{ loading, isGuided, parcelsHaveBeenLoaded }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
     { loading: false, isGuided: false, parcelsHaveBeenLoaded: false });
@@ -74,14 +74,6 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
       store.dispatch({ parcelsHaveBeenLoaded: false })
     }
   }, [])
-
-  const setLayerEvents = (layer, agriParcels) => {
-    layer.on('click', function () {
-      agriParcels.forEach(ap => ap.off('mouseover mouseout click'))
-    })
-
-    _layerGroup.addTo(Map);
-  }
 
   const removeLoadedLayers = () => {
     if (!parcelsHaveBeenLoaded && !parcelsHaveBeenLoadedStore) {
@@ -98,7 +90,6 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
       });
 
       _layerGroup.clearLayers().removeFrom(Map);
-      // markerPoints.disable();
       setState({ parcelsHaveBeenLoaded: false })
       store.dispatch({ parcelsHaveBeenLoaded: false })
     }
@@ -108,9 +99,7 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
     store.dispatch({ processID: _id });
     setState({ isGuided: true });
 
-    if (agriParcels.length > 0) {
-      agriParcels.forEach(ap => setLayerEvents(ap, agriParcels))
-    }
+    _layerGroup.addTo(Map);
 
     Map.on('click', e => {
       const p = Map.transform(e.latlng);
@@ -160,6 +149,5 @@ const _Load = ({ processID, agriParcels, parcelsHaveBeenLoaded: parcelsHaveBeenL
 export const Load = core.connect((state) => ({
   processID: state.app.processID,
   farmObjId: state.farmRegistry?.farmObjId,
-  agriParcels: state.farmRegistry?.agriParcels,
   parcelsHaveBeenLoaded: state.farmRegistry?.parcelsHaveBeenLoaded,
 }))(_Load);
