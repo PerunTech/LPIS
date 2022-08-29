@@ -174,3 +174,7 @@
   right: 400px !important;
   font-size: larger !important;
 }
+
+.secondary-marker-icon {
+  z-index: 150 !important;
+}
