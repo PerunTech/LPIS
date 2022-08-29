@@ -3,15 +3,18 @@ import { core, ui } from '../../../Spatial';
 import { Polygon } from './Polygon';
 import { Line } from './Line';
 import { Point } from './Point';
+import { Load } from './Load';
 
 const { connect } = core;
-const { ButtonGroup } = ui
+const { ButtonGroup, Divider } = ui
 
 const _LandscapeFeatures = () =>
   <ButtonGroup>
     <Polygon />
     <Line />
     <Point />
+    <Divider />
+    <Load />
   </ButtonGroup>;
 
 _LandscapeFeatures.propTypes = {
