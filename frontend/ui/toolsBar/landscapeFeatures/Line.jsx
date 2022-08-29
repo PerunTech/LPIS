@@ -89,7 +89,7 @@ const _Line = ({ processID }) => {
   }
 
   return (
-    <ProcessButton onClick={enable}>
+    <ProcessButton id={_id} onClick={enable}>
       <Icon name='length' size='30px' />
       <span style={{ display: 'block', marginTop: '5px' }}>Линија</span>
       {processID === _id && renderComponent()}

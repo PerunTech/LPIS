@@ -89,7 +89,7 @@ const _Polygon = ({ processID }) => {
   }
 
   return (
-    <ProcessButton onClick={enable}>
+    <ProcessButton id={_id} onClick={enable}>
       <Icon name='selection-polygon' size='30px' />
       <span style={{ display: 'block', marginTop: '5px' }}>Полигон</span>
       {processID === _id && renderComponent()}
