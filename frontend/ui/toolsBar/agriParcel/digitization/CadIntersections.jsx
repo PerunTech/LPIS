@@ -57,9 +57,9 @@ export const getCadIntersections = () => {
 export const _CadIntersections = ({ showCadParcels }) => {
   useEffect(() => {
     return () => {
-        store.dispatch({ 'cadIntersections': {}, showCadParcels: false })
+      store.dispatch({ 'cadIntersections': {}, showCadParcels: false })
     }
-}, [])
+  }, [])
 
   const label = showCadParcels ? 'Скриј пресеци' : 'Прикажи пресеци'
   const onClick = () => showCadParcels ? removeCadIntersections(true) : getCadIntersections()

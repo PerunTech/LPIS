@@ -66,7 +66,7 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
             setState({ X: p.x, Y: p.y, loading: true });
 
             http.call('copy-agri', {
-                url: '/lpis/copy/parcel/{init.token}/ILPIS/' + p.x + '/' + p.y,
+                url: '/lpis/copy/parcel/{init.token}/AGRI_PARCEL/' + p.x + '/' + p.y,
                 method: 'post',
                 responseType: 'arraybuffer',
             }).then(response => {
@@ -127,8 +127,12 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
     }
 
     const renderGuideForm = () => {
+        let msg = copyAPMsg
+        if (showGuidanceButton) {
+            msg = ['', '']
+        }
         return (
-            <Guidance id={_id} disable={disable} msg={copyAPMsg} title='Копирај земјоделска парцела'>
+            <Guidance id={_id} disable={disable} msg={msg} title='Копирај земјоделска парцела'>
                 {showGuidanceButton && <div className='mt-2'>
                     <Button className='next' size='' onClick={handleShowForm}>
                         Прикажи форма
