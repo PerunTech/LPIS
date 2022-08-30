@@ -542,7 +542,7 @@ public class AgriParcel {
 			else
 				ap.setStatus("VALID");
 		}
-		if(this.overlappedNeighbours(svg, geom, ap.getParentId(), typeId).size()>0)
+		if (this.overlappedNeighbours(svg, geom, ap.getParentId(), typeId).size() > 0)
 			throw (new SvException(CC.GEOM_INVALID, svg.getInstanceUser(), ap, null));
 		SvGeometry.setGeometry(ap, geom);
 
@@ -587,7 +587,7 @@ public class AgriParcel {
 
 		boolean hasSpikes = true;
 		Object userDate = geom.getUserData();
-		for (int i = 0; i < numberOfRepeats; i++) {
+		for (int i = 1; i <= numberOfRepeats; i++) {
 			while (hasSpikes) {
 				try {
 					svg.testPolygonSpikes(geom, maxAngle);
@@ -598,9 +598,12 @@ public class AgriParcel {
 					}
 				}
 			}
+			while (Util.hasDuplicates((Polygon) geom, minPointDistance)) {
+				geom = TopologyPreservingSimplifier.simplify(geom, minPointDistance * (1 / numberOfRepeats * i));
+			}
 			hasSpikes = true;
 		}
-		geom = TopologyPreservingSimplifier.simplify(geom, minPointDistance);
+
 		geom.setUserData(userDate);
 		return geom;
 
