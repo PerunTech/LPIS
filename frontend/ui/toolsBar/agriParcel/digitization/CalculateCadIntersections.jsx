@@ -11,7 +11,7 @@ const { Icon } = ui;
 const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'calculateCadIntersections';
-const _iconId = 'area';
+const _iconId = 'intersection';
 
 const _CalculateCadIntersections = ({ processID, agriParcels, farmObjId }) => {
   const [{ loading, isGuided }, setState] = useReducer((currState, update) =>
