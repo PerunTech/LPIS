@@ -127,8 +127,12 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
     }
 
     const renderGuideForm = () => {
+        let msg = copyAPMsg
+        if (showGuidanceButton) {
+            msg = ['', '']
+        }
         return (
-            <Guidance id={_id} disable={disable} msg={copyAPMsg} title='Копирај земјоделска парцела'>
+            <Guidance id={_id} disable={disable} msg={msg} title='Копирај земјоделска парцела'>
                 {showGuidanceButton && <div className='mt-2'>
                     <Button className='next' size='' onClick={handleShowForm}>
                         Прикажи форма
