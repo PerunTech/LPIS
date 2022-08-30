@@ -767,10 +767,31 @@ public class ApplicationServices {
 			svr.setIncludeGeometries(true);
 			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
 			Collection<Geometry> gg = getPhysicalBlock(svg, point.getEnvelopeInternal(), "ext_lpis.ilpis", "geometry");
+			Geometry pb = null;
 			for (Geometry g : gg) {
-				if (g.covers(point))
-					result.add(g);
+				if (g.covers(point)) {
+					pb = g;
+					break;
+				}
 			}
+			Geometry tmpb = pb;
+			if (tmpb != null) {
+				Long layerTypeId = SvCore.getTypeIdByName(objectName);
+				Collection<Geometry> agriParcels = svg.getRelatedGeometries(pb, layerTypeId, SDIRelation.INTERSECTS,
+						null, null, false);
+				for (Geometry apc : agriParcels) {
+					tmpb = tmpb.difference(apc);
+					tmpb = LpisUtil.ensurePolygon(tmpb, point);
+					if (tmpb == null)
+						break;
+				}
+			}
+			if (tmpb != null) {
+				tmpb.setUserData(pb.getUserData());
+				result.add(tmpb);
+			} else
+				result.add(pb);
+
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.copy");
 		}

@@ -17,6 +17,7 @@ import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog_common.DbDataObject;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
@@ -34,6 +35,28 @@ public class LpisUtil {
 		return true;
 	}
 
+	public static Geometry ensurePolygon(Geometry geom, Geometry location) {
+		Geometry bestCandidate = geom instanceof Polygon ? geom : null;
+		if (geom instanceof GeometryCollection) {
+			for (int i = 0; i < geom.getNumGeometries(); i++) {
+				Geometry g = geom.getGeometryN(i);
+				if (g instanceof Polygon)
+					if (bestCandidate == null || (bestCandidate != null && bestCandidate.getArea() < g.getArea())) {
+						if (location == null || (location != null && g.intersects(location)))
+							bestCandidate = g;
+					}
+
+			}
+		}
+		return bestCandidate;
+
+	}
+
+	public static Geometry ensurePolygon(Geometry geom) {
+		return ensurePolygon(geom, null);
+
+	}
+	
 	public static boolean coversWithTolerance(Geometry g1, Geometry g2, double tolerance) {
 		if (g2.getGeometryType().equals(g1.getGeometryType())) {
 			Geometry intersection = g2.intersection(g1);

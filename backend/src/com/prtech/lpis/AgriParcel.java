@@ -158,14 +158,14 @@ public class AgriParcel {
 		while (iterator.hasNext()) {
 			tmpResult = mergePolygons((Polygon) tmpResult, (Polygon) iterator.next());
 		}
-		tmpResult = ensurePolygon(tmpResult);
+		tmpResult = LpisUtil.ensurePolygon(tmpResult);
 		tmpResult = SvUtil.sdiFactory.createPolygon(((Polygon) tmpResult).getExteriorRing().getCoordinates());
 
 		Iterator<Geometry> itdiff = gg.iterator();
 		while (itdiff.hasNext()) {
 			tmpResult = tmpResult.difference(itdiff.next());
 		}
-		tmpResult = ensurePolygon(tmpResult);
+		tmpResult = LpisUtil.ensurePolygon(tmpResult);
 		return tmpResult;
 	}
 
@@ -347,7 +347,7 @@ public class AgriParcel {
 					}
 				}
 			}
-			geom = ensurePolygon(tmpGeom);
+			geom = LpisUtil.ensurePolygon(tmpGeom);
 			SvGeometry.setGeometry(parcel, geom);
 		} else if (cutPB >= 1) {
 			Boolean isInsiderPB = false;
@@ -395,7 +395,7 @@ public class AgriParcel {
 					if (nap1.overlaps(geom))
 						geom = geom.difference(nap1);
 				}
-				geom = ensurePolygon(geom);
+				geom = LpisUtil.ensurePolygon(geom);
 				SvGeometry.setGeometry(parcel, geom);
 			}
 
@@ -424,7 +424,7 @@ public class AgriParcel {
 				if (nap.intersects(geom))
 					geom = geom.difference(nap);
 			}
-			geom = ensurePolygon(geom);
+			geom = LpisUtil.ensurePolygon(geom);
 			SvGeometry.setGeometry(parcel, geom);
 			if (parcel.getVal(CC.HAS_OVERLAP) != null && (boolean) parcel.getVal(CC.HAS_OVERLAP))
 				result.setItems(removeOverlaps(svg, parcel).getItems());
@@ -612,20 +612,7 @@ public class AgriParcel {
 
 	}
 
-	private Geometry ensurePolygon(Geometry geom) {
-		Geometry bestCandidate = geom instanceof Polygon ? geom : null;
-		if (geom instanceof GeometryCollection) {
-			for (int i = 0; i < geom.getNumGeometries(); i++) {
-				Geometry g = geom.getGeometryN(i);
-				if (g instanceof Polygon)
-					if (bestCandidate == null || (bestCandidate != null && bestCandidate.getArea() < g.getArea()))
-						bestCandidate = g;
 
-			}
-		}
-		return bestCandidate;
-
-	}
 
 	private Geometry preventFarmOverlap(SvReader svr, DbDataObject parcel) throws SvException {
 		DbDataArray assets = getAssetsList(svr, parcel.getParentId(), CC.AGRI_PARCEL);
@@ -638,7 +625,7 @@ public class AgriParcel {
 			if (LpisUtil.overlapsWithTolerance(g, other, 0.01))// TODO
 				g = g.difference(other);
 		}
-		g = ensurePolygon(g);
+		g = LpisUtil.ensurePolygon(g);
 		g.setUserData(parcel);
 		return g;
 	}
