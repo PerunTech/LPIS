@@ -135,12 +135,17 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     store.dispatch({ hiddenAssets: [] })
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
-            // These are checks to skip the layers which have been manually loaded by the user using the agriParcel/digitization/Load.jsx component
-            if (!strcmp(layer?.feature?.properties?.DESCRIPTOR, 'LOADED_AGRI_PARCEL')) {
-                if ((layer?.options?.name && strcmp(layer.options.name, 'marker-point')) || layer instanceof factory.LayerGroup) {
-                    return false
-                } else {
-                    Map.removeLayer(layer);
+            // Remove everything when we first call this function
+            if (fitBounds) {
+                Map.removeLayer(layer);
+            } else {
+                // These are checks to skip the layers which have been manually loaded by the user using the agriParcel/digitization/Load.jsx component
+                if (!strcmp(layer?.feature?.properties?.DESCRIPTOR, 'LOADED_AGRI_PARCEL')) {
+                    if ((layer?.options?.name && strcmp(layer.options.name, 'marker-point')) || layer instanceof factory.LayerGroup) {
+                        return false
+                    } else {
+                        Map.removeLayer(layer);
+                    }
                 }
             }
         }
