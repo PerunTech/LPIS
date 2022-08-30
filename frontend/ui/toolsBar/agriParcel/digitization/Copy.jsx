@@ -66,7 +66,7 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
             setState({ X: p.x, Y: p.y, loading: true });
 
             http.call('copy-agri', {
-                url: '/lpis/copy/parcel/{init.token}/ILPIS/' + p.x + '/' + p.y,
+                url: '/lpis/copy/parcel/{init.token}/AGRI_PARCEL/' + p.x + '/' + p.y,
                 method: 'post',
                 responseType: 'arraybuffer',
             }).then(response => {
