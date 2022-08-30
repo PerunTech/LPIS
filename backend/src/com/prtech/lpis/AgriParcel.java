@@ -599,7 +599,7 @@ public class AgriParcel {
 				}
 			}
 			while (Util.hasDuplicates((Polygon) geom, minPointDistance)) {
-				geom = TopologyPreservingSimplifier.simplify(geom, minPointDistance * (1 / numberOfRepeats * i));
+				geom = TopologyPreservingSimplifier.simplify(geom, minPointDistance * (1.0 / numberOfRepeats * (double)i));
 			}
 			hasSpikes = true;
 		}
