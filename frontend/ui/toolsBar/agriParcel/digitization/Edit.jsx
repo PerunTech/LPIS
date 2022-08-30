@@ -136,7 +136,7 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
 
   const initEdit = layer => {
     // Move map view on top of selected polygon.
-    Map.fitBounds(layer.getBounds());
+    // Map.fitBounds(layer.getBounds());
     // Activate edit handler on selected polygon
     edit.polygon.enable(layer, config);
     setState({ layer: layer, data: layer.feature.properties, showGuidanceButton: true });
