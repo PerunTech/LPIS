@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, tools, config as cfg } from '../../../../Spatial';
 import { config, permanentCropSchema } from '../Config';
-import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
+import { bufferToString, getFarmMapAssets, isJSON, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -18,7 +18,7 @@ const { useEffect, useReducer } = React;
 const _id = 'editAP';
 const _layerGroup = factory.layerGroup();
 
-const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
+const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending, historyEditEnabled, historyParcelToEdit, parcelHistoryModalWasClosed }) => {
   const [{ layer, geojson, data, permanentCropData, loading, isGuided, showForm, showGuidanceButton, showPermanentCropForm, allPermanentCrops }, setState] = useReducer(
     (currState, update) => ({ ...currState, ...update }),
     {
@@ -34,25 +34,53 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
     }
   }, [])
 
+  useEffect(() => {
+    if (historyEditEnabled && historyParcelToEdit) {
+      enable()
+    }
+  }, [historyEditEnabled, historyParcelToEdit])
+
+  useEffect(() => {
+    if (parcelHistoryModalWasClosed) {
+      disable()
+    }
+  }, [parcelHistoryModalWasClosed])
+
   const enable = () => {
-    if (agriParcels.length > 0) {
-      agriParcels.forEach(sc => _setBlockEvents(sc, agriParcels))
+    if (historyEditEnabled) {
+      if (agriParcels.length > 0) {
+        agriParcels.forEach(ap => ap.off('mouseover mouseout click'))
+      }
+
       store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
       setState({ isGuided: true, showForm: false, showPermanentCropForm: false, data: {}, permanentCropData: {}, layer: {}, allPermanentCrops: undefined })
       _editAP()
+      initEdit(historyParcelToEdit)
 
       Map.on('contextmenu', e => {
         const p = Map.transform(e.latlng);
         getParcelInfo(p)
       })
     } else {
-      alertUser(
-        true,
-        'warning',
-        'Не се пронајдени земјоделски парцели.',
-        'Додадете земјоделски парцели пред да ја користите алатката за менување.',
-      );
-      disable()
+      if (agriParcels.length > 0) {
+        agriParcels.forEach(sc => _setBlockEvents(sc, agriParcels))
+        store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
+        setState({ isGuided: true, showForm: false, showPermanentCropForm: false, data: {}, permanentCropData: {}, layer: {}, allPermanentCrops: undefined })
+        _editAP()
+
+        Map.on('contextmenu', e => {
+          const p = Map.transform(e.latlng);
+          getParcelInfo(p)
+        })
+      } else {
+        alertUser(
+          true,
+          'warning',
+          'Не се пронајдени земјоделски парцели.',
+          'Додадете земјоделски парцели пред да ја користите алатката за менување.',
+        );
+        disable()
+      }
     }
   };
 
@@ -63,7 +91,7 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
       layer: {}, data: {}, geojson: {}, permanentCropData: {}, isGuided: false,
       showForm: false, showGuidanceButton: false, showPermanentCropForm: false, loading: false, allPermanentCrops: undefined
     });
-    store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
+    store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom, parcelHistoryModalWasClosed: false });
     // We remove the working geometry, save process will add the result.
     layer.removeFrom && layer.removeFrom(Map);
     getFarmMapAssets()
@@ -71,6 +99,7 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   }
 
   const disable = (data, geojson) => {
+    store.dispatch({ editFormWasClosed: true })
     if (data && data.LAND_COVER_CODE) {
       if (Number(data.LAND_COVER_CODE) >= 400 && Number(data.LAND_COVER_CODE) < 500) {
         const parcelId = geojson[0].feature.id
@@ -158,6 +187,11 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending }) => {
   }
 
   const onSubmit = ({ formData }) => {
+    let finalLayer = layer
+    if (finalLayer.feature.properties && strcmp(finalLayer.feature.properties.DESCRIPTOR, 'PARCEL_HISTORY')) {
+      finalLayer.feature.properties.DESCRIPTOR = 'AGRI_PARCEL'
+      finalLayer.feature.properties.USER_NAME = ''
+    }
     _stopEditAP()
     saveAP(JSON.stringify({
       ...data,
@@ -335,5 +369,8 @@ export const Edit = core.connect(state => ({
   processID: state.app.processID,
   saveIsPending: state.farmRegistry?.saveIsPending,
   farmObjId: state.farmRegistry?.farmObjId,
-  agriParcels: state.farmRegistry?.agriParcels
+  agriParcels: state.farmRegistry?.agriParcels,
+  historyEditEnabled: state.farmRegistry?.historyEditEnabled,
+  historyParcelToEdit: state.farmRegistry?.historyParcelToEdit,
+  parcelHistoryModalWasClosed: state.farmRegistry?.parcelHistoryModalWasClosed,
 }))(_Edit)
