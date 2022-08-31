@@ -60,7 +60,8 @@ export const farmRegLpis = () => {
         'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'farmObjId': '', 'farmObjTypeId': '', 'actionType': '',
         'fic': '', 'fullName': '', 'tableName': '', 'selectedParcelId': '', 'selectedCropParcelId': '', 'saveIsPending': false,
         'showCadParcels': false, 'hiddenAssets': [], 'parcelHistory': [], 'theSearchedParcelWasRemoved': false, 'parcelsHaveBeenLoaded': false,
-        'showParcelInfoContainer': false, 'farmInfo': undefined, 'parcelInfo': undefined
+        'showParcelInfoContainer': false, 'farmInfo': undefined, 'parcelInfo': undefined, 'historyEditEnabled': false, 'historyParcelToEdit': {},
+        'editFormWasClosed': false, 'parcelHistoryModalWasClosed': false
     })
     const _token = redux.store.getState().security.svSession;
     getFarmMapAssets(true)
