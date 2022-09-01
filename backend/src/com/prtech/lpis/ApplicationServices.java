@@ -384,8 +384,8 @@ public class ApplicationServices {
 			svg.setAutoCommit(false);
 			Geometry geom = Util.getInputGeometry(formVals, null);
 			Long layerTypeId = SvCore.getTypeIdByName(objectName);
-			List<DbDataObject> toBeDeleted = new ArrayList<DbDataObject>();
-			Set<Geometry> split = svg.splitGeometries((LineString) geom, layerTypeId, toBeDeleted, false, SC.PARENT_ID,
+			List<DbDataObject> splitObject = new ArrayList<DbDataObject>();
+			Set<Geometry> split = svg.splitGeometries((LineString) geom, layerTypeId, splitObject, false, SC.PARENT_ID,
 					parentId, false);
 
 			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
@@ -399,8 +399,8 @@ public class ApplicationServices {
 					newGeometry = null;
 			}
 			// TODO add calculus of overlaps
-			if (newGeometry != null) {
-				DbDataObject dbo = (DbDataObject) newGeometry.getUserData();
+			if (newGeometry != null && splitObject.size() != 1) {
+				DbDataObject dbo = splitObject.get(0);
 				(new AgriParcel()).saveAgriParcel(svr, dbo.getObjectId(), dbo.getParentId(), 2, 2, 2, new JsonObject(),
 						true, newGeometry);
 				result.addAll(split);
