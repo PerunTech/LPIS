@@ -378,7 +378,6 @@ public class ApplicationServices {
 			@PathParam("x") final Double x, @PathParam("y") final Double y,
 			final MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
-		String errMsg = "";
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvReader svr = new SvReader(token); SvGeometry svg = new SvGeometry(svr)) {
 			svg.setAutoCommit(false);
@@ -399,28 +398,25 @@ public class ApplicationServices {
 					newGeometry = null;
 			}
 			// TODO add calculus of overlaps
-			if (newGeometry != null && splitObject.size() != 1) {
+			if (newGeometry != null && splitObject.size() == 1) {
 				DbDataObject dbo = splitObject.get(0);
 				(new AgriParcel()).saveAgriParcel(svr, dbo.getObjectId(), dbo.getParentId(), 0, 0, 2, new JsonObject(),
 						true, newGeometry);
 				result.add(newGeometry);
 				svg.dbCommit();
 			}
-		} catch (SvException e) {
-			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
-			errMsg = e.getMessage();
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.splitParcel");
 		}
-		if (errMsg.isEmpty()) {
-			StreamingOutput pbfStream = new StreamingOutput() {
-				public void write(OutputStream stream) throws IOException {
-					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
-					enc.writeSvGeometry(result);
-				};
+
+		StreamingOutput pbfStream = new StreamingOutput() {
+			public void write(OutputStream stream) throws IOException {
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+				enc.writeSvGeometry(result);
 			};
-			return Response.ok(pbfStream, "application/pbf").build();
-		} else
-			return Response.status(500).entity(errMsg).type(MediaType.APPLICATION_JSON).build();
+		};
+		return Response.ok(pbfStream, "application/pbf").build();		
+		
 	}
 
 	@Path("/intersect/{token}/{objectName}/{objectId}/")
