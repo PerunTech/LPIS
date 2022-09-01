@@ -47,10 +47,10 @@ public class Reader {
 					DbDataObject parcel = parcels.getItemByIdx(dbo.getVal("LAND_PARCEL_ID").toString());
 					if (parcel != null) {
 						DbDataObject newParcel = new DbDataObject(parcel.getObjectType(), parcel.getValuesMap());
-						newParcel.setVal(CC.GR_PARCEL,  dbo.getVal(CC.GR_PARCEL));
+						newParcel.setVal(CC.GR_PARCEL, dbo.getVal(CC.GR_PARCEL));
 						newParcel.setVal(CC.CAD_AREA, dbo.getVal(CC.CAD_AREA));
 						newParcel.setVal(CC.FR_AREA, dbo.getVal(CC.FR_AREA));
-						newParcel.setVal(CC.OVERLAP_AREA,dbo.getVal(Sv.AREA));
+						newParcel.setVal(CC.OVERLAP_AREA, dbo.getVal(Sv.AREA));
 						newParcel.setVal(CC.MUNICIPALITY_NAME, dbo.getVal(CC.MUNICIPALITY_NAME));
 						tmpJoinedParcels.add(newParcel);
 						tmpParcels.put(parcel.getObjectId(), parcel);
@@ -98,6 +98,11 @@ public class Reader {
 					parcels.addDataItem(dbp);
 				}
 			}
+
+			for (DbDataObject parcel : parcels.getItems())
+				if (parcel.getVal(CC.ALLOWED_AREA) != null && ((BigDecimal) parcel.getVal(CC.ALLOWED_AREA))
+						.compareTo((BigDecimal) parcel.getVal(CC.AREA)) > 0)
+					parcel.setVal(CC.ALLOWED_AREA, parcel.getVal(CC.AREA));
 
 			// deduplicate intersections
 			addIntersections(parcels, dbIntersect, includeIntersectionDetails);
