@@ -270,7 +270,8 @@ public class AgriParcel {
 		while (gi.hasNext()) {
 			Geometry ng = gi.next();
 			DbDataObject dbo = (DbDataObject) ng.getUserData();
-			if (!dbo.getParentId().equals(parentId) && (com.prtech.lpis.LpisUtil.overlapsWithTolerance(ng, geom, 0.01))) {
+			if (!dbo.getParentId().equals(parentId)
+					&& (com.prtech.lpis.LpisUtil.overlapsWithTolerance(ng, geom, 0.01))) {
 				gl.add(ng);
 			}
 		}
@@ -527,7 +528,7 @@ public class AgriParcel {
 			svg.setAutoCommit(false);
 			Util.calculateGeometryDerivatives(ap);
 
-			geom = autoFixPoly(svg, geom, 2);
+//			geom = autoFixPoly(svg, geom, 2);
 
 			if (geom.isSimple() && geom.isValid() && !geom.isEmpty()) {
 				Geometry negativeTest = geom.buffer(-1.0);
@@ -617,7 +618,7 @@ public class AgriParcel {
 		return SvUtil.sdiFactory.createPolygon(newCoords.toArray(new Coordinate[newCoords.size()]));
 	}
 
-	private Geometry autoFixPoly(SvGeometry svg, Geometry geom, int numberOfRepeats) throws SvException {
+	public Geometry autoFixPoly(SvGeometry svg, Geometry geom, int numberOfRepeats) throws SvException {
 
 		boolean hasSpikes = true;
 		Object userDate = geom.getUserData();
@@ -633,7 +634,7 @@ public class AgriParcel {
 				}
 			}
 			int simplifyThr = i;
-			while (Util.hasDuplicates((Polygon) geom, minPointDistance)) {
+			if (Util.hasDuplicates((Polygon) geom, minPointDistance)) {
 				geom = TopologyPreservingSimplifier.simplify(geom,
 						minPointDistance * (1.0 / numberOfRepeats * (double) simplifyThr));
 				simplifyThr++;
