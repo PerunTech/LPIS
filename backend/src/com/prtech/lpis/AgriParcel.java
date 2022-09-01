@@ -70,6 +70,10 @@ import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 public class AgriParcel {
 	private Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
+	private Double maxShortAngle = SvParameter.getSysParam(CC.SDI_SHORTSPIKE_MAX_ANGLE,
+			CC.DEFAULT_SHORTSPIKE_MAX_ANGLE);
+	private Double maxShortSegment = SvParameter.getSysParam(CC.SDI_SHORTSPIKE_SEGMENT_LENGTH,
+			CC.DEFAULT_SHORTSPIKE_SEGMENT_LENGTH);
 	private Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
 	private Double mergeTolerance = SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE);
 	static final Logger log4j = SvConf.getLogger(AgriParcel.class);
@@ -594,7 +598,7 @@ public class AgriParcel {
 					hasSpikes = false;
 				} catch (SvException e) {
 					if (e.getLabelCode().equals(Sv.Exceptions.SDI_SPIKE_DETECTED)) {
-						geom = svg.fixPolygonSpikes(geom, maxAngle);
+						geom = svg.fixPolygonSpikes(geom, maxAngle, maxShortAngle, maxShortSegment);
 					}
 				}
 			}
@@ -611,8 +615,6 @@ public class AgriParcel {
 		return geom;
 
 	}
-
-
 
 	private Geometry preventFarmOverlap(SvReader svr, DbDataObject parcel) throws SvException {
 		DbDataArray assets = getAssetsList(svr, parcel.getParentId(), CC.AGRI_PARCEL);

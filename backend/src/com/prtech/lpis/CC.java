@@ -69,5 +69,9 @@ public class CC {
 	public static final String NEIGHBOUR_DUPLICATE_POINTS = "NEIGHBOUR_DUPLICATE_POINTS";
 	public static final String COMMON_USE_PARCEL_MUST_BE_200 = "COMMON_USE_PARCEL_MUST_BE_200";
 	public static final String TOPO_ERR = "TOPO_ERR";
+	public static final String SDI_SHORTSPIKE_SEGMENT_LENGTH = "SDI_SHORTSPIKE_SEGMENT_LENGTH";
+	public static final String SDI_SHORTSPIKE_MAX_ANGLE = "SDI_SHORTSPIKE_MAX_ANGLE";
+	public static final Double DEFAULT_SHORTSPIKE_MAX_ANGLE = -0.1;
+	public static final Double DEFAULT_SHORTSPIKE_SEGMENT_LENGTH = 0.0;
 
 }
