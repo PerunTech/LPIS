@@ -63,14 +63,14 @@ function _Area ({ processID, currentMeasure, ..._props }) {
             <DrawActions
               finish={() => draw.polygon._finishShape()}
               undo={() => draw.polygon._removeLastVertex()}
-              cancel={() => (draw.polygon.disable('force'), draw.polygon.enable(MEASURE_AREA))} />
+              cancel={disable.bind(area)} />
           </Modal.Title>
           <Modal.Body >
             <Button disabled size='lg' className='as-label' >{(sum + currentMeasure) + ' m²'}</Button>
           </Modal.Body>
-          <Modal.Footer >
-            <Button size='' className='end-measurement' onClick={disable.bind(area)} >Затвори</Button>
-          </Modal.Footer>
+          {/* <Modal.Footer >
+            <Button size='' className='end-measurement' onClick={() => (draw.polygon.disable('force'), draw.polygon.enable(MEASURE_AREA))}>Поништи</Button>
+          </Modal.Footer> */}
         </Modal>}
     </ProcessButton>
   )
