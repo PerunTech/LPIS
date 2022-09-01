@@ -38,6 +38,6 @@ export const Eraser = (props) =>
   <ProcessButton {...props}
     id={_id}
     onClick={() => eraser.clearMeasurements()} >
-    <Icon name='delete-control' size='30px' />
+    <Icon name={_id} size='28px' />
     <span style={{ display: 'block', marginTop: '5px' }}>Избриши мерења</span>
   </ProcessButton>;
