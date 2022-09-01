@@ -566,11 +566,14 @@ public class AgriParcel {
 			else
 				throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), ap, null));
 		} else {
+			neighbours = this.overlappedNeighbours(svg, geom, -1L, typeId);
 			Iterator<Geometry> itg = neighbours.iterator();
 			while (itg.hasNext()) {
 				Geometry ol = itg.next();
-				geom = geom.difference(ol);
-				geom = alignOnNeighbour((Polygon) geom, (Polygon) ol);
+				if (!ap.getObjectId().equals(((DbDataObject) ol.getUserData()).getObjectId())) {
+					geom = geom.difference(ol);
+					geom = alignOnNeighbour((Polygon) geom, (Polygon) ol);
+				}
 			}
 			if (Util.hasDuplicates((Polygon) geom, minPointDistance))
 				ap.setStatus("INVALID");
