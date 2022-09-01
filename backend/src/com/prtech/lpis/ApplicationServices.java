@@ -415,8 +415,8 @@ public class ApplicationServices {
 				enc.writeSvGeometry(result);
 			};
 		};
-		return Response.ok(pbfStream, "application/pbf").build();		
-		
+		return Response.ok(pbfStream, "application/pbf").build();
+
 	}
 
 	@Path("/intersect/{token}/{objectName}/{objectId}/")
@@ -789,6 +789,7 @@ public class ApplicationServices {
 				}
 			}
 			if (tmpb != null) {
+				tmpb = (new AgriParcel()).autoFixPoly(svg, tmpb, 2);
 				tmpb.setUserData(pb.getUserData());
 				result.add(tmpb);
 			} else

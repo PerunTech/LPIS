@@ -255,6 +255,9 @@ public class AgriParcel {
 
 			if (autoCommit)
 				svg.dbCommit();
+		} catch (SvException e) {
+			svg.dbRollback();
+			throw (e);
 		}
 
 	}
@@ -528,7 +531,7 @@ public class AgriParcel {
 			svg.setAutoCommit(false);
 			Util.calculateGeometryDerivatives(ap);
 
-//			geom = autoFixPoly(svg, geom, 2);
+			geom = autoFixPoly(svg, geom, 2);
 
 			if (geom.isSimple() && geom.isValid() && !geom.isEmpty()) {
 				Geometry negativeTest = geom.buffer(-1.0);
@@ -636,11 +639,9 @@ public class AgriParcel {
 					}
 				}
 			}
-			int simplifyThr = i;
 			if (Util.hasDuplicates((Polygon) geom, minPointDistance)) {
 				geom = TopologyPreservingSimplifier.simplify(geom,
-						minPointDistance * (1.0 / numberOfRepeats * (double) simplifyThr));
-				simplifyThr++;
+						minPointDistance * (1.0 / numberOfRepeats * (double) i));
 			}
 			hasSpikes = true;
 		}
