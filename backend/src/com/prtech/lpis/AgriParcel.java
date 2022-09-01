@@ -270,8 +270,7 @@ public class AgriParcel {
 		while (gi.hasNext()) {
 			Geometry ng = gi.next();
 			DbDataObject dbo = (DbDataObject) ng.getUserData();
-			if ((com.prtech.lpis.LpisUtil.overlapsWithTolerance(ng, geom, 0.01))
-					&& !dbo.getParentId().equals(parentId)) {
+			if (!dbo.getParentId().equals(parentId) && (com.prtech.lpis.LpisUtil.overlapsWithTolerance(ng, geom, 0.01))) {
 				gl.add(ng);
 			}
 		}
@@ -443,7 +442,7 @@ public class AgriParcel {
 
 	public Geometry parcelAlignment(SvGeometry svg, DbDataObject parcel, int cutPB, int cutAP, int alignNB,
 			DbDataArray result) throws SvException, SQLException, ParseException {
-		if (cutAP == 1 && alignNB == 0)
+		if (cutAP == 1 && alignNB != 2)
 			throw (new SvException("error.params_not_compatible", svg.getInstanceUser()));
 		Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 		Geometry geom = SvGeometry.getGeometry(parcel);

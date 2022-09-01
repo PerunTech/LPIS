@@ -401,9 +401,9 @@ public class ApplicationServices {
 			// TODO add calculus of overlaps
 			if (newGeometry != null && splitObject.size() != 1) {
 				DbDataObject dbo = splitObject.get(0);
-				(new AgriParcel()).saveAgriParcel(svr, dbo.getObjectId(), dbo.getParentId(), 2, 2, 2, new JsonObject(),
+				(new AgriParcel()).saveAgriParcel(svr, dbo.getObjectId(), dbo.getParentId(), 0, 0, 2, new JsonObject(),
 						true, newGeometry);
-				result.addAll(split);
+				result.add(newGeometry);
 				svg.dbCommit();
 			}
 		} catch (SvException e) {
