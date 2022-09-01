@@ -52,7 +52,7 @@ function _Length ({ processID, currentMeasure, ..._props }) {
       id={id}
       className={processID === id ? 'active' : ''}
       onClick={enable.bind(length)} >
-      <Icon name='measure-length' size='36px' />
+      <Icon name={id} size='28px' />
       <span style={{ display: 'block' }}>Измери должина</span>
       {processID === id
         && <Modal show
