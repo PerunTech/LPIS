@@ -4,7 +4,6 @@ import { Form } from './Form'
 import { config, saveAPFormSchema } from './Config';
 import { bufferToString, isJSON, strcmp } from '../../Util'
 
-
 const { http, store, factory, Map, util } = core;
 const { protobuf, geobuf } = data;
 const { Button, Modal, Icon, DrawActions } = ui
@@ -61,9 +60,16 @@ export const saveAP = (layer, callback, skipChecks) => {
                     ReactDOM.render(<APChecksModal data={response.data} />, container)
                 }
             } else {
-                _fail()
+                const title = response?.data?.title || ''
+                const msg = response?.data?.message || ''
+                _fail(title, msg)
             }
-        }).catch(() => _fail());
+        }).catch((error) => {
+            const { response } = error
+            const title = response?.data?.title || ''
+            const msg = response?.data?.message || ''
+            _fail(title, msg)
+        });
     }
 
     // Check 1, intersection with the underlining physical block.  

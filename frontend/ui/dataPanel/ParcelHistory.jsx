@@ -1,34 +1,44 @@
 import { React, elements } from 'perun-core'
 import format from 'date-fns/format'
 import mk from 'date-fns/locale/mk'
-import { core, ui } from '../../Spatial'
+import { core, ui, config as cfg } from '../../Spatial'
 import { translateBooleanValue, translateLandCoverCode } from '../Util'
 import { removeParcelHistoryLayers, truncate } from './Util'
 
+const { MAP_CONFIG } = cfg
 const { Map, store, connect } = core
 const { Modal, Button, DrawActions } = ui
 const { useEffect } = React
 const { ReactBootstrap } = elements
 const { Table } = ReactBootstrap
 
-const _ParcelHistory = ({ parcelHistory, setShowParcelHistory }) => {
+const _ParcelHistory = ({ parcelHistory, setShowParcelHistory, historyEditEnabled, editFormWasClosed }) => {
   useEffect(() => {
     return () => {
-      store.dispatch({ parcelHistory: [] })
+      store.dispatch({ parcelHistory: [], minZoom: MAP_CONFIG.minZoom, historyEditEnabled: false, historyParcelToEdit: {} })
     }
   }, [])
 
+  useEffect(() => {
+    if (editFormWasClosed) {
+      store.dispatch({ minZoom: MAP_CONFIG.minZoom, historyEditEnabled: false, historyParcelToEdit: {}, editFormWasClosed: false })
+    }
+  }, [editFormWasClosed])
+
   const disable = () => {
     removeParcelHistoryLayers()
-    store.dispatch({ parcelHistory: [] })
+    store.dispatch({ parcelHistory: [], minZoom: MAP_CONFIG.minZoom, historyEditEnabled: false, historyParcelToEdit: {}, parcelHistoryModalWasClosed: true })
     setShowParcelHistory(false)
   }
 
-  const showGeometry = layer => {
+  const showGeometry = (layer, isEdit) => {
     removeParcelHistoryLayers()
     layer.feature.properties.DESCRIPTOR = 'PARCEL_HISTORY'
     layer.addTo(Map)
     Map.fitBounds(layer.getBounds())
+    if (isEdit) {
+      store.dispatch({ historyEditEnabled: true, historyParcelToEdit: layer })
+    }
   }
 
   const renderTable = () => {
@@ -71,9 +81,10 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory }) => {
                 <td>{translateBooleanValue(properties.CERTIFICATE_OF_USE)}</td>
                 <td>{Math.round(properties.AREA)} m²</td>
                 <td>
-                  <Button onClick={() => showGeometry(historyEl)}>
-                    Прикажи геометрија
-                  </Button>
+                  <Button disabled={historyEditEnabled} onClick={() => showGeometry(historyEl)}>Прикажи геометрија</Button>
+                </td>
+                <td>
+                  <Button disabled={historyEditEnabled} onClick={() => showGeometry(historyEl, true)}>Уреди геометрија</Button>
                 </td>
               </tr>
             )
@@ -112,5 +123,8 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory }) => {
   )
 }
 
-export const ParcelHistory = connect(state =>
-  ({ parcelHistory: state.farmRegistry?.parcelHistory }))(_ParcelHistory)
+export const ParcelHistory = connect(state => ({
+  parcelHistory: state.farmRegistry?.parcelHistory,
+  historyEditEnabled: state.farmRegistry?.historyEditEnabled,
+  editFormWasClosed: state.farmRegistry?.editFormWasClosed,
+}))(_ParcelHistory)
