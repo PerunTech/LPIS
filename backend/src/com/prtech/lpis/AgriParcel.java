@@ -76,6 +76,8 @@ public class AgriParcel {
 			CC.DEFAULT_SHORTSPIKE_SEGMENT_LENGTH);
 	private Double sliverRatio = SvParameter.getSysParam(CC.SDI_AREA2PERIMETER_RATIO, CC.DEFAULT_AREA2PERIMETER_RATIO);
 	private Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
+	private Double minSliverArea = SvParameter.getSysParam(CC.SDI_MIN_SLIVER_AREA, CC.DEFAULT_MIN_SLIVER_AREA);
+
 	private Double mergeTolerance = SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE);
 	static final Logger log4j = SvConf.getLogger(AgriParcel.class);
 
@@ -300,7 +302,7 @@ public class AgriParcel {
 
 		for (Geometry near : nearby) {
 			Geometry sliver = calculateSliver(geom, near);
-			if (sliver.getArea() < (sliver.getLength() * sliverRatio))
+			if (sliver.getArea() > minSliverArea && sliver.getArea() < (sliver.getLength() * sliverRatio))
 				slivers.add(sliver);
 		}
 
