@@ -57,26 +57,27 @@ const _Merge = ({ processID, farmObjId }) => {
       })
       const numOfNewParcels = geojson.getLayers().length
       const msg = numOfNewParcels === 1 ? 'Добиена е една нова парцела.' : `Добиени се ${numOfNewParcels} нови парцели.`
-      alertUser(true, 'success', 'Успешно споени парцели', msg, getFarmMapAssets)
+      alertUser(true, 'success', 'Успешно споени парцели', msg)
+      cleanup(lineLayer);
     }).catch(error => {
       setState({ loading: false })
       const { response } = error
       const errorMsg = decodeResponse(response)
-      alertUser(true, 'error', 'Грешка при спојување на парцели', errorMsg, getFarmMapAssets);
+      alertUser(true, 'error', 'Грешка при спојување на парцели', errorMsg);
+      cleanup(lineLayer);
     })
-
-    //remove line   
-    cleanup(lineLayer);
   }
 
   const disable = () => {
     // Reset state, internal and application-wide.
-    setState({ layer: {}, data: {} });
+    setState({ layer: {} });
     store.dispatch({ processID: '' });
     // We remove the working geometry, save process will add the result.
     layer.removeFrom && layer.removeFrom(Map);
     // Disable Split handler.
     line.disable('force');
+    // Reload the assets
+    getFarmMapAssets()
   }
 
   return <ProcessButton id={_id} onClick={enable} title='Спои парцела' className='mr-2' >

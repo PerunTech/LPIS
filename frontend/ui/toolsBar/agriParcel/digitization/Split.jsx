@@ -1,4 +1,4 @@
-import { React, elements } from 'perun-core';
+import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
 import { config, splitAPMsg } from '../Config';
 import { decodeResponse, getFarmMapAssets } from '../../../Util';
@@ -9,10 +9,13 @@ const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { draw: { line } } = tools;
 const { Icon } = ui;
+const { useReducer } = React;
 const { alertUser } = elements;
 const _id = 'splitAP';
 
 const _Split = ({ processID, agriParcels, farmObjId }) => {
+  const [{ loading }, setState] = useReducer((currState, update) => ({ ...currState, ...update }), { loading: false });
+
   const cleanup = (lineLayer) => {
     disable()
     Map.off('new_shape');
@@ -64,6 +67,7 @@ const _Split = ({ processID, agriParcels, farmObjId }) => {
   };
 
   const splitParcel = (lineLayer, point) => {
+    setState({ loading: true })
     const { x, y } = point
     http.call(_id, {
       url: `/lpis/split/agriParcel/{init.token}/AGRI_PARCEL/${farmObjId}/${x}/${y}`,
@@ -71,6 +75,7 @@ const _Split = ({ processID, agriParcels, farmObjId }) => {
       responseType: 'arraybuffer',
       data: JSON.stringify(factory.GeoJSON.fromLayer(lineLayer))
     }).then(response => {
+      setState({ loading: false })
       const geojson = factory.geoJSON(geobuf.decode(protobuf(response)), config.pathOptions);
       const stateData = store.getState().data.layers;
 
@@ -81,15 +86,15 @@ const _Split = ({ processID, agriParcels, farmObjId }) => {
       })
       const numOfNewParcels = geojson.getLayers().length
       const msg = numOfNewParcels === 1 ? 'Добиена е една нова парцела.' : `Добиени се ${numOfNewParcels} нови парцели.`
-      alertUser(true, 'success', 'Успешно поделена земјоделска парцела', msg, getFarmMapAssets)
+      alertUser(true, 'success', 'Успешно поделена земјоделска парцела', msg)
+      cleanup(lineLayer);
     }).catch(error => {
+      setState({ loading: false })
       const { response } = error
       const errorMsg = decodeResponse(response)
-      alertUser(true, 'error', 'Грешка при поделба земјоделска парцела', errorMsg, getFarmMapAssets);
+      alertUser(true, 'error', 'Грешка при поделба земјоделска парцела', errorMsg)
+      cleanup(lineLayer);
     })
-
-    //remove line   
-    cleanup(lineLayer);
   }
 
   const disable = () => {
@@ -119,6 +124,7 @@ const _Split = ({ processID, agriParcels, farmObjId }) => {
     <Icon name={_id} size='28px' style={{ marginTop: '2px' }} />
     <span style={{ display: 'block', marginTop: '5px' }}>Подели</span>
     {processID === _id && renderGuideForm()}
+    {loading && <Loading />}
   </ProcessButton>;
 };
 
