@@ -15,6 +15,9 @@ export { AgriParcel } from './toolsBar/agriParcel/AgriParcel';
 /* crop parcel */
 export { CropParcel } from './toolsBar/cropParcel/CropParcel';
 
+/* measurement */
+export { Measurement } from './toolsBar/measurement/Measurement'
+
 /* toolbars  */
 
 export { IO } from './toolsBar/tabs/IO';
