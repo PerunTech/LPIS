@@ -73,5 +73,7 @@ public class CC {
 	public static final String SDI_SHORTSPIKE_MAX_ANGLE = "SDI_SHORTSPIKE_MAX_ANGLE";
 	public static final Double DEFAULT_SHORTSPIKE_MAX_ANGLE = -0.1;
 	public static final Double DEFAULT_SHORTSPIKE_SEGMENT_LENGTH = 0.0;
+	public static final String SDI_AREA2PERIMETER_RATIO = "SDI_AREA2PERIMETER_RATIO";
+	public static final Double DEFAULT_AREA2PERIMETER_RATIO = 1.0;
 
 }

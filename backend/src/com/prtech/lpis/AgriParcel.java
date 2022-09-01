@@ -74,6 +74,7 @@ public class AgriParcel {
 			CC.DEFAULT_SHORTSPIKE_MAX_ANGLE);
 	private Double maxShortSegment = SvParameter.getSysParam(CC.SDI_SHORTSPIKE_SEGMENT_LENGTH,
 			CC.DEFAULT_SHORTSPIKE_SEGMENT_LENGTH);
+	private Double sliverRatio = SvParameter.getSysParam(CC.SDI_AREA2PERIMETER_RATIO, CC.DEFAULT_AREA2PERIMETER_RATIO);
 	private Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
 	private Double mergeTolerance = SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE);
 	static final Logger log4j = SvConf.getLogger(AgriParcel.class);
@@ -275,6 +276,38 @@ public class AgriParcel {
 		return gl;
 	}
 
+	Geometry calculateSliver(Geometry geom, Geometry near) {
+		Geometry bufferToNear = geom.buffer(mergeTolerance).intersection(near);
+		Geometry bufferFromNear = near.buffer(mergeTolerance).intersection(geom);
+		// intersection the buffer with the original geoms will give us minimal set of
+		// points for convex hull
+		ArrayList<Geometry> gg = new ArrayList<>();
+		gg.add(bufferToNear);
+		gg.add(bufferFromNear);
+		Geometry cvh = SvUtil.sdiFactory.createGeometryCollection(gg.toArray(new Geometry[gg.size()]));
+		ConvexHull ch = new ConvexHull(cvh);
+		Geometry gapFill = ch.getConvexHull();
+		gapFill = gapFill.difference(geom).difference(near);
+		return gapFill;
+	}
+
+	public Collection<Geometry> potentialSliver(SvGeometry svg, Geometry geom, Collection<Geometry> overlapped,
+			Collection<Geometry> nearby) throws SvException {
+
+		Collection<Geometry> slivers = new ArrayList<>();
+		for (Geometry overlap : overlapped)
+			geom = geom.difference(overlap);
+
+		for (Geometry near : nearby) {
+			Geometry sliver = calculateSliver(geom, near);
+			if (sliver.getArea() < (sliver.getLength() * sliverRatio))
+				slivers.add(sliver);
+		}
+
+		return slivers;
+
+	}
+
 	public Collection<Geometry> touchingNeighbours(SvGeometry svg, Geometry geom, Long parentId, Long typeId)
 			throws SvException {
 		// Perform check if our parcel crosses with neighbouring parcels.
@@ -376,23 +409,16 @@ public class AgriParcel {
 		Collection<Geometry> neighboursNearBy = this.overlappedNeighbours(svg, bufferedAP, parcel.getParentId(),
 				SvCore.getTypeIdByName(CC.AGRI_PARCEL));
 		// remove the previously aligned ones
-		neighboursNearBy.removeAll(alreadAligned);
+		// neighboursNearBy.removeAll(alreadAligned);
 
 		if (alignNB == 0) {
 			for (Geometry nap : neighboursNearBy) {
 				geom = alignOnNeighbour((Polygon) geom, (Polygon) nap);
 				// get the buffer zone as overlap of the intersection of the two buffered geoms
-				ArrayList<Geometry> gg = new ArrayList<>();
-				Geometry buffer1 = geom.buffer(mergeTolerance).intersection(nap);
-				Geometry buffer2 = nap.buffer(mergeTolerance).intersection(geom);
-				// intersection the buffer with the original geoms will give us minimal set of
-				// points for convex hull
-				gg.add(buffer1);
-				gg.add(buffer2);
-				Geometry cvh = SvUtil.sdiFactory.createGeometryCollection(gg.toArray(new Geometry[gg.size()]));
-				ConvexHull ch = new ConvexHull(cvh);
-				Geometry gapFill = ch.getConvexHull();
-				geom = geom.union(gapFill).difference(nap);
+
+				Geometry gapFill = calculateSliver(geom, nap);
+				gapFill = LpisUtil.ensurePolygon(gapFill);
+				geom = geom.union(gapFill);
 				geom = geom.intersection(currentBlock);
 
 				for (Geometry nap1 : alreadAligned) {

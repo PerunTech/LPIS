@@ -1149,16 +1149,9 @@ public class ApplicationServices {
 					.buffer(SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE));
 
 			Collection<Geometry> neighboursNearBy = aps.overlappedNeighbours(svg, bufferedAP, parentId, typeId);
-			neighboursNearBy.removeAll(neighbours);
-			Collection<Geometry> neighboursTouching = aps.touchingNeighbours(svg, geom, parentId, typeId);
-			neighboursNearBy.removeAll(neighboursTouching);
-			Iterator<Geometry> git = neighboursNearBy.iterator();
-			while (git.hasNext()) {
-				Geometry nearBy = git.next();
-				if (DistanceOp.distance(geom, nearBy) < 0.01)
-					git.remove();
-			}
-			json.addProperty(CC.AGRI_PARCEL_NEIGHBOUR, neighboursNearBy.size() > 0);
+
+			Collection<Geometry> slivered = aps.potentialSliver(svg, geom, neighbours, neighboursNearBy);
+			json.addProperty(CC.AGRI_PARCEL_NEIGHBOUR, slivered.size() > 0);
 		}
 		return json;
 	}
