@@ -390,16 +390,22 @@ public class ApplicationServices {
 
 			Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
 			Iterator<Geometry> gi = split.iterator();
+			Geometry newGeometry = null;
 			while (gi.hasNext()) {
-				if (!gi.next().covers(point))
-					gi.remove();
+				newGeometry = gi.next();
+				if (newGeometry.covers(point))
+					break;
+				else
+					newGeometry = null;
 			}
 			// TODO add calculus of overlaps
-
-			(new AgriParcel()).splitMergeGeometryDbUpdate(svg, split, toBeDeleted, false);
-			result.addAll(split);
-
-			svg.dbCommit();
+			if (newGeometry != null) {
+				DbDataObject dbo = (DbDataObject) newGeometry.getUserData();
+				(new AgriParcel()).saveAgriParcel(svr, dbo.getObjectId(), dbo.getParentId(), 2, 2, 2, new JsonObject(),
+						true, newGeometry);
+				result.addAll(split);
+				svg.dbCommit();
+			}
 		} catch (SvException e) {
 			errMsg = e.getJsonMessage();
 		} catch (Exception e) {
@@ -464,7 +470,7 @@ public class ApplicationServices {
 		try (SvReader svr = new SvReader(token)) {
 
 			JsonObject metadata = Util.dataToJson(formVals);
-			(new AgriParcel()).saveAgriParcel(svr, objectId, parentId, cutPB, cutAP, alignAP, metadata, true);
+			(new AgriParcel()).saveAgriParcel(svr, objectId, parentId, cutPB, cutAP, alignAP, metadata, true, null);
 
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.saveParcel");

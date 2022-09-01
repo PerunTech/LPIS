@@ -469,7 +469,8 @@ public class AgriParcel {
 	}
 
 	public void saveAgriParcel(SvCore core, Long objectId, Long parentId, int cutPB, int cutAP, int alignNB,
-			JsonObject metadata, boolean autoCommit) throws SvException, SQLException, ParseException {
+			JsonObject metadata, boolean autoCommit, Geometry geometryOverride)
+			throws SvException, SQLException, ParseException {
 		DbDataObject ap = null;
 		DbDataArray result = new DbDataArray();
 		try (SvReader svr = new SvReader(core); SvGeometry svg = new SvGeometry(svr);) {
@@ -477,12 +478,13 @@ public class AgriParcel {
 			svr.setIncludeGeometries(true);
 			ap = new DbDataObject();
 			DbDataArray parcelsToSave = new DbDataArray();
-			Geometry geom = null;
+			Geometry geom = geometryOverride;
 			Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 			DbDataArray fieldSet = SvCore.getFields(typeId);
 			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
 
-			geom = Util.jsonToGeometry(metadata.get(Sv.GEOM));
+			if (geom == null)
+				geom = Util.jsonToGeometry(metadata.get(Sv.GEOM));
 			if (geom.getGeometryType().equals("LineString"))
 				geom = generatePolygon(svg, (LineString) geom, typeId);
 
