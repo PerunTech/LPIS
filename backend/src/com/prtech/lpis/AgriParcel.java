@@ -502,12 +502,13 @@ public class AgriParcel {
 			SvGeometry.setGeometry(ap, geom);
 
 			// Map form values to dbo fields
-			for (DbDataObject field : fieldSet.getItems()) {
-				String fieldName = field.getVal(Sv.FIELD_NAME).toString();
-				if (Util.excludeField(fieldName) && !"".equalsIgnoreCase(field.getVal(Sv.FIELD_TYPE).toString())) {
-					ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
+			if (geometryOverride == null)
+				for (DbDataObject field : fieldSet.getItems()) {
+					String fieldName = field.getVal(Sv.FIELD_NAME).toString();
+					if (Util.excludeField(fieldName) && !"".equalsIgnoreCase(field.getVal(Sv.FIELD_TYPE).toString())) {
+						ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
+					}
 				}
-			}
 			if ((boolean) ap.getVal(CC.COMMON_USE) && !ap.getVal(CC.LAND_COVER_CODE).equals(CC.LAND_COVER_CODE_200))
 				throw (new SvException(CC.COMMON_USE_PARCEL_MUST_BE_200, svg.getInstanceUser()));
 
