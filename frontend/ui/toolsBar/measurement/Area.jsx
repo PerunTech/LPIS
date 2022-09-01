@@ -50,7 +50,7 @@ function _Area ({ processID, currentMeasure, ..._props }) {
       id={id}
       className={processID === id ? 'active' : ''}
       onClick={enable.bind(area)} >
-      <Icon name='measure-area' size='28px' />
+      <Icon name={id} size='28px' />
       <span style={{ display: 'block', marginTop: '5px' }}>Измери површина</span>
       {processID === id
         && <Modal show
