@@ -1,9 +1,9 @@
 import { React, PropTypes, redux, createHashHistory } from 'perun-core';
 import { ui, core } from '../../Spatial';
-import { PhysicalBlock, LandscapeFeatures, AgriParcel, CropParcel, IO } from '..';
+import { PhysicalBlock, LandscapeFeatures, AgriParcel, CropParcel, Measurement, IO } from '..';
 import { Digitization } from './agriParcel/digitization/Digitization';
 
-const { Tab, Tabs, Button, Icon, Selection, Measurement } = ui;
+const { Tab, Tabs, Button, Icon, Selection } = ui;
 const { store, logoutUser } = redux;
 const history = createHashHistory();
 
