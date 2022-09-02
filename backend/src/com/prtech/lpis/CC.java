@@ -77,5 +77,8 @@ public class CC {
 	public static final Double DEFAULT_AREA2PERIMETER_RATIO = 1.0;
 	public static final String SDI_MIN_SLIVER_AREA = "SDI_MIN_SLIVER_AREA";
 	public static final Double DEFAULT_MIN_SLIVER_AREA = 5.0;
+	public static final String SDI_POINT_DEDUPE_TYPE = "SDI_POINT_DEDUPE_TYPE";
+	public static final Integer DEFAULT_POINT_DEDUPE_TYPE = 0;
+	public static final Integer DEDUPE_SIMPLIFY = 1;
 
 }

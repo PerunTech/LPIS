@@ -78,6 +78,7 @@ public class AgriParcel {
 	private Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
 	private Double minSliverArea = SvParameter.getSysParam(CC.SDI_MIN_SLIVER_AREA, CC.DEFAULT_MIN_SLIVER_AREA);
 
+	private Integer dedupeType = SvParameter.getSysParam(CC.SDI_POINT_DEDUPE_TYPE, CC.DEFAULT_POINT_DEDUPE_TYPE);
 	private Double mergeTolerance = SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE);
 	static final Logger log4j = SvConf.getLogger(AgriParcel.class);
 
@@ -137,7 +138,7 @@ public class AgriParcel {
 				}
 			}
 		}
-		result = svg.fixPolygonSpikes(result, maxAngle);
+		// result = svg.fixPolygonSpikes(result, maxAngle);
 		result.setUserData(resultDbo);
 		return result;
 	}
@@ -236,6 +237,9 @@ public class AgriParcel {
 	public void splitMergeGeometryDbUpdate(SvGeometry svg, Set<Geometry> newGeometries,
 			List<DbDataObject> deletedGeometries, boolean autoCommit) throws SvException {
 		try (SvWriter svw = new SvWriter(svg)) {
+			svw.setAutoCommit(false);
+			svg.setAutoCommit(false);
+			svg.dbSetAutoCommit(false);
 			DbDataObject dbo = null;
 			// delete the others
 
@@ -250,7 +254,7 @@ public class AgriParcel {
 				SvGeometry.setGeometry(dbo, autoFixPoly(svg, g, 2));
 				newDba.addDataItem(dbo);
 			}
-
+			svg.setSkipSpatialValidations(true);
 			svg.saveGeometry(newDba, true, false);
 
 			if (autoCommit)
@@ -640,8 +644,12 @@ public class AgriParcel {
 				}
 			}
 			if (Util.hasDuplicates((Polygon) geom, minPointDistance)) {
-				geom = TopologyPreservingSimplifier.simplify(geom,
-						minPointDistance * (1.0 / numberOfRepeats * (double) i));
+				if (dedupeType.equals(CC.DEFAULT_POINT_DEDUPE_TYPE)) {
+					geom = Util.deduplicatePolygon((Polygon) geom, minPointDistance);
+				} else if (dedupeType.equals(CC.DEDUPE_SIMPLIFY)) {
+					geom = TopologyPreservingSimplifier.simplify(geom,
+							minPointDistance * (1.0 / numberOfRepeats * (double) i));
+				}
 			}
 			hasSpikes = true;
 		}
