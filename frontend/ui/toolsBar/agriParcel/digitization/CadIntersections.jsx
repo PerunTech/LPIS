@@ -62,10 +62,11 @@ export const _CadIntersections = ({ showCadParcels }) => {
   }, [])
 
   const label = showCadParcels ? 'Скриј пресеци' : 'Прикажи пресеци'
+  const shortLabel = showCadParcels ? 'Скриј пресеци' : 'Прик. пресеци'
   const onClick = () => showCadParcels ? removeCadIntersections(true) : getCadIntersections()
   return <ProcessButton onClick={onClick} title={label}>
     <Icon name={_iconId} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>{label}</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>{shortLabel}</span>
   </ProcessButton>
 }
 

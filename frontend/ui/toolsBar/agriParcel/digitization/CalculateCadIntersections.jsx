@@ -91,9 +91,9 @@ const _CalculateCadIntersections = ({ processID, agriParcels, farmObjId }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} >
+  return <ProcessButton id={_id} onClick={enable} title='Пресметај пресеци'>
     <Icon name={_iconId} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Пресметај пресеци</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>Пресм. пресеци</span>
     {processID === _id && renderComponent()}
     {loading && <Loading />}
   </ProcessButton>;
