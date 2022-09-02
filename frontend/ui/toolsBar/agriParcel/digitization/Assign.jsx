@@ -154,7 +154,7 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
   }
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} msg={assignAPMsg} title='Назначи стопанство' />
+    return <Guidance id={_id} disable={disable} msg={assignAPMsg} title='Додели (назначи) стопанство' />
   }
 
   const renderForm = () => {
@@ -175,9 +175,9 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} >
+  return <ProcessButton id={_id} onClick={enable} title='Додели (назначи) стопанство'>
     <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }} title='Назначи стопанство'>Назначи стопан.</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>Додели</span>
     {processID === _id && renderComponent()}
     {(loading || saveIsPending) && <Loading />}
   </ProcessButton>;
