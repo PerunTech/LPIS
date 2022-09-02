@@ -78,8 +78,8 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
               alertUser(true, 'info', title)
               disable()
             } else {
-              if (!strcmp(landUseCode, '200')) {
-                const title = 'Само парцели со код на употреба 200 може да се користат за заедничка употреба'
+              if (!strcmp(landUseCode, '200') && !strcmp(landUseCode, '310') && !strcmp(landUseCode, '320')) {
+                const title = 'Само парцели со код на употреба 200 (нива), 310 (ливада) и 320 (пасиште) може да се користат за заедничка употреба'
                 alertUser(true, 'warning', title)
                 disable()
               } else {
