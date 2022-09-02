@@ -683,6 +683,42 @@ public class ApplicationServices {
 		return result;
 	}
 
+	Collection<Geometry> getReferenceParcel(SvCore svc, Long id, String tableName, String geomColName)
+			throws SvException, SQLException, ParseException {
+		List<Geometry> result = new ArrayList<>();
+		String select = "SELECT " + SvCore.getDbHandler().getGeomReadSQL(geomColName) + " as GG, tt.* FROM " + tableName
+				+ " tt WHERE id=?";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		WKBReader wkb = new WKBReader(SvUtil.sdiFactory);
+		try {
+			Connection con = svc.dbGetConn();
+			ps = con.prepareStatement(select);
+			ps.setLong(1, id);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				DbDataObject dbo = new DbDataObject();
+				byte[] geom = SvConf.getDbHandler().getGeometry(rs, 1);
+				if (geom != null) {
+					Geometry g = wkb.read(geom);
+
+					for (int i = 2; i <= rs.getMetaData().getColumnCount(); i++) {
+						String colName = rs.getMetaData().getColumnName(i);
+						dbo.setVal(colName, rs.getObject(i));
+					}
+					g.setUserData(dbo);
+					result.add(g);
+				}
+			}
+		} finally {
+			if (ps != null)
+				ps.close();
+			if (rs != null)
+				rs.close();
+		}
+		return result;
+	}
+
 	@GET
 	@Path("/get/parcel/{token}/{sizpId}")
 	@Produces("application/pbf")
@@ -749,6 +785,42 @@ public class ApplicationServices {
 			return Response.ok(pbfStream, "application/pbf").build();
 		} else
 			return Response.status(500).entity("{error:err.no_parcel.found}").type(MediaType.APPLICATION_JSON).build();
+
+//		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
+
+	}
+
+	@GET
+		@Path("/copy/parcel/{token}/{objectName}/{id}")
+	@Produces("application/pbf")
+	public Response copyFromLayer(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("id") final Long id,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
+		final Set<Geometry> result = new HashSet<Geometry>();
+		try (SvReader svr = new SvReader(token);
+				SvWriter svw = new SvWriter(svr);
+				SvGeometry svg = new SvGeometry(svr)) {
+			svr.setIncludeGeometries(true);
+
+			Collection<Geometry> gg = getReferenceParcel(svg, id, "ext_lpis.rp", "geometry");
+			result.addAll(gg);
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+					"error.lpis.copy_reference_parcel");
+		}
+
+		if (!result.isEmpty()) {
+			StreamingOutput pbfStream = new StreamingOutput() {
+				public void write(OutputStream stream) throws IOException {
+					GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+					enc.writeSvGeometry(result);
+				};
+			};
+			return Response.ok(pbfStream, "application/pbf").build();
+		} else
+			return Response.status(500).entity("{error:err.no_reference_parcel.selected}")
+					.type(MediaType.APPLICATION_JSON).build();
 
 //		return mergeGeometryImpl(token, objectName, false, lineStringWKT, formVals);
 
