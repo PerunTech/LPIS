@@ -74,7 +74,10 @@ public class AgriParcel {
 			CC.DEFAULT_SHORTSPIKE_MAX_ANGLE);
 	private Double maxShortSegment = SvParameter.getSysParam(CC.SDI_SHORTSPIKE_SEGMENT_LENGTH,
 			CC.DEFAULT_SHORTSPIKE_SEGMENT_LENGTH);
-	private Double sliverRatio = SvParameter.getSysParam(CC.SDI_AREA2PERIMETER_RATIO, CC.DEFAULT_AREA2PERIMETER_RATIO);
+	private Double maxSliverRatio = SvParameter.getSysParam(CC.SDI_AREA2PERIMETER_RATIO,
+			CC.DEFAULT_AREA2PERIMETER_RATIO);
+	private Double minSliverRatio = SvParameter.getSysParam(CC.SDI_AREA2PERIMETER_MINRATIO,
+			CC.DEFAULT_AREA2PERIMETER_MINRATIO);
 	private Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
 	private Double minSliverArea = SvParameter.getSysParam(CC.SDI_MIN_SLIVER_AREA, CC.DEFAULT_MIN_SLIVER_AREA);
 
@@ -285,9 +288,9 @@ public class AgriParcel {
 		return gl;
 	}
 
-	Geometry calculateSliver(Geometry geom, Geometry near) {
-		Geometry bufferToNear = geom.buffer(mergeTolerance).intersection(near);
-		Geometry bufferFromNear = near.buffer(mergeTolerance).intersection(geom);
+	Geometry calculateSliver(Polygon geom, Polygon near) {
+		Geometry bufferToNear = near.getExteriorRing().intersection(geom.buffer(mergeTolerance));
+		Geometry bufferFromNear = geom.getExteriorRing().intersection(near.buffer(mergeTolerance));
 		// intersection the buffer with the original geoms will give us minimal set of
 		// points for convex hull
 		ArrayList<Geometry> gg = new ArrayList<>();
@@ -308,9 +311,13 @@ public class AgriParcel {
 			geom = geom.difference(overlap);
 
 		for (Geometry near : nearby) {
-			Geometry sliver = calculateSliver(geom, near);
-			if (sliver.getArea() > minSliverArea && sliver.getArea() < (sliver.getLength() * sliverRatio))
-				slivers.add(sliver);
+			Geometry sliver = calculateSliver((Polygon) geom, (Polygon) near);
+			for (int i = 0; i < sliver.getNumGeometries(); i++) {
+				Geometry gs = sliver.getGeometryN(i);
+				if ((gs.getArea() > minSliverArea || gs.getArea() > (gs.getLength() * minSliverRatio))
+						&& gs.getArea() < (gs.getLength() * maxSliverRatio))
+					slivers.add(gs);
+			}
 		}
 
 		return slivers;
@@ -425,7 +432,7 @@ public class AgriParcel {
 				geom = alignOnNeighbour((Polygon) geom, (Polygon) nap);
 				// get the buffer zone as overlap of the intersection of the two buffered geoms
 
-				Geometry gapFill = calculateSliver(geom, nap);
+				Geometry gapFill = calculateSliver((Polygon) geom, (Polygon) nap);
 				gapFill = LpisUtil.ensurePolygon(gapFill);
 				geom = geom.union(gapFill);
 				geom = geom.intersection(currentBlock);
