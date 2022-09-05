@@ -20,9 +20,9 @@ const _iconId = 'copy-secondary';
 const _layerGroup = factory.layerGroup();
 
 const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
-  const [{ layer, data, loading, isGuided, showForm, showGuidanceButton }, setState] = useReducer((currState, update) =>
+  const [{ layer, data, parcelObjId, loading, isGuided, showForm, showGuidanceButton }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { layer: {}, data: {}, loading: false, isGuided: false, showForm: false, showGuidanceButton: false });
+    { layer: {}, data: {}, parcelObjId: 0, loading: false, isGuided: false, showForm: false, showGuidanceButton: false });
 
   const _editAP = () => {
     const currZoom = Map.getZoom();
@@ -47,8 +47,9 @@ const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
   }
 
   const getReferentParcel = layer => {
+    const selectedLayerMetadata = layer.feature.properties
     // Get the referent parcel layer for the selected agri parcel
-    setState({ loading: true })
+    setState({ loading: true, parcelObjId: layer.feature.id })
     const parcelOldId = layer.feature.properties.OLD_ID
     const url = `/lpis/copy/parcel/{init.token}/RP/${parcelOldId}`
     http.call('get-referent-parcel', { url, responseType: 'arraybuffer' }).then(response => {
@@ -58,13 +59,16 @@ const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
       const layers = geojson.getLayers();
 
       layers.forEach(layer => {
+        const landUseCode = layer.feature.properties?.LAND_USE_1
+        if (landUseCode) {
+          selectedLayerMetadata.LAND_COVER_CODE = landUseCode
+        }
         // assign metadata
-        layer.feature.id = 0
         layer.feature.properties.parent_id = farmObjId
         layer.addTo(Map);
         _editAP()
         initEdit(layer)
-        setState({ data: layer.feature.properties, layer })
+        setState({ layer, data: selectedLayerMetadata })
       })
     }).catch(err => {
       console.error(err)
@@ -99,7 +103,7 @@ const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
     Map.off('click');
     _stopEditAP()
     // Reset state, internal and application-wide.
-    setState({ loading: false, isGuided: false, showForm: false, showGuidanceButton: false, layer: {}, data: {} });
+    setState({ loading: false, isGuided: false, showForm: false, showGuidanceButton: false, layer: {}, data: {}, parcelObjId: 0 });
     store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
     getFarmMapAssets()
   };
@@ -125,14 +129,13 @@ const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
   }
 
   const onSubmit = formData => {
+    _stopEditAP()
     saveAP(JSON.stringify({
       ...data,
       ...formData,
       GEOM: factory.GeoJSON.fromLayer(layer),
-      X: X,
-      Y: Y,
       parent_id: farmObjId,
-      OBJECT_ID: 0
+      OBJECT_ID: parcelObjId
     }), disable);
   }
 
