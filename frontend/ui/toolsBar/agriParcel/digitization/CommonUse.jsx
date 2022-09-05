@@ -6,7 +6,7 @@ import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { getFarmMapAssets, strcmp } from '../../../Util';
 
-const { Map, store, http } = core;
+const { Map, connect, store, http } = core;
 const { geobuf, protobuf } = data;
 const { Icon, DrawActions } = ui;
 const { alertUser } = elements;
@@ -88,8 +88,8 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
                 alertUser(true, 'info', title, '', confirm, disable, true, 'Да', 'Не')
               }
             }
-          } else if (!strcmp(landUseCode, '200')) {
-            const title = 'Само парцели со код на употреба 200 може да се користат за заедничка употреба'
+          } else if (!strcmp(landUseCode, '200') && !strcmp(landUseCode, '310') && !strcmp(landUseCode, '320')) {
+            const title = 'Само парцели со код на употреба 200 (нива), 310 (ливада) и 320 (пасиште) може да се користат за заедничка употреба'
             alertUser(true, 'warning', title)
             disable()
           } else if (hasCommonUse) {
@@ -223,16 +223,16 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable}>
+    <ProcessButton id={_id} onClick={enable} title='Заедничка употреба'>
       <Icon name={_iconId} size='30px' />
-      <span style={{ display: "block", marginTop: '5px' }} title='Заедничка употреба'>Заеднич. употреба</span>
+      <span style={{ display: "block", marginTop: '5px' }}>Заеднич. употр.</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>
   );
 };
 
-export const CommonUse = core.connect((state) => ({
+export const CommonUse = connect((state) => ({
   processID: state.app.processID,
   farmObjId: state.farmRegistry?.farmObjId,
   agriParcels: state.farmRegistry?.agriParcels,
