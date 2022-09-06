@@ -1,11 +1,13 @@
 import { React, PropTypes } from 'perun-core';
-import { core } from '../../Spatial';
+import { core, ui } from '../../Spatial';
 import { DataList, DataListUtils } from '..';
 import { FarmDataGridInfoHeader } from './FarmDataGridInfoHeader';
 import { FarmDataGridHeader } from './FarmDataGridHeader';
 import { CadastreSearch } from './CadastreSearch';
 import { LpisSearch } from './LpisSearch';
 import { ParcelInfo } from './ParcelInfo';
+
+const { Button, Icon } = ui;
 
 /* Root nodes in the data panel tree. */
 const dataCategories = (function () {
@@ -32,10 +34,14 @@ const dataCategories = (function () {
  */
 const _DataPanel = ({ categories, actionType, showParcelInfoContainer }) => {
     const [data, setData] = React.useState(categories);
+    const [isOpen, setOpen] = React.useState(true);
 
-    return <div id='data-panel' style={{ width: '555px' }}>
-        <DataListUtils setData={setData} />
-        {actionType === 'sizp' && (
+    return <div id='data-panel' className={isOpen ? '' : 'collapsed'}>
+        {/* <DataListUtils setData={setData} /> */}
+        <Button id='data-panel-toggle' onClick={() => setOpen(!isOpen)}>
+            <Icon name={isOpen ? 'chevron-left' : 'chevron-right'} size='16px'></Icon>
+        </Button>
+        {actionType === 'sizp' && isOpen && (
             <React.Fragment>
                 <div className='d-flex flex-row justify-content-center align-items-center' style={{ gap: '1vh' }}>
                     <ParcelInfo />
@@ -44,13 +50,13 @@ const _DataPanel = ({ categories, actionType, showParcelInfoContainer }) => {
                 </div>
             </React.Fragment>
         )}
-        {(actionType === 'sizp' || actionType === 'pplan') &&
+        {(actionType === 'sizp' || actionType === 'pplan') && isOpen &&
             <React.Fragment>
                 <FarmDataGridInfoHeader />
                 {!showParcelInfoContainer && <FarmDataGridHeader gridType='agri_parcel' />}
             </React.Fragment>
         }
-        <DataList data={data} setData={setData} />
+        {isOpen && <DataList data={data} setData={setData} />}
     </div>;
 }
 
