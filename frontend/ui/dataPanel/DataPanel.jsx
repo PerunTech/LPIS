@@ -1,6 +1,6 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
-import { DataList, DataListUtils } from '..';
+import { DataList } from '..';
 import { FarmDataGridInfoHeader } from './FarmDataGridInfoHeader';
 import { FarmDataGridHeader } from './FarmDataGridHeader';
 import { CadastreSearch } from './CadastreSearch';
@@ -38,7 +38,6 @@ const _DataPanel = ({ categories, actionType, showParcelInfoContainer }) => {
 
     return (
         <div id='data-panel' style={{ width: isOpen ? '555px' : '' }}>
-            {/* <DataListUtils setData={setData} /> */}
             <Button id='data-panel-toggle' onClick={() => setOpen(!isOpen)}>
                 <Icon name={isOpen ? 'chevron-left' : 'chevron-right'} size='16px'></Icon>
             </Button>
