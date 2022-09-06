@@ -42,11 +42,3 @@
   margin-top: 10px;
   margin-bottom: 10px;
 }
-
-#data :not(.collapsed) {
-  width: 555px;
-}
-
-#data-panel .collapsed {
-  width: 35px;
-}
