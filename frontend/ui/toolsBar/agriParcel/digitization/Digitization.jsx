@@ -4,6 +4,7 @@ import { ui } from '../../../../Spatial';
 import { CommonUse } from './CommonUse';
 import { Assign } from './Assign';
 import { Copy } from './Copy';
+import { CopyRefParcel } from './CopyRefParcel';
 import { Cut } from './Cut';
 import { Delete } from './Delete';
 import { DeleteParcelFromFarm } from './DeleteParcelFromFarm';
@@ -28,6 +29,7 @@ export const Digitization = () => {
         <Info />
         <Divider />
         <Copy />
+        <CopyRefParcel />
         <Draw />
         <DrawWithLine />
         <Delete />

@@ -1,11 +1,13 @@
 import { React, PropTypes } from 'perun-core';
-import { core } from '../../Spatial';
-import { DataList, DataListUtils } from '..';
+import { core, ui } from '../../Spatial';
+import { DataList } from '..';
 import { FarmDataGridInfoHeader } from './FarmDataGridInfoHeader';
 import { FarmDataGridHeader } from './FarmDataGridHeader';
 import { CadastreSearch } from './CadastreSearch';
 import { LpisSearch } from './LpisSearch';
 import { ParcelInfo } from './ParcelInfo';
+
+const { Button, Icon } = ui;
 
 /* Root nodes in the data panel tree. */
 const dataCategories = (function () {
@@ -32,26 +34,31 @@ const dataCategories = (function () {
  */
 const _DataPanel = ({ categories, actionType, showParcelInfoContainer }) => {
     const [data, setData] = React.useState(categories);
+    const [isOpen, setOpen] = React.useState(true);
 
-    return <div id='data-panel' style={{ width: '555px' }}>
-        <DataListUtils setData={setData} />
-        {actionType === 'sizp' && (
-            <React.Fragment>
-                <div className='d-flex flex-row justify-content-center align-items-center' style={{ gap: '1vh' }}>
-                    <ParcelInfo />
-                    <CadastreSearch />
-                    <LpisSearch />
-                </div>
-            </React.Fragment>
-        )}
-        {(actionType === 'sizp' || actionType === 'pplan') &&
-            <React.Fragment>
-                <FarmDataGridInfoHeader />
-                {!showParcelInfoContainer && <FarmDataGridHeader gridType='agri_parcel' />}
-            </React.Fragment>
-        }
-        <DataList data={data} setData={setData} />
-    </div>;
+    return (
+        <div id='data-panel' style={{ width: isOpen ? '555px' : '' }}>
+            <Button id='data-panel-toggle' onClick={() => setOpen(!isOpen)}>
+                <Icon name={isOpen ? 'chevron-left' : 'chevron-right'} size='16px'></Icon>
+            </Button>
+            {actionType === 'sizp' && isOpen && (
+                <React.Fragment>
+                    <div className='d-flex flex-row justify-content-center align-items-center' style={{ gap: '1vh' }}>
+                        <ParcelInfo />
+                        <CadastreSearch />
+                        <LpisSearch />
+                    </div>
+                </React.Fragment>
+            )}
+            {(actionType === 'sizp' || actionType === 'pplan') && isOpen &&
+                <React.Fragment>
+                    <FarmDataGridInfoHeader />
+                    {!showParcelInfoContainer && <FarmDataGridHeader gridType='agri_parcel' />}
+                </React.Fragment>
+            }
+            {isOpen && <DataList data={data} setData={setData} />}
+        </div>
+    );
 }
 
 _DataPanel.defaultProps = {
