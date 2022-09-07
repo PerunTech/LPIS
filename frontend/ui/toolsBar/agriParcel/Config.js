@@ -54,7 +54,7 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
                     }
                 } : {
                     physical_block_check: {
-                        title: 'Земјоделската парцела е комплетно опфатена од еден и единствен физички блок',
+                        title: 'Земјоделската парцела е комплетно опфатена од еден физички блок',
                         type: 'string'
                     }
                 },
@@ -79,9 +79,9 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
                     agri_parcel_neighbour: {
                         title: 'Соседна земјоделска парцела',
                         type: 'string',
-                        enum: ['0', '1', '2'],
-                        enumNames: ['Прилепи до соседна парцела', 'Остави простор помеѓу парцелите', 'Задржи ја постоечката определба'],
-                        default: '2'
+                        enum: ['0', '1'],
+                        enumNames: ['Прилепи до соседна парцела', 'Остави простор помеѓу парцелите'],
+                        default: '0'
                     }
                 } : {
                     agri_parcel_neighbour: {
