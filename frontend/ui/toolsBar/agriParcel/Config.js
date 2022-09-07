@@ -77,7 +77,7 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
                 },
                 ...neighbourCheck ? {
                     agri_parcel_neighbour: {
-                        title: 'Соседна земјоделска парцела',
+                        title: 'Соседните парцели не се прилепени или оддалечени повеќе од 1 метар',
                         type: 'string',
                         enum: ['0', '1'],
                         enumNames: ['Прилепи до соседна парцела', 'Остави простор помеѓу парцелите'],
@@ -85,7 +85,7 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
                     }
                 } : {
                     agri_parcel_neighbour: {
-                        title: 'Соседна земјоделска парцела',
+                        title: 'Соседните парцели се прилепени или оддалечени повеќе од 1 метар',
                         type: 'string',
                     }
                 }
