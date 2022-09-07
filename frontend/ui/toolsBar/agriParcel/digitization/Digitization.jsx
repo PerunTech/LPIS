@@ -34,10 +34,10 @@ export const Digitization = () => {
         <DrawWithLine />
         <Delete />
         <Edit />
-        <Cut />
-        <Split />
         <Merge />
+        <Split />
         <Fill />
+        <Cut />
         <Divider />
         <Refresh />
         <Divider />

@@ -17,14 +17,14 @@ const history = createHashHistory();
 const _id = 'assignAP';
 
 const _Assign = ({ processID, farmObjId, saveIsPending }) => {
-  const [{ layer, data, X, Y, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
+  const [{ layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
+    { layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
 
   const disable = reloadData => {
     Map.off('click');
     // Reset state, internal and application-wide.
-    setState({ layer: {}, data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
+    setState({ layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
     store.dispatch({ processID: '' });
     // We remove the working geometry, save process will add the result.
     layer.removeFrom && layer.removeFrom(Map);
@@ -40,7 +40,7 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
     // Click handler for selection of location and creation of crop parcel geometry.
     Map.on('click', e => {
       const p = Map.transform(e.latlng);
-      setState({ X: p.x, Y: p.y, loading: true });
+      setState({ loading: true });
 
       http.call('assign-agri', {
         url: `/lpis/add/farm/{init.token}/${farmObjId}/AGRI_PARCEL/${p.x}/${p.y}`,
