@@ -324,6 +324,46 @@ public class AgriParcel {
 
 	}
 
+	public Collection<Geometry> splitParcel(SvGeometry svg, Geometry geom, Long parentId, String objectName, Double x,
+			Double y) throws SvException, SQLException, ParseException {
+		ArrayList<Geometry> result = new ArrayList<>();
+		svg.setAutoCommit(false);
+		Long layerTypeId = SvCore.getTypeIdByName(objectName);
+		List<DbDataObject> splitObject = new ArrayList<DbDataObject>();
+		Set<Geometry> split = svg.splitGeometries((LineString) geom, layerTypeId, splitObject, false, SC.PARENT_ID,
+				parentId, false);
+
+		Point point = SvUtil.sdiFactory.createPoint(new Coordinate(x, y));
+		ArrayList<Geometry> others = new ArrayList<>();
+		Iterator<Geometry> gi = split.iterator();
+		Geometry newGeometry = null;
+		while (gi.hasNext()) {
+			Geometry tmpGeometry = gi.next();
+			if (tmpGeometry.covers(point))
+				newGeometry = tmpGeometry;
+			else
+				others.add(tmpGeometry);
+		}
+		// TODO add calculus of overlaps
+		if (newGeometry != null && splitObject.size() == 1) {
+			DbDataObject dbo = splitObject.get(0);
+			this.saveAgriParcel(svg, dbo.getObjectId(), dbo.getParentId(), 2, 2, 2, new JsonObject(),
+					true, newGeometry);
+			result.add(newGeometry);
+			DbDataArray dba = new DbDataArray();
+			for (Geometry other : others) {
+				DbDataObject dboNew = new DbDataObject(dbo.getObjectType());
+				dboNew.setValuesMap(dbo.getValuesMap());
+				dboNew.setVal(CC.OLD_ID, null);
+				SvGeometry.setGeometry(dboNew, other);
+				dba.addDataItem(dboNew);
+			}
+			svg.saveGeometry(dba);
+			svg.dbCommit();
+		}
+		return result;
+	}
+
 	public Collection<Geometry> touchingNeighbours(SvGeometry svg, Geometry geom, Long parentId, Long typeId)
 			throws SvException {
 		// Perform check if our parcel crosses with neighbouring parcels.
@@ -586,6 +626,7 @@ public class AgriParcel {
 				Geometry ol = itg.next();
 				if (!ap.getObjectId().equals(((DbDataObject) ol.getUserData()).getObjectId())) {
 					geom = geom.difference(ol);
+					geom = LpisUtil.ensurePolygon(geom);
 					geom = alignOnNeighbour((Polygon) geom, (Polygon) ol);
 				}
 			}
