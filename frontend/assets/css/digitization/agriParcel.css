@@ -175,6 +175,26 @@
   font-size: larger !important;
 }
 
+.ap-checks-modal .success-pre-save-check input {
+  display: none;
+}
+
+.ap-checks-modal .success-pre-save-check label {
+  background-color: #4bb543;
+  color: #ffffff;
+  max-width: fit-content;
+  border-radius: 6px;
+  font-size: 16px !important;
+}
+
+.ap-checks-modal .success-pre-save-check label::before {
+  content: '\00a0';
+}
+
+.ap-checks-modal .success-pre-save-check label::after {
+  content: '\00a0\00a0\2713';
+}
+
 .secondary-marker-icon {
   z-index: 5 !important;
 }

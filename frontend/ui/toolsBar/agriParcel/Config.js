@@ -41,7 +41,7 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
         schema: {
             type: 'object',
             properties: {
-                ...pbCheck && {
+                ...pbCheck ? {
                     physical_block_check: {
                         title: 'Земјоделската парцела не е комплетно опфатена од еден и единствен физички блок',
                         type: 'string',
@@ -52,8 +52,13 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
                         ],
                         default: '0'
                     }
+                } : {
+                    physical_block_check: {
+                        title: 'Земјоделската парцела е комплетно опфатена од еден и единствен физички блок',
+                        type: 'string'
+                    }
                 },
-                ...apCheck && {
+                ...apCheck ? {
                     agri_parcel_check: {
                         title: 'Земјоделската парцела се пресекува со соседните земјоделски парцели',
                         type: 'string',
@@ -64,8 +69,13 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
                         ],
                         default: '0'
                     }
+                } : {
+                    agri_parcel_check: {
+                        title: 'Земјоделската парцела не се пресекува со соседните земјоделски парцели',
+                        type: 'string',
+                    }
                 },
-                ...neighbourCheck && {
+                ...neighbourCheck ? {
                     agri_parcel_neighbour: {
                         title: 'Соседна земјоделска парцела',
                         type: 'string',
@@ -73,18 +83,42 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
                         enumNames: ['Прилепи до соседна парцела', 'Остави простор помеѓу парцелите', 'Задржи ја постоечката определба'],
                         default: '2'
                     }
+                } : {
+                    agri_parcel_neighbour: {
+                        title: 'Соседна земјоделска парцела',
+                        type: 'string',
+                    }
                 }
             }
         },
         uiSchema: {
-            physical_block_check: {
-                'ui:widget': 'radio'
+            ...pbCheck ? {
+                physical_block_check: {
+                    'ui:widget': 'radio'
+                }
+            } : {
+                physical_block_check: {
+                    'classNames': 'success-pre-save-check'
+                }
             },
-            agri_parcel_check: {
-                'ui:widget': 'radio'
+            ...apCheck ? {
+                agri_parcel_check: {
+                    'ui:widget': 'radio'
+                }
+            } : {
+                agri_parcel_check: {
+                    'classNames': 'success-pre-save-check'
+
+                }
             },
-            agri_parcel_neighbour: {
-                'ui:widget': 'radio'
+            ...neighbourCheck ? {
+                agri_parcel_neighbour: {
+                    'ui:widget': 'radio'
+                }
+            } : {
+                agri_parcel_neighbour: {
+                    'classNames': 'success-pre-save-check'
+                }
             }
         }
     }
