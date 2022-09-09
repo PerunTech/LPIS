@@ -308,6 +308,7 @@ public class AgriParcel {
 		for (Geometry overlap : overlapped)
 			try {
 				geom = geom.difference(overlap);
+				geom = LpisUtil.ensurePolygon(geom);
 			} catch (TopologyException e) {
 				SvException sv = new SvException(CC.TOPO_ERR, svg.getInstanceUser(),
 						(DbDataObject) overlap.getUserData(), geom);

@@ -48,6 +48,8 @@ public class LpisUtil {
 
 			}
 		}
+		if (geom.getUserData() != null)
+			bestCandidate.setUserData(geom.getUserData());
 		return bestCandidate;
 
 	}
