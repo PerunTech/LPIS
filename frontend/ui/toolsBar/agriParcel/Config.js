@@ -42,14 +42,13 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck, intersectedNe
         const neighbourIds = intersectedNeighbours
         const splitIds = neighbourIds.split(',')
         if (splitIds && Array.isArray(splitIds) && splitAPMsg.length > 0) {
-            splitIds.forEach(id => {
+            splitIds.forEach((id, i) => {
                 if (id) {
                     const splitId = id?.split(':')
                     if (splitId && Array.isArray(splitId) && splitId.length > 0) {
                         const parcelId = splitId[0]
-                        const parcelArea = Number(splitId[1]).toFixed(2)
-                        const unit = 'm²'
-                        apCheckDescriptionLabel += `${parcelId} (${parcelArea} ${unit})`
+                        const comma = i !== splitIds.length - 1 ? '' : ','
+                        apCheckDescriptionLabel += `${parcelId}${comma}`
                     }
                 }
             })
@@ -80,7 +79,6 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck, intersectedNe
                 ...apCheck ? {
                     agri_parcel_check: {
                         title: 'Земјоделската парцела се пресекува со соседните земјоделски парцели',
-                        description: apCheckDescriptionLabel,
                         type: 'string',
                         enum: ['0', '1'],
                         enumNames: [
@@ -98,6 +96,7 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck, intersectedNe
                 ...neighbourCheck ? {
                     agri_parcel_neighbour: {
                         title: 'Соседните парцели не се прилепени или оддалечени повеќе од 1 метар',
+                        description: `Соседни парцели кои не се прецизно прилепени: ${apCheckDescriptionLabel}`,
                         type: 'string',
                         enum: ['0', '1'],
                         enumNames: ['Прилепи до соседна парцела', 'Остави простор помеѓу парцелите'],
