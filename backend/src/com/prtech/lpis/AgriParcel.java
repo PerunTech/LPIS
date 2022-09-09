@@ -453,7 +453,7 @@ public class AgriParcel {
 		} else if (cutPB >= 1) {
 			Boolean isInsiderPB = false;
 			for (Geometry pb : gg) {
-				if (com.prtech.lpis.LpisUtil.coversWithTolerance(pb, geom, 0.01)) {
+				if (com.prtech.lpis.LpisUtil.coversWithSliverTolerance(pb, geom, minSliverArea, minSliverRatio)) {
 					isInsiderPB = true;
 					selectedPb = pb;
 					break;
@@ -485,7 +485,7 @@ public class AgriParcel {
 				geom = geom.union(gapFill);
 				geom = geom.intersection(currentBlock);
 				geom = LpisUtil.ensurePolygon(geom);
-				
+
 				for (Geometry nap1 : alreadAligned) {
 					if (nap1.overlaps(geom)) {
 						geom = geom.difference(nap1);
