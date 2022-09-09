@@ -36,7 +36,26 @@ export const restAP = {
     }
 };
 
-export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
+export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck, intersectedNeighbours) => {
+    let apCheckDescriptionLabel = ''
+    if (intersectedNeighbours) {
+        const neighbourIds = intersectedNeighbours
+        const splitIds = neighbourIds.split(',')
+        if (splitIds && Array.isArray(splitIds) && splitAPMsg.length > 0) {
+            splitIds.forEach(id => {
+                if (id) {
+                    const splitId = id?.split(':')
+                    if (splitId && Array.isArray(splitId) && splitId.length > 0) {
+                        const parcelId = splitId[0]
+                        const parcelArea = Number(splitId[1]).toFixed(2)
+                        const unit = 'm²'
+                        apCheckDescriptionLabel += `${parcelId} (${parcelArea} ${unit})`
+                    }
+                }
+            })
+        }
+    }
+
     return {
         schema: {
             type: 'object',
@@ -61,6 +80,7 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
                 ...apCheck ? {
                     agri_parcel_check: {
                         title: 'Земјоделската парцела се пресекува со соседните земјоделски парцели',
+                        description: apCheckDescriptionLabel,
                         type: 'string',
                         enum: ['0', '1'],
                         enumNames: [
@@ -108,7 +128,6 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck) => {
             } : {
                 agri_parcel_check: {
                     'classNames': 'success-pre-save-check'
-
                 }
             },
             ...neighbourCheck ? {

@@ -210,7 +210,8 @@ export const saveAP = (layer, callback, skipChecks) => {
         const pbCheck = data.physical_block_check
         const apCheck = data.agri_parcel_check
         const neighbourCheck = data.agri_parcel_neighbour
-        const { schema, uiSchema } = saveAPFormSchema(pbCheck, apCheck, neighbourCheck)
+        const intersectedNeighbours = data.AGRI_PARCEL_NEIGHBOUR_ID
+        const { schema, uiSchema } = saveAPFormSchema(pbCheck, apCheck, neighbourCheck, intersectedNeighbours)
 
         const onSubmit = ({ formData }) => {
             _saveAgriParcel(formData)
