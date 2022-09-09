@@ -59,8 +59,8 @@ export function getParcelInfo (p, callback, setState) {
     }
     if (setState) {
       setState({ loading: false, isGuided: false, parcelsHaveBeenLoaded: false })
+      store.dispatch({ processID: '', parcelsHaveBeenLoaded: false })
     }
-    store.dispatch({ processID: '', parcelsHaveBeenLoaded: false })
   })
 }
 
