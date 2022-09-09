@@ -82,5 +82,6 @@ public class CC {
 	public static final Integer DEDUPE_SIMPLIFY = 1;
 	public static final String SDI_AREA2PERIMETER_MINRATIO = "SDI_AREA2PERIMETER_MINRATIO";
 	public static final Double DEFAULT_AREA2PERIMETER_MINRATIO = 0.1;
+	public static final String AGRI_PARCEL_NEIGHBOUR_ID = "AGRI_PARCEL_NEIGHBOUR_ID";
 
 }

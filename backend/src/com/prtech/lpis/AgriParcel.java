@@ -311,9 +311,11 @@ public class AgriParcel {
 			Geometry sliver = calculateSliver((Polygon) geom, (Polygon) near);
 			for (int i = 0; i < sliver.getNumGeometries(); i++) {
 				Geometry gs = sliver.getGeometryN(i);
-				if ((gs.getArea() > minSliverArea || gs.getArea() > (gs.getLength() * minSliverRatio))
-						&& gs.getArea() < (gs.getLength() * maxSliverRatio))
+				if ((gs.getArea() > minSliverArea && gs.getArea() > (gs.getLength() * minSliverRatio))
+						&& gs.getArea() < (gs.getLength() * maxSliverRatio)) {
+					gs.setUserData(near.getUserData());
 					slivers.add(gs);
+				}
 			}
 		}
 
