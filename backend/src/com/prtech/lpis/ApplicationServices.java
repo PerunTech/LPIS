@@ -1202,18 +1202,26 @@ public class ApplicationServices {
 			Geometry bufferedAP = geom
 					.buffer(SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE));
 
-			Collection<Geometry> neighboursNearBy = aps.overlappedNeighbours(svg, bufferedAP, parentId, typeId);
+			try {
+				Collection<Geometry> neighboursNearBy = aps.overlappedNeighbours(svg, bufferedAP, parentId, typeId);
 
-			Collection<Geometry> slivered = aps.potentialSliver(svg, geom, neighbours, neighboursNearBy);
-			json.addProperty(CC.AGRI_PARCEL_NEIGHBOUR, slivered.size() > 0);
-			StringBuilder sb = new StringBuilder();
-			for (Geometry g : slivered) {
-				DbDataObject dbo = (DbDataObject) g.getUserData();
-				sb.append(dbo.getVal("OLD_ID") + ":" + Double.toString(g.getArea()) + ", ");
+				Collection<Geometry> slivered = aps.potentialSliver(svg, geom, neighbours, neighboursNearBy);
+				json.addProperty(CC.AGRI_PARCEL_NEIGHBOUR, slivered.size() > 0);
+				StringBuilder sb = new StringBuilder();
+				for (Geometry g : slivered) {
+					DbDataObject dbo = (DbDataObject) g.getUserData();
+					sb.append(dbo.getVal("OLD_ID") + ":" + Double.toString(g.getArea()) + ", ");
+				}
+				if (sb.length() > 0)
+					sb.setLength(sb.length() - 1);
+				json.addProperty(CC.AGRI_PARCEL_NEIGHBOUR_ID, sb.toString());
+			} catch (SvException e) {
+				json.addProperty(CC.AGRI_PARCEL_NEIGHBOUR, false);
+				if (e.getLabelCode().equals(CC.TOPO_ERR)) {
+					JsonObject o = e.getUserData().toSimpleJson();
+					json.addProperty(CC.AGRI_PARCEL_NEIGHBOUR_ID, o.get("OLD_ID").getAsString());
+				}
 			}
-			if (sb.length() > 0)
-				sb.setLength(sb.length() - 1);
-			json.addProperty(CC.AGRI_PARCEL_NEIGHBOUR_ID, sb.toString());
 
 		}
 		return json;

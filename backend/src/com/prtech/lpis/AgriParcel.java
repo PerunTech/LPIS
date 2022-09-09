@@ -62,6 +62,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.geom.util.GeometryExtracter;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
@@ -305,7 +306,13 @@ public class AgriParcel {
 
 		Collection<Geometry> slivers = new ArrayList<>();
 		for (Geometry overlap : overlapped)
-			geom = geom.difference(overlap);
+			try {
+				geom = geom.difference(overlap);
+			} catch (TopologyException e) {
+				SvException sv = new SvException(CC.TOPO_ERR, svg.getInstanceUser(),
+						(DbDataObject) overlap.getUserData(), geom);
+				throw (sv);
+			}
 
 		for (Geometry near : nearby) {
 			Geometry sliver = calculateSliver((Polygon) geom, (Polygon) near);
@@ -318,7 +325,6 @@ public class AgriParcel {
 				}
 			}
 		}
-
 		return slivers;
 
 	}
