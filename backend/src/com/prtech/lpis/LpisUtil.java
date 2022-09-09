@@ -56,7 +56,7 @@ public class LpisUtil {
 		return ensurePolygon(geom, null);
 
 	}
-	
+
 	public static boolean coversWithTolerance(Geometry g1, Geometry g2, double tolerance) {
 		if (g2.getGeometryType().equals(g1.getGeometryType())) {
 			Geometry intersection = g2.intersection(g1);
@@ -67,6 +67,17 @@ public class LpisUtil {
 			}
 		}
 		return false;
+	}
+
+	public static boolean coversWithSliverTolerance(Geometry g1, Geometry g2, double minSliverArea,
+			double minSliverRatio) {
+		if (g2.getGeometryType().equals(g1.getGeometryType())) {
+			Geometry outside = g2.difference(g1);
+			if ((outside.getArea() > minSliverArea || outside.getArea() > (outside.getLength() * minSliverRatio)))
+				return false;
+		} else
+			return false;
+		return true;
 	}
 
 	public static boolean overlapsWithTolerance(Geometry g1, Geometry g2, double tolerance) {

@@ -69,20 +69,17 @@ import com.vividsolutions.jts.operation.polygonize.Polygonizer;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 public class AgriParcel {
-	private Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
-	private Double maxShortAngle = SvParameter.getSysParam(CC.SDI_SHORTSPIKE_MAX_ANGLE,
-			CC.DEFAULT_SHORTSPIKE_MAX_ANGLE);
-	private Double maxShortSegment = SvParameter.getSysParam(CC.SDI_SHORTSPIKE_SEGMENT_LENGTH,
+	Double maxAngle = SvParameter.getSysParam(Sv.SDI_SPIKE_MAX_ANGLE, Sv.DEFAULT_SPIKE_MAX_ANGLE);
+	Double maxShortAngle = SvParameter.getSysParam(CC.SDI_SHORTSPIKE_MAX_ANGLE, CC.DEFAULT_SHORTSPIKE_MAX_ANGLE);
+	Double maxShortSegment = SvParameter.getSysParam(CC.SDI_SHORTSPIKE_SEGMENT_LENGTH,
 			CC.DEFAULT_SHORTSPIKE_SEGMENT_LENGTH);
-	private Double maxSliverRatio = SvParameter.getSysParam(CC.SDI_AREA2PERIMETER_RATIO,
-			CC.DEFAULT_AREA2PERIMETER_RATIO);
-	private Double minSliverRatio = SvParameter.getSysParam(CC.SDI_AREA2PERIMETER_MINRATIO,
-			CC.DEFAULT_AREA2PERIMETER_MINRATIO);
-	private Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
-	private Double minSliverArea = SvParameter.getSysParam(CC.SDI_MIN_SLIVER_AREA, CC.DEFAULT_MIN_SLIVER_AREA);
+	Double maxSliverRatio = SvParameter.getSysParam(CC.SDI_AREA2PERIMETER_RATIO, CC.DEFAULT_AREA2PERIMETER_RATIO);
+	Double minSliverRatio = SvParameter.getSysParam(CC.SDI_AREA2PERIMETER_MINRATIO, CC.DEFAULT_AREA2PERIMETER_MINRATIO);
+	Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
+	Double minSliverArea = SvParameter.getSysParam(CC.SDI_MIN_SLIVER_AREA, CC.DEFAULT_MIN_SLIVER_AREA);
 
-	private Integer dedupeType = SvParameter.getSysParam(CC.SDI_POINT_DEDUPE_TYPE, CC.DEFAULT_POINT_DEDUPE_TYPE);
-	private Double mergeTolerance = SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE);
+	Integer dedupeType = SvParameter.getSysParam(CC.SDI_POINT_DEDUPE_TYPE, CC.DEFAULT_POINT_DEDUPE_TYPE);
+	Double mergeTolerance = SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE);
 	static final Logger log4j = SvConf.getLogger(AgriParcel.class);
 
 	public AgriParcel() throws SvException {
@@ -347,8 +344,8 @@ public class AgriParcel {
 		// TODO add calculus of overlaps
 		if (newGeometry != null && splitObject.size() == 1) {
 			DbDataObject dbo = splitObject.get(0);
-			this.saveAgriParcel(svg, dbo.getObjectId(), dbo.getParentId(), 2, 2, 2, new JsonObject(),
-					false, newGeometry);
+			this.saveAgriParcel(svg, dbo.getObjectId(), dbo.getParentId(), 2, 2, 2, new JsonObject(), false,
+					newGeometry);
 			result.add(newGeometry);
 			DbDataArray dba = new DbDataArray();
 			for (Geometry other : others) {

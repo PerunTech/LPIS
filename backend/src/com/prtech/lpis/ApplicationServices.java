@@ -378,10 +378,11 @@ public class ApplicationServices {
 			@PathParam("x") final Double x, @PathParam("y") final Double y,
 			final MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
-		final Set<Geometry> result = new HashSet<Geometry>();
+		final Collection<Geometry> result = new ArrayList<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
 			Geometry geom = Util.getInputGeometry(formVals, null);
-			(new AgriParcel()).splitParcel(svg, geom, parentId, objectName, x, y);
+			Collection<Geometry> split = (new AgriParcel()).splitParcel(svg, geom, parentId, objectName, x, y);
+			result.addAll(split);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.splitParcel");
 		}
@@ -1186,7 +1187,8 @@ public class ApplicationServices {
 			Collection<Geometry> gg = aps.getPBIntersections(svg, geom);
 			boolean pbCover = false;
 			for (Geometry pb : gg) {
-				if (com.prtech.lpis.LpisUtil.coversWithTolerance(pb, geom, 0.01)) {
+				if (com.prtech.lpis.LpisUtil.coversWithSliverTolerance(pb, geom, aps.minSliverArea,
+						aps.minSliverRatio)) {
 					pbCover = true;
 					break;
 				}
