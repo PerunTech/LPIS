@@ -483,12 +483,21 @@ public class AgriParcel {
 				gapFill = LpisUtil.ensurePolygon(gapFill);
 				geom = geom.union(gapFill);
 				geom = geom.intersection(currentBlock);
-
-				for (Geometry nap1 : alreadAligned) {
-					if (nap1.overlaps(geom))
-						geom = geom.difference(nap1);
-				}
 				geom = LpisUtil.ensurePolygon(geom);
+				
+				for (Geometry nap1 : alreadAligned) {
+					if (nap1.overlaps(geom)) {
+						geom = geom.difference(nap1);
+						geom = LpisUtil.ensurePolygon(geom);
+					}
+					if ((!geom.isValid()) || (!geom.isSimple())) {
+						SvException sv = new SvException(CC.TOPO_ERR, svg.getInstanceUser(),
+								(DbDataObject) nap1.getUserData(), geom);
+						throw (sv);
+					}
+
+				}
+
 				SvGeometry.setGeometry(parcel, geom);
 			}
 
