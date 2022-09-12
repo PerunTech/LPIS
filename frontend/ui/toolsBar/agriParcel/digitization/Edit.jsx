@@ -155,7 +155,7 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending, historyEditEn
   }
 
   const _setBlockEvents = (layer, agriParcels) => {
-    layer.on('mouseover', function () { this.setStyle({ color: '#eed000', fillColor: '#000000' }) })
+    layer.on('mouseover', function () { this.setStyle({ color: '#005cb8', fillColor: '#000000' }) })
       .on('mouseout', function () { this.setStyle({ color: '#3399ff', fillColor: '#3388ff' }) })
       .on('click', function () {
         initEdit(this);

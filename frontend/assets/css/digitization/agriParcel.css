@@ -196,5 +196,10 @@
 }
 
 .secondary-marker-icon {
-  z-index: 5 !important;
+  z-index: 3 !important;
+}
+
+.draw-marker-icon,
+.edit-marker-icon {
+  z-index: 1500 !important;
 }

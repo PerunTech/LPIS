@@ -40,6 +40,7 @@ const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
   const initEdit = layer => {
     // Move map view on top of selected polygon.
     Map.fitBounds(layer.getBounds());
+    layer.setStyle({ color: '#005cb8', fillColor: '#000000' })
     // Activate edit handler on selected polygon
     edit.polygon.enable(layer, apConfig);
     // Activate edit event listeners on layer.

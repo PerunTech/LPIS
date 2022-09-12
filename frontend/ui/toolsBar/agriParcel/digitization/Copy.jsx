@@ -39,6 +39,7 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
     const initEdit = layer => {
         // Move map view on top of selected polygon.
         Map.fitBounds(layer.getBounds());
+        layer.setStyle({ color: '#005cb8', fillColor: '#000000' })
         // Activate edit handler on selected polygon
         edit.polygon.enable(layer, config);
         // Activate edit event listeners on layer.
