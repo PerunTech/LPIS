@@ -21,11 +21,9 @@ const _Fill = ({ processID, farmObjId, saveIsPending }) => {
 
     const enable = () => {
         Map.on('new_shape', e => fillParcel(e));
-
         // state setters
         store.dispatch({ processID: _id });
         setState({ isGuided: true, showForm: false })
-
         // init draw handler
         polygon.enable(config);
     }
@@ -35,12 +33,9 @@ const _Fill = ({ processID, farmObjId, saveIsPending }) => {
         Map.off('new_shape');
         setState({ layer: {}, data: {}, isGuided: false, showForm: false });
         store.dispatch({ processID: '' });
-
         // We remove the working geometry, save process will add the result, as well as additional vectors.
         layer.removeFrom && layer.removeFrom(Map);
-
         polygon.disable('force');
-
         // refresh work layer
         getFarmMapAssets()
     }
@@ -55,17 +50,9 @@ const _Fill = ({ processID, farmObjId, saveIsPending }) => {
             }).then(response => {
                 const buff = geobuf.decode(protobuf(response));
                 const geojson = factory.geoJSON(buff, config.pathOptions);
-                const stateData = store.getState().data.layers;
-
                 geojson.getLayers().forEach(layer => {
-                    const id = layer.feature.id
-
-                    // remove old app layers entries, will update with the new geojson set.
-                    stateData[id] && stateData[id].removeFrom(Map);
-
                     layer.addTo(Map);
                     e.layer.removeFrom(Map);
-
                     setState({
                         layer: layer,
                         data: {

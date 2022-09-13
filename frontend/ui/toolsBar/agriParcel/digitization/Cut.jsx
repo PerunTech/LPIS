@@ -20,11 +20,9 @@ const _Cut = ({ processID, farmObjId, saveIsPending }) => {
 
     const enable = () => {
         Map.on('new_shape', e => cutParcel(e));
-
         // state setters
         store.dispatch({ processID: _id });
         setState({ isGuided: true, showForm: false })
-
         // init draw handler
         polygon.enable(config);
     }
@@ -51,12 +49,7 @@ const _Cut = ({ processID, farmObjId, saveIsPending }) => {
             }).then(response => {
                 const buff = geobuf.decode(protobuf(response));
                 const geojson = factory.geoJSON(buff, config.pathOptions);
-                const stateData = store.getState().data.layers;
-
                 geojson.getLayers().forEach(layer => {
-                    const id = layer.feature.id
-                    // remove old app layers entries, will update with the new geojson set.
-                    stateData[id] && stateData[id].removeFrom(Map);
                     layer.addTo(Map);
                     e.layer.removeFrom(Map);
                     setState({

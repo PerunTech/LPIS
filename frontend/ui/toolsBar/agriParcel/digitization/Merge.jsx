@@ -49,12 +49,6 @@ const _Merge = ({ processID, farmObjId }) => {
     }).then(response => {
       setState({ loading: false })
       const geojson = factory.geoJSON(geobuf.decode(protobuf(response)), config.pathOptions);
-      const stateData = store.getState().data.layers;
-      geojson.getLayers().forEach(layer => {
-        const id = layer.feature.id
-        // remove old app layers entries, will update with the new geojson set.
-        stateData[id] && stateData[id].removeFrom(Map);
-      })
       const numOfNewParcels = geojson.getLayers().length
       const msg = numOfNewParcels === 1 ? 'Добиена е една нова парцела.' : `Добиени се ${numOfNewParcels} нови парцели.`
       alertUser(true, 'success', 'Успешно споени парцели', msg)
