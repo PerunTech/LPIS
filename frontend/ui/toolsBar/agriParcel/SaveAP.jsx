@@ -4,7 +4,7 @@ import { Form } from './Form'
 import { config, saveAPFormSchema } from './Config';
 import { bufferToString, isJSON, strcmp } from '../../Util'
 
-const { http, store, factory, Map, util } = core;
+const { http, store, factory, Map } = core;
 const { protobuf, geobuf } = data;
 const { Button, Modal, Icon, DrawActions } = ui
 
@@ -26,15 +26,6 @@ export const saveAP = (layer, callback, skipChecks) => {
     const _succeed = (data, layer) => {
         // Create layer from geojson, operate on the individual layer, rather than the feature collection.
         const geojson = factory.geoJSON(data, config.pathOptions);
-        const stateData = store.getState().data.layers;
-        geojson.getLayers().forEach(layer => {
-            const id = layer.feature.id
-            // remove old app layers entries, will update with the new geojson set.
-            stateData[id] && stateData[id].removeFrom(Map);
-            // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
-            layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
-            layer.addTo(Map);
-        })
         store.dispatch({ saveIsPending: false })
         elements.alertUser(true,
             'success',
