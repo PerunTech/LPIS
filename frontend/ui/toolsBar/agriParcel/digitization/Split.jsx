@@ -9,12 +9,24 @@ const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { draw: { line } } = tools;
 const { Icon } = ui;
-const { useReducer } = React;
+const { useReducer, useEffect } = React;
 const { alertUser } = elements;
 const _id = 'splitAP';
 
 const _Split = ({ processID, agriParcels, farmObjId }) => {
   const [{ loading }, setState] = useReducer((currState, update) => ({ ...currState, ...update }), { loading: false });
+
+  useEffect(() => {
+    return () => {
+      line.disable('force');
+      Map.off('new_shape');
+      Map.eachLayer(layer => {
+        if (layer?.options?.icon) {
+          layer.removeFrom(Map)
+        }
+      })
+    }
+  }, [])
 
   const cleanup = (lineLayer) => {
     disable()

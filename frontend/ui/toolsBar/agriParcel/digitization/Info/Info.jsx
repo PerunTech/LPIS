@@ -19,6 +19,7 @@ const _Info = ({ processID }) => {
   useEffect(() => {
     return () => {
       store.dispatch({ showParcelInfoContainer: false, farmInfo: undefined, parcelInfo: undefined })
+      Map.off('click')
     }
   }, [])
 
