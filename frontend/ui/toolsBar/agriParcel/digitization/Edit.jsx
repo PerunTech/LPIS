@@ -252,13 +252,13 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending, historyEditEn
   }
 
   const renderGuideForm = () => {
-    let msg = ['Одберете земјоделска парцела на мапата која сакате да ја промените.', '']
+    let msg = ['Одберете земјоделска парцела на мапата која сакате да ја уредите.', '']
     if (showGuidanceButton) {
       msg = ['', '']
     }
 
     return (
-      <Guidance id={_id} disable={() => disable()} msg={msg} title='Промени земјоделска парцела'>
+      <Guidance id={_id} disable={() => disable()} msg={msg} title='Уреди земјоделска парцела'>
         {showGuidanceButton && <div className='mt-2'>
           <Button className='next' size='' onClick={onSubmit}>
             Зачувај
@@ -356,9 +356,9 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending, historyEditEn
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable} title='Промени парцела' className='mr-2'>
+    <ProcessButton id={_id} onClick={enable} title='Уреди парцела' className='mr-2'>
       <Icon name={_id} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Промени</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>Уреди</span>
       {processID === _id && renderComponent()}
       {(loading || saveIsPending) && <Loading />}
     </ProcessButton>

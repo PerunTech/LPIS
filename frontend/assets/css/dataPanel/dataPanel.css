@@ -6,6 +6,8 @@
 
 #data-panel-toggle {
   width: 60px;
+  background-color: #f9f9f9;
+  border-color: #f9f9f9;
 }
 
 #data-panel .data-panel-title {

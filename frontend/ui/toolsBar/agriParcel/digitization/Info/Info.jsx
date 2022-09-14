@@ -83,7 +83,7 @@ const _Info = ({ processID }) => {
   return (
     <ProcessButton id={_id} onClick={enable} title='Информации за парцела'>
       <Icon name={_id} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Информации</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>Инфо</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>
