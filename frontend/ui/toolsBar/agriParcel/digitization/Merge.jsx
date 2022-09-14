@@ -9,12 +9,19 @@ const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { draw: { line } } = tools;
 const { Icon } = ui;
-const { useReducer } = React;
+const { useReducer, useEffect } = React;
 const { alertUser } = elements;
 const _id = 'mergeAP';
 
 const _Merge = ({ processID, farmObjId }) => {
   const [{ layer, loading }, setState] = useReducer((currState, update) => ({ ...currState, ...update }), { layer: {}, loading: false });
+
+  useEffect(() => {
+    return () => {
+      line.disable('force');
+      Map.off('new_shape');
+    }
+  }, [])
 
   const cleanup = (lineLayer) => {
     disable()

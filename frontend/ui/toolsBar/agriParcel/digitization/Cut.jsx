@@ -11,12 +11,19 @@ const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
-const { useReducer } = React;
+const { useReducer, useEffect } = React;
 const _id = 'cutAP';
 
 const _Cut = ({ processID, farmObjId, saveIsPending }) => {
     const [{ layer, data, isGuided, showForm }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }), { layer: {}, data: {}, isGuided: false, showForm: false });
+
+    useEffect(() => {
+        return () => {
+            polygon.disable('force');
+            Map.off('new_shape');
+        }
+    }, [])
 
     const enable = () => {
         Map.on('new_shape', e => cutParcel(e));
