@@ -75,9 +75,9 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
                 const proto = protobuf(response);
                 const buff = geobuf.decode(proto);
                 const geojson = factory.geoJSON(buff, config.pathOptions);
-
                 geojson.getLayers().forEach(layer => {
                     const landCoverCode = layer.feature.properties?.LAND_USE_ID
+                    const data = { LAND_COVER_CODE: landCoverCode }
                     // assign metadata
                     layer.feature.id = 0
                     layer.feature.properties.parent_id = farmObjId
@@ -85,7 +85,7 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
                     layer.addTo(Map);
                     _editAP()
                     initEdit(layer)
-                    setState({ data: layer.feature.properties, layer: layer, initialLandCoverCode: landCoverCode })
+                    setState({ data, layer: layer, initialLandCoverCode: landCoverCode })
                 })
             }).catch(err => {
                 console.log(err)
