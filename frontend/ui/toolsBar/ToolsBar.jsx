@@ -8,6 +8,10 @@ const { store, logoutUser } = redux;
 const history = createHashHistory();
 
 const _ToolsBar = ({ actionType }) => {
+    const handleHome = () => {
+        history.push('/')
+    }
+
     const handleBack = () => {
         if (actionType === 'pplan') {
             history.push('/main/iacs-claims/p_plan')
@@ -58,14 +62,22 @@ const _ToolsBar = ({ actionType }) => {
         return shouldDisable
     }
 
-    return <div id='toolsbar' >
+    return <div id='toolsbar'>
         <Button disabled className='left-corner-filler' />
-        <Button
-            onClick={handleBack}
-            className='toolbar-home'
-            title='Кон почетна'>
-            <Icon name='home' size='18px' style={{ fill: '#3a3a3a' }} />
-        </Button>
+        <div className='toolbar-left-buttons-container'>
+            <Button
+                onClick={handleHome}
+                className='toolbar-left-button toolbar-left-home-button'
+                title='Кон почетна'>
+                <Icon name='home' size='18px' style={{ fill: '#3a3a3a' }} />
+            </Button>
+            <Button
+                onClick={handleBack}
+                className='toolbar-left-button'
+                title='Назад'>
+                <Icon name='back' size='18px' style={{ fill: '#3a3a3a' }} />
+            </Button>
+        </div>
         <Tabs defaultActiveKey={getDefaultActiveKey} >
             <Tab eventKey='physical-block' title='Физички блокови' disabled={disableTab('physical-block')} >
                 <PhysicalBlock />
