@@ -2,8 +2,12 @@
   max-height: 85%;
 }
 
-#farm-registry-map #dataList {
+#farm-registry-map #dataList.parcels-data-list {
   max-height: calc(100vh - 380px) !important;
+}
+
+#farm-registry-map #dataList.parcel-info-data-list {
+  max-height: calc(100vh - 310px) !important;
 }
 
 #farm-registry-map .cad-intersection-tooltip {
