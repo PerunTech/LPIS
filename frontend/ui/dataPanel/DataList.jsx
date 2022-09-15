@@ -5,7 +5,12 @@ import { FarmDataGrid } from './FarmDataGrid';
 import { InfoList } from '../toolsBar/agriParcel/digitization/Info/InfoList';
 
 export const _DataList = ({ data, setData, actionType, showParcelInfoContainer, farmData, layers, pauseGrid }) => {
-    return <div id='dataList' >
+    let dataListContainerClassName = 'parcels-data-list'
+    if (showParcelInfoContainer) {
+        dataListContainerClassName = 'parcel-info-data-list'
+    }
+
+    return <div id='dataList' className={dataListContainerClassName}>
         {!pauseGrid && actionType !== 'sizp' && actionType !== 'pplan' && data.map((el, idx) =>
             <ui.TreeNode
                 id={idx}
