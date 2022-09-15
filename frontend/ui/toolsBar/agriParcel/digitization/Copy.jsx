@@ -115,7 +115,7 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
 
     const onSubmit = ({ formData }) => {
         if (!strcmp(formData.LAND_COVER_CODE, initialLandCoverCode)) {
-            const title = 'Избравте различен вредност за Употреба на земјиште'
+            const title = 'Избравте различна вредност за Употреба на земјиште'
             const msg = 'Дали сте сигурни дека сакате да продолжите?'
             alertUser(true, 'warning', title, msg, () => executeSaveAP(formData), () => { }, true, 'Продолжи', 'Откажи')
         } else {
