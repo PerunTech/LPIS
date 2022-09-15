@@ -2,6 +2,7 @@ import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { DataList } from '..';
 import { FarmDataGridInfoHeader } from './FarmDataGridInfoHeader';
+import { FarmDataGridNumOfParcels } from './FarmDataGridNumOfParcels';
 import { FarmDataGridHeader } from './FarmDataGridHeader';
 import { CadastreSearch } from './CadastreSearch';
 import { LpisSearch } from './LpisSearch';
@@ -32,7 +33,7 @@ const dataCategories = (function () {
  * 
  * @param {*} props 
  */
-const _DataPanel = ({ categories, actionType, showParcelInfoContainer }) => {
+const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer }) => {
     const [data, setData] = React.useState(categories);
     const [isOpen, setOpen] = React.useState(true);
 
@@ -53,7 +54,12 @@ const _DataPanel = ({ categories, actionType, showParcelInfoContainer }) => {
             {(actionType === 'sizp' || actionType === 'pplan') && isOpen &&
                 <React.Fragment>
                     <FarmDataGridInfoHeader />
-                    {!showParcelInfoContainer && <FarmDataGridHeader gridType='agri_parcel' />}
+                    {!showParcelInfoContainer && (
+                        <React.Fragment>
+                            <FarmDataGridNumOfParcels rows={farmData} />
+                            <FarmDataGridHeader gridType='agri_parcel' />
+                        </React.Fragment>
+                    )}
                 </React.Fragment>
             }
             {isOpen && <DataList data={data} setData={setData} />}
@@ -73,5 +79,5 @@ _DataPanel.propTypes = {
 
 export const DataPanel = core.connect(state => ({
     processID: state.app.processID, actionType: state.farmRegistry?.actionType,
-    showParcelInfoContainer: state.farmRegistry?.showParcelInfoContainer
+    farmData: state.farmRegistry?.agriParcels, showParcelInfoContainer: state.farmRegistry?.showParcelInfoContainer
 }))(_DataPanel);
