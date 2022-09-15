@@ -4,6 +4,10 @@
   transition: all 2s ease-in-out;
 }
 
+#data-panel .num-of-parcels {
+  font-size: 0.9rem;
+}
+
 #data-panel-toggle {
   width: 70px;
   background-color: #f9f9f9;
