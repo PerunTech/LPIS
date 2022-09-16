@@ -5,7 +5,7 @@ import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
 import { ProcessButton, loadFarmerAssets } from '../..';
-import { getFarmPPlanAssets, strcmp } from '../../Util';
+import { bufferToString, getFarmPPlanAssets, isJSON, strcmp } from '../../Util';
 
 const { alertUser } = elements;
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
@@ -100,9 +100,15 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
                     }
                 })
             }).catch(err => {
-                console.log(err)
+                const { response } = err
+                let msg = ''
+                const stringifiedResponse = bufferToString(response?.data)
+                if (isJSON(stringifiedResponse) && Object.keys(JSON.parse(stringifiedResponse)).length > 1) {
+                    const parsedResponse = JSON.parse(stringifiedResponse)
+                    msg = parsedResponse?.Label_Code || ''
+                }
+                alertUser(true, 'error', 'Настана грешка', msg)
                 disable()
-                alertUser(true, 'error', 'Настана грешка')
             });
 
             Map.off('click');
