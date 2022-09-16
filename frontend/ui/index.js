@@ -18,10 +18,8 @@ export { CropParcel } from './toolsBar/cropParcel/CropParcel';
 /* measurement */
 export { Measurement } from './toolsBar/measurement/Measurement'
 
-/* toolbars  */
-
-export { IO } from './toolsBar/tabs/IO';
-
+/* import/export  */
+export { IO } from './toolsBar/io/IO'
 /* data panel  */
 export { DataGrid } from './dataPanel/DataGrid';
 export { DataListUtils } from './dataPanel/DataListUtils';
