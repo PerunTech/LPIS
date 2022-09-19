@@ -9,6 +9,8 @@ import { LpisSearch } from './LpisSearch';
 import { ParcelInfo } from './ParcelInfo';
 
 const { Button, Icon } = ui;
+const { store, connect } = core;
+const { useState, useEffect } = React;
 
 /* Root nodes in the data panel tree. */
 const dataCategories = (function () {
@@ -22,8 +24,14 @@ const dataCategories = (function () {
  * @param {*} props 
  */
 const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer }) => {
-    const [data, setData] = React.useState(categories);
-    const [isOpen, setOpen] = React.useState(true);
+    const [data, setData] = useState(categories);
+    const [isOpen, setOpen] = useState(true);
+
+    useEffect(() => {
+        return () => {
+            store.dispatch({ 'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'farmObjId': '', 'farmObjTypeId': '', 'actionType': '' })
+        }
+    }, [])
 
     return (
         <div id='data-panel' style={{ width: isOpen ? '555px' : '' }}>
@@ -65,7 +73,7 @@ _DataPanel.propTypes = {
     actionType: PropTypes.string
 }
 
-export const DataPanel = core.connect(state => ({
+export const DataPanel = connect(state => ({
     processID: state.app.processID, actionType: state.farmRegistry?.actionType,
     farmData: state.farmRegistry?.agriParcels, showParcelInfoContainer: state.farmRegistry?.showParcelInfoContainer
 }))(_DataPanel);
