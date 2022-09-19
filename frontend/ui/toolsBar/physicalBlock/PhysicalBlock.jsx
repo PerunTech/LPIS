@@ -2,7 +2,7 @@ import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../../Spatial';
 import { Info } from './Info/Info';
 import { AdvanceDigitization } from './Advance';
-import { createBlock } from './Create';
+import { CreateBlock } from './Create';
 import { editBlock } from './Edit';
 import { restPB } from './Config';
 
@@ -14,7 +14,7 @@ const _PhysicalBlock = ({ processID, actionType }) =>
         {actionType === 'sizp' && <Info />}
         {actionType !== 'sizp' && (
             <React.Fragment>
-                <createBlock.render processID={processID} />
+                <CreateBlock />
                 <editBlock.render processID={processID} />
                 <Divider />
                 <AdvanceDigitization name='физички блок' />
