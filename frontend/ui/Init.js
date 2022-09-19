@@ -1,9 +1,10 @@
 import { redux } from 'perun-core';
-import { ui, core } from '../Spatial';
+import { ui, core, config } from '../Spatial';
 import { layerList } from '../config/layerList';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets } from '.';
 import { getFarmMapAssets } from './Util';
 
+const { SYS_CENTER } = config;
 const { Map, store } = core;
 
 let _isLoaded = false;
@@ -50,6 +51,8 @@ export const lpis = () => {
         }
     });
 
+    Map.setView(SYS_CENTER, 3);
+
     return ui.init(_token)
         .addControl(ToolsBar, {}, { position: 'top' })
         .addControl(DataPanel, {}, { position: 'left' })
@@ -70,6 +73,7 @@ export const farmRegLpis = () => {
         'editFormWasClosed': false, 'parcelHistoryModalWasClosed': false
     })
     const _token = redux.store.getState().security.svSession;
+    Map.setView(SYS_CENTER, 3);
     getFarmMapAssets(true)
 
     return ui.init(_token)
