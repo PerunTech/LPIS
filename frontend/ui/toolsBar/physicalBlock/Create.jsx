@@ -1,76 +1,106 @@
-import { React, PropTypes, elements } from 'perun-core';
+import { React, elements } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
+import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { config } from './Config';
 
-const { Map, store, factory, http } = core;
-const { draw } = tools;
+const { Map, store, connect, factory, http } = core;
+const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
+const { alertUser } = elements;
+const { useReducer } = React;
 
-/**
- * Create a physical block.
- */
-export const createBlock = {
-  _id: 'createBlock',
-  _layer: {},
+const _id = 'createBlock';
 
-  enable () {
-    Map.on('new_shape', this._finishShape.bind(this));
-    store.dispatch({ processID: this._id });
-    draw.polygon.enable(config);
-  },
+const _CreateBlock = ({ processID }) => {
+  const [{ layer, isGuided, showForm }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }),
+    { layer: {}, isGuided: false, showForm: false });
 
-  disable () {
+  const enable = () => {
+    Map.on('new_shape', e => {
+      if (e && e.layer) {
+        setState({ layer: e.layer, isGuided: false, showForm: true })
+        e.layer.addTo(Map)
+      }
+
+      Map.off('new_shape')
+    });
+
+    setState({ isGuided: true, showForm: false, layer: {} });
+    store.dispatch({ processID: _id });
+    polygon.enable(config);
+  }
+
+  const disable = () => {
     Map.off('new_shape');
     store.dispatch({ processID: '' });
-    this._layer.removeFrom && this._layer.removeFrom(Map);
-    draw.polygon.disable('force');
-  },
+    layer.removeFrom && layer.removeFrom(Map);
+    polygon.disable('force');
+  }
 
-  _onSubmit ({ formData }) {
+  const onSubmit = ({ formData }) => {
     http.call('save_pb', {
       data: JSON.stringify({
         ...formData,
-        GEOM: factory.GeoJSON.fromLayer(this._layer)
+        GEOM: factory.GeoJSON.fromLayer(layer)
       })
     }).then(() => {
-      this.disable();
-      elements.alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
+      disable();
+      alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
     }).catch(() => {
-      this._layer.removeFrom(Map);
-      this.disable();
-      elements.alertUser(true, 'error', 'Грешка при зачувување', 'Физичкиот блок не е запишан во базата на податоци.')
+      layer.removeFrom(Map);
+      disable();
+      alertUser(true, 'error', 'Грешка при зачувување', 'Физичкиот блок не е запишан во базата на податоци.')
     })
-  },
-
-  _finishShape (e) {
-    (e && e.layer)
-      && (this._layer = e.layer, e.layer.addTo(Map));
-  },
-
-  render ({ processID }) {
-    const { _id, enable, disable, _onSubmit } = createBlock;
-
-    return (
-      <ProcessButton
-        id={_id}
-        className={processID === _id ? 'active' : ''}
-        onClick={enable.bind(createBlock)} >
-        <Icon name={_id} size='34px' />
-        <span style={{ display: 'block', marginTop: '1px' }}>Нацртај блок</span>
-        {processID === _id
-          && <Form onSubmit={_onSubmit.bind(createBlock)} >
-            <DrawActions
-              finish={() => draw.polygon._finishShape()}
-              undo={() => draw.polygon._removeLastVertex()}
-              cancel={disable.bind(createBlock)} />
-          </Form>}
-      </ProcessButton>
-    );
   }
+
+  const renderGuideForm = () => {
+    return (
+      <Guidance
+        id={_id}
+        title='Нацртај блок'
+        msg={['Алатката за цртање физички блок е активна', '']}
+        finish={() => polygon._finishShape()}
+        undo={() => polygon._removeLastVertex()}
+        disable={disable}
+      />
+    )
+  }
+
+  const renderForm = () => {
+    return (
+      <Form onSubmit={onSubmit}>
+        <DrawActions
+          finish={() => draw.polygon._finishShape()}
+          undo={() => draw.polygon._removeLastVertex()}
+          cancel={disable} />
+      </Form>
+    )
+  }
+
+  const componentToRender = () => {
+    let componentToRender = null
+
+    if (isGuided && !showForm) {
+      componentToRender = renderGuideForm()
+    } else if (showForm && !isGuided) {
+      componentToRender = renderForm()
+    }
+
+    return componentToRender
+  }
+
+  return (
+    <ProcessButton
+      id={_id}
+      onClick={enable} >
+      <Icon name={_id} size='34px' />
+      <span style={{ display: 'block', marginTop: '1px' }}>Нацртај блок</span>
+      {processID === _id && componentToRender()}
+    </ProcessButton>
+  )
 }
 
-createBlock.render.propTypes = {
-  processID: PropTypes.string,
-}
+export const CreateBlock = connect(state => ({ processID: state.app.processID }))(_CreateBlock)
