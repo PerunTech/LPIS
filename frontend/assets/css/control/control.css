@@ -1,5 +1,10 @@
-#farm-registry-map .control-center {
+#farm-registry-map .control-center,
+#lpis-map .control-center {
   max-height: 85%;
+}
+
+#lpis-map #dataList {
+  max-height: calc(100vh - 220px) !important;
 }
 
 #farm-registry-map #dataList.parcels-data-list {

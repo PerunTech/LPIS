@@ -14,19 +14,7 @@ const { Button, Icon } = ui;
 const dataCategories = (function () {
     return Object.entries({
         physical_block: 'Физички блокови',
-        agri_parcel: 'Земјоделски парцели',
-        cad_parcel: 'Катастарски парцели',
-        measurements: 'Мерења',
-        imports: 'Увезувања',
-        pastures: 'Пасишта',
-        landscape_features: 'Обележја на пејсажот',
-        npa: 'Заштитени подрачја',
-        soil_types: 'Почвени типови',
-        transport_network: 'Транспортна мрежа',
-        water_bodies: 'Води',
-    })
-        .map(entry => ({ id: entry[0], label: entry[1], isOpen: false, }))
-        .concat([{ id: 'resto', label: 'Останато', isOpen: false }]);
+    }).map(entry => ({ id: entry[0], label: entry[1], isOpen: false, }))
 })();
 
 /**
