@@ -22,19 +22,19 @@ export const createBlock = {
 
     disable () {
         Map.off('new_shape');
-        store.dispatch({processID: ''});
-        
+        store.dispatch({ processID: '' });
+
         // this._layer.removeFrom && this._layer.hideMeasurements();
         this._layer = {};
         draw.polygon.disable('force');
     },
 
     _onSubmit ({ formData }) {
-        http.call('save_pb', { 
-            data: JSON.stringify({ 
-                ...formData, 
+        http.call('save_pb', {
+            data: JSON.stringify({
+                ...formData,
                 GEOM: factory.GeoJSON.fromLayer(this._layer)
-            }) 
+            })
         }).then(() => {
             this.disable();
             elements.alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
@@ -46,26 +46,26 @@ export const createBlock = {
     },
 
     _finishShape (e) {
-        (e && e.layer) 
+        (e && e.layer)
             && (this._layer = e.layer, e.layer.addTo(Map));
     },
 
-    render ({processID}) {
-        const { _id, enable, disable, _onSubmit} = createBlock;
+    render ({ processID }) {
+        const { _id, enable, disable, _onSubmit } = createBlock;
 
         return <Button
-            id={_id} 
+            id={_id}
             className={processID === _id ? 'active' : ''}
             onClick={enable.bind(createBlock)} >
-                <Icon name={_id} size='34px' />
-                <span style={{display: 'block', marginTop: '1px' }}>Нацртај блок</span>
-                { processID === _id  
-                    && <Form onSubmit={_onSubmit.bind(createBlock)} >
-                        <DrawActions
-                            finish={() => draw.polygon._finishShape()}
-                            undo={() => draw.polygon._removeLastVertex()}
-                            cancel={disable.bind(createBlock)} />
-                    </Form> }
+            <Icon name={_id} size='34px' />
+            <span style={{ display: 'block', marginTop: '1px' }}>Нацртај блок</span>
+            {processID === _id
+                && <Form onSubmit={_onSubmit.bind(createBlock)} >
+                    <DrawActions
+                        finish={() => draw.polygon._finishShape()}
+                        undo={() => draw.polygon._removeLastVertex()}
+                        cancel={disable.bind(createBlock)} />
+                </Form>}
         </Button>;
     }
 }

@@ -2,6 +2,7 @@
   background-color: #f9f9f9;
   transition: width 1s;
 }
+
 #layer-panel-toggle {
   width: 50px;
 }
@@ -45,6 +46,12 @@
   overflow: hidden auto;
 }
 
-#farm-registry-map .leaflet-control-layers-group {
+#lpis-map .leaflet-control-layers-list {
+  max-height: 760px;
+  overflow: hidden auto;
+}
+
+#farm-registry-map .leaflet-control-layers-group,
+#lpis-map .leaflet-control-layers-group {
   margin-top: 0.5rem !important;
 }

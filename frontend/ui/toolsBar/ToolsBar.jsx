@@ -29,7 +29,9 @@ const _ToolsBar = ({ actionType }) => {
             case 'pplan':
                 defaultActiveKey = 'crop-parcel'
                 break
-            default: break
+            default:
+                defaultActiveKey = 'physical-block'
+                break
         }
         return defaultActiveKey
     }
@@ -43,17 +45,17 @@ const _ToolsBar = ({ actionType }) => {
                 }
                 break
             case 'landscape-features':
-                if (actionType === 'pplan') {
+                if (actionType === 'pplan' || !actionType) {
                     shouldDisable = true
                 }
                 break
             case 'agri-parcel':
-                if (actionType === 'pplan') {
+                if (actionType === 'pplan' || !actionType) {
                     shouldDisable = true
                 }
                 break
             case 'crop-parcel':
-                if (actionType === 'sizp') {
+                if (actionType === 'sizp' || !actionType) {
                     shouldDisable = true
                 }
                 break

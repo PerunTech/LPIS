@@ -22,22 +22,22 @@ export const editBlock = {
     enable () {
         this._layerGroup.addTo(Map);
         Map.setView(Map.getCenter(), MIN_DIGI_SCALE);
-        store.dispatch({minZoom: MIN_DIGI_SCALE})
+        store.dispatch({ minZoom: MIN_DIGI_SCALE })
         this._fetchBlocks()
     },
 
     disable () {
         this._layer = {};
         this._layerGroup.clearLayers().removeFrom(Map);
-        store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
+        store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
         edit.polygon.disable();
     },
 
-    onSubmit ({formData}) {
-        http.call('save_pb', { 
-            data: JSON.stringify({ 
-                ...formData, 
-                GEOM: factory.GeoJSON.fromLayer(this._layer, Map.getCRS()) 
+    onSubmit ({ formData }) {
+        http.call('save_pb', {
+            data: JSON.stringify({
+                ...formData,
+                GEOM: factory.GeoJSON.fromLayer(this._layer, Map.getCRS())
             }),
             url: '/lpis/save/physicalBlock/{init.token}/' + this._layer.feature.id
         }).then(() => {
@@ -56,7 +56,7 @@ export const editBlock = {
     initEdit (layer) {
         // set fields, disable all selection events on group.
         this._layer = layer;
-        this._layerGroup.eachLayer(layer => 
+        this._layerGroup.eachLayer(layer =>
             layer.off('mouseover mouseout click'));
 
         // publish active process, edit begins.
@@ -69,7 +69,7 @@ export const editBlock = {
         edit.polygon.enable(this._simplifyMultipolygon(layer), cfg);
 
         // Activate edit event listeners on layer.
-        layer.on('pm:edit', e => this._layer = e.target );
+        layer.on('pm:edit', e => this._layer = e.target);
     },
 
     _fetchBlocks () {
@@ -77,7 +77,7 @@ export const editBlock = {
             url: '/spatial/getGeometry/bbox/{init.token}/PHYSICAL_BLOCK/' + Map.getBBox(),
         }).then(response => {
             this._renderBlocks(geobuf.decode(protobuf(response)));
-        }).catch(err => 
+        }).catch(err =>
             console.log(err));
     },
 
@@ -93,8 +93,8 @@ export const editBlock = {
     },
 
     _setBlockEvents (layer) {
-        layer.on('mouseover', function () { this.setStyle({ fillColor: '#FFFFFF' })})
-            .on('mouseout', function () { this.setStyle({ fillColor: '#000000' })})
+        layer.on('mouseover', function () { this.setStyle({ fillColor: '#FFFFFF' }) })
+            .on('mouseout', function () { this.setStyle({ fillColor: '#000000' }) })
             .on('click', function () { editBlock.initEdit(this); })
     },
 
@@ -103,7 +103,7 @@ export const editBlock = {
         let simpleLatlngArr = latlngArr[0];
         latlngArr.length = 0
 
-        Object.keys(simpleLatlngArr).forEach(key => 
+        Object.keys(simpleLatlngArr).forEach(key =>
             latlngArr.push(simpleLatlngArr[key]));
 
         return layer;
@@ -113,25 +113,25 @@ export const editBlock = {
         return String('Променет блок ' + layer._leaflet_id);
     },
 
-    render: connect(state => ({ 
-            bbox: state.map.bbox 
-        })) (props => {
-            // const [layer, setLayer] = useState({});
-            const { _id, enable, disable, onSubmit, _layer } = editBlock;
+    render: connect(state => ({
+        bbox: state.map.bbox
+    }))(props => {
+        // const [layer, setLayer] = useState({});
+        const { _id, enable, disable, onSubmit, _layer } = editBlock;
 
-            return <Button
-                id={_id} 
-                className={props.processID === _id ? 'active' : ''}
-                onClick={enable.bind(editBlock)} >
-                    <Icon name={_id} size='30px' />
-                    <span style={{display: 'block', marginTop: '5px' }}>Промени блок</span>
-                    { props.processID === _id  
-                        && <Form onSubmit={onSubmit.bind(editBlock)} data={_layer.feature.properties} >
-                            <DrawActions
-                                cancel={disable.bind(editBlock)} />
-                        </Form> }
-            </Button>;
-        })
+        return <Button
+            id={_id}
+            className={props.processID === _id ? 'active' : ''}
+            onClick={enable.bind(editBlock)} >
+            <Icon name={_id} size='30px' />
+            <span style={{ display: 'block', marginTop: '5px' }}>Промени блок</span>
+            {props.processID === _id
+                && <Form onSubmit={onSubmit.bind(editBlock)} data={_layer.feature.properties} >
+                    <DrawActions
+                        cancel={disable.bind(editBlock)} />
+                </Form>}
+        </Button>;
+    })
 }
 
 editBlock.render.propTypes = {
