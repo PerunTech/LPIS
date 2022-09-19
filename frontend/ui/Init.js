@@ -4,7 +4,7 @@ import { layerList } from '../config/layerList';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets } from '.';
 import { getFarmMapAssets } from './Util';
 
-const { store } = core;
+const { Map, store } = core;
 
 let _isLoaded = false;
 const _gsaa = (_token) => {
@@ -42,7 +42,20 @@ export const gsaa = () => {
 }
 
 export const lpis = () => {
+    store.addState('farmRegistry', {
+        'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'farmObjId': '', 'farmObjTypeId': '', 'actionType': '',
+        'fic': '', 'fullName': '', 'tableName': '', 'selectedParcelId': '', 'selectedCropParcelId': '', 'saveIsPending': false,
+        'showCadParcels': false, 'hiddenAssets': [], 'parcelHistory': [], 'theSearchedParcelWasRemoved': false, 'parcelsHaveBeenLoaded': false,
+        'showParcelInfoContainer': false, 'farmInfo': undefined, 'parcelInfo': undefined, 'historyEditEnabled': false, 'historyParcelToEdit': {},
+        'editFormWasClosed': false, 'parcelHistoryModalWasClosed': false
+    })
     const _token = redux.store.getState().security.svSession;
+
+    Map.eachLayer(function (layer) {
+        if (!!layer.toGeoJSON) {
+            Map.removeLayer(layer);
+        }
+    });
 
     return ui.init(_token)
         .addControl(ToolsBar, {}, { position: 'top' })

@@ -41,13 +41,9 @@
   border-color: #dae0e5;
 }
 
-#farm-registry-map .leaflet-control-layers-list {
-  max-height: 725px;
-  overflow: hidden auto;
-}
-
+#farm-registry-map .leaflet-control-layers-list,
 #lpis-map .leaflet-control-layers-list {
-  max-height: 760px;
+  max-height: 725px;
   overflow: hidden auto;
 }
 
