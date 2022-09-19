@@ -73,7 +73,6 @@ export const farmRegLpis = () => {
         'editFormWasClosed': false, 'parcelHistoryModalWasClosed': false
     })
     const _token = redux.store.getState().security.svSession;
-    Map.setView(SYS_CENTER, 3);
     getFarmMapAssets(true)
 
     return ui.init(_token)
