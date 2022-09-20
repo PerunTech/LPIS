@@ -3,11 +3,12 @@ import { core, ui } from '../../../Spatial';
 import { Info } from './Info/Info';
 import { AdvanceDigitization } from './Advance';
 import { CreateBlock } from './Create';
+import { Delete } from './Delete';
 import { editBlock } from './Edit';
 import { restPB } from './Config';
 
 const { connect, store } = core;
-const { ButtonGroup, Button, Icon, Divider } = ui
+const { ButtonGroup, Divider } = ui
 
 const _PhysicalBlock = ({ processID, actionType }) =>
     <ButtonGroup>
@@ -19,10 +20,7 @@ const _PhysicalBlock = ({ processID, actionType }) =>
                 <Divider />
                 <AdvanceDigitization name='физички блок' />
                 <Divider />
-                <Button disabled>
-                    <Icon name='deletePB' size='28px' style={{ marginTop: '2px' }} />
-                    <span style={{ display: 'block', marginTop: '5px' }}>Избриши физички блок</span>
-                </Button>
+                <Delete />
             </React.Fragment>
         )}
     </ButtonGroup>;
