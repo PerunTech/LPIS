@@ -9,7 +9,7 @@ const { Map, store, connect, factory, http } = core;
 const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
 const { alertUser } = elements;
-const { useReducer } = React;
+const { useReducer, useEffect } = React;
 
 const _id = 'createBlock';
 
@@ -17,6 +17,13 @@ const _CreateBlock = ({ processID }) => {
   const [{ layer, isGuided, showForm }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
     { layer: {}, isGuided: false, showForm: false });
+
+  useEffect(() => {
+    return () => {
+      Map.off('new_shape');
+      polygon.disable('force');
+    }
+  }, [])
 
   const enable = () => {
     Map.on('new_shape', e => {
