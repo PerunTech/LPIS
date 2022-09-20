@@ -21,7 +21,7 @@ const _PhysicalBlock = ({ processID, actionType }) =>
                 <Divider />
                 <Button disabled>
                     <Icon name='deletePB' size='28px' style={{ marginTop: '2px' }} />
-                    <span style={{ display: 'block', marginTop: '5px' }}>Избриши парцела</span>
+                    <span style={{ display: 'block', marginTop: '5px' }}>Избриши физички блок</span>
                 </Button>
             </React.Fragment>
         )}
