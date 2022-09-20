@@ -11,7 +11,7 @@ const { protobuf, geobuf } = data;
 const { edit } = tools;
 const { Icon, DrawActions } = ui;
 const { alertUser } = elements;
-const { useReducer } = React;
+const { useReducer, useEffect } = React;
 
 const _id = 'editBlock'
 const _layerGroup = factory.layerGroup();
@@ -19,6 +19,14 @@ const _layerGroup = factory.layerGroup();
 const _EditBlock = ({ processID }) => {
   const [{ layer, isGuided, showForm }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }), { layer: {}, isGuided: false, showForm: false });
+
+  useEffect(() => {
+    return () => {
+      Map.off('new_shape');
+      edit.polygon.disable('force');
+      store.dispatch({ minZoom: MAP_CONFIG.minZoom });
+    }
+  }, [])
 
   const _simplifyMultipolygon = layer => {
     let latlngArr = layer._latlngs
