@@ -37,7 +37,7 @@ export const ExportSHP = () => {
       generateOptions.type = 'nodebuffer';
     }
 
-    zip.generateAsync({ type: "blob" }).then(blob => {
+    zip.generateAsync({ type: 'blob' }).then(blob => {
       saveAs(blob, zipArchiveName + '.zip');
     })
   }
