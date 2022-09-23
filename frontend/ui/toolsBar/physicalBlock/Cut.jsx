@@ -4,11 +4,13 @@ import { config } from './Config';
 import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { ProcessButton } from '../ProcessButton';
+import { decodeResponse } from '../../Util';
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
+const { alertUser } = elements;
 const { useReducer, useEffect } = React;
 
 const _id = 'cut-pb';
@@ -67,10 +69,10 @@ const _Cut = ({ processID }) => {
           })
         })
       }).catch(error => {
-        e.layer.removeFrom(Map);
-        let enc = new TextDecoder("utf-8");
-        let errmsg = enc.decode(error.response.data);
-        elements.alertUser(true, 'error', 'Грешка при отсекување земјоделска парцела', errmsg);
+        const { response } = error
+        const errorMsg = decodeResponse(response)
+        alertUser(true, 'error', 'Грешка при отсекување земјоделска парцела', errorMsg);
+        e.layer.removeFrom(Map)
         disable()
       })
     }
@@ -130,11 +132,13 @@ const _Cut = ({ processID }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} title='Отсечи блок'>
-    <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Отсечи блок</span>
-    {processID === _id && renderComponent()}
-  </ProcessButton>
+  return (
+    <ProcessButton id={_id} onClick={enable} title='Отсечи блок'>
+      <Icon name={_id} size='30px' />
+      <span style={{ display: 'block', marginTop: '5px' }}>Отсечи блок</span>
+      {processID === _id && renderComponent()}
+    </ProcessButton>
+  )
 }
 
 export const Cut = core.connect(state => ({

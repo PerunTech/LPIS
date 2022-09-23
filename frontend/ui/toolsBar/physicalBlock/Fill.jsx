@@ -4,11 +4,13 @@ import { config } from './Config';
 import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { ProcessButton } from '../ProcessButton';
+import { decodeResponse } from '../../Util';
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { draw: { polygon } } = tools
 const { Icon, DrawActions } = ui;
+const { alertUser } = elements;
 const { useReducer, useEffect } = React;
 
 const _id = 'fill-pb';
@@ -67,10 +69,10 @@ const _Fill = ({ processID }) => {
           })
         })
       }).catch(error => {
-        e.layer.removeFrom(Map);
-        let enc = new TextDecoder("utf-8");
-        let errmsg = enc.decode(error.response.data);
-        elements.alertUser(true, 'error', 'Грешка при пополнување физички блок', errmsg);
+        const { response } = error
+        const errorMsg = decodeResponse(response)
+        alertUser(true, 'error', 'Грешка при пополнување физички блок', errorMsg);
+        e.layer.removeFrom(Map)
         disable()
       })
     }
