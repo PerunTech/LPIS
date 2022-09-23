@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
 import { config, cutAPMsg } from '../Config';
-import { getFarmMapAssets } from '../../../Util';
+import { decodeResponse, getFarmMapAssets } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -11,6 +11,7 @@ const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { draw: { polygon } } = tools;
 const { Icon, DrawActions } = ui;
+const { alertUser } = elements;
 const { useReducer, useEffect } = React;
 const _id = 'cutAP';
 
@@ -71,10 +72,10 @@ const _Cut = ({ processID, farmObjId, saveIsPending }) => {
           })
         })
       }).catch(error => {
+        const { response } = error
+        const errorMsg = decodeResponse(response)
+        alertUser(true, 'error', 'Грешка при отсекување земјоделска парцела', errorMsg);
         e.layer.removeFrom(Map);
-        let enc = new TextDecoder("utf-8");
-        let errmsg = enc.decode(error.response.data);
-        elements.alertUser(true, 'error', 'Грешка при отсекување земјоделска парцела', errmsg);
         disable()
       })
     }

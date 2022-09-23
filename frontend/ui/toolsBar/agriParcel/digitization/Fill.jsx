@@ -5,12 +5,13 @@ import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
-import { getFarmMapAssets } from '../../../Util'
+import { decodeResponse, getFarmMapAssets } from '../../../Util'
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
 const { draw: { polygon } } = tools
 const { Icon, DrawActions } = ui;
+const { alertUser } = elements;
 const { useReducer, useEffect } = React;
 const _id = 'fillAP';
 
@@ -71,14 +72,10 @@ const _Fill = ({ processID, farmObjId, saveIsPending }) => {
           })
         })
       }).catch(error => {
-        e.layer.removeFrom(Map);
-        let enc = new TextDecoder("utf-8");
-        let errmsg = enc.decode(error.response.data);
-        elements.alertUser(true,
-          'error',
-          'Грешка при пополнување парцела',
-          errmsg
-        );
+        const { response } = error
+        const errorMsg = decodeResponse(response)
+        alertUser(true, 'error', 'Грешка при пополнување парцела', errorMsg)
+        e.layer.removeFrom(Map)
       })
     }
 
