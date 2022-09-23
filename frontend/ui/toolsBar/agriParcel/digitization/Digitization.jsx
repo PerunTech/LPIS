@@ -25,31 +25,31 @@ import { Load } from './Load';
 const { ButtonGroup, Divider } = ui;
 
 export const Digitization = () => {
-    return <ButtonGroup>
-        <Info />
-        <Divider />
-        <Copy />
-        <CopyRefParcel />
-        <Draw />
-        <DrawWithLine />
-        <Delete />
-        <Edit />
-        <Merge />
-        <Split />
-        <Fill />
-        <Cut />
-        <Divider />
-        <Refresh />
-        <Divider />
-        <Load />
-        <Divider />
-        <Assign />
-        <CommonUse />
-        <PermanentCrops />
-        <CalculateCadIntersections />
-        <CadIntersections />
-        <DeleteParcelFromFarm />
-        <Divider />
-        <Print />
-    </ButtonGroup>;
+  return <ButtonGroup>
+    <Info />
+    <Divider />
+    <Copy />
+    <CopyRefParcel />
+    <Draw />
+    <DrawWithLine />
+    <Delete />
+    <Edit />
+    <Merge />
+    <Split />
+    <Fill />
+    <Cut />
+    <Divider />
+    <Refresh />
+    <Divider />
+    <Load />
+    <Divider />
+    <Assign />
+    <CommonUse />
+    <PermanentCrops />
+    <CalculateCadIntersections />
+    <CadIntersections />
+    <DeleteParcelFromFarm />
+    <Divider />
+    <Print />
+  </ButtonGroup>;
 }
