@@ -41,7 +41,7 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck, intersectedNe
     if (intersectedNeighbours) {
         const neighbourIds = intersectedNeighbours
         const splitIds = neighbourIds.split(',')?.filter(neighbourId => neighbourId)
-        if (splitIds && Array.isArray(splitIds) && splitAPMsg.length > 0) {
+        if (splitIds && Array.isArray(splitIds) && splitIds.length > 0) {
             splitIds.forEach((id, i) => {
                 if (id) {
                     const splitId = id?.split(':')
