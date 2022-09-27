@@ -49,9 +49,9 @@ const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer 
             )}
             {(actionType === 'sizp' || actionType === 'pplan') && isOpen &&
                 <React.Fragment>
-                    <FarmDataGridInfoHeader />
                     {!showParcelInfoContainer && (
                         <React.Fragment>
+                            <FarmDataGridInfoHeader />
                             <FarmDataGridNumOfParcels rows={farmData} />
                             <FarmDataGridHeader gridType='agri_parcel' />
                         </React.Fragment>

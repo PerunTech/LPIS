@@ -141,22 +141,22 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
     return (
       <React.Fragment>
         {farmInfo && parcelInfo ?
-          <div className='mt-1 text-center border-top selected-parcel-info'>
-            {parcelInfo && parcelInfo.COMMON_USE && <Button className='mb-1 p-2 info' onClick={getCommonUse}>
+          <div className='mt-2 text-center border-top selected-parcel-info'>
+            {parcelInfo && parcelInfo.COMMON_USE && <Button className='mt-1 mb-1 p-2 info' onClick={getCommonUse}>
               Информации за заедничка употреба
             </Button>}
             {commonUses && Array.isArray(commonUses) && commonUses.length > 0 && <div id='commonUses' className='mb-2'>
               <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Заедничка употреба</p>
               {commonUsesContainer()}
             </div>}
-            {parcelInfo && parcelInfo.HAS_OVERLAP && !overlaps && <Button className='mb-1 p-2 info' onClick={getOverlaps}>
+            {parcelInfo && parcelInfo.HAS_OVERLAP && !overlaps && <Button className='mt-1 mb-1 p-2 info' onClick={getOverlaps}>
               Информации за преклопи
             </Button>}
             {overlaps && Array.isArray(overlaps) && overlaps.length > 0 && <div id='overlaps' className='mb-2'>
               <p className='font-weight-bold' style={{ marginBottom: '0', textDecoration: 'underline' }}>Преклопи</p>
               {overlapsContainer()}
             </div>}
-            {canHavePermanentCrops && !permanentCrops && <Button className='mb-1 p-2 info' onClick={getPermanentCrops}>
+            {canHavePermanentCrops && !permanentCrops && <Button className='mt-1 mb-1 p-2 info' onClick={getPermanentCrops}>
               Информации за долгогодишни култури
             </Button>}
             {permanentCrops && Array.isArray(permanentCrops) && permanentCrops.length > 0 && <div id='permanentCrops' className='mb-2'>
@@ -164,7 +164,7 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
               {permanentCropsContainer()}
             </div>}
             <InfoListGroup farmInfo={farmInfo} parcelInfo={parcelInfo} />
-          </div> : <div className='mt-1 text-center'>Нема информации</div>}
+          </div> : <div className='mt-2 text-center'>Нема информации</div>}
       </React.Fragment>
     )
   }
