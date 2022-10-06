@@ -33,8 +33,16 @@ const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer 
         }
     }, [])
 
+    const getDataPanelWidth = () => {
+        let width = ''
+        if (isOpen) {
+            width = actionType ? '555px' : '300px'
+        }
+        return width
+    }
+
     return (
-        <div id='data-panel' style={{ width: isOpen ? '555px' : '' }}>
+        <div id='data-panel' style={{ width: getDataPanelWidth() }}>
             <Button id='data-panel-toggle' onClick={() => setOpen(!isOpen)}>
                 <Icon name={isOpen ? 'chevron-left' : 'chevron-right'} size='16px'></Icon>
             </Button>
