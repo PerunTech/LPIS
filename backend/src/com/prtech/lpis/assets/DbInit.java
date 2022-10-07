@@ -260,6 +260,18 @@ public class DbInit implements IDbInit {
 		dbf6.setCode_list_user_code("LAND_COVER");
 		dbf6.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":true}}");
+
+		/* C6 [read-write, not null, form-visible], essential alphanumerical data of this object.*/
+		DbDataField dbf61 = new DbDataField();
+		dbf61.setDbFieldName("LAND_COVER_CODE2");
+		dbf61.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf61.setDbFieldSize(50);
+		dbf61.setIsNull(false);
+		dbf61.setLabel_code("physical_block.land_cover_code2");
+		dbf61.setCode_list_user_code("LAND_COVER");
+		dbf61.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
+				+ "\"resizable\":true,\"editable\":true}}");
+	
 		
 		/* C7 [read-write, can be null, form-visible] */
 		DbDataField dbf7 = new DbDataField();
@@ -281,7 +293,18 @@ public class DbInit implements IDbInit {
 		dbf8.setLabel_code("physical_block.old_id");
 		dbf8.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 
-		DbDataField[] fieldList = new DbDataField[8];
+		/* C8 [system, form-hidden] */
+		DbDataField dbf81 = new DbDataField();
+		dbf81.setDbFieldName("INT_ID");
+		dbf81.setDbFieldType(DbFieldType.NUMERIC);
+		dbf81.setDbFieldSize(18);
+		dbf81.setDbFieldScale(0);
+		dbf81.setIsNull(true);
+		dbf8.setLabel_code("physical_block.old_id");
+		dbf8.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+
+		
+		DbDataField[] fieldList = new DbDataField[9];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
@@ -290,6 +313,7 @@ public class DbInit implements IDbInit {
 		fieldList[5] = dbf6;
 		fieldList[6] = dbf7;
 		fieldList[7] = dbf8;
+		fieldList[8] = dbf61;
 		dbt.setDbTableFields(fieldList);
 		
 		return dbt;
