@@ -266,7 +266,7 @@ public class DbInit implements IDbInit {
 		dbf61.setDbFieldName("LAND_COVER_CODE2");
 		dbf61.setDbFieldType(DbFieldType.NVARCHAR);
 		dbf61.setDbFieldSize(50);
-		dbf61.setIsNull(false);
+		dbf61.setIsNull(true);
 		dbf61.setLabel_code("physical_block.land_cover_code2");
 		dbf61.setCode_list_user_code("LAND_COVER");
 		dbf61.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
@@ -300,11 +300,11 @@ public class DbInit implements IDbInit {
 		dbf81.setDbFieldSize(18);
 		dbf81.setDbFieldScale(0);
 		dbf81.setIsNull(true);
-		dbf8.setLabel_code("physical_block.old_id");
-		dbf8.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
+		dbf81.setLabel_code("physical_block.old_id");
+		dbf81.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 
 		
-		DbDataField[] fieldList = new DbDataField[9];
+		DbDataField[] fieldList = new DbDataField[10];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
@@ -314,6 +314,7 @@ public class DbInit implements IDbInit {
 		fieldList[6] = dbf7;
 		fieldList[7] = dbf8;
 		fieldList[8] = dbf61;
+		fieldList[9] = dbf81;
 		dbt.setDbTableFields(fieldList);
 		
 		return dbt;
