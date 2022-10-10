@@ -48,7 +48,12 @@ export const saveAP = (layer, callback, skipChecks, skipNeighbourCheck) => {
                 if (!pbCheck && !apCheck && !neighbourCheck) {
                     _saveAgriParcel()
                 } else {
-                    ReactDOM.render(<APChecksModal data={response.data} />, container)
+                    // If the physical block & agri parcel checks are not returned & the neighbour check should be skipped, skip the modal for the checks
+                    if (!pbCheck && !apCheck && skipNeighbourCheck) {
+                        _saveAgriParcel()
+                    } else {
+                        ReactDOM.render(<APChecksModal data={response.data} />, container)
+                    }
                 }
             } else {
                 const title = response?.data?.title || ''
