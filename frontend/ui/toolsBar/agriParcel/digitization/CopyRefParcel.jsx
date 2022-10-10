@@ -137,7 +137,7 @@ const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
       GEOM: factory.GeoJSON.fromLayer(layer),
       parent_id: farmObjId,
       OBJECT_ID: parcelObjId
-    }), disable);
+    }), disable, false, true);
   }
 
   const handleShowForm = () => {
