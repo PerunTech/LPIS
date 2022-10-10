@@ -8,7 +8,7 @@ const { http, store, factory, Map } = core;
 const { protobuf, geobuf } = data;
 const { Button, Modal, Icon, DrawActions } = ui
 
-export const saveAP = (layer, callback, skipChecks) => {
+export const saveAP = (layer, callback, skipChecks, skipNeighbourCheck) => {
     // Container for our workflow.
     const container = document.getElementsByClassName('control-topleft')[0];
 
@@ -200,9 +200,12 @@ export const saveAP = (layer, callback, skipChecks) => {
     const APChecksModal = ({ data }) => {
         const pbCheck = data.physical_block_check
         const apCheck = data.agri_parcel_check
-        const neighbourCheck = data.agri_parcel_neighbour
+        let neighbourCheck = data.agri_parcel_neighbour
+        if (skipNeighbourCheck) {
+            neighbourCheck = false
+        }
         const intersectedNeighbours = data.AGRI_PARCEL_NEIGHBOUR_ID
-        const { schema, uiSchema } = saveAPFormSchema(pbCheck, apCheck, neighbourCheck, intersectedNeighbours)
+        const { schema, uiSchema } = saveAPFormSchema(pbCheck, apCheck, neighbourCheck, intersectedNeighbours, skipNeighbourCheck)
 
         const onSubmit = ({ formData }) => {
             _saveAgriParcel(formData)
