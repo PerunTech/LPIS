@@ -55,6 +55,8 @@ const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
     const url = `/lpis/copy/parcel/{init.token}/RP/${parcelOldId}`
     http.call('get-referent-parcel', { url, responseType: 'arraybuffer' }).then(response => {
       setState({ loading: false, showGuidanceButton: true })
+      // Remove the initial working layer from the map
+      layer.removeFrom(Map)
       const data = geobuf.decode(protobuf(response));
       const geojson = factory.geoJSON(data, apConfig.pathOptions);
       const layers = geojson.getLayers();
