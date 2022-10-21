@@ -36,7 +36,7 @@ export const restAP = {
     }
 };
 
-export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck, intersectedNeighbours, skipNeighbourCheck) => {
+export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck, intersectedNeighbours) => {
     let apCheckDescriptionLabel = ''
     if (intersectedNeighbours) {
         const neighbourIds = intersectedNeighbours
@@ -98,11 +98,11 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck, intersectedNe
                         title: 'Соседните парцели не се прилепени или оддалечени повеќе од 1 метар',
                         description: `Соседни парцели кои не се прецизно прилепени: ${apCheckDescriptionLabel}`,
                         type: 'string',
-                        enum: ['0', '1'],
-                        enumNames: ['Прилепи до соседна парцела', 'Остави простор помеѓу парцелите'],
+                        enum: ['0', '1', '2'],
+                        enumNames: ['Прилепи до соседна парцела', 'Остави простор помеѓу парцелите', 'Задржи ја постоечката определба'],
                         default: '0'
                     }
-                } : !skipNeighbourCheck && {
+                } : {
                     agri_parcel_neighbour: {
                         title: 'Соседните парцели се прилепени или оддалечени повеќе од 1 метар',
                         type: 'string',
