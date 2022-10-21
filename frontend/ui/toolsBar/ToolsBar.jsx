@@ -23,6 +23,9 @@ const _ToolsBar = ({ actionType }) => {
     const getDefaultActiveKey = () => {
         let defaultActiveKey = ''
         switch (actionType) {
+            case 'preview':
+                defaultActiveKey = 'io'
+                break;
             case 'sizp':
                 defaultActiveKey = 'agri-parcel'
                 break
@@ -40,22 +43,22 @@ const _ToolsBar = ({ actionType }) => {
         let shouldDisable = false
         switch (tabType) {
             case 'physical-block':
-                if (actionType === 'pplan') {
+                if (actionType === 'pplan' || actionType === 'preview') {
                     shouldDisable = true
                 }
                 break
             case 'landscape-features':
-                if (actionType === 'pplan' || !actionType) {
+                if (actionType === 'pplan' || actionType === 'preview' || !actionType) {
                     shouldDisable = true
                 }
                 break
             case 'agri-parcel':
-                if (actionType === 'pplan' || !actionType) {
+                if (actionType === 'pplan' || actionType === 'preview' || !actionType) {
                     shouldDisable = true
                 }
                 break
             case 'crop-parcel':
-                if (actionType === 'sizp' || !actionType) {
+                if (actionType === 'sizp' || actionType === 'preview' || !actionType) {
                     shouldDisable = true
                 }
                 break

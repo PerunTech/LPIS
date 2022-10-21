@@ -55,7 +55,7 @@ const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer 
                     </div>
                 </React.Fragment>
             )}
-            {(actionType === 'sizp' || actionType === 'pplan') && isOpen &&
+            {(actionType === 'sizp' || actionType === 'pplan' || actionType === 'preview') && isOpen &&
                 <React.Fragment>
                     {!showParcelInfoContainer && (
                         <React.Fragment>
