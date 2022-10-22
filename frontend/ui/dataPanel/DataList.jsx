@@ -11,7 +11,7 @@ export const _DataList = ({ data, setData, actionType, showParcelInfoContainer, 
     }
 
     return <div id='dataList' className={dataListContainerClassName}>
-        {!pauseGrid && actionType !== 'sizp' && actionType !== 'pplan' && data.map((el, idx) =>
+        {!pauseGrid && actionType !== 'sizp' && actionType !== 'pplan' && actionType !== 'preview' && data.map((el, idx) =>
             <ui.TreeNode
                 id={idx}
                 key={el.id}
@@ -24,7 +24,7 @@ export const _DataList = ({ data, setData, actionType, showParcelInfoContainer, 
                     rows={Object.values(layers).filter(layer =>
                         layer.getMetadata().type === el.id)} />}
             </ui.TreeNode>)}
-        {(actionType === 'sizp' || actionType === 'pplan') && !showParcelInfoContainer &&
+        {(actionType === 'sizp' || actionType === 'pplan' || actionType === 'preview') && !showParcelInfoContainer &&
             <FarmDataGrid type='agri_parcel' rows={farmData} actionType={actionType} />
         }
         {actionType === 'sizp' && showParcelInfoContainer && <InfoList />}

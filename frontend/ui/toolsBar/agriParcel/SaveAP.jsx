@@ -8,7 +8,7 @@ const { http, store, factory, Map } = core;
 const { protobuf, geobuf } = data;
 const { Button, Modal, Icon, DrawActions } = ui
 
-export const saveAP = (layer, callback, skipChecks, skipNeighbourCheck) => {
+export const saveAP = (layer, callback, skipChecks) => {
     // Container for our workflow.
     const container = document.getElementsByClassName('control-topleft')[0];
 
@@ -48,12 +48,7 @@ export const saveAP = (layer, callback, skipChecks, skipNeighbourCheck) => {
                 if (!pbCheck && !apCheck && !neighbourCheck) {
                     _saveAgriParcel()
                 } else {
-                    // If the physical block & agri parcel checks are not returned & the neighbour check should be skipped, skip the modal for the checks
-                    if (!pbCheck && !apCheck && skipNeighbourCheck) {
-                        _saveAgriParcel()
-                    } else {
-                        ReactDOM.render(<APChecksModal data={response.data} />, container)
-                    }
+                    ReactDOM.render(<APChecksModal data={response.data} />, container)
                 }
             } else {
                 const title = response?.data?.title || ''
@@ -206,11 +201,8 @@ export const saveAP = (layer, callback, skipChecks, skipNeighbourCheck) => {
         const pbCheck = data.physical_block_check
         const apCheck = data.agri_parcel_check
         let neighbourCheck = data.agri_parcel_neighbour
-        if (skipNeighbourCheck) {
-            neighbourCheck = false
-        }
         const intersectedNeighbours = data.AGRI_PARCEL_NEIGHBOUR_ID
-        const { schema, uiSchema } = saveAPFormSchema(pbCheck, apCheck, neighbourCheck, intersectedNeighbours, skipNeighbourCheck)
+        const { schema, uiSchema } = saveAPFormSchema(pbCheck, apCheck, neighbourCheck, intersectedNeighbours)
 
         const onSubmit = ({ formData }) => {
             _saveAgriParcel(formData)
