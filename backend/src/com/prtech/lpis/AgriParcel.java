@@ -36,6 +36,7 @@ import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
+import com.prtech.svarog.SvExecManager;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvParameter;
 import com.prtech.svarog.SvReader;
@@ -87,19 +88,18 @@ public class AgriParcel {
 
 	}
 
-	private Long getExternalSequence(SvCore svc) throws SvException {
+	private Long getExternalSequence(SvCore svc, String sequenceName) throws SvException {
 		Long nextId = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		Connection con = svc.dbGetConn();
 		try {
-			ps = con.prepareStatement("select " + ApplicationServices.externalIdSequence + ".nextval from DUAL");
+			ps = con.prepareStatement("select " + sequenceName + ".nextval from DUAL");
 			rs = ps.executeQuery();
 			if (rs.next())
 				nextId = rs.getLong(1);
 		} catch (Exception e) {
-			throw (new SvException(CC.NO_SEQUENCE, svc.getInstanceUser(), null,
-					ApplicationServices.externalIdSequence));
+			throw (new SvException(CC.NO_SEQUENCE, svc.getInstanceUser(), null, sequenceName));
 		} finally {
 			if (rs != null)
 				SvCore.closeResource(rs, svc.getInstanceUser());
@@ -144,6 +144,15 @@ public class AgriParcel {
 		return result;
 	}
 
+	/**
+	 * Method to generate polygon from string
+	 * 
+	 * @param svg
+	 * @param line
+	 * @param layerTypeId
+	 * @return
+	 * @throws SvException
+	 */
 	public Geometry generatePolygon(SvGeometry svg, LineString line, Long layerTypeId) throws SvException {
 
 		Polygonizer polygonizer = new Polygonizer();
@@ -331,7 +340,7 @@ public class AgriParcel {
 	}
 
 	public Collection<Geometry> splitParcel(SvGeometry svg, Geometry geom, Long parentId, String objectName, Double x,
-			Double y) throws SvException, SQLException, ParseException {
+			Double y, String sequenceName, String customExecutor) throws SvException, SQLException, ParseException {
 		ArrayList<Geometry> result = new ArrayList<>();
 		svg.setAutoCommit(false);
 		Long layerTypeId = SvCore.getTypeIdByName(objectName);
@@ -353,16 +362,21 @@ public class AgriParcel {
 		// TODO add calculus of overlaps
 		if (newGeometry != null && splitObject.size() == 1) {
 			DbDataObject dbo = splitObject.get(0);
-			this.saveAgriParcel(svg, dbo.getObjectId(), dbo.getParentId(), 2, 2, 2, new JsonObject(), false,
-					newGeometry);
+			this.saveAgriParcel(svg, dbo.getObjectId(), layerTypeId, dbo.getParentId(), 2, 2, 2, new JsonObject(),
+					false, newGeometry, sequenceName, customExecutor);
 			result.add(newGeometry);
 			DbDataArray dba = new DbDataArray();
 			for (Geometry other : others) {
 				DbDataObject dboNew = new DbDataObject(dbo.getObjectType());
 				dboNew.setValuesMap(dbo.getValuesMap());
-				Long extId = getExternalSequence(svg);
-				dboNew.setVal(CC.OLD_ID, extId);
 				SvGeometry.setGeometry(dboNew, other);
+				// run custom presave checks
+				try (SvExecManager svx = new SvExecManager(svg)) {
+					Map<String, Object> params = new HashMap<>();
+					params.put("PARCEL", dboNew);
+					params.put("SEQUENCE_NAME", sequenceName);
+					dboNew = (DbDataObject) svx.execute(customExecutor, params, null);
+				}
 				dba.addDataItem(dboNew);
 			}
 			svg.setSkipSpatialValidations(true);
@@ -512,6 +526,25 @@ public class AgriParcel {
 		return geom;
 	}
 
+	public String getExternalSequenceName(String objectName) {
+		String seqName = null;
+		try {
+			seqName = SvParameter.getSysParam(CC.EXTERNAL_SEQ_NAME + "_" + objectName, CC.NO_SEQUENCE);
+		} catch (SvException e) {
+			log4j.error("No external sequence configured for object:" + objectName, e);
+		}
+		return seqName;
+	}
+
+	public String getCustomExecutorName(String objectName) {
+		String seqName = null;
+		try {
+			seqName = SvParameter.getSysParam(CC.CUSTOM_EXEC_NAME + "_" + objectName, CC.NO_CUSTOM_EXEC);
+		} catch (SvException e) {
+			log4j.error("No custom executor configured for object:" + objectName, e);
+		}
+		return seqName;
+	}
 	public Geometry parcelAlignment(SvGeometry svg, DbDataObject parcel, int cutPB, int cutAP, int alignNB,
 			DbDataArray result) throws SvException, SQLException, ParseException {
 		if (cutAP == 1 && alignNB != 2)
@@ -538,10 +571,54 @@ public class AgriParcel {
 		geom.setUserData(parcel);
 		return geom;
 	}
+	/**
+	 * This is method for agri parcel presave checks
+	 * 
+	 * @param svr
+	 * @param ap
+	 * @param sequenceName
+	 * @return
+	 * @throws SvException
+	 */
+	public DbDataObject agriParcelPresaveChecks(SvCore svr, DbDataObject ap, String sequenceName) throws SvException {
+		// prevent farm overlaps
 
-	public void saveAgriParcel(SvCore core, Long objectId, Long parentId, int cutPB, int cutAP, int alignNB,
-			JsonObject metadata, boolean autoCommit, Geometry geometryOverride)
-			throws SvException, SQLException, ParseException {
+		if (ap.getObjectType().equals(SvCore.getTypeIdByName(CC.AGRI_PARCEL))) {
+			Geometry geom = preventFarmOverlap(svr, ap, CC.AGRI_PARCEL);
+			SvGeometry.setGeometry(ap, geom);
+			// ensure common use
+			if ((boolean) ap.getVal(CC.COMMON_USE) && !ap.getVal(CC.LAND_COVER_CODE).equals(CC.LAND_COVER_CODE_200))
+				throw (new SvException(CC.COMMON_USE_PARCEL_MUST_BE_200, svr.getInstanceUser()));
+			if (ap.getObjectId().equals(0L)) {
+				Long extId = getExternalSequence(svr, sequenceName);
+				ap.setVal(CC.OLD_ID, extId);
+			}
+		}
+		// end agri checks
+		return ap;
+	}
+	
+	/**
+	 * Method to save a parcel in the SDI
+	 * @param core Reference to the SvCore under which the save shall be executed
+	 * @param objectId The objectId of the parcel (if its update)
+	 * @param typeId The typeId of the parcel
+	 * @param parentId The parent of the parcel
+	 * @param cutPB Flag to enable parcel cutoff according to the physical block layer
+	 * @param cutAP Flag to enable parcel cutoff according to the Agri Parcel layer
+	 * @param alignNB Flag to enable parcel alignment
+	 * @param metadata The JSON metadat sent from the JS frontend
+	 * @param autoCommit Flag to set the autocommit
+	 * @param geometryOverride If we need to overrider the geometry (used for splitting)
+	 * @param sequenceName Name of the sequence to generate new OLD_ID
+	 * @param customExecutor Name of the executor to be invoked for the specific layer
+	 * @throws SvException
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
+	public void saveAgriParcel(SvCore core, Long objectId, Long typeId, Long parentId, int cutPB, int cutAP,
+			int alignNB, JsonObject metadata, boolean autoCommit, Geometry geometryOverride, String sequenceName,
+			String customExecutor) throws SvException, SQLException, ParseException {
 		DbDataObject ap = null;
 		DbDataArray result = new DbDataArray();
 		try (SvReader svr = new SvReader(core); SvGeometry svg = new SvGeometry(svr);) {
@@ -550,14 +627,15 @@ public class AgriParcel {
 			ap = new DbDataObject();
 			DbDataArray parcelsToSave = new DbDataArray();
 			Geometry geom = geometryOverride;
-			Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
+			// = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 			DbDataArray fieldSet = SvCore.getFields(typeId);
 			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
 
 			if (geom == null)
 				geom = Util.jsonToGeometry(metadata.get(Sv.GEOM));
-			if (geom.getGeometryType().equals("LineString"))
-				geom = generatePolygon(svg, (LineString) geom, typeId);
+//TODO move this to generation by line
+//			if (geom.getGeometryType().equals("LineString"))
+//				geom = generatePolygon(svg, (LineString) geom, typeId);
 
 			if (isUpdate) {
 				ap = svr.getObjectById(objectId, typeId, null);
@@ -568,9 +646,6 @@ public class AgriParcel {
 			}
 			// prepare the geometry for further processing
 			isUpdate = (new com.prtech.spatial.ApplicationServices()).prepareGeometry(geom, ap, svg, true);
-			// prevent farm overlaps
-			geom = preventFarmOverlap(svr, ap);
-			SvGeometry.setGeometry(ap, geom);
 
 			// Map form values to dbo fields
 			if (geometryOverride == null)
@@ -580,11 +655,15 @@ public class AgriParcel {
 						ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
 					}
 				}
-			if ((boolean) ap.getVal(CC.COMMON_USE) && !ap.getVal(CC.LAND_COVER_CODE).equals(CC.LAND_COVER_CODE_200))
-				throw (new SvException(CC.COMMON_USE_PARCEL_MUST_BE_200, svg.getInstanceUser()));
 
-			if (ap.getObjectId().equals(0L))
-				ap.setVal(CC.OLD_ID, null);
+			// run custom presave checks
+			try (SvExecManager svx = new SvExecManager(core)) {
+				Map<String, Object> params = new HashMap<>();
+				params.put("PARCEL", ap);
+				params.put("SEQUENCE_NAME", sequenceName);
+				ap = (DbDataObject) svx.execute(customExecutor, params, null);
+			}
+
 			Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, ap.getParentId(), typeId);
 			geom = parcelAlignment(svg, ap, cutPB, cutAP, alignNB, result);
 			// check minimum parcel size
@@ -592,10 +671,6 @@ public class AgriParcel {
 				throw (new SvException(CC.PARCEL_LESS_THAN_MINIMUM, svg.getInstanceUser(), ap,
 						ApplicationServices.minimumAgriParcelSize));
 
-			if (ap.getVal(CC.OLD_ID) == null) {
-				Long extId = getExternalSequence(svr);
-				ap.setVal(CC.OLD_ID, extId);
-			}
 			svg.setAutoCommit(false);
 			Util.calculateGeometryDerivatives(ap);
 
@@ -724,8 +799,8 @@ public class AgriParcel {
 
 	}
 
-	private Geometry preventFarmOverlap(SvReader svr, DbDataObject parcel) throws SvException {
-		DbDataArray assets = getAssetsList(svr, parcel.getParentId(), CC.AGRI_PARCEL);
+	private Geometry preventFarmOverlap(SvCore svr, DbDataObject parcel, String objectName) throws SvException {
+		DbDataArray assets = getAssetsList(svr, parcel.getParentId(), objectName);
 		Geometry g = SvGeometry.getGeometry(parcel);
 		for (DbDataObject dbo : assets.getItems()) {
 			Geometry other = SvGeometry.getGeometry(dbo);
@@ -749,30 +824,30 @@ public class AgriParcel {
 	 * @return
 	 * @throws SvException
 	 */
-	DbDataArray getAssetsList(SvReader svr, Long objectId, String typeName) throws SvException {
+	DbDataArray getAssetsList(SvCore svc, Long objectId, String typeName) throws SvException {
 		DbDataArray result = new DbDataArray();
+		try (SvReader svr = new SvReader(svc)) {
+			// Filter for campaign year and geometry not null, when cp is requested.
+			if (typeName.equalsIgnoreCase("LAND_USE_PLAN")) {
+				svr.setIncludeGeometries(true);
+				DbDataArray dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
+				for (DbDataObject dbo : dbArr.getItems()) {
+					String cYear = (String) dbo.getVal("CAMPAIGN_YEAR");
+					String now = String.valueOf(new DateTime().year().get());
+					Geometry g = SvGeometry.getGeometry(dbo);
 
-		// Filter for campaign year and geometry not null, when cp is requested.
-		if (typeName.equalsIgnoreCase("LAND_USE_PLAN")) {
-			svr.setIncludeGeometries(true);
-			DbDataArray dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
-			for (DbDataObject dbo : dbArr.getItems()) {
-				String cYear = (String) dbo.getVal("CAMPAIGN_YEAR");
-				String now = String.valueOf(new DateTime().year().get());
-				Geometry g = SvGeometry.getGeometry(dbo);
-
-				if (cYear != null && cYear.equals(now) && g != null) {
-					result.addDataItem(dbo);
+					if (cYear != null && cYear.equals(now) && g != null) {
+						result.addDataItem(dbo);
+					}
 				}
+			} else if (typeName.equalsIgnoreCase(CC.AGRI_PARCEL)) {
+				result = new Reader(svr).getParcels(objectId, null, true);
+
+			} else if (typeName.equalsIgnoreCase(CC.LP_CAD_INTERSECTIONS)) {
+				result = new Reader(svr).getParcels(objectId, null, true, true);
+
 			}
-		} else if (typeName.equalsIgnoreCase(CC.AGRI_PARCEL)) {
-			result = new Reader(svr).getParcels(objectId, null, true);
-
-		} else if (typeName.equalsIgnoreCase(CC.LP_CAD_INTERSECTIONS)) {
-			result = new Reader(svr).getParcels(objectId, null, true, true);
-
 		}
-
 		return result;
 
 	}

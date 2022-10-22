@@ -49,6 +49,7 @@ public class CC {
 	public static final String WFS_NOT_CONFIGURED = "lpis.error.wfs.notconfigured";
 	public static final String NO_SEQUENCE = "NO_SEQUENCE";
 	public static final String EXTERNAL_SEQ_NAME = "EXTERNAL_SEQ_NAME";
+	public static final String EXTERNAL_SEQ_NAME_PB = "EXTERNAL_SEQ_NAME_PB";
 	public static final String MERGE_GEOM_INVALID = "MERGE_GEOM_INVALID";
 	public static final String SIMPLIFY_LEVEL = "SIMPLIFY_LEVEL";
 	public static final Object CAD_MUNICIPALITIES_FILENAME = "CAD_MUNICIPALITIES.JSON";
@@ -83,5 +84,7 @@ public class CC {
 	public static final String SDI_AREA2PERIMETER_MINRATIO = "SDI_AREA2PERIMETER_MINRATIO";
 	public static final Double DEFAULT_AREA2PERIMETER_MINRATIO = 0.1;
 	public static final String AGRI_PARCEL_NEIGHBOUR_ID = "AGRI_PARCEL_NEIGHBOUR_ID";
-
+	public static final String CUSTOM_EXEC_NAME = "CUSTOM_EXEC_NAME";
+	public static final String NO_CUSTOM_EXEC = "NO_CUSTOM_EXEC";
+	public static final String PRESAVE_AGRI_PARCEL = "PRESAVE_AGRI_PARCEL";
 }

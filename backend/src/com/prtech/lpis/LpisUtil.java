@@ -13,6 +13,8 @@ import org.joda.time.DateTime;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.prtech.svarog.SvCore;
+import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog_common.DbDataObject;
@@ -220,4 +222,6 @@ public class LpisUtil {
 		dbo.setVal("AREA", Double.parseDouble(df.format(geom.getArea()).replace(",", ".")));
 		dbo.setVal("PERIMETER", Double.parseDouble(df.format(geom.getLength()).replace(",", ".")));
 	}
+
+
 }

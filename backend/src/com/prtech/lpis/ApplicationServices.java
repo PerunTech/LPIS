@@ -93,7 +93,7 @@ public class ApplicationServices {
 	static Map<Integer, ArrayList<Geometry>> municipalityMap = new HashMap<Integer, ArrayList<Geometry>>();
 
 	static int minimumAgriParcelSize;
-	static String externalIdSequence;
+	static Map<String, String> externalSeqNames = new HashMap<>();
 	static double simplifyTopoligyLevel;
 
 	static final Logger log4j = SvConf.getLogger(ApplicationServices.class);
@@ -117,12 +117,7 @@ public class ApplicationServices {
 			log4j.error("Minimum Agri parcel size not size, defaulting to 100 sqm", e);
 			minimumAgriParcelSize = 100;
 		}
-		try {
-			externalIdSequence = SvParameter.getSysParam(CC.EXTERNAL_SEQ_NAME, CC.NO_SEQUENCE);
-		} catch (SvException e) {
-			log4j.error("No external sequence configured", e);
-			externalIdSequence = CC.NO_SEQUENCE;
-		}
+
 	}
 
 	static ArrayList<Geometry> getCadMunicipalities(Integer sector, String token) throws SvException, ParseException {
@@ -377,11 +372,27 @@ public class ApplicationServices {
 			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
 			@PathParam("x") final Double x, @PathParam("y") final Double y,
 			final MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+		return splitParcel(token, objectName, parentId, x, y, formVals, httpRequest);
+
+	}
+
+	@Path("/parcel/split/{token}/{objectName}/{parentId}/{x}/{y}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/pbf")
+	public Response splitParcel(@PathParam("token") final String token,
+			@PathParam("objectName") final String objectName, @PathParam("parentId") final Long parentId,
+			@PathParam("x") final Double x, @PathParam("y") final Double y,
+			final MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 
 		final Collection<Geometry> result = new ArrayList<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
 			Geometry geom = Util.getInputGeometry(formVals, null);
-			Collection<Geometry> split = (new AgriParcel()).splitParcel(svg, geom, parentId, objectName, x, y);
+			AgriParcel ap = (new AgriParcel());
+			String externalSequence = ap.getExternalSequenceName(objectName);
+			String customExecutor = ap.getCustomExecutorName(objectName);
+			Collection<Geometry> split = ap.splitParcel(svg, geom, parentId, objectName, x, y,
+					externalSequence, customExecutor);
 			result.addAll(split);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.splitParcel");
@@ -440,11 +451,30 @@ public class ApplicationServices {
 			@PathParam("parentId") Long parentId, @PathParam("cutPB") Integer cutPB, @PathParam("cutAP") Integer cutAP,
 			@PathParam("alignAP") Integer alignAP, MultivaluedMap<String, String> formVals,
 			@Context HttpServletRequest httpRequest) {
+
+		return saveParcel(token, CC.AGRI_PARCEL, objectId, parentId, cutPB, cutAP, alignAP, formVals, httpRequest);
+	};
+
+
+
+	@Path("/parcels/save/{token}/{objectName}/{objectId}/{parentId}/{cutPB}/{cutAP}/{alignAP}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response saveParcel(@PathParam("token") String token, @PathParam("objectName") String objectName,
+			@PathParam("objectId") Long objectId, @PathParam("parentId") Long parentId,
+			@PathParam("cutPB") Integer cutPB, @PathParam("cutAP") Integer cutAP, @PathParam("alignAP") Integer alignAP,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvReader svr = new SvReader(token)) {
 
 			JsonObject metadata = Util.dataToJson(formVals);
-			(new AgriParcel()).saveAgriParcel(svr, objectId, parentId, cutPB, cutAP, alignAP, metadata, true, null);
+			Long typeId = SvCore.getTypeIdByName(objectName);
+			AgriParcel ap = (new AgriParcel());
+			String externalSequence = ap.getExternalSequenceName(objectName);
+			String customExecutor = ap.getCustomExecutorName(objectName);
+			
+			ap.saveAgriParcel(svr, objectId, typeId, parentId, cutPB, cutAP, alignAP, metadata, true,
+					null, externalSequence, customExecutor);
 
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.saveParcel");

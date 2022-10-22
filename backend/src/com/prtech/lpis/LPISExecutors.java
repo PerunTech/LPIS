@@ -26,17 +26,20 @@ public class LPISExecutors implements ISvExecutorGroup {
 		returnTypes = new HashMap<>();
 		returnTypes.put(CC.PARCELS, DbDataArray.class);
 		returnTypes.put(CC.IMPORT, DbDataArray.class);
+		returnTypes.put(CC.PRESAVE_AGRI_PARCEL, DbDataObject.class);
 
 		descriptions = new HashMap<>();
 		descriptions.put(CC.PARCELS,
 				"Method which returns array of all parcels related to the farm identified by parameter FARM_ID");
 		descriptions.put(CC.IMPORT, "Method which performs import of all farm parcels by FARM_ID ");
+		descriptions.put(CC.PRESAVE_AGRI_PARCEL,
+				"Method which performs pre-save checks on new AGRI PARCEL objects and assigns OLD_ID");
 
 	}
 
 	@Override
 	public long versionUID() {
-		return 2;
+		return 3;
 	}
 
 	@Override
@@ -115,7 +118,14 @@ public class LPISExecutors implements ISvExecutorGroup {
 				result = errorObjects;
 			}
 			break;
+		case CC.PRESAVE_AGRI_PARCEL:
+			DbDataObject parcel = (DbDataObject) params.get("PARCEL");
+			String sequenceName = (String) params.get("SEQUENCE_NAME");
+			result = (new AgriParcel().agriParcelPresaveChecks((SvCore) svCore, parcel, sequenceName));
+			break;
+
 		}
+
 		return result;
 	}
 
