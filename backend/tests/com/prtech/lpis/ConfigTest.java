@@ -328,7 +328,7 @@ public class ConfigTest {
 		 */
 	}
 
-	@Test
+	//@Test
 	public void testParcelIntersect() throws SvException, ParseException {
 
 		int lock = 0;
