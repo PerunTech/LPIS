@@ -19,7 +19,7 @@ import com.prtech.svarog_interfaces.ISvCore;
 import com.prtech.svarog_interfaces.ISvExecutorGroup;
 
 public class LPISExecutors implements ISvExecutorGroup {
-	private static List<String> names = new ArrayList<>(Arrays.asList(CC.PARCELS, CC.IMPORT));
+	private static List<String> names = new ArrayList<>(Arrays.asList(CC.PARCELS, CC.IMPORT, CC.PRESAVE_AGRI_PARCEL));
 	private static Map<String, Class<?>> returnTypes;
 	private static Map<String, String> descriptions;
 	static {
