@@ -1,6 +1,6 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, tools, config as cfg } from '../../../../Spatial';
-import { config, drawAPMsg, permanentCropSchema } from '../Config';
+import { config, drawAPWithLineMsg, permanentCropSchema } from '../Config';
 import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
@@ -11,18 +11,20 @@ import { getParcelInfo } from './Load';
 const { Map, store, factory, http } = core;
 const { draw: { line } } = tools;
 const { Icon, DrawActions } = ui;
-const { MAP_CONFIG } = cfg;
+const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
 const { alertUser } = elements;
 const { useReducer } = React;
 const _id = 'drawAPWithLine';
 const _iconId = 'selection';
 
 const _DrawWithLine = ({ processID, farmObjId, saveIsPending }) => {
-  const [{ layer, data, geojson, isGuided, showForm, showPermanentCropForm, permanentCropData }, setState] = useReducer((currState, update) =>
+  const [{ layer, X, Y, data, geojson, isGuided, showForm, showPermanentCropForm, permanentCropData }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { layer: {}, data: {}, geojson: {}, isGuided: false, showForm: false, showPermanentCropForm: false, permanentCropData: {} });
+    { layer: {}, X: 0, Y: 0, data: {}, geojson: {}, isGuided: false, showForm: false, showPermanentCropForm: false, permanentCropData: {} });
 
-  const enable = () => {
+  const _enableLine = () => {
+    line.enable(config, 12, 18, false);
+    Map.off('click', _setPointMarker)
     Map.on('new_shape', e => {
       if (e && e.layer) {
         setState({ layer: e.layer, isGuided: false, showForm: true, showPermanentCropForm: false })
@@ -30,21 +32,36 @@ const _DrawWithLine = ({ processID, farmObjId, saveIsPending }) => {
       }
       Map.off('new_shape contextmenu');
     });
+  }
+
+  const _setPointMarker = e => {
+    const latLng = e.latlng
+    const point = Map.transform(latLng);
+    setState({ X: point.x, Y: point.y })
+    // Create a marker & add it to the map
+    const markerConfig = { icon: factory.divIcon({ className: 'marker-icon' }) }
+    const marker = factory.marker(latLng, markerConfig)
+    marker.addTo(Map)
+    // Enable the line-drawing process
+    _enableLine()
+  }
+
+  const enable = () => {
+    Map.on('click', _setPointMarker)
 
     Map.on('contextmenu', e => {
       const p = Map.transform(e.latlng);
       getParcelInfo(p)
     })
 
-    setState({ isGuided: true, showForm: false, data: {}, layer: {} });
-    store.dispatch({ processID: _id });
-    line.enable(config, 12, 18, false);
+    setState({ isGuided: true, showForm: false, data: {}, layer: {}, X: 0, Y: 0 });
+    store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
   };
 
   const reset = () => {
     // Reset state, internal and application-wide.
-    setState({ layer: {}, data: {}, geojson: {}, isGuided: false, showForm: false, showPermanentCropForm: false, permanentCropData: {} });
-    store.dispatch({ processID: '', maxZoom: MAP_CONFIG.maxZoom });
+    setState({ layer: {}, X: 0, Y: 0, data: {}, geojson: {}, isGuided: false, showForm: false, showPermanentCropForm: false, permanentCropData: {} });
+    store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom, maxZoom: MAP_CONFIG.maxZoom });
     // We remove the working geometry, save process will add the result.
     layer.removeFrom && layer.removeFrom(Map);
     // Disable draw handler.
@@ -82,6 +99,8 @@ const _DrawWithLine = ({ processID, farmObjId, saveIsPending }) => {
       ...formData,
       OBJECT_ID: 0,
       parent_id: farmObjId,
+      X,
+      Y,
       GEOM: factory.GeoJSON.fromLayer(layer)
     }), disable);
   }
@@ -139,7 +158,7 @@ const _DrawWithLine = ({ processID, farmObjId, saveIsPending }) => {
       finish={() => line._finishShape()}
       undo={() => line._removeLastVertex()}
       disable={disable}
-      msg={drawAPMsg}
+      msg={drawAPWithLineMsg}
     />
   }
 
@@ -176,7 +195,6 @@ const _DrawWithLine = ({ processID, farmObjId, saveIsPending }) => {
 
   return <ProcessButton id={_id} onClick={enable} title='Нацртај парцела (со линија)' className='mr-2'>
     <Icon name={_iconId} size='30px' />
-    {/* <span style={{ display: 'block', marginTop: '5px' }}>Нацртај (со линија)</span> */}
     {processID === _id && renderComponent()}
     {saveIsPending && <Loading />}
   </ProcessButton>;
