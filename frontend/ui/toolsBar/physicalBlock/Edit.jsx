@@ -1,13 +1,13 @@
 import { React, elements } from 'perun-core';
-import { config, core, data, tools, ui } from '../../../Spatial';
+import { config, core, tools, ui } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { config as cfg } from './Config';
+import { decodeResponse } from '../../Util';
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = config;
 const { Map, store, factory, http, connect } = core;
-const { protobuf, geobuf } = data;
 const { edit } = tools;
 const { Icon, DrawActions } = ui;
 const { alertUser } = elements;
@@ -16,7 +16,7 @@ const { useReducer, useEffect } = React;
 const _id = 'editBlock'
 const _layerGroup = factory.layerGroup();
 
-const _EditBlock = ({ processID }) => {
+const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
   const [{ layer, isGuided, showForm }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }), { layer: {}, isGuided: false, showForm: false });
 
@@ -28,69 +28,37 @@ const _EditBlock = ({ processID }) => {
     }
   }, [])
 
-  const _simplifyMultipolygon = layer => {
-    let latlngArr = layer._latlngs
-    let simpleLatlngArr = latlngArr[0];
-    latlngArr.length = 0
-
-    Object.keys(simpleLatlngArr).forEach(key => latlngArr.push(simpleLatlngArr[key]));
-
-    return layer;
-  }
-
   const initEdit = layer => {
     // set fields, disable all selection events on group.
-    setState({ layer })
-    _layerGroup.eachLayer(layer =>
-      layer.off('mouseover mouseout click'));
-
+    setState({ layer, isGuided: false, showForm: true })
     // publish active process, edit begins.
     store.dispatch({ processID: _id });
-
     //Move map view on top of selected polygon.
     Map.fitBounds(layer.getBounds());
-
     // Activate edit handler on selected polygon
-    edit.polygon.enable(_simplifyMultipolygon(layer), cfg);
-
+    edit.polygon.enable(layer, cfg);
     // Activate edit event listeners on layer.
     layer.on('pm:edit', e => setState({ layer: e.target }));
   }
 
-  const _setBlockEvents = layer => {
-    layer.on('mouseover', function () { this.setStyle({ fillColor: '#FFFFFF' }) })
-      .on('mouseout', function () { this.setStyle({ fillColor: '#000000' }) })
-      .on('click', function () { initEdit(this); })
-  }
-
-  const _renderBlocks = jsonArr => {
-    jsonArr.features.map(el => {
-      factory.geoJSON(el, {
-        onEachFeature: function (_feature, layer) {
-          _setBlockEvents(layer);
-          _layerGroup.addLayer(layer);
-        }.bind(this),
-      });
-    })
-  }
-
-  const _fetchBlocks = () => {
-    http.call('render_pb', {
-      url: '/spatial/getGeometry/bbox/{init.token}/PHYSICAL_BLOCK/' + Map.getBBox(),
-    }).then(response => {
-      _renderBlocks(geobuf.decode(protobuf(response)));
-    }).catch(err => {
-      console.error(err);
-      disable();
-      alertUser(true, 'error', 'Грешка при вчитување физички блокови');
+  const _setBlockEvents = layers => {
+    Object.values(layers).forEach(layer => {
+      layer.on('mouseover', function () { this.setStyle({ fillColor: '#FFFFFF' }) })
+        .on('mouseout', function () { this.setStyle({ fillColor: '#000000' }) })
+        .on('click', function () { initEdit(this); })
     })
   }
 
   const enable = () => {
-    _layerGroup.addTo(Map);
-    Map.setView(Map.getCenter(), MIN_DIGI_SCALE);
-    store.dispatch({ minZoom: MIN_DIGI_SCALE })
-    _fetchBlocks()
+    if (!Object.keys(loadedPhysicalBlocks).length > 0) {
+      alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за уредување')
+    } else {
+      _layerGroup.addTo(Map);
+      Map.setView(Map.getCenter(), MIN_DIGI_SCALE);
+      store.dispatch({ minZoom: MIN_DIGI_SCALE })
+      _setBlockEvents(loadedPhysicalBlocks)
+      setState({ isGuided: true, renderForm: false })
+    }
   }
 
   const disable = () => {
@@ -98,25 +66,23 @@ const _EditBlock = ({ processID }) => {
     setState({ layer: {}, isGuided: false, showForm: false })
     store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
     edit.polygon.disable();
+    Object.values(loadedPhysicalBlocks).forEach(layer => layer.off('mouseover mouseout click'))
   }
 
   const onSubmit = ({ formData }) => {
-    http.call('save_pb', {
-      data: JSON.stringify({
-        ...formData,
-        GEOM: factory.GeoJSON.fromLayer(layer, Map.getCRS())
-      }),
-      url: '/lpis/save/physicalBlock/{init.token}/' + layer.feature.id
-    }).then(() => {
-      store.dispatch({ processID: _id });
-      _layerGroup.removeLayer(layer);
-      layer.addTo(Map);
-
+    const url = `/lpis/parcels/save/{init.token}/PHYSICAL_BLOCK/${layer.feature.id}/0/2/2/2`
+    const data = JSON.stringify({
+      ...formData,
+      GEOM: factory.GeoJSON.fromLayer(layer),
+    })
+    http.call('save_pb', { data, url, method: 'post', responseType: 'arraybuffer' }).then(() => {
       disable();
       alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
-    }).catch(() => {
+    }).catch((error) => {
+      const { response } = error
+      const errorMsg = decodeResponse(response)
       disable();
-      alertUser(true, 'error', 'Грешка при зачувување', 'Физичкиот блок не е запишан во базата на податоци.');
+      alertUser(true, 'error', 'Грешка при зачувување', errorMsg);
     })
   }
 
@@ -160,4 +126,7 @@ const _EditBlock = ({ processID }) => {
   )
 }
 
-export const EditBlock = connect(state => ({ processID: state.app.processID }))(_EditBlock)
+export const EditBlock = connect(state => ({
+  processID: state.app.processID,
+  loadedPhysicalBlocks: state.lpis?.loadedPhysicalBlocks,
+}))(_EditBlock)

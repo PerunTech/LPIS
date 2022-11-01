@@ -4,6 +4,7 @@ import { Info } from './Info/Info';
 import { AdvanceDigitization } from './Advance';
 import { CreateBlock } from './Create';
 import { Delete } from './Delete';
+import { Load } from './Load';
 import { EditBlock } from './Edit';
 import { restPB } from './Config';
 
@@ -19,6 +20,8 @@ const _PhysicalBlock = ({ actionType }) =>
                 <EditBlock />
                 <Divider />
                 <AdvanceDigitization name='физички блок' />
+                <Divider />
+                <Load />
                 <Divider />
                 <Delete />
             </React.Fragment>
