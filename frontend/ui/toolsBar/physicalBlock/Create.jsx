@@ -4,6 +4,7 @@ import { ProcessButton } from '../ProcessButton';
 import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { config } from './Config';
+import { decodeResponse } from '../../Util';
 
 const { Map, store, connect, factory, http } = core;
 const { draw: { polygon } } = tools;
@@ -48,18 +49,20 @@ const _CreateBlock = ({ processID }) => {
   }
 
   const onSubmit = ({ formData }) => {
-    http.call('save_pb', {
-      data: JSON.stringify({
-        ...formData,
-        GEOM: factory.GeoJSON.fromLayer(layer)
-      })
-    }).then(() => {
+    const url = `/lpis/parcels/save/{init.token}/PHYSICAL_BLOCK/0/0/2/2/2`
+    const data = JSON.stringify({
+      ...formData,
+      GEOM: factory.GeoJSON.fromLayer(layer),
+    })
+    http.call('save_pb', { data, url, method: 'post', responseType: 'arraybuffer' }).then(() => {
       disable();
       alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
-    }).catch(() => {
+    }).catch((error) => {
+      const { response } = error
+      const errorMsg = decodeResponse(response)
       layer.removeFrom(Map);
       disable();
-      alertUser(true, 'error', 'Грешка при зачувување', 'Физичкиот блок не е запишан во базата на податоци.')
+      alertUser(true, 'error', 'Грешка при зачувување', errorMsg)
     })
   }
 
