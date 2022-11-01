@@ -57,7 +57,7 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
       Map.setView(Map.getCenter(), MIN_DIGI_SCALE);
       store.dispatch({ minZoom: MIN_DIGI_SCALE })
       _setBlockEvents(loadedPhysicalBlocks)
-      setState({ isGuided: true, renderForm: false })
+      setState({ isGuided: true, showForm: false })
     }
   }
 
