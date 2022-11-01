@@ -1,3 +1,6 @@
+import { core } from '../../../Spatial';
+const { Map } = core;
+
 /** @constant */
 export const metadata = {
     type: 'physical_block',
@@ -90,6 +93,21 @@ export const config = {
 export const physicalBlockInfoMsg = [
     'Одберете физички блок на мапата за кој сакате да добиете повеќе информации.'
 ]
+
+export const loadPhysicalBlockMsg = [
+    'Одберете физички блок на мапата кој сакате да биде вчитан.'
+]
+
+export const setLoadedPhysicalBlockLabel = loadedPhysicalBlock => {
+    const oldId = loadedPhysicalBlock.feature.properties.OLD_ID || '';
+    const cnt = String(loadedPhysicalBlock.feature.properties.CENTROID);
+    const latLng = Map.untransform(cnt.substring(cnt.indexOf('(') + 1, cnt.indexOf(')')).split(' ').map(s => Number(s)))
+
+    loadedPhysicalBlock.bindTooltip(String(oldId), { direction: 'center', permanent: true });
+    loadedPhysicalBlock.openTooltip(latLng);
+
+    return loadedPhysicalBlock;
+}
 
 export const restPB = {
     save_pb: {
