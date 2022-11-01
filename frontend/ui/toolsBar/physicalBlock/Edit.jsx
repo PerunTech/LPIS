@@ -31,8 +31,6 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
   const initEdit = layer => {
     // set fields, disable all selection events on group.
     setState({ layer, isGuided: false, showForm: true })
-    // publish active process, edit begins.
-    store.dispatch({ processID: _id });
     //Move map view on top of selected polygon.
     Map.fitBounds(layer.getBounds());
     // Activate edit handler on selected polygon
@@ -57,6 +55,7 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
       Map.setView(Map.getCenter(), MIN_DIGI_SCALE);
       store.dispatch({ minZoom: MIN_DIGI_SCALE })
       _setBlockEvents(loadedPhysicalBlocks)
+      store.dispatch({ processID: _id })
       setState({ isGuided: true, showForm: false })
     }
   }
