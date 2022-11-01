@@ -9,7 +9,7 @@ const { Map, store, connect, http, factory } = core;
 const { geobuf, protobuf } = data;
 const { Icon } = ui;
 const { alertUser } = elements;
-const { useReducer } = React;
+const { useEffect, useReducer } = React;
 
 const _id = 'load';
 const _secondaryId = 'removeLoadedPhysicalBlocks';
@@ -27,13 +27,16 @@ export function getPhysicalBlockInfo (p, callback, setState) {
     const geojson = factory.geoJSON(data, config.pathOptions);
     const layers = geojson.getLayers();
     if (layers && Array.isArray(layers) && layers.length > 0) {
+      const loadedPhysicalBlocks = store.getState().lpis?.loadedPhysicalBlocks
       layers.forEach(layer => {
+        Reflect.set(loadedPhysicalBlocks, layer.feature.properties?.OLD_ID, layer)
         if (layer?.feature?.properties) {
           layer.feature.properties.DESCRIPTOR = 'LOADED_PHYSICAL_BLOCK'
         }
         setLoadedPhysicalBlockLabel(layer)
         layer.addTo(Map)
       });
+      store.dispatch({ physicalBlocksHaveBeenLoaded: true, loadedPhysicalBlocks })
       if (setState) {
         setState({ physicalBlocksHaveBeenLoaded: true })
       }
@@ -46,7 +49,7 @@ export function getPhysicalBlockInfo (p, callback, setState) {
   }).catch(err => {
     console.error(err)
     alertUser(true, 'error', 'Настана грешка')
-    store.dispatch({ processID: '' })
+    store.dispatch({ processID: '', physicalBlocksHaveBeenLoaded: false })
     if (callback) {
       callback()
     }
@@ -56,13 +59,19 @@ export function getPhysicalBlockInfo (p, callback, setState) {
   })
 }
 
-const _Load = ({ processID }) => {
+const _Load = ({ processID, physicalBlocksHaveBeenLoaded: physicalBlocksHaveBeenLoadedStore }) => {
   const [{ loading, isGuided, physicalBlocksHaveBeenLoaded }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
     { loading: false, isGuided: false, physicalBlocksHaveBeenLoaded: false });
 
+  useEffect(() => {
+    return () => {
+      store.dispatch({ loadedPhysicalBlocks: {}, physicalBlocksHaveBeenLoaded: false })
+    }
+  }, [])
+
   const removeLoadedLayers = () => {
-    if (!physicalBlocksHaveBeenLoaded) {
+    if (!physicalBlocksHaveBeenLoaded && !physicalBlocksHaveBeenLoadedStore) {
       alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови')
     } else {
       Map.eachLayer(function (layer) {
@@ -75,6 +84,7 @@ const _Load = ({ processID }) => {
 
       _layerGroup.clearLayers().removeFrom(Map);
       setState({ physicalBlocksHaveBeenLoaded: false })
+      store.dispatch({ loadedPhysicalBlocks: {}, physicalBlocksHaveBeenLoaded: false })
     }
   }
 
@@ -129,4 +139,8 @@ const _Load = ({ processID }) => {
   );
 }
 
-export const Load = connect((state) => ({ processID: state.app.processID, }))(_Load);
+export const Load = connect((state) => ({
+  processID: state.app.processID,
+  physicalBlocksHaveBeenLoaded: state.lpis?.physicalBlocksHaveBeenLoaded,
+  loadedPhysicalBlocks: state.lpis?.loadedPhysicalBlocks,
+}))(_Load);
