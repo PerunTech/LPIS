@@ -41,8 +41,8 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
 
   const _setBlockEvents = layers => {
     Object.values(layers).forEach(layer => {
-      layer.on('mouseover', function () { this.setStyle({ fillColor: '#FFFFFF' }) })
-        .on('mouseout', function () { this.setStyle({ fillColor: '#000000' }) })
+      layer.on('mouseover', function () { this.setStyle({ fillColor: '#000000' }) })
+        .on('mouseout', function () { this.setStyle({ fillColor: '#f8f8ff' }) })
         .on('click', function () { initEdit(this); })
     })
   }
