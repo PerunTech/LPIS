@@ -85,7 +85,6 @@ export const config = {
         fillColor: '#f8f8ff',
         opacity: 0.9,
         fillOpacity: 0.25,
-        showMeasurements: true,
         metadata
     }
 };

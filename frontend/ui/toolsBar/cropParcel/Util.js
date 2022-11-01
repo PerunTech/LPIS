@@ -1,6 +1,7 @@
 import { elements } from 'perun-core';
 import { core, data, config as spatialConfig } from '../../../Spatial';
 import { config as apConfig } from '../agriParcel/Config';
+import { setLoadedPhysicalBlockLabel } from '../physicalBlock/Config';
 import { config as cpConfig } from './Config';
 import { crop_codes_desc, crop_codes_idx } from './Crop_Codes';
 
@@ -182,6 +183,7 @@ Map.on('zoomend', ({target}) => {
                 props.DESCRIPTOR === 'LP_CAD_INTERSECTIONS' && setCILabel(layer);
                 props.DESCRIPTOR === 'LOADED_AGRI_PARCEL' && setLoadedParcelLabel(layer)
                 props.DESCRIPTOR === 'SEARCHED_LPIS_PARCEL' && setSearchedParcelLabel(layer)
+                props.DESCRIPTOR === 'LOADED_PHYSICAL_BLOCK' && setLoadedPhysicalBlockLabel(layer)
             }
         });
 
