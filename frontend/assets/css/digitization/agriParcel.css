@@ -38,6 +38,11 @@
   margin-left: 5px;
 }
 
+.ap-form-aux .form-group,
+.ap-form-admin .form-group {
+  width: 100% !important;
+}
+
 #pb-contains-ap-dialog .modal-title {
   font-size: 20px;
   text-align: center;

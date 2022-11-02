@@ -161,6 +161,19 @@ export const metadataMain = {
                 type: 'string',
                 default: '200'
             },
+            LAND_COVER_CODE_2: {
+                enum: ['0', '200', '210', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500',
+                    '600', '900'],
+                enumNames: [' ', 'Нива (обработливо земјиште)', 'Оранжерии и пластеници на обработливо земјиште',
+                    'Ливада', 'Пасиште', 'Долгогодишни култури (траен насад)', 'Лозов насад',
+                    'Овоштарник', 'Маслинов насад', 'Овошен насад', 'Јаткасто овошје', 'Растенија со брзо растечка маса',
+                    'Мешани трајни насади', 'Различна искористеност на земјиштето', 'Матични насади',
+                    'Останати типови на употреба на земјиштето'],
+                maxLength: 50,
+                title: 'Секундарна употреба на земјиште',
+                type: 'string',
+                default: '0'
+            },
             HOME_NAME: {
                 maxLength: 2000,
                 title: 'Локалитет',
@@ -191,7 +204,7 @@ export const metadataMain = {
     },
     uiSchema: {
         LAND_COVER_CODE: {},
-        /*HOME_NAME: { 'ui:widget': 'textarea' },*/
+        LAND_COVER_CODE_2: {},
         NOTE_INSERT: { 'ui:widget': 'textarea' },
         NOTE_FARMER: { 'ui:widget': 'textarea' },
         NOTE_ORGANISATION: { 'ui:widget': 'textarea' }
@@ -204,26 +217,8 @@ export const metadataAux = {
     namePath: 'options.metadata.schema.properties.parent_id',
     schema: {
         properties: {
-            LAND_COVER_CODE_2: {
-                enum: ['0', '200', '210', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500',
-                    '600', '900'],
-                enumNames: [' ', 'Нива (обработливо земјиште)', 'Оранжерии и пластеници на обработливо земјиште',
-                    'Ливада', 'Пасиште', 'Долгогодишни култури (траен насад)', 'Лозов насад',
-                    'Овоштарник', 'Маслинов насад', 'Овошен насад', 'Јаткасто овошје', 'Растенија со брзо растечка маса',
-                    'Мешани трајни насади', 'Различна искористеност на земјиштето', 'Матични насади',
-                    'Останати типови на употреба на земјиштето'],
-                maxLength: 50,
-                title: 'Секундарна употреба на земјиште',
-                type: 'string',
-                default: '0'
-            },
-            TERRACE: {
-                title: 'Тераси',
-                type: 'boolean',
-                default: false
-            },
-            IRRIGATION: {
-                title: 'Наводнување',
+            CHANGED_BORDER: {
+                title: 'Променета граница',
                 type: 'boolean',
                 default: false
             },
@@ -232,16 +227,44 @@ export const metadataAux = {
                 type: 'boolean',
                 default: false
             },
+            TERRACE: {
+                title: 'Тераси',
+                type: 'boolean',
+                default: false
+            },
             INVISIBLE_BORDER: {
                 title: 'Невидлива граница',
                 type: 'boolean',
                 default: false
             },
-            CHANGED_BORDER: {
-                title: 'Променета граница',
+            IRRIGATION: {
+                title: 'Наводнување',
                 type: 'boolean',
                 default: false
             },
+            ELIGIBILITY_COEF: {
+                title: 'Коефициент на искористена површина',
+                type: 'integer',
+                minimum: 0,
+                maximum: 100,
+                default: 100
+            },
+        },
+        'type': 'object',
+    },
+    uiSchema: {
+        ELIGIBILITY_COEF: { 'ui:widget': 'range' },
+        SLOPE_AVG: { 'ui:disabled': true },
+        Z_AVG: { 'ui:disabled': true },
+    }
+};
+
+/** @constant */
+export const metadataAdmin = {
+    type: 'agri_parcel',
+    namePath: 'options.metadata.schema.properties.parent_id',
+    schema: {
+        properties: {
             EXPOSITION_AVG: {
                 title: 'Експозиција',
                 type: 'integer',
@@ -258,31 +281,6 @@ export const metadataAux = {
                 title: 'Надморска височина',
                 type: 'string',
                 default: '0'
-            },
-
-        },
-        'type': 'object',
-    },
-    uiSchema: {
-        LAND_COVER_CODE_2: {},
-        EXPOSITION_AVG: { 'ui:widget': 'range', 'ui:disabled': true },
-        SLOPE_AVG: { 'ui:disabled': true },
-        Z_AVG: { 'ui:disabled': true },
-    }
-};
-
-/** @constant */
-export const metadataAdmin = {
-    type: 'agri_parcel',
-    namePath: 'options.metadata.schema.properties.parent_id',
-    schema: {
-        properties: {
-            ELIGIBILITY_COEF: {
-                title: 'Коефициент на искористена површина',
-                type: 'integer',
-                minimum: 0,
-                maximum: 100,
-                default: 100
             },
             ORGANIC: {
                 title: 'Органско производство',
@@ -308,9 +306,8 @@ export const metadataAdmin = {
         'type': 'object',
     },
     uiSchema: {
-        ELIGIBILITY_COEF: { 'ui:widget': 'range' },
+        EXPOSITION_AVG: { 'ui:widget': 'range', 'ui:disabled': true },
         COMMON_USE: { 'ui:disabled': true },
-        // CERTIFICATE_OF_USE: { 'ui:disabled': true },
         SOIL_TYPE: { 'ui:disabled': true },
     }
 };
