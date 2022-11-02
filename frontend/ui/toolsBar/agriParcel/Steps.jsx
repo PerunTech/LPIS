@@ -41,9 +41,19 @@ Main.propTypes = {
 
 /* Aux Metadata */
 export function Aux ({ formData, onChange, prev, next }) {
+    const data = formData
+    const uiSchema = metadataAux.uiSchema
+    if (data && data.LAND_COVER_CODE && !strcmp(data.LAND_COVER_CODE, '320')) {
+        data.ELIGIBILITY_COEF = 0
+        uiSchema.ELIGIBILITY_COEF = { 'ui:disabled': true }
+    } else {
+        data.ELIGIBILITY_COEF = 100
+        uiSchema.ELIGIBILITY_COEF = {}
+    }
+
     return <Form schema={metadataAux.schema}
-        uiSchema={metadataAux.uiSchema}
-        formData={formData}
+        uiSchema={uiSchema}
+        formData={data}
         onChange={onChange}
         onSubmit={() => next()}
         className='rjsf ap-form-aux' >

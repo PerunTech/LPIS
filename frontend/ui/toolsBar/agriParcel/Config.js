@@ -204,7 +204,7 @@ export const metadataMain = {
     },
     uiSchema: {
         LAND_COVER_CODE: {},
-        LAND_COVER_CODE_2: {},
+        LAND_COVER_CODE_2: { 'ui:disabled': true },
         NOTE_INSERT: { 'ui:widget': 'textarea' },
         NOTE_FARMER: { 'ui:widget': 'textarea' },
         NOTE_ORGANISATION: { 'ui:widget': 'textarea' }
@@ -243,17 +243,16 @@ export const metadataAux = {
                 default: false
             },
             ELIGIBILITY_COEF: {
-                title: 'Коефициент на искористена површина',
+                title: 'Корисна површина',
                 type: 'integer',
-                minimum: 0,
-                maximum: 100,
-                default: 100
+                enum: [0, 25, 50, 75, 100],
+                enumNames: ['Н/П', '25%', '50%', '75%', '100%'],
+                default: 0,
             },
         },
         'type': 'object',
     },
     uiSchema: {
-        ELIGIBILITY_COEF: { 'ui:widget': 'range' },
         SLOPE_AVG: { 'ui:disabled': true },
         Z_AVG: { 'ui:disabled': true },
     }
