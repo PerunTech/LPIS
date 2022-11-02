@@ -245,9 +245,9 @@ export const metadataAux = {
             ELIGIBILITY_COEF: {
                 title: 'Корисна површина',
                 type: 'integer',
-                enum: [0, 25, 50, 75, 100],
-                enumNames: ['Н/П', '25%', '50%', '75%', '100%'],
-                default: 0,
+                enum: [25, 50, 75, 100],
+                enumNames: ['25%', '50%', '75%', '100%'],
+                default: 100,
             },
         },
         'type': 'object',
