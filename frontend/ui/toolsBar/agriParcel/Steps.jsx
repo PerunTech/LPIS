@@ -26,7 +26,8 @@ export function Main ({ formData, onChange, next }) {
             toggleState(!state)
             onChange(e)
         }}
-        onSubmit={() => next()} >
+        onSubmit={() => next()}
+        className='rjsf ap-form-main' >
         <div id='formActions' >
             <Button type='submit' size='' className='next' > Следно </Button>
         </div>
