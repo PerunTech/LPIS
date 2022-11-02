@@ -26,7 +26,8 @@ export function Main ({ formData, onChange, next }) {
             toggleState(!state)
             onChange(e)
         }}
-        onSubmit={() => next()} >
+        onSubmit={() => next()}
+        className='rjsf ap-form-main' >
         <div id='formActions' >
             <Button type='submit' size='' className='next' > Следно </Button>
         </div>
@@ -41,9 +42,18 @@ Main.propTypes = {
 
 /* Aux Metadata */
 export function Aux ({ formData, onChange, prev, next }) {
+    const data = formData
+    const uiSchema = metadataAux.uiSchema
+    if (data && data.LAND_COVER_CODE && !strcmp(data.LAND_COVER_CODE, '320')) {
+        data.ELIGIBILITY_COEF = 100
+        uiSchema.ELIGIBILITY_COEF = { 'ui:disabled': true }
+    } else {
+        uiSchema.ELIGIBILITY_COEF = {}
+    }
+
     return <Form schema={metadataAux.schema}
-        uiSchema={metadataAux.uiSchema}
-        formData={formData}
+        uiSchema={uiSchema}
+        formData={data}
         onChange={onChange}
         onSubmit={() => next()}
         className='rjsf ap-form-aux' >
