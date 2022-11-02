@@ -3,14 +3,29 @@ import { ui } from '../../../Spatial';
 import { metadataMain, metadataAux, metadataAdmin } from './Config';
 import { strcmp } from '../../Util'
 
+const { useState } = React;
 const { Form, Button } = ui;
 
 /* Main Metadata */
 export function Main ({ formData, onChange, next }) {
+    // This state key is for re-rendering the form
+    const [state, toggleState] = useState(false)
+    const data = formData
+    const uiSchema = metadataMain.uiSchema
+    if (data && data.LAND_COVER_CODE && !strcmp(data.LAND_COVER_CODE, '490')) {
+        data.LAND_COVER_CODE_2 = '0'
+        uiSchema.LAND_COVER_CODE_2 = { 'ui:disabled': true }
+    } else {
+        uiSchema.LAND_COVER_CODE_2 = {}
+    }
+
     return <Form schema={metadataMain.schema}
-        uiSchema={metadataMain.uiSchema}
-        formData={formData}
-        onChange={onChange}
+        uiSchema={uiSchema}
+        formData={data}
+        onChange={(e) => {
+            toggleState(!state)
+            onChange(e)
+        }}
         onSubmit={() => next()} >
         <div id='formActions' >
             <Button type='submit' size='' className='next' > Следно </Button>
@@ -26,20 +41,12 @@ Main.propTypes = {
 
 /* Aux Metadata */
 export function Aux ({ formData, onChange, prev, next }) {
-    const data = formData
-    const uiSchema = metadataAux.uiSchema
-    if (data && data.LAND_COVER_CODE && !strcmp(data.LAND_COVER_CODE, '490')) {
-        data.LAND_COVER_CODE_2 = '0'
-        uiSchema.LAND_COVER_CODE_2 = { 'ui:disabled': true }
-    } else {
-        uiSchema.LAND_COVER_CODE_2 = {}
-    }
-
     return <Form schema={metadataAux.schema}
-        uiSchema={uiSchema}
-        formData={data}
+        uiSchema={metadataAux.uiSchema}
+        formData={formData}
         onChange={onChange}
-        onSubmit={() => next()} >
+        onSubmit={() => next()}
+        className='rjsf ap-form-aux' >
         <div id='formActions' >
             <Button type='button' size='' className='prev' onClick={prev} > Назад </Button>
             <Button type='submit' size='' className='next' > Следно </Button>
@@ -60,7 +67,8 @@ export function Admin ({ formData, onChange, prev, onSubmit }) {
         uiSchema={metadataAdmin.uiSchema}
         formData={formData}
         onChange={onChange}
-        onSubmit={onSubmit} >
+        onSubmit={onSubmit}
+        className='rjsf ap-form-admin' >
         <div id='formActions' >
             <Button type='button' size='' className='prev' onClick={prev} > Назад </Button>
             <Button type='submit' size='' className='next' > Зачувај </Button>
