@@ -545,6 +545,7 @@ public class AgriParcel {
 		}
 		return seqName;
 	}
+
 	public Geometry parcelAlignment(SvGeometry svg, DbDataObject parcel, int cutPB, int cutAP, int alignNB,
 			DbDataArray result) throws SvException, SQLException, ParseException {
 		if (cutAP == 1 && alignNB != 2)
@@ -571,6 +572,7 @@ public class AgriParcel {
 		geom.setUserData(parcel);
 		return geom;
 	}
+
 	/**
 	 * This is method for agri parcel presave checks
 	 * 
@@ -589,29 +591,32 @@ public class AgriParcel {
 			// ensure common use
 			if ((boolean) ap.getVal(CC.COMMON_USE) && !ap.getVal(CC.LAND_COVER_CODE).equals(CC.LAND_COVER_CODE_200))
 				throw (new SvException(CC.COMMON_USE_PARCEL_MUST_BE_200, svr.getInstanceUser()));
-			if (ap.getObjectId().equals(0L)) {
-				Long extId = getExternalSequence(svr, sequenceName);
-				ap.setVal(CC.OLD_ID, extId);
-			}
+
 		}
 		// end agri checks
 		return ap;
 	}
-	
+
 	/**
 	 * Method to save a parcel in the SDI
-	 * @param core Reference to the SvCore under which the save shall be executed
-	 * @param objectId The objectId of the parcel (if its update)
-	 * @param typeId The typeId of the parcel
-	 * @param parentId The parent of the parcel
-	 * @param cutPB Flag to enable parcel cutoff according to the physical block layer
-	 * @param cutAP Flag to enable parcel cutoff according to the Agri Parcel layer
-	 * @param alignNB Flag to enable parcel alignment
-	 * @param metadata The JSON metadat sent from the JS frontend
-	 * @param autoCommit Flag to set the autocommit
-	 * @param geometryOverride If we need to overrider the geometry (used for splitting)
-	 * @param sequenceName Name of the sequence to generate new OLD_ID
-	 * @param customExecutor Name of the executor to be invoked for the specific layer
+	 * 
+	 * @param core             Reference to the SvCore under which the save shall be
+	 *                         executed
+	 * @param objectId         The objectId of the parcel (if its update)
+	 * @param typeId           The typeId of the parcel
+	 * @param parentId         The parent of the parcel
+	 * @param cutPB            Flag to enable parcel cutoff according to the
+	 *                         physical block layer
+	 * @param cutAP            Flag to enable parcel cutoff according to the Agri
+	 *                         Parcel layer
+	 * @param alignNB          Flag to enable parcel alignment
+	 * @param metadata         The JSON metadat sent from the JS frontend
+	 * @param autoCommit       Flag to set the autocommit
+	 * @param geometryOverride If we need to overrider the geometry (used for
+	 *                         splitting)
+	 * @param sequenceName     Name of the sequence to generate new OLD_ID
+	 * @param customExecutor   Name of the executor to be invoked for the specific
+	 *                         layer
 	 * @throws SvException
 	 * @throws SQLException
 	 * @throws ParseException
@@ -657,13 +662,19 @@ public class AgriParcel {
 				}
 
 			// run custom presave checks
-			try (SvExecManager svx = new SvExecManager(core)) {
-				Map<String, Object> params = new HashMap<>();
-				params.put("PARCEL", ap);
-				params.put("SEQUENCE_NAME", sequenceName);
-				ap = (DbDataObject) svx.execute(customExecutor, params, null);
-			}
+			if (!customExecutor.equals(CC.NO_CUSTOM_EXEC))
+				try (SvExecManager svx = new SvExecManager(core)) {
+					Map<String, Object> params = new HashMap<>();
+					params.put("PARCEL", ap);
+					params.put("SEQUENCE_NAME", sequenceName);
+					ap = (DbDataObject) svx.execute(customExecutor, params, null);
+				}
 
+				if (ap.getObjectId().equals(0L) && !sequenceName.equals(CC.NO_SEQUENCE)) {
+					Long extId = getExternalSequence(svr, sequenceName);
+					ap.setVal(CC.OLD_ID, extId);
+				}
+			
 			Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, ap.getParentId(), typeId);
 			geom = parcelAlignment(svg, ap, cutPB, cutAP, alignNB, result);
 			// check minimum parcel size
