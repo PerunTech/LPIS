@@ -57,8 +57,8 @@ export const layerList = [
         },
         'Иницијални податоци': {
             'Иницијален СИЗП (ажуриран)': factory.tileLayer.wms(
-                geoService + '/geoserver/mk/wms', {
-                layers: 'mk:ILPIS',
+                'http://192.168.9.73:8070' + '/geoserver/mkd/wms', {
+                layers: 'mkd:VPHYSICAL_BLOCK_WMS',
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
