@@ -1,4 +1,4 @@
-import { React, elements } from 'perun-core';
+import { React, Loading, elements } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { Guidance } from '../agriParcel/Guidance';
@@ -15,9 +15,9 @@ const { useReducer, useEffect } = React;
 const _id = 'createBlock';
 
 const _CreateBlock = ({ processID }) => {
-  const [{ layer, isGuided, showForm }, setState] = useReducer((currState, update) =>
+  const [{ loading, layer, data, isGuided, showForm }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { layer: {}, isGuided: false, showForm: false });
+    { loading: false, layer: {}, data: {}, isGuided: false, showForm: false });
 
   useEffect(() => {
     return () => {
@@ -29,26 +29,32 @@ const _CreateBlock = ({ processID }) => {
   const enable = () => {
     Map.on('new_shape', e => {
       if (e && e.layer) {
-        setState({ layer: e.layer, isGuided: false, showForm: true })
+        setState({ layer: e.layer, loading: false, isGuided: false, showForm: true })
         e.layer.addTo(Map)
       }
 
       Map.off('new_shape')
     });
 
-    setState({ isGuided: true, showForm: false, layer: {} });
+    setState({ loading: false, isGuided: true, showForm: false, layer: {}, data: {} });
     store.dispatch({ processID: _id });
     polygon.enable(config);
   }
 
   const disable = () => {
     Map.off('new_shape');
+    setState({ loading: false, data: {} })
     store.dispatch({ processID: '' });
     layer.removeFrom && layer.removeFrom(Map);
     polygon.disable('force');
   }
 
+  const onChange = ({ formData }) => {
+    setState({ data: { ...data, ...formData } });
+  }
+
   const onSubmit = ({ formData }) => {
+    setState({ loading: true })
     const url = `/lpis/parcels/save/{init.token}/PHYSICAL_BLOCK/0/0/2/2/2`
     const data = JSON.stringify({
       ...formData,
@@ -81,7 +87,7 @@ const _CreateBlock = ({ processID }) => {
 
   const renderForm = () => {
     return (
-      <Form onSubmit={onSubmit}>
+      <Form onSubmit={onSubmit} onChange={onChange} data={data}>
         <DrawActions
           finish={() => draw.polygon._finishShape()}
           undo={() => draw.polygon._removeLastVertex()}
@@ -109,6 +115,7 @@ const _CreateBlock = ({ processID }) => {
       <Icon name={_id} size='34px' />
       <span style={{ display: 'block', marginTop: '1px' }}>Нацртај блок</span>
       {processID === _id && componentToRender()}
+      {loading && <Loading />}
     </ProcessButton>
   )
 }

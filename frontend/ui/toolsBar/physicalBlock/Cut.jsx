@@ -1,4 +1,4 @@
-import { React, elements } from 'perun-core';
+import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../Spatial';
 import { config } from './Config';
 import { Guidance } from '../agriParcel/Guidance';
@@ -16,8 +16,8 @@ const { useReducer, useEffect } = React;
 const _id = 'cut-pb';
 
 const _Cut = ({ processID }) => {
-  const [{ layer, data, isGuided, showForm }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { layer: {}, data: {}, isGuided: false, showForm: false });
+  const [{ layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
 
   useEffect(() => {
     return () => {
@@ -30,7 +30,7 @@ const _Cut = ({ processID }) => {
     Map.on('new_shape', e => cutPB(e));
     // state setters
     store.dispatch({ processID: _id });
-    setState({ isGuided: true, showForm: false })
+    setState({ loading: false, isGuided: true, showForm: false })
     // init draw handler
     polygon.enable(config);
   }
@@ -38,7 +38,7 @@ const _Cut = ({ processID }) => {
   const disable = () => {
     // Reset state, internal and application-wide.
     Map.off('new_shape');
-    setState({ layer: {}, data: {}, isGuided: false, showForm: false });
+    setState({ layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
     store.dispatch({ processID: '' });
     // We remove the working geometry, save process will add the result, as well as additional vectors.
     layer.removeFrom && layer.removeFrom(Map);
@@ -47,6 +47,7 @@ const _Cut = ({ processID }) => {
 
   const cutPB = e => {
     if (e && e.layer) {
+      setState({ loading: true })
       http.call(_id, {
         url: '/spatial/geometry/hole/{init.token}/PHYSICAL_BLOCK/' + 0,
         method: 'post',
@@ -65,13 +66,14 @@ const _Cut = ({ processID }) => {
               OBJECT_ID: Number(layer.feature.id)
             },
             isGuided: false,
-            showForm: true
+            showForm: true,
+            loading: false
           })
         })
       }).catch(error => {
         const { response } = error
-        const errorMsg = decodeResponse(response)
-        alertUser(true, 'error', 'Грешка при отсекување земјоделска парцела', errorMsg);
+        const errorMsg = decodeResponse(response, true)
+        alertUser(true, 'error', 'Грешка при отсекување физички блок', errorMsg);
         e.layer.removeFrom(Map)
         disable()
       })
@@ -81,6 +83,7 @@ const _Cut = ({ processID }) => {
   }
 
   const onSubmit = ({ formData }) => {
+    console.log(layer)
     http.call('save_pb', {
       data: JSON.stringify({
         ...formData,
@@ -137,6 +140,7 @@ const _Cut = ({ processID }) => {
       <Icon name={_id} size='30px' />
       <span style={{ display: 'block', marginTop: '5px' }}>Отсечи блок</span>
       {processID === _id && renderComponent()}
+      {loading && <Loading />}
     </ProcessButton>
   )
 }

@@ -1,4 +1,4 @@
-import { React, elements } from 'perun-core';
+import { React, Loading, elements } from 'perun-core';
 import { config, core, tools, ui } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { Guidance } from '../agriParcel/Guidance';
@@ -17,8 +17,8 @@ const _id = 'editBlock'
 const _layerGroup = factory.layerGroup();
 
 const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
-  const [{ layer, isGuided, showForm }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { layer: {}, isGuided: false, showForm: false });
+  const [{ loading, layer, data, isGuided, showForm }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { loading: false, layer: {}, data: {}, isGuided: false, showForm: false });
 
   useEffect(() => {
     return () => {
@@ -30,9 +30,7 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
 
   const initEdit = layer => {
     // set fields, disable all selection events on group.
-    setState({ layer, isGuided: false, showForm: true })
-    //Move map view on top of selected polygon.
-    Map.fitBounds(layer.getBounds());
+    setState({ loading: false, layer, data: layer.feature.properties, isGuided: false, showForm: true })
     // Activate edit handler on selected polygon
     edit.polygon.enable(layer, cfg);
     // Activate edit event listeners on layer.
@@ -52,7 +50,6 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
       alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за уредување')
     } else {
       _layerGroup.addTo(Map);
-      Map.setView(Map.getCenter(), MIN_DIGI_SCALE);
       store.dispatch({ minZoom: MIN_DIGI_SCALE })
       _setBlockEvents(loadedPhysicalBlocks)
       store.dispatch({ processID: _id })
@@ -60,27 +57,44 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
     }
   }
 
-  const disable = () => {
+  const disable = (resetData) => {
+    if (resetData) {
+      Object.values(loadedPhysicalBlocks).forEach(loadedLayer => {
+        loadedLayer.off('mouseover mouseout click')
+        if (loadedLayer.feature.properties?.OLD_ID === layer.feature.properties?.OLD_ID) {
+          let editedLoadedLayer = loadedLayer
+          editedLoadedLayer = layer
+          editedLoadedLayer.feature.properties = data
+          Reflect.set(loadedPhysicalBlocks, layer.feature.properties.OLD_ID, editedLoadedLayer)
+          store.dispatch({ loadedPhysicalBlocks })
+        }
+      })
+    }
+    Object.values(loadedPhysicalBlocks).forEach(loadedLayer => loadedLayer.off('mouseover mouseout click'))
     _layerGroup.clearLayers().removeFrom(Map);
-    setState({ layer: {}, isGuided: false, showForm: false })
+    setState({ loading: false, layer: {}, data: {}, isGuided: false, showForm: false })
     store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
     edit.polygon.disable();
-    Object.values(loadedPhysicalBlocks).forEach(layer => layer.off('mouseover mouseout click'))
+  }
+
+  const onChange = ({ formData }) => {
+    setState({ data: { ...data, ...formData } });
   }
 
   const onSubmit = ({ formData }) => {
+    setState({ loading: true, showForm: false })
     const url = `/lpis/parcels/save/{init.token}/PHYSICAL_BLOCK/${layer.feature.id}/0/2/2/2`
     const data = JSON.stringify({
       ...formData,
       GEOM: factory.GeoJSON.fromLayer(layer),
     })
     http.call('save_pb', { data, url, method: 'post', responseType: 'arraybuffer' }).then(() => {
-      disable();
+      disable(true);
       alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
     }).catch((error) => {
       const { response } = error
       const errorMsg = decodeResponse(response)
-      disable();
+      disable(true);
       alertUser(true, 'error', 'Грешка при зачувување', errorMsg);
     })
   }
@@ -89,14 +103,14 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
     const msg = ['Одберете физички блок на мапата кој сакате да го уредите.', '']
 
     return (
-      <Guidance id={_id} disable={() => disable()} msg={msg} title='Уреди физички блок' />
+      <Guidance id={_id} disable={() => disable(false)} msg={msg} title='Уреди физички блок' />
     )
   }
 
   const renderForm = () => {
     return (
-      <Form onSubmit={onSubmit} data={layer.feature.properties} >
-        <DrawActions cancel={disable} />
+      <Form onSubmit={onSubmit} onChange={onChange} data={data} >
+        <DrawActions cancel={() => disable(false)} />
       </Form>
     )
   }
@@ -121,6 +135,7 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
       <Icon name={_id} size='30px' />
       <span style={{ display: 'block', marginTop: '5px' }}>Уреди блок</span>
       {processID === _id && componentToRender()}
+      {loading && <Loading />}
     </ProcessButton>
   )
 }
