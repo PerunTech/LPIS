@@ -4,7 +4,7 @@ import { metadata } from './Config';
 
 const { Button, Modal } = ui;
 
-export function Form ({ onSubmit, data = {}, children }) {
+export function Form ({ onSubmit, onChange, data = {}, children }) {
     return <Modal show
         id='measure-dialog'
         backdrop={false}
@@ -19,7 +19,8 @@ export function Form ({ onSubmit, data = {}, children }) {
                 schema={metadata.schema}
                 uiSchema={metadata.uiSchema}
                 formData={data}
-                onSubmit={onSubmit}>
+                onSubmit={onSubmit}
+                onChange={onChange}>
                 <Button type='submit' size='' className='save-pb' >
                     Зачувај
                 </Button>
@@ -30,6 +31,7 @@ export function Form ({ onSubmit, data = {}, children }) {
 
 Form.propTypes = {
     onSubmit: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
     data: PropTypes.object,
     children: PropTypes.Node
 }
