@@ -16,7 +16,7 @@ const { useState, useEffect } = React;
 const dataCategories = (function () {
   return Object.entries({
     physical_block: 'Физички блокови',
-  }).map(entry => ({ id: entry[0], label: entry[1], isOpen: false, }))
+  }).map(entry => ({ id: entry[0], label: entry[1], isOpen: true, }))
 })();
 
 /**

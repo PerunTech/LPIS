@@ -31,7 +31,7 @@ export function getPhysicalBlockInfo (p, callback, setState) {
       layers.forEach(layer => {
         Reflect.set(loadedPhysicalBlocks, layer.feature.properties?.OLD_ID, layer)
         if (layer?.feature?.properties) {
-          layer.feature.properties.DESCRIPTOR = 'LOADED_PHYSICAL_BLOCK'
+          layer.feature.properties.DESCRIPTOR = 'PHYSICAL_BLOCK'
         }
         setLoadedPhysicalBlockLabel(layer)
         layer.addTo(Map)
@@ -76,7 +76,7 @@ const _Load = ({ processID, physicalBlocksHaveBeenLoaded: physicalBlocksHaveBeen
     } else {
       Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
-          if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'LOADED_PHYSICAL_BLOCK')) {
+          if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'PHYSICAL_BLOCK')) {
             Map.removeLayer(layer);
           }
         }

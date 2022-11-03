@@ -3,11 +3,22 @@ import { core, ui } from '../../Spatial';
 import { DataGrid } from '..';
 import { FarmDataGrid } from './FarmDataGrid';
 import { InfoList } from '../toolsBar/agriParcel/digitization/Info/InfoList';
+import { strcmp } from '../Util';
 
-export const _DataList = ({ data, setData, actionType, showParcelInfoContainer, farmData, layers, pauseGrid }) => {
+export const _DataList = ({ data, setData, actionType, showParcelInfoContainer, loadedPhysicalBlocks, farmData, layers, pauseGrid }) => {
     let dataListContainerClassName = 'parcels-data-list'
     if (showParcelInfoContainer) {
         dataListContainerClassName = 'parcel-info-data-list'
+    }
+
+    const getRows = el => {
+        let rows = []
+        if (!strcmp(el.id, 'physical_block')) {
+            rows = Object.values(layers).filter(layer => layer.getMetadata().type === el.id)
+        } else {
+            rows = Object.values(loadedPhysicalBlocks)
+        }
+        return rows
     }
 
     return <div id='dataList' className={dataListContainerClassName}>
@@ -19,10 +30,7 @@ export const _DataList = ({ data, setData, actionType, showParcelInfoContainer, 
                 isOpen={el.isOpen}
                 onClick={id =>
                     setData(core.util.replaceElement(data, id, { ...data[id], isOpen: !(el.isOpen) }))} >
-                {<DataGrid
-                    type={el}
-                    rows={Object.values(layers).filter(layer =>
-                        layer.getMetadata().type === el.id)} />}
+                {<DataGrid type={el} rows={getRows(el)} />}
             </ui.TreeNode>)}
         {(actionType === 'sizp' || actionType === 'pplan' || actionType === 'preview') && !showParcelInfoContainer &&
             <FarmDataGrid type='agri_parcel' rows={farmData} actionType={actionType} />
@@ -60,4 +68,5 @@ export const DataList = core.connect(state =>
     actionType: state.farmRegistry?.actionType,
     farmData: state.farmRegistry?.agriParcels,
     showParcelInfoContainer: state.farmRegistry?.showParcelInfoContainer,
+    loadedPhysicalBlocks: state.lpis?.loadedPhysicalBlocks,
 }))(_DataList);
