@@ -1,4 +1,4 @@
-import { React, elements } from 'perun-core';
+import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../Spatial';
 import { config } from './Config';
 import { Guidance } from '../agriParcel/Guidance';
@@ -16,8 +16,8 @@ const { useReducer, useEffect } = React;
 const _id = 'fill-pb';
 
 const _Fill = ({ processID }) => {
-  const [{ layer, data, isGuided, showForm }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { layer: {}, data: {}, isGuided: false, showForm: false });
+  const [{ layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
 
   useEffect(() => {
     return () => {
@@ -38,7 +38,7 @@ const _Fill = ({ processID }) => {
   const disable = () => {
     // Reset state, internal and application-wide.
     Map.off('new_shape');
-    setState({ layer: {}, data: {}, isGuided: false, showForm: false });
+    setState({ layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
     store.dispatch({ processID: '' });
     // We remove the working geometry, save process will add the result, as well as additional vectors.
     layer.removeFrom && layer.removeFrom(Map);
@@ -47,6 +47,7 @@ const _Fill = ({ processID }) => {
 
   const fillPB = e => {
     if (e && e.layer) {
+      setState({ loading: true, isGuided: false })
       http.call(_id, {
         url: '/spatial/geometry/fill/{init.token}/PHYSICAL_BLOCK/' + 0,
         method: 'post',
@@ -64,8 +65,8 @@ const _Fill = ({ processID }) => {
               ...layer.feature.properties,
               OBJECT_ID: Number(layer.feature.id)
             },
-            isGuided: false,
-            showForm: true
+            showForm: true,
+            loading: false
           })
         })
       }).catch(error => {
@@ -137,6 +138,7 @@ const _Fill = ({ processID }) => {
       <Icon name={_id} size='34px' />
       <span style={{ display: 'block', marginTop: '5px' }}>Пополни блок</span>
       {processID === _id && renderComponent()}
+      {loading && <Loading />}
     </ProcessButton>
   )
 }
