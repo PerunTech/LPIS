@@ -83,7 +83,6 @@ const _Cut = ({ processID }) => {
   }
 
   const onSubmit = ({ formData }) => {
-    console.log(layer)
     http.call('save_pb', {
       data: JSON.stringify({
         ...formData,
