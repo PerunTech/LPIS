@@ -183,7 +183,7 @@ Map.on('zoomend', ({target}) => {
                 props.DESCRIPTOR === 'LP_CAD_INTERSECTIONS' && setCILabel(layer);
                 props.DESCRIPTOR === 'LOADED_AGRI_PARCEL' && setLoadedParcelLabel(layer)
                 props.DESCRIPTOR === 'SEARCHED_LPIS_PARCEL' && setSearchedParcelLabel(layer)
-                props.DESCRIPTOR === 'LOADED_PHYSICAL_BLOCK' && setLoadedPhysicalBlockLabel(layer)
+                props.DESCRIPTOR === 'PHYSICAL_BLOCK' && setLoadedPhysicalBlockLabel(layer)
             }
         });
 
