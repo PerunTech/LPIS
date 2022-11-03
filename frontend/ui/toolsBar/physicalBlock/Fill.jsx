@@ -70,7 +70,7 @@ const _Fill = ({ processID }) => {
         })
       }).catch(error => {
         const { response } = error
-        const errorMsg = decodeResponse(response)
+        const errorMsg = decodeResponse(response, true)
         alertUser(true, 'error', 'Грешка при пополнување физички блок', errorMsg);
         e.layer.removeFrom(Map)
         disable()
