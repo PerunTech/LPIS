@@ -10,9 +10,17 @@ const { useReducer } = React;
 
 const _id = 'deletePB';
 
-const _Delete = ({ processID }) => {
+const _Delete = ({ processID, loadedPhysicalBlocks }) => {
   const [{ isGuided, layer }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }), { isGuided: false, layer: {} });
+
+  const setBlockEvents = layers => {
+    Object.values(layers).forEach(layer => {
+      layer.on('click', function () {
+        setState({ layer: this, isGuided: false })
+      })
+    })
+  }
 
   const deleteLayer = () => {
     http.call(_id, {
@@ -34,16 +42,20 @@ const _Delete = ({ processID }) => {
   }
 
   const enable = () => {
-    alertUser(true,
-      'warning',
-      'Не се пронајдени физички блокови.',
-      'Додадете физички блокови пред да ја користите алатката за бришење.');
+    if (!Object.keys(loadedPhysicalBlocks).length > 0) {
+      alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за бришење')
+    } else {
+      store.dispatch({ processID: _id });
+      setState({ isGuided: true })
+      setBlockEvents(loadedPhysicalBlocks)
+    }
   }
 
   const disable = () => {
     // Reset state, internal and application-wide.
     store.dispatch({ processID: '' });
     setState({ isGuided: false, layer: {} });
+    Object.values(loadedPhysicalBlocks).forEach(layer => layer.off('click'))
   }
 
   return <ProcessButton id={_id} onClick={() => enable()} title='Избриши блок'>
@@ -51,7 +63,7 @@ const _Delete = ({ processID }) => {
     <span style={{ display: 'block', marginTop: '5px' }}>Избриши блок</span>
     {processID === _id
       && (isGuided
-        ? <Guidance id={_id} disable={disable} msg={['Одберете земјоделска парцела на мапата која ќе се избрише од базата на податоци.', '']} title='Избриши блок' />
+        ? <Guidance id={_id} disable={disable} msg={['Одберете физички блок на мапата кој ќе се избрише од базата на податоци.', '']} title='Избриши блок' />
         : <Modal id='measure-dialog'
           className='delete-control-dialog'
           show
@@ -73,5 +85,6 @@ const _Delete = ({ processID }) => {
 };
 
 export const Delete = core.connect(state => ({
-  processID: state.app.processID
+  processID: state.app.processID,
+  loadedPhysicalBlocks: state.lpis?.loadedPhysicalBlocks,
 }))(_Delete)
