@@ -229,6 +229,17 @@ const _GridRows = ({ rows, selectedParcelId, selectedCropParcelId }) => {
                     <Icon name={getParcelVisibleIcon(el.getId(), descriptor)} size='16px' />
                 </Button>
             </ButtonGroup>
+        } else if (strcmp(descriptor, 'physical_block')) {
+            const id = props.OLD_ID || '/',
+                landCoverCode = props.LAND_COVER_CODE,
+                area = Math.round(props.AREA),
+                unit = 'm²'
+            return <ButtonGroup className='data-grid-row' key={id} >
+                <Button disabled className='data-grid-index' />
+                <Button disabled className='data-grid-column' >{id}</Button>
+                <Button disabled className='data-grid-column' >{landCoverCode}</Button>
+                <Button disabled className='data-grid-column' >{area + ' ' + unit}</Button>
+            </ButtonGroup>
         }
     });
 }
