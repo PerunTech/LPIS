@@ -1,13 +1,15 @@
-import { React, Loading } from 'perun-core'
+import { React, Loading, elements } from 'perun-core'
 import { core, ui } from '../../../Spatial'
 import { Form } from '../agriParcel/Form'
 import { Guidance } from '../agriParcel/Guidance'
 import { ProcessButton } from '../ProcessButton'
 import { landscapeFeaturesSchema } from './Config'
 const { schema, uiSchema } = landscapeFeaturesSchema
+import { decodeResponse } from '../../Util'
 
-const { Map, factory, connect, store } = core
+const { Map, factory, connect, store, http } = core
 const { DrawActions, Icon } = ui
+const { alertUser } = elements
 const { useReducer } = React
 
 const _id = 'landscapeFeaturesPoint'
@@ -56,8 +58,22 @@ const _Point = ({ processID }) => {
   }
 
   const onSubmit = ({ formData }) => {
-    console.log(formData)
-    console.log(X, Y)
+    setState({ loading: true })
+    const url = `/lpis/landscape-features/save/point/{init.token}/${X}/${Y}`
+    const data = JSON.stringify({
+      ...formData,
+      GEOM: factory.GeoJSON.fromLayer(layer),
+    })
+    http.call('save_lf', { data, url, method: 'post', responseType: 'arraybuffer' }).then(() => {
+      disable();
+      alertUser(true, 'success', 'Успешно зачувување', 'Пејсажните обележја се запишани во базата на податоци.')
+    }).catch((error) => {
+      const { response } = error
+      const errorMsg = decodeResponse(response, true)
+      layer.removeFrom(Map);
+      disable();
+      alertUser(true, 'error', 'Грешка при зачувување', errorMsg)
+    })
   }
 
   const onChange = ({ formData }) => {
