@@ -97,7 +97,7 @@ const _Split = ({ processID, agriParcels, farmObjId }) => {
       setState({ loading: false })
       const { response } = error
       const errorMsg = decodeResponse(response)
-      alertUser(true, 'error', 'Грешка при поделба земјоделска парцела', errorMsg)
+      alertUser(true, 'error', 'Грешка при поделба на земјоделска парцела', errorMsg)
       cleanup(lineLayer);
     })
   }
