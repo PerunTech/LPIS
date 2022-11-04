@@ -148,6 +148,11 @@ export const metadataMain = {
     namePath: 'options.metadata.schema.properties.parent_id',
     schema: {
         properties: {
+            OLD_ID: {
+                title: 'СИЗП број',
+                type: 'integer',
+                default: 0
+            },
             LAND_COVER_CODE: {
                 enum: ['200', '210', '310', '320', '410', '421', '422', '423', '430', '490', '600', '900'],
                 enumNames: ['Нива (обработливо земјиште)', 'Стакленик/Пластеник', 'Ливада', 'Пасиште', 'Лозов насад',
@@ -195,6 +200,7 @@ export const metadataMain = {
         'type': 'object',
     },
     uiSchema: {
+        OLD_ID: { 'ui:disabled': true },
         LAND_COVER_CODE: {},
         LAND_COVER_CODE_2: { 'ui:disabled': true },
         NOTE_INSERT: { 'ui:widget': 'textarea' },
