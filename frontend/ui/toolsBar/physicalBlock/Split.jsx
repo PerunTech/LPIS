@@ -92,7 +92,7 @@ const _Split = ({ processID }) => {
     }).catch(error => {
       setState({ loading: false })
       const { response } = error
-      const errorMsg = decodeResponse(response, true)
+      const errorMsg = decodeResponse(response, 'physical_block')
       alertUser(true, 'error', 'Грешка при поделба на физички блок', errorMsg)
       cleanup(lineLayer);
     })

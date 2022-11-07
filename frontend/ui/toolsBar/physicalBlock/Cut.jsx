@@ -72,7 +72,7 @@ const _Cut = ({ processID }) => {
         })
       }).catch(error => {
         const { response } = error
-        const errorMsg = decodeResponse(response, true)
+        const errorMsg = decodeResponse(response, 'physical_block')
         alertUser(true, 'error', 'Грешка при отсекување физички блок', errorMsg);
         e.layer.removeFrom(Map)
         disable()

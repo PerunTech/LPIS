@@ -65,7 +65,7 @@ const _CreateBlock = ({ processID }) => {
       alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
     }).catch((error) => {
       const { response } = error
-      const errorMsg = decodeResponse(response, true)
+      const errorMsg = decodeResponse(response, 'physical_block')
       layer.removeFrom(Map);
       disable();
       alertUser(true, 'error', 'Грешка при зачувување', errorMsg)

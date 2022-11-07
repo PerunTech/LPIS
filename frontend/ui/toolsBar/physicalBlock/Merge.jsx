@@ -64,7 +64,7 @@ const _Merge = ({ processID }) => {
     }).catch(error => {
       setState({ loading: false })
       const { response } = error
-      const errorMsg = decodeResponse(response, true)
+      const errorMsg = decodeResponse(response, 'physical_block')
       alertUser(true, 'error', 'Грешка при спојување на физички блок', errorMsg);
       cleanup(lineLayer);
     })

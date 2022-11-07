@@ -69,7 +69,7 @@ const _Point = ({ processID }) => {
       alertUser(true, 'success', 'Успешно зачувување', 'Пејсажните обележја се запишани во базата на податоци.')
     }).catch((error) => {
       const { response } = error
-      const errorMsg = decodeResponse(response, true)
+      const errorMsg = decodeResponse(response, 'landscape_features')
       layer.removeFrom(Map);
       disable();
       alertUser(true, 'error', 'Грешка при зачувување', errorMsg)
