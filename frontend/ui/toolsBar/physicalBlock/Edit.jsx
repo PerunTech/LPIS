@@ -93,7 +93,7 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
       alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
     }).catch((error) => {
       const { response } = error
-      const errorMsg = decodeResponse(response, true)
+      const errorMsg = decodeResponse(response, 'physical_block')
       disable(true);
       alertUser(true, 'error', 'Грешка при зачувување', errorMsg);
     })

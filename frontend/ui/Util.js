@@ -33,10 +33,12 @@ export const bufferToString = buffer => {
     return String.fromCharCode.apply(null, new Uint8Array(buffer));
 }
 
-export const decodeResponse = (response, isFromPb) => {
+export const decodeResponse = (response, objectName) => {
     let errorMsg = 'Земјоделската парцела не е запишана во базата на податоци.'
-    if (isFromPb) {
+    if (strcmp(objectName, 'physical_block')) {
         errorMsg = 'Физичкиот блок не е запишан во базата на податоци.'
+    } else if (strcmp(objectName, 'landscape_features')) {
+        errorMsg = 'Пејсажните обележја не се запишани во базата на податоци.'
     }
     const decoder = new TextDecoder()
     const decoded = decoder.decode(response.data)
