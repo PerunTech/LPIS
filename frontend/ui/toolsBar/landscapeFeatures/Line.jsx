@@ -7,7 +7,7 @@ import { config, landscapeFeaturesSchema } from './Config'
 const { schema, uiSchema } = landscapeFeaturesSchema
 import { decodeResponse } from '../../Util';
 
-const { Map, store, connect, http } = core
+const { Map, factory, store, connect, http } = core
 const { draw: { line } } = tools
 const { DrawActions, Icon } = ui
 const { alertUser } = elements
