@@ -113,7 +113,8 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck, intersectedNe
         uiSchema: {
             ...pbCheck ? {
                 physical_block_check: {
-                    'ui:widget': 'radio'
+                    'ui:widget': 'radio',
+                    'classNames': 'physical-block-check'
                 }
             } : {
                 physical_block_check: {
@@ -122,7 +123,8 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck, intersectedNe
             },
             ...apCheck ? {
                 agri_parcel_check: {
-                    'ui:widget': 'radio'
+                    'ui:widget': 'radio',
+                    'classNames': 'agri-parcel-check'
                 }
             } : {
                 agri_parcel_check: {
@@ -131,7 +133,8 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck, intersectedNe
             },
             ...neighbourCheck ? {
                 agri_parcel_neighbour: {
-                    'ui:widget': 'radio'
+                    'ui:widget': 'radio',
+                    'classNames': 'agri-parcel-neighbour-check'
                 }
             } : {
                 agri_parcel_neighbour: {

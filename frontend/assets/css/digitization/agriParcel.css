@@ -18,7 +18,6 @@
   color: #3399ff;
   float: left;
   border: 1px solid transparent;
-  /*padding: 0.75rem;*/
 }
 #measure-dialog .prev:hover:not(.disabled) {
   background-color: #e2e6ea;
@@ -181,12 +180,16 @@
   font-size: larger !important;
 }
 
+.ap-checks-modal input[type='radio'] {
+  accent-color: #323232;
+}
+
 .ap-checks-modal .success-pre-save-check input {
   display: none;
 }
 
 .ap-checks-modal .success-pre-save-check label {
-  background-color: #4bb543;
+  background-color: #1db954;
   color: #ffffff;
   max-width: fit-content;
   border-radius: 6px;
@@ -199,6 +202,19 @@
 
 .ap-checks-modal .success-pre-save-check label::after {
   content: '\00a0\00a0\2713';
+}
+
+.ap-checks-modal .physical-block-check > label,
+.ap-checks-modal .agri-parcel-check > label,
+.ap-checks-modal .agri-parcel-neighbour-check > label {
+  background-color: #006d77;
+  color: #ffffff;
+  max-width: fit-content;
+  border-radius: 6px;
+  font-size: 15px !important;
+  padding-left: 18px;
+  padding-right: 6px;
+  margin-bottom: 8px;
 }
 
 .secondary-marker-icon {
