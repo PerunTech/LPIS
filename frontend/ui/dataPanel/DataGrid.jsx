@@ -12,9 +12,11 @@ let hiddenAssets = [];
 
 const getParcelVisibleIcon = (id, type) => {
     let iconName = 'eye-on';
-    let layers = store.getState().farmRegistry.agriParcels;
+    let layers = store.getState()?.farmRegistry?.agriParcels;
     if (strcmp(type, 'land_use_plan')) {
-        layers = store.getState().farmRegistry.farmPPlanData;
+        layers = store.getState()?.farmRegistry?.farmPPlanData;
+    } else if (strcmp(type, 'physical_block')) {
+        layers = store.getState()?.lpis?.loadedPhysicalBlocks;
     }
     Object.values(layers).forEach((l) => {
         if (Number(l.getId()) === Number(id)) {
@@ -32,9 +34,11 @@ const getParcelVisibleIcon = (id, type) => {
 };
 
 const toggleAssetFromMap = (id, type) => {
-    let layers = store.getState().farmRegistry.agriParcels;
+    let layers = store.getState()?.farmRegistry?.agriParcels;
     if (strcmp(type, 'land_use_plan')) {
-        layers = store.getState().farmRegistry.farmPPlanData;
+        layers = store.getState()?.farmRegistry?.farmPPlanData;
+    } else if (strcmp(type, 'physical_block')) {
+        layers = store.getState()?.lpis?.loadedPhysicalBlocks;
     }
     let visible = true;
     Object.values(layers).forEach((l) => {
@@ -88,7 +92,7 @@ export const DataGrid = core.connect(state => ({
 /*      GRID HEADER      */
 /* --------------------- */
 const columnEnum = {
-    physical_block: ['Ид. Број', 'Класа', 'Површина'],
+    physical_block: ['Ид. Број', 'Класа', 'Површина', '', ''],
     agri_parcel: ['СИЗП Број', 'Површина', 'Употр. на земјиште', 'Локалитет', , 'Заеднич. употр.', 'Право на корист.'],
     land_use_plan: ['СИЗП Број', 'Земјодел. култура', 'Површина', 'Број на садници'],
     cad_parcel: ['Ид. Број', 'Број на КО', 'Површина'],
@@ -239,6 +243,15 @@ const _GridRows = ({ rows, selectedParcelId, selectedCropParcelId }) => {
                 <Button disabled className='data-grid-column' >{id}</Button>
                 <Button disabled className='data-grid-column' >{landCoverCode}</Button>
                 <Button disabled className='data-grid-column' >{area + ' ' + unit}</Button>
+                <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} >
+                    <Icon name='pinpoint-secondary' size='16px' />
+                </Button>
+                <Button className='data-grid-util' onClick={() => {
+                    toggleAssetFromMap(el.getId(), descriptor)
+                    setOpen(!isOpen)
+                }}>
+                    <Icon name={getParcelVisibleIcon(el.getId(), descriptor)} size='16px' />
+                </Button>
             </ButtonGroup>
         }
     });
