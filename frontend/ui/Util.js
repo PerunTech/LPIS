@@ -257,3 +257,13 @@ export const getFarmPPlanAssets = (showAlert = false) => {
         showAlert && alertUser(true, 'error', 'Настана грешка', 'Податоците не се успешно освежени.')
     })
 }
+
+export const clearNonPBLayers = () => {
+    Map.eachLayer(function (layer) {
+        if (!!layer.toGeoJSON) {
+            if (!strcmp(layer?.DESCRIPTOR, 'physical_block')) {
+                Map.removeLayer(layer);
+            }
+        }
+    });
+}

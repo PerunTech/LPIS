@@ -4,7 +4,7 @@ import { config } from './Config';
 import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { ProcessButton } from '../ProcessButton';
-import { decodeResponse } from '../../Util';
+import { clearNonPBLayers, decodeResponse } from '../../Util';
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
@@ -43,6 +43,7 @@ const _Cut = ({ processID }) => {
     // We remove the working geometry, save process will add the result, as well as additional vectors.
     layer.removeFrom && layer.removeFrom(Map);
     polygon.disable('force');
+    clearNonPBLayers()
   }
 
   const cutPB = e => {

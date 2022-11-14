@@ -36,7 +36,7 @@ const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer 
   const getDataPanelWidth = () => {
     let width = ''
     if (isOpen) {
-      width = actionType ? '555px' : '300px'
+      width = actionType ? '555px' : '430px'
     }
     return width
   }
