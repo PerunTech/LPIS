@@ -181,7 +181,7 @@ public class DbInit implements IDbInit {
 	public static DbDataTable createPhysicalBlock () {
 		DbDataTable dbt = new DbDataTable();
 		dbt.setDbTableName("PHYSICAL_BLOCK");
-		dbt.setDbRepoName(CONST_MASTER_REPO);
+		dbt.setDbRepoName(CONST_MASTER_REPO+"_sdi");
 		dbt.setDbSchema(CONST_DEFAULT_SCHEMA);
 		dbt.setIsSystemTable(false);
 		dbt.setIsRepoTable(false);
