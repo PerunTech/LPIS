@@ -1,5 +1,6 @@
 import { redux, createHashHistory, elements } from 'perun-core';
 import { core, data } from '../Spatial';
+import { layerList } from '../config/layerList';
 import { setAPLabel, setCPLabel } from '.';
 import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
 import { config as cpConfig } from './toolsBar/cropParcel/Config';
@@ -180,6 +181,7 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
             // Get the farm data only when we first call this function
             if (fitBounds) {
                 getFarmData(farmObjId)
+                layerList[1]['СИЗП']['СИЗП'].addTo(Map)
             }
             store.dispatch({ farmObjId, farmObjTypeId, actionType })
             const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`

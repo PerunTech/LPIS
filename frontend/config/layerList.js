@@ -30,7 +30,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
-            }).addTo(Map)
+            })
         },
         'ДГУ': {
             'ТК 25': factory.tileLayer.wms(
