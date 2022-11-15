@@ -54,6 +54,7 @@ export const lpis = () => {
         }
     });
 
+    layerList[1]['СИЗП']['СИЗП'].removeFrom(Map)
     Map.setView(SYS_CENTER, 3);
 
     return ui.init(_token)
