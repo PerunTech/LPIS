@@ -30,6 +30,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             })
         },
         'ДГУ': {
@@ -39,6 +40,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             }),
             'Државни граници': factory.tileLayer.wms(
                 geoService + '/geoserver/mk/wms', {
@@ -46,6 +48,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             }),
             'Општини': factory.tileLayer.wms(
                 geoService + '/geoserver/mk/wms', {
@@ -53,6 +56,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             })
         },
         'Иницијални податоци': {
@@ -62,6 +66,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             }),
             'Референтна парцела (РП)': factory.tileLayer.wms(
                 geoService + '/geoserver/mk/wms', {
@@ -69,6 +74,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             })
         },
         'Катастарски податоци': {
@@ -78,6 +84,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             })
         },
         'Води': {
@@ -87,6 +94,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             })
         },
         'Високопланински пасишта': {
@@ -96,6 +104,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             })
         },
         'Патна мрежа (податоци од AREC)': {
@@ -105,6 +114,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             })
         },
         'Почвена карта': {
@@ -114,6 +124,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             }),
             'Почвени профили': factory.tileLayer.wms(
                 geoService + '/geoserver/mk/wms', {
@@ -121,6 +132,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             })
         },
         'Заштитено подрачје': {
@@ -130,6 +142,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             })
         },
         'Системи за наводнување и одводнување': {
@@ -139,6 +152,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             }),
             'Споредни канали': factory.tileLayer.wms(
                 geoService + '/geoserver/mk/wms', {
@@ -146,6 +160,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             }),
             'Главни цевководи': factory.tileLayer.wms(
                 geoService + '/geoserver/mk/wms', {
@@ -153,6 +168,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             }),
             'Споредни цевководи': factory.tileLayer.wms(
                 geoService + '/geoserver/mk/wms', {
@@ -160,6 +176,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             })
         },
         'Податоци од земјишна покривка': {
@@ -169,6 +186,7 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
+                isOverlay: true,
             })
         }
     }

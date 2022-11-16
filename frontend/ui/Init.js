@@ -51,10 +51,15 @@ export const lpis = () => {
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
             Map.removeLayer(layer);
+        } else {
+            // This will remove any overlays that have been previously used
+            if (layer?.options?.isOverlay) {
+                Map.removeLayer(layer);
+            }
         }
     });
 
-    layerList[1]['СИЗП']['СИЗП'].removeFrom(Map)
+    layerList[1]['Иницијални податоци']['Иницијален СИЗП (ажуриран)'].addTo(Map)
     Map.setView(SYS_CENTER, 3);
 
     return ui.init(_token)

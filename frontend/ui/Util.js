@@ -154,6 +154,11 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
                     }
                 }
             }
+        } else {
+            // This will remove any overlays that have been previously used
+            if (layer?.options?.isOverlay) {
+                Map.removeLayer(layer);
+            }
         }
     });
 
