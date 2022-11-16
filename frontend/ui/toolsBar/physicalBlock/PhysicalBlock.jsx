@@ -13,7 +13,7 @@ const { ButtonGroup, Divider } = ui
 
 const _PhysicalBlock = ({ actionType }) =>
     <ButtonGroup>
-        {actionType === 'sizp' && <Info />}
+        <Info />
         {actionType !== 'sizp' && (
             <React.Fragment>
                 <CreateBlock />
