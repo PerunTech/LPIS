@@ -2,6 +2,7 @@ import { React, elements } from 'perun-core';
 import { core, ui } from '../../../Spatial';
 import { Guidance } from '../agriParcel/Guidance';
 import { ProcessButton } from '../ProcessButton';
+import { strcmp } from '../../Util'
 
 const { Map, store, http } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
@@ -34,6 +35,12 @@ const _Delete = ({ processID, loadedPhysicalBlocks }) => {
     }).then(() => {
       layer.removeFrom(Map);
       alertUser(true, 'success', 'Успешно бришење', 'Блокот е избришан од базата на податоци.');
+      const newLoadedPhysicalBlocks = Object.values(loadedPhysicalBlocks).filter(loadedLayer => !strcmp(layer.feature.id, loadedLayer.feature.id))
+      if (Array.isArray(newLoadedPhysicalBlocks) && newLoadedPhysicalBlocks.length > 0) {
+        store.dispatch({ loadedPhysicalBlocks: newLoadedPhysicalBlocks })
+      } else {
+        store.dispatch({ physicalBlocksHaveBeenLoaded: false, loadedPhysicalBlocks: [] })
+      }
       disable()
     }).catch(() => {
       alertUser(true, 'error', 'Грешка при бришење', 'Блокот не е избришан од базата на податоци.');

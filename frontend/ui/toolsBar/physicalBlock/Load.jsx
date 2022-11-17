@@ -70,6 +70,12 @@ const _Load = ({ processID, physicalBlocksHaveBeenLoaded: physicalBlocksHaveBeen
     }
   }, [])
 
+  useEffect(() => {
+    if (!physicalBlocksHaveBeenLoadedStore) {
+      setState({ physicalBlocksHaveBeenLoaded: false })
+    }
+  }, [physicalBlocksHaveBeenLoadedStore])
+
   const removeLoadedLayers = () => {
     if (!physicalBlocksHaveBeenLoaded && !physicalBlocksHaveBeenLoadedStore) {
       alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови')
