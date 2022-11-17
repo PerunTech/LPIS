@@ -3,5 +3,7 @@ node_modules
 .project
 .settings
 target
-www/lpis.js
+backend/www/*.js
+backend/www/*.js.map
 index.html
+pnpm-lock.yaml
