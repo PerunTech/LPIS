@@ -14,7 +14,7 @@ const { alertUser } = elements;
 
 const _id = 'split-pb';
 
-const _Split = ({ processID }) => {
+const _Split = ({ processID, loadedPhysicalBlocks }) => {
   const [{ loading }, setState] = useReducer((currState, update) => ({ ...currState, ...update }), { loading: false });
 
   useEffect(() => {
@@ -30,6 +30,7 @@ const _Split = ({ processID }) => {
   }, [])
 
   const cleanup = (lineLayer) => {
+    store.dispatch({ processID: '' })
     disable()
     Map.off('new_shape');
     //remove line
@@ -42,9 +43,9 @@ const _Split = ({ processID }) => {
     Map.on('new_shape', e => {
       if (e && e.layer) {
         const title = 'Дали сакате да го поделите физичкиот блок?'
-        alertUser(true, 'warning', title, '', splitPB.bind(null, e.layer, point), cleanup.bind(null, e.layer), true, 'Да', 'Не')
+        alertUser(true, 'warning', title, '', () => splitPB(e.layer, point), () => cleanup(e.layer), true, 'Да', 'Не')
       } else {
-        cleanup();
+        cleanup(e.layer);
       }
     });
     line.enable(config);
@@ -65,20 +66,21 @@ const _Split = ({ processID }) => {
   }
 
   const enable = () => {
-    alertUser(
-      true,
-      'warning',
-      'Не се пронајдени физички блокови.',
-      'Додадете физички блокови пред да ја користите алатката за делење.',
-    );
-    disable()
+    if (!Object.keys(loadedPhysicalBlocks).length > 0) {
+      alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за делење')
+      disable()
+    } else {
+      const pbs = Object.values(loadedPhysicalBlocks)
+      pbs.forEach(pb => _handleLayerClick(pb, pbs))
+      store.dispatch({ processID: _id })
+    }
   };
 
   const splitPB = (lineLayer, point) => {
     setState({ loading: true })
     const { x, y } = point
     http.call(_id, {
-      url: `/lpis/split/physicalBlock/{init.token}/PHYSICAL_BLOCK/0/${x}/${y}`,
+      url: `/lpis/split/agriParcel/{init.token}/PHYSICAL_BLOCK/0/${x}/${y}`,
       method: 'post',
       responseType: 'arraybuffer',
       data: JSON.stringify(factory.GeoJSON.fromLayer(lineLayer))
@@ -109,8 +111,6 @@ const _Split = ({ processID }) => {
     })
     // Disable Split handler.
     line.disable('force');
-    // Reload the assets
-    getFarmMapAssets()
   }
 
   const renderGuideForm = () => {
@@ -134,5 +134,6 @@ const _Split = ({ processID }) => {
 };
 
 export const Split = core.connect(state => ({
-  processID: state.app.processID
+  processID: state.app.processID,
+  loadedPhysicalBlocks: state.lpis?.loadedPhysicalBlocks,
 }))(_Split)
