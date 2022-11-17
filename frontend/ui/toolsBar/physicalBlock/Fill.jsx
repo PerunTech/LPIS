@@ -15,7 +15,7 @@ const { useReducer, useEffect } = React;
 
 const _id = 'fill-pb';
 
-const _Fill = ({ processID }) => {
+const _Fill = ({ processID, loadedPhysicalBlocks }) => {
   const [{ layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }), { layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
 
@@ -27,12 +27,17 @@ const _Fill = ({ processID }) => {
   }, [])
 
   const enable = () => {
-    Map.on('new_shape', e => fillPB(e));
-    // state setters
-    store.dispatch({ processID: _id });
-    setState({ isGuided: true, showForm: false })
-    // init draw handler
-    polygon.enable(config);
+    if (!Object.keys(loadedPhysicalBlocks).length > 0) {
+      alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за пополнување')
+      disable()
+    } else {
+      Map.on('new_shape', e => fillPB(e));
+      // state setters
+      store.dispatch({ processID: _id });
+      setState({ isGuided: true, showForm: false })
+      // init draw handler
+      polygon.enable(config);
+    }
   }
 
   const disable = () => {
@@ -47,7 +52,7 @@ const _Fill = ({ processID }) => {
 
   const fillPB = e => {
     if (e && e.layer) {
-      setState({ loading: true, isGuided: false })
+      setState({ loading: true, isGuided: false, layer: e.layer })
       http.call(_id, {
         url: '/spatial/geometry/fill/{init.token}/PHYSICAL_BLOCK/' + 0,
         method: 'post',
@@ -82,12 +87,12 @@ const _Fill = ({ processID }) => {
   }
 
   const onSubmit = ({ formData }) => {
-    http.call('save_pb', {
-      data: JSON.stringify({
-        ...formData,
-        GEOM: factory.GeoJSON.fromLayer(layer)
-      })
-    }).then(() => {
+    const url = `/lpis/parcels/save/{init.token}/PHYSICAL_BLOCK/${layer.feature.id}/0/2/2/2`
+    const data = JSON.stringify({
+      ...formData,
+      GEOM: factory.GeoJSON.fromLayer(layer)
+    })
+    http.call('save_pb', { method: 'post', url, data }).then(() => {
       disable();
       alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
     }).catch(() => {
@@ -144,5 +149,6 @@ const _Fill = ({ processID }) => {
 }
 
 export const Fill = core.connect(state => ({
-  processID: state.app.processID
+  processID: state.app.processID,
+  loadedPhysicalBlocks: state.lpis?.loadedPhysicalBlocks,
 }))(_Fill)
