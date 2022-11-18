@@ -59,16 +59,18 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
   }
 
   const disable = () => {
-    Object.values(loadedPhysicalBlocks).forEach(loadedLayer => {
-      loadedLayer.off('mouseover mouseout click')
-      if (loadedLayer.feature.properties?.OLD_ID === layer.feature.properties?.OLD_ID) {
-        // Remove the loaded layer from the map & from the loadedPhysicalBlocks object
-        loadedLayer.removeFrom(Map)
-        Reflect.deleteProperty(loadedPhysicalBlocks, loadedLayer.feature.properties.OLD_ID)
-        // Get the layer once again, using the point as the WS param
-        getPhysicalBlockInfo(loadedLayer.feature.point)
-      }
-    })
+    if (Object.keys(layer).length > 0) {
+      Object.values(loadedPhysicalBlocks).forEach(loadedLayer => {
+        loadedLayer.off('mouseover mouseout click')
+        if (loadedLayer.feature.id === layer.feature.id) {
+          // Remove the loaded layer from the map & from the loadedPhysicalBlocks object
+          loadedLayer.removeFrom(Map)
+          Reflect.deleteProperty(loadedPhysicalBlocks, loadedLayer.feature.id)
+          // Get the layer once again, using the point as the WS param
+          getPhysicalBlockInfo(loadedLayer.feature.point)
+        }
+      })
+    }
     _layerGroup.clearLayers().removeFrom(Map);
     setState({ loading: false, layer: {}, data: {}, isGuided: false, showForm: false })
     store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
