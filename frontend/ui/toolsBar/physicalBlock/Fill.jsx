@@ -5,6 +5,7 @@ import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { ProcessButton } from '../ProcessButton';
 import { decodeResponse } from '../../Util';
+import { getPhysicalBlockInfo } from './Load';
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
@@ -16,8 +17,8 @@ const { useReducer, useEffect } = React;
 const _id = 'fill-pb';
 
 const _Fill = ({ processID, loadedPhysicalBlocks }) => {
-  const [{ layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
+  const [{ point, layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { point: {}, layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
 
   useEffect(() => {
     return () => {
@@ -41,9 +42,20 @@ const _Fill = ({ processID, loadedPhysicalBlocks }) => {
   }
 
   const disable = () => {
+    if (Object.keys(layer).length > 0) {
+      Object.values(loadedPhysicalBlocks).forEach(loadedLayer => {
+        if (loadedLayer.feature.id === layer.feature.id) {
+          // Remove the loaded layer from the map & from the loadedPhysicalBlocks object
+          loadedLayer.removeFrom(Map)
+          Reflect.deleteProperty(loadedPhysicalBlocks, loadedLayer.feature.id)
+          // Get the layer once again, using the point as the WS param
+          getPhysicalBlockInfo(point)
+        }
+      })
+    }
     // Reset state, internal and application-wide.
     Map.off('new_shape');
-    setState({ layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
+    setState({ point: {}, layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
     store.dispatch({ processID: '' });
     // We remove the working geometry, save process will add the result, as well as additional vectors.
     layer.removeFrom && layer.removeFrom(Map);
@@ -63,8 +75,10 @@ const _Fill = ({ processID, loadedPhysicalBlocks }) => {
         const geojson = factory.geoJSON(buff, config.pathOptions);
         geojson.getLayers().forEach(layer => {
           layer.addTo(Map);
+          const p = Map.transform(layer.getBounds().getCenter());
           e.layer.removeFrom(Map);
           setState({
+            point: p,
             layer: layer,
             data: {
               ...layer.feature.properties,
