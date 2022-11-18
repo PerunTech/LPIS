@@ -5,6 +5,7 @@ import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { config as cfg } from './Config';
 import { decodeResponse } from '../../Util';
+import { getPhysicalBlockInfo } from './Load';
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = config;
 const { Map, store, factory, http, connect } = core;
@@ -57,20 +58,17 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
     }
   }
 
-  const disable = (resetData) => {
-    if (resetData) {
-      Object.values(loadedPhysicalBlocks).forEach(loadedLayer => {
-        loadedLayer.off('mouseover mouseout click')
-        if (loadedLayer.feature.properties?.OLD_ID === layer.feature.properties?.OLD_ID) {
-          let editedLoadedLayer = loadedLayer
-          editedLoadedLayer = layer
-          editedLoadedLayer.feature.properties = data
-          Reflect.set(loadedPhysicalBlocks, layer.feature.properties.OLD_ID, editedLoadedLayer)
-          store.dispatch({ loadedPhysicalBlocks })
-        }
-      })
-    }
-    Object.values(loadedPhysicalBlocks).forEach(loadedLayer => loadedLayer.off('mouseover mouseout click'))
+  const disable = () => {
+    Object.values(loadedPhysicalBlocks).forEach(loadedLayer => {
+      loadedLayer.off('mouseover mouseout click')
+      if (loadedLayer.feature.properties?.OLD_ID === layer.feature.properties?.OLD_ID) {
+        // Remove the loaded layer from the map & from the loadedPhysicalBlocks object
+        loadedLayer.removeFrom(Map)
+        Reflect.deleteProperty(loadedPhysicalBlocks, loadedLayer.feature.properties.OLD_ID)
+        // Get the layer once again, using the point as the WS param
+        getPhysicalBlockInfo(loadedLayer.feature.point)
+      }
+    })
     _layerGroup.clearLayers().removeFrom(Map);
     setState({ loading: false, layer: {}, data: {}, isGuided: false, showForm: false })
     store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
@@ -89,12 +87,12 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
       GEOM: factory.GeoJSON.fromLayer(layer),
     })
     http.call('save_pb', { data, url, method: 'post', responseType: 'arraybuffer' }).then(() => {
-      disable(true);
+      disable();
       alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
     }).catch((error) => {
       const { response } = error
       const errorMsg = decodeResponse(response, 'physical_block')
-      disable(true);
+      disable();
       alertUser(true, 'error', 'Грешка при зачувување', errorMsg);
     })
   }
