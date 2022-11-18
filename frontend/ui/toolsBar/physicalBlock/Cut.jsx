@@ -4,7 +4,7 @@ import { config } from './Config';
 import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { ProcessButton } from '../ProcessButton';
-import { clearNonPBLayers, decodeResponse } from '../../Util';
+import { decodeResponse } from '../../Util';
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
@@ -47,7 +47,6 @@ const _Cut = ({ processID, loadedPhysicalBlocks }) => {
     // We remove the working geometry, save process will add the result, as well as additional vectors.
     layer.removeFrom && layer.removeFrom(Map);
     polygon.disable('force');
-    clearNonPBLayers()
   }
 
   const cutPB = e => {
@@ -88,12 +87,12 @@ const _Cut = ({ processID, loadedPhysicalBlocks }) => {
   }
 
   const onSubmit = ({ formData }) => {
-    http.call('save_pb', {
-      data: JSON.stringify({
-        ...formData,
-        GEOM: factory.GeoJSON.fromLayer(layer)
-      })
-    }).then(() => {
+    const url = `/lpis/parcels/save/{init.token}/PHYSICAL_BLOCK/${layer.feature.id}/0/2/2/2`
+    const data = JSON.stringify({
+      ...formData,
+      GEOM: factory.GeoJSON.fromLayer(layer)
+    })
+    http.call('save_pb', { method: 'post', url, data }).then(() => {
       disable();
       alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
     }).catch(() => {
