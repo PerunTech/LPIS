@@ -61,10 +61,10 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
   const disable = () => {
     Object.values(loadedPhysicalBlocks).forEach(loadedLayer => {
       loadedLayer.off('mouseover mouseout click')
-      if (loadedLayer.feature.properties?.OLD_ID === layer.feature.properties?.OLD_ID) {
+      if (loadedLayer.feature.id === layer.feature.id) {
         // Remove the loaded layer from the map & from the loadedPhysicalBlocks object
         loadedLayer.removeFrom(Map)
-        Reflect.deleteProperty(loadedPhysicalBlocks, loadedLayer.feature.properties.OLD_ID)
+        Reflect.deleteProperty(loadedPhysicalBlocks, loadedLayer.feature.id)
         // Get the layer once again, using the point as the WS param
         getPhysicalBlockInfo(loadedLayer.feature.point)
       }
