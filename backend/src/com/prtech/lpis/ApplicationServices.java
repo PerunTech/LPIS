@@ -189,6 +189,7 @@ public class ApplicationServices {
 			dbo.setVal(Sv.FILE_NAME, CC.CAD_MUNICIPALITIES_FILENAME);
 			byte[] bytes = geoJson.getBytes();
 			dbo.setVal(Sv.FILE_SIZE, bytes.length);
+			dbo.setVal("FILE_DATE", DateTime.now());
 			svf.saveFile(dbo, SvCore.getDbtByName(CC.AGRI_PARCEL), bytes, true);
 		}
 
