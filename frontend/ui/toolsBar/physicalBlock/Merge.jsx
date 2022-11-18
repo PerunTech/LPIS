@@ -14,7 +14,7 @@ const { alertUser } = elements;
 
 const _id = 'merge-pb';
 
-const _Merge = ({ processID }) => {
+const _Merge = ({ processID, loadedPhysicalBlocks }) => {
   const [{ layer, loading }, setState] = useReducer((currState, update) => ({ ...currState, ...update }), { layer: {}, loading: false });
 
   useEffect(() => {
@@ -34,17 +34,22 @@ const _Merge = ({ processID }) => {
   }
 
   const enable = () => {
-    Map.on('new_shape', e => {
-      if (e && e.layer) {
-        const title = 'Спојување на физички блокови'
-        const msg = 'Дали сакате да ги споите избраните физички блокови во еден?'
-        alertUser(true, 'warning', title, msg, mergePB.bind(null, e.layer), cleanup.bind(null, e.layer), true, 'Да', 'Не')
-      } else {
-        cleanup();
-      }
-    });
-    store.dispatch({ processID: _id });
-    line.enable(config);
+    if (!Object.keys(loadedPhysicalBlocks).length > 0) {
+      alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за спојување')
+      disable()
+    } else {
+      Map.on('new_shape', e => {
+        if (e && e.layer) {
+          const title = 'Спојување на физички блокови'
+          const msg = 'Дали сакате да ги споите избраните физички блокови во еден?'
+          alertUser(true, 'warning', title, msg, () => mergePB(e.layer), () => cleanup(e.layer), true, 'Да', 'Не')
+        } else {
+          cleanup();
+        }
+      });
+      store.dispatch({ processID: _id });
+      line.enable(config);
+    }
   };
 
   const mergePB = (lineLayer) => {
@@ -97,5 +102,6 @@ const _Merge = ({ processID }) => {
 };
 
 export const Merge = core.connect(state => ({
-  processID: state.app.processID
+  processID: state.app.processID,
+  loadedPhysicalBlocks: state.lpis?.loadedPhysicalBlocks,
 }))(_Merge)

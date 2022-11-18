@@ -5,6 +5,7 @@ import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { config } from './Config';
 import { decodeResponse } from '../../Util';
+import { getPhysicalBlockInfo } from './Load';
 
 const { Map, store, connect, factory, http } = core;
 const { draw: { polygon } } = tools;
@@ -15,9 +16,9 @@ const { useReducer, useEffect } = React;
 const _id = 'createBlock';
 
 const _CreateBlock = ({ processID }) => {
-  const [{ loading, layer, data, isGuided, showForm }, setState] = useReducer((currState, update) =>
+  const [{ loading, point, layer, data, isGuided, showForm }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { loading: false, layer: {}, data: {}, isGuided: false, showForm: false });
+    { loading: false, point: {}, layer: {}, data: {}, isGuided: false, showForm: false });
 
   useEffect(() => {
     return () => {
@@ -29,14 +30,15 @@ const _CreateBlock = ({ processID }) => {
   const enable = () => {
     Map.on('new_shape', e => {
       if (e && e.layer) {
-        setState({ layer: e.layer, loading: false, isGuided: false, showForm: true })
+        const p = Map.transform(e.layer.getBounds().getCenter())
+        setState({ point: p, layer: e.layer, loading: false, isGuided: false, showForm: true })
         e.layer.addTo(Map)
       }
 
       Map.off('new_shape')
     });
 
-    setState({ loading: false, isGuided: true, showForm: false, layer: {}, data: {} });
+    setState({ loading: false, isGuided: true, showForm: false, point: {}, layer: {}, data: {} });
     store.dispatch({ processID: _id });
     polygon.enable(config);
   }
@@ -63,6 +65,7 @@ const _CreateBlock = ({ processID }) => {
     http.call('save_pb', { data, url, method: 'post', responseType: 'arraybuffer' }).then(() => {
       disable();
       alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
+      getPhysicalBlockInfo(point)
     }).catch((error) => {
       const { response } = error
       const errorMsg = decodeResponse(response, 'physical_block')

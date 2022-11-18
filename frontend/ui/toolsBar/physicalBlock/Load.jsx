@@ -29,7 +29,8 @@ export function getPhysicalBlockInfo (p, callback, setState) {
     if (layers && Array.isArray(layers) && layers.length > 0) {
       const loadedPhysicalBlocks = store.getState().lpis?.loadedPhysicalBlocks
       layers.forEach(layer => {
-        Reflect.set(loadedPhysicalBlocks, layer.feature.properties?.OLD_ID, layer)
+        Reflect.set(loadedPhysicalBlocks, layer.feature.id, layer)
+        layer.feature.point = p
         if (layer?.feature?.properties) {
           layer.feature.properties.DESCRIPTOR = 'PHYSICAL_BLOCK'
         }
@@ -69,6 +70,12 @@ const _Load = ({ processID, physicalBlocksHaveBeenLoaded: physicalBlocksHaveBeen
       store.dispatch({ loadedPhysicalBlocks: {}, physicalBlocksHaveBeenLoaded: false })
     }
   }, [])
+
+  useEffect(() => {
+    if (!physicalBlocksHaveBeenLoadedStore) {
+      setState({ physicalBlocksHaveBeenLoaded: false })
+    }
+  }, [physicalBlocksHaveBeenLoadedStore])
 
   const removeLoadedLayers = () => {
     if (!physicalBlocksHaveBeenLoaded && !physicalBlocksHaveBeenLoadedStore) {
