@@ -15,7 +15,7 @@ const { useReducer, useEffect } = React;
 
 const _id = 'cut-pb';
 
-const _Cut = ({ processID }) => {
+const _Cut = ({ processID, loadedPhysicalBlocks }) => {
   const [{ layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }), { layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
 
@@ -27,12 +27,16 @@ const _Cut = ({ processID }) => {
   }, [])
 
   const enable = () => {
-    Map.on('new_shape', e => cutPB(e));
-    // state setters
-    store.dispatch({ processID: _id });
-    setState({ loading: false, isGuided: true, showForm: false })
-    // init draw handler
-    polygon.enable(config);
+    if (!Object.keys(loadedPhysicalBlocks).length > 0) {
+      alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за отсекување')
+    } else {
+      Map.on('new_shape', e => cutPB(e));
+      // state setters
+      store.dispatch({ processID: _id });
+      setState({ loading: false, isGuided: true, showForm: false })
+      // init draw handler
+      polygon.enable(config);
+    }
   }
 
   const disable = () => {
@@ -146,5 +150,6 @@ const _Cut = ({ processID }) => {
 }
 
 export const Cut = core.connect(state => ({
-  processID: state.app.processID
+  processID: state.app.processID,
+  loadedPhysicalBlocks: state.lpis?.loadedPhysicalBlocks,
 }))(_Cut)
