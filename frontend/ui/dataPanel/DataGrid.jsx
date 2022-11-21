@@ -110,7 +110,10 @@ const columnEnum = {
 /* Column names above each set of data types in the list. */
 const _GridHeader = ({ typeId }) => {
     const columns = columnEnum[typeId] || columnEnum['resto'];
-    const columnElements = columns.map(el => <Button key={el} disabled className='data-grid-column' >{el}</Button>)
+    const columnElements = columns.map((el, i) => {
+        const key = strcmp(typeId, 'physical_block') ? `${el}_${i + 1}` : el
+        return <Button key={key} disabled className='data-grid-column' >{el}</Button>
+    })
     return <ButtonGroup className='data-grid-header' id="grid-header">
         <Button disabled className='data-grid-index' />
         {columnElements}
