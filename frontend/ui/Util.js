@@ -1,6 +1,7 @@
 import { redux, createHashHistory, elements } from 'perun-core';
 import { core, data } from '../Spatial';
-import { point, inside } from '@turf/turf'
+import { point } from '@turf/helpers'
+import inside from '@turf/boolean-point-in-polygon'
 import { layerList } from '../config/layerList';
 import { setAPLabel, setCPLabel } from '.';
 import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
