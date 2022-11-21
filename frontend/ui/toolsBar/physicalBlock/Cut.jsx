@@ -4,7 +4,7 @@ import { config } from './Config';
 import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { ProcessButton } from '../ProcessButton';
-import { decodeResponse } from '../../Util';
+import { decodeResponse, getRandomPointInPolygon } from '../../Util';
 import { getPhysicalBlockInfo } from './Load';
 
 const { Map, store, factory, http } = core;
@@ -40,8 +40,8 @@ const _Cut = ({ processID, loadedPhysicalBlocks }) => {
     }
   }
 
-  const disable = () => {
-    if (Object.keys(layer).length > 0) {
+  const disable = (getNewLayer) => {
+    if (getNewLayer && Object.keys(layer).length > 0) {
       Object.values(loadedPhysicalBlocks).forEach(loadedLayer => {
         if (loadedLayer.feature.id === layer.feature.id) {
           // Remove the loaded layer from the map & from the loadedPhysicalBlocks object
@@ -74,7 +74,12 @@ const _Cut = ({ processID, loadedPhysicalBlocks }) => {
         const geojson = factory.geoJSON(buff, config.pathOptions);
         geojson.getLayers().forEach(layer => {
           layer.addTo(Map);
-          const p = Map.transform(layer.getBounds().getCenter());
+          const randomPoint = getRandomPointInPolygon(layer)
+          const pointLatLngs = {
+            lat: randomPoint.geometry.coordinates[1],
+            lng: randomPoint.geometry.coordinates[0]
+          }
+          const p = Map.transform(pointLatLngs);
           e.layer.removeFrom(Map);
           setState({
             point: p,
@@ -107,7 +112,7 @@ const _Cut = ({ processID, loadedPhysicalBlocks }) => {
       GEOM: factory.GeoJSON.fromLayer(layer)
     })
     http.call('save_pb', { method: 'post', url, data }).then(() => {
-      disable();
+      disable(true);
       alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
     }).catch(() => {
       layer.removeFrom(Map);
