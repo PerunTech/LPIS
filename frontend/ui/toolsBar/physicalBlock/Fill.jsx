@@ -17,8 +17,8 @@ const { useReducer, useEffect } = React;
 const _id = 'fill-pb';
 
 const _Fill = ({ processID, loadedPhysicalBlocks }) => {
-  const [{ getNewLayer, point, layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { getNewLayer: false, point: {}, layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
+  const [{ point, layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { point: {}, layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
 
   useEffect(() => {
     return () => {
@@ -41,7 +41,7 @@ const _Fill = ({ processID, loadedPhysicalBlocks }) => {
     }
   }
 
-  const disable = () => {
+  const disable = (getNewLayer) => {
     if (getNewLayer && Object.keys(layer).length > 0) {
       Object.values(loadedPhysicalBlocks).forEach(loadedLayer => {
         if (loadedLayer.feature.id === layer.feature.id) {
@@ -55,7 +55,7 @@ const _Fill = ({ processID, loadedPhysicalBlocks }) => {
     }
     // Reset state, internal and application-wide.
     Map.off('new_shape');
-    setState({ getNewLayer: false, point: {}, layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
+    setState({ point: {}, layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
     store.dispatch({ processID: '' });
     // We remove the working geometry, save process will add the result, as well as additional vectors.
     layer.removeFrom && layer.removeFrom(Map);
@@ -107,12 +107,10 @@ const _Fill = ({ processID, loadedPhysicalBlocks }) => {
       GEOM: factory.GeoJSON.fromLayer(layer)
     })
     http.call('save_pb', { method: 'post', url, data }).then(() => {
-      setState({ getNewLayer: true })
-      disable();
+      disable(true);
       alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
     }).catch(() => {
       layer.removeFrom(Map);
-      setState({ getNewLayer: false })
       disable();
       alertUser(true, 'error', 'Грешка при зачувување', 'Физичкиот блок не е запишан во базата на податоци.')
     })
