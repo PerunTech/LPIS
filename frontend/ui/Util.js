@@ -1,5 +1,6 @@
 import { redux, createHashHistory, elements } from 'perun-core';
 import { core, data } from '../Spatial';
+import { point, inside } from '@turf/turf'
 import { layerList } from '../config/layerList';
 import { setAPLabel, setCPLabel } from '.';
 import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
@@ -273,4 +274,25 @@ export const clearNonPBLayers = () => {
             }
         }
     });
+}
+
+export const getRandomPointInPolygon = (polygon) => {
+    const bounds = polygon.getBounds();
+    const x_min = bounds.getEast();
+    const x_max = bounds.getWest();
+    const y_min = bounds.getSouth();
+    const y_max = bounds.getNorth();
+
+    const lat = y_min + (Math.random() * (y_max - y_min));
+    const lng = x_min + (Math.random() * (x_max - x_min));
+
+    const randomPoint = point([lng, lat]);
+    const poly = polygon.toGeoJSON();
+    const isInside = inside(randomPoint, poly);
+
+    if (isInside) {
+        return randomPoint
+    } else {
+        return getRandomPointInPolygon(polygon)
+    }
 }
