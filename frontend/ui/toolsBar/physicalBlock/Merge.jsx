@@ -1,9 +1,11 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../Spatial';
+import geomsIntersect from '@turf/boolean-intersects';
 import { config } from './Config';
 import { decodeResponse } from '../../Util';
 import { Guidance } from '../agriParcel/Guidance';
 import { ProcessButton } from '../ProcessButton';
+import { getPhysicalBlockInfo } from './Load';
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
@@ -24,8 +26,8 @@ const _Merge = ({ processID, loadedPhysicalBlocks }) => {
     }
   }, [])
 
-  const cleanup = (lineLayer) => {
-    disable()
+  const cleanup = (lineLayer, getNewLayer, point) => {
+    disable(lineLayer, getNewLayer, point)
     Map.off('new_shape');
     //remove line
     if (lineLayer) {
@@ -63,10 +65,15 @@ const _Merge = ({ processID, loadedPhysicalBlocks }) => {
       setState({ loading: false })
       const geojson = factory.geoJSON(geobuf.decode(protobuf(response)), config.pathOptions);
       const numOfNewPhysicalBlocks = geojson.getLayers().length
+      let point = {}
+      geojson.getLayers().forEach(layer => {
+        point = Map.transform(layer.getBounds().getCenter());
+      })
       const msg = numOfNewPhysicalBlocks === 1 ? 'Добиен е еден нов физички блок.' : `Добиени се ${numOfNewPhysicalBlocks} нови физички блок.`
       alertUser(true, 'success', 'Успешно споени физички блок', msg)
-      cleanup(lineLayer);
+      cleanup(lineLayer, true, point);
     }).catch(error => {
+      console.error(error)
       setState({ loading: false })
       const { response } = error
       const errorMsg = decodeResponse(response, 'physical_block')
@@ -75,7 +82,21 @@ const _Merge = ({ processID, loadedPhysicalBlocks }) => {
     })
   }
 
-  const disable = () => {
+  const disable = (lineLayer, getNewLayer, point) => {
+    if (lineLayer && getNewLayer) {
+      Object.values(loadedPhysicalBlocks).forEach(loadedLayer => {
+        const lineGeoJSON = lineLayer.toGeoJSON()
+        const polygonGeoJSON = loadedLayer.toGeoJSON()
+        // Check if the line intersects any of the loaded polygons
+        if (geomsIntersect(lineGeoJSON, polygonGeoJSON)) {
+          // Remove the loaded layer from the map & from the loadedPhysicalBlocks object
+          loadedLayer.removeFrom(Map)
+          Reflect.deleteProperty(loadedPhysicalBlocks, loadedLayer.feature.id)
+        }
+      })
+      // Get the layer once again, using the point as the WS param
+      getPhysicalBlockInfo(point)
+    }
     // Reset state, internal and application-wide.
     setState({ layer: {} });
     store.dispatch({ processID: '' });

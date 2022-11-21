@@ -15,6 +15,7 @@
         "url": "https://gitlab.prtech.mk/iacs_custom/lpis"
     },
     "dependencies": {
+        "@turf/boolean-intersects": "^6.5.0",
         "@turf/boolean-point-in-polygon": "^6.5.0",
         "@turf/helpers": "^6.5.0",
         "date-fns": "^2.29.1",
