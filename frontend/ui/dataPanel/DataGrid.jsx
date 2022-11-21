@@ -235,10 +235,11 @@ const _GridRows = ({ rows, selectedParcelId, selectedCropParcelId }) => {
             </ButtonGroup>
         } else if (strcmp(descriptor, 'physical_block')) {
             const id = props.OLD_ID || '/',
+                objectId = el.getId(),
                 landCoverCode = props.LAND_COVER_CODE,
                 area = Math.round(props.AREA),
                 unit = 'm²'
-            return <ButtonGroup className='data-grid-row' key={id} >
+            return <ButtonGroup className='data-grid-row' key={objectId} >
                 <Button disabled className='data-grid-index' />
                 <Button disabled className='data-grid-column' >{id}</Button>
                 <Button disabled className='data-grid-column' >{landCoverCode}</Button>
