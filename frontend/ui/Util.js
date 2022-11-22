@@ -1,7 +1,7 @@
 import { redux, createHashHistory, elements } from 'perun-core';
 import { core, data } from '../Spatial';
 import { point } from '@turf/helpers'
-import inside from '@turf/boolean-point-in-polygon'
+import isPointInPolygon from '@turf/boolean-point-in-polygon'
 import { layerList } from '../config/layerList';
 import { setAPLabel, setCPLabel } from '.';
 import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
@@ -289,7 +289,7 @@ export const getRandomPointInPolygon = (polygon) => {
 
     const randomPoint = point([lng, lat]);
     const poly = polygon.toGeoJSON();
-    const isInside = inside(randomPoint, poly);
+    const isInside = isPointInPolygon(randomPoint, poly);
 
     if (isInside) {
         return randomPoint
