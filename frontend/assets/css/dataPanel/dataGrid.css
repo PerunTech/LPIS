@@ -6,15 +6,18 @@
 .data-grid-header {
     display: flex;
 }
+
 .data-grid-header .btn.disabled {
     font-style: italic;
     opacity: 0.8;
     border-bottom: 1px solid #00000025;
     background-color: #f9f9f9;
 }
+
 .data-grid-header .data-grid-index {
     flex: 0 0 22px;
 }
+
 .data-grid-header .data-grid-column {
     flex: 0 0 78px;
     text-align: start;
@@ -24,13 +27,16 @@
     display: flex;
     border-bottom: 1px solid #00000025;
 }
+
 .data-grid-row:nth-child(odd) button {
     background-color: #f9f9f9;
 }
+
 .data-grid-row .data-grid-index {
     flex: 0 0 22px;
     opacity: 1;
 }
+
 .data-grid-row .data-grid-column {
     flex: 0 0 78px;
     text-align: start;
@@ -40,11 +46,19 @@
     white-space: nowrap;
     overflow: hidden;
 }
+
 .data-grid-row:hover .data-grid-index,
 .data-grid-row:hover .data-grid-column,
-.data-grid-row:hover .data-grid-util 
-{
-    background-color: #3399ff25 ;
+.data-grid-row:hover .data-grid-util {
+    background-color: #3399ff25;
+}
+
+.data-grid-column-pb-util {
+    flex: 0 0 55px !important;
+}
+
+.data-grid-row-pb .data-grid-util {
+    flex: 0 0 55px !important;
 }
 
 .data-grid-util {

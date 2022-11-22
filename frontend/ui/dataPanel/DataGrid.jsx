@@ -64,6 +64,24 @@ const toggleAssetFromMap = (id, type) => {
     return visible;
 };
 
+const removeLayer = (type, id) => {
+    let layers = {}
+    if (strcmp(type, 'physical_block')) {
+        layers = store.getState()?.lpis?.loadedPhysicalBlocks;
+        Object.values(layers).forEach(loadedLayer => {
+            if (strcmp(loadedLayer.feature.id, id)) {
+                // Remove the loaded layer from the map & from the loadedPhysicalBlocks object
+                loadedLayer.removeFrom(Map)
+                Reflect.deleteProperty(layers, id)
+            }
+        })
+
+        if (Object.keys(layers).length === 0) {
+            store.dispatch({ loadedPhysicalBlocks: {}, physicalBlocksHaveBeenLoaded: false })
+        }
+    }
+}
+
 const _DataGrid = ({ type, rows, selectedParcelId, selectedCropParcelId }) => {
     return store.getState().map.id === 'gsaa-map'
         ? <div id={type.id + '-grid'} className='data-grid' >
@@ -92,7 +110,7 @@ export const DataGrid = core.connect(state => ({
 /*      GRID HEADER      */
 /* --------------------- */
 const columnEnum = {
-    physical_block: ['СИЗП Број', 'Класа', 'Површина', '', ''],
+    physical_block: ['СИЗП Број', 'Класа', 'Површина', '', '', ''],
     agri_parcel: ['СИЗП Број', 'Површина', 'Употр. на земјиште', 'Локалитет', , 'Заеднич. употр.', 'Право на корист.'],
     land_use_plan: ['СИЗП Број', 'Земјодел. култура', 'Површина', 'Број на садници'],
     cad_parcel: ['Ид. Број', 'Број на КО', 'Површина'],
@@ -112,7 +130,14 @@ const _GridHeader = ({ typeId }) => {
     const columns = columnEnum[typeId] || columnEnum['resto'];
     const columnElements = columns.map((el, i) => {
         const key = strcmp(typeId, 'physical_block') ? `${el}_${i + 1}` : el
-        return <Button key={key} disabled className='data-grid-column' >{el}</Button>
+        let classNames = 'data-grid-column'
+        if (strcmp(typeId, 'physical_block')) {
+            // This will get only the elements that do not contain any text
+            if (!el) {
+                classNames += ' data-grid-column-pb-util'
+            }
+        }
+        return <Button key={key} disabled className={classNames} >{el}</Button>
     })
     return <ButtonGroup className='data-grid-header' id="grid-header">
         <Button disabled className='data-grid-index' />
@@ -242,7 +267,7 @@ const _GridRows = ({ rows, selectedParcelId, selectedCropParcelId }) => {
                 landCoverCode = props.LAND_COVER_CODE,
                 area = Math.round(props.AREA),
                 unit = 'm²'
-            return <ButtonGroup className='data-grid-row' key={objectId} >
+            return <ButtonGroup className='data-grid-row data-grid-row-pb' key={objectId} >
                 <Button disabled className='data-grid-index' />
                 <Button disabled className='data-grid-column' >{id}</Button>
                 <Button disabled className='data-grid-column' >{landCoverCode}</Button>
@@ -255,6 +280,9 @@ const _GridRows = ({ rows, selectedParcelId, selectedCropParcelId }) => {
                     setOpen(!isOpen)
                 }}>
                     <Icon name={getParcelVisibleIcon(el.getId(), descriptor)} size='16px' />
+                </Button>
+                <Button title='Отстрани од мапа' className='data-grid-util' onClick={() => removeLayer(descriptor, objectId)} >
+                    <Icon name='delete' size='16px' />
                 </Button>
             </ButtonGroup>
         }
