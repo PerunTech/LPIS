@@ -87,7 +87,7 @@ const _Merge = ({ processID, loadedPhysicalBlocks }) => {
       Object.values(loadedPhysicalBlocks).forEach(loadedLayer => {
         const lineGeoJSON = lineLayer.toGeoJSON()
         const polygonGeoJSON = loadedLayer.toGeoJSON()
-        // Check if the line intersects any of the loaded polygons
+        // Check if the line intersects with any of the loaded polygons
         if (geomsIntersect(lineGeoJSON, polygonGeoJSON)) {
           // Remove the loaded layer from the map & from the loadedPhysicalBlocks object
           loadedLayer.removeFrom(Map)
@@ -100,7 +100,7 @@ const _Merge = ({ processID, loadedPhysicalBlocks }) => {
     // Reset state, internal and application-wide.
     setState({ layer: {} });
     store.dispatch({ processID: '' });
-    // We remove the working geometry, save process will add the result.
+    // We remove the working geometry.
     layer.removeFrom && layer.removeFrom(Map);
     // Disable Split handler.
     line.disable('force');
