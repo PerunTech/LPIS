@@ -29,7 +29,7 @@ export function getPhysicalBlockInfo (p, callback, setState) {
     if (layers && Array.isArray(layers) && layers.length > 0) {
       const loadedPhysicalBlocks = store.getState().lpis?.loadedPhysicalBlocks
       layers.forEach(layer => {
-        // Only add the layers if they have been loaded already
+        // Only add the layers if they haven't been loaded already
         if (!loadedPhysicalBlocks[layer.feature.id]) {
           Reflect.set(loadedPhysicalBlocks, layer.feature.id, layer)
           layer.feature.point = p
