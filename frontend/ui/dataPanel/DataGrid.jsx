@@ -64,7 +64,7 @@ const toggleAssetFromMap = (id, type) => {
     return visible;
 };
 
-const removeLayer = (type, id) => {
+const removeLayer = (id, type) => {
     let layers = {}
     if (strcmp(type, 'physical_block')) {
         layers = store.getState()?.lpis?.loadedPhysicalBlocks;
@@ -276,13 +276,13 @@ const _GridRows = ({ rows, selectedParcelId, selectedCropParcelId }) => {
                     <Icon name='pinpoint-secondary' size='16px' />
                 </Button>
                 <Button className='data-grid-util' onClick={() => {
-                    toggleAssetFromMap(el.getId(), descriptor)
+                    toggleAssetFromMap(objectId, descriptor)
                     setOpen(!isOpen)
                 }}>
-                    <Icon name={getParcelVisibleIcon(el.getId(), descriptor)} size='16px' />
+                    <Icon name={getParcelVisibleIcon(objectId, descriptor)} size='16px' />
                 </Button>
-                <Button title='Отстрани од мапа' className='data-grid-util' onClick={() => removeLayer(descriptor, objectId)} >
-                    <Icon name='delete' size='16px' />
+                <Button title='Отстрани од мапа' className='data-grid-util' onClick={() => removeLayer(objectId, descriptor)} >
+                    <Icon name='cancel' size='16px' />
                 </Button>
             </ButtonGroup>
         }
