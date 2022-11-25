@@ -267,16 +267,6 @@ export const getFarmPPlanAssets = (showAlert = false) => {
     })
 }
 
-export const clearNonPBLayers = () => {
-    Map.eachLayer(function (layer) {
-        if (!!layer.toGeoJSON) {
-            if (!strcmp(layer?.DESCRIPTOR, 'physical_block')) {
-                Map.removeLayer(layer);
-            }
-        }
-    });
-}
-
 export const getRandomPointInPolygon = (polygon) => {
     const bounds = polygon.getBounds();
     const x_min = bounds.getEast();
