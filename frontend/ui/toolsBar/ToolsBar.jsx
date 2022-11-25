@@ -15,6 +15,13 @@ const _ToolsBar = ({ actionType }) => {
     const handleBack = () => {
         if (actionType === 'pplan') {
             history.push('/main/iacs-claims/p_plan')
+        } else if (actionType === 'preview') {
+            const ostcPathName = redux.store.getState()?.['otscm_iacs.ipardFarmerInfo']?.controlPath
+            if (ostcPathName) {
+                history.push(ostcPathName)
+            } else {
+                history.goBack()
+            }
         } else {
             history.goBack()
         }
