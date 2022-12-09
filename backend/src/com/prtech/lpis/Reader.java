@@ -92,7 +92,7 @@ public class Reader {
 						SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
 				if (dbp != null) {
 					BigDecimal allowedArea = ((BigDecimal) dbp.getVal(CC.AREA))
-							.multiply(((BigDecimal) dboCommonParcel.getVal(CC.PERCENTAGE)));
+							.multiply(((BigDecimal) dboCommonParcel.getVal(CC.PERCENTAGE)).divide(new BigDecimal(100)));
 					dbp.setVal(CC.ALLOWED_AREA, allowedArea);
 					dbp.setVal(CC.COMMON_USE, true);
 					parcels.addDataItem(dbp);
