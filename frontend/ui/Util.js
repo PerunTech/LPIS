@@ -293,8 +293,9 @@ export const getRandomPointInPolygon = (polygon) => {
 
 export const getGeoTypeLayers = () => {
     const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
-    const geoService = window.server.substr(0, window.server.lastIndexOf('/'))
     const tableName = 'GEO_LAYER_TYPE'
+    const server = window.server.substr(0, window.server.lastIndexOf('/'))
+    let geoService = `${server}/geoserver/mk/wms`
     http.call('get-layers', {
         url: `${window.server}/ReactElements/getTableData/${token}/${tableName}/100`
     }).then(res => {
@@ -317,10 +318,14 @@ export const getGeoTypeLayers = () => {
                     if (!layers[layerGroup]) {
                         layers[layerGroup] = {}
                     }
-                    const tileLayer = factory.tileLayer.wms(`${geoService}/geoserver/mk/wms`, tileLayerOptions)
+                    if (strcmp(title, 'mkd:VAGRI_PARCEL_WMS') || strcmp(title, 'mkd:VPHYSICAL_BLOCK_WMS2')) {
+                        geoService = 'http://192.168.9.73:8070/geoserver/mkd/wms'
+                    }
+                    const tileLayer = factory.tileLayer.wms(geoService, tileLayerOptions)
                     Reflect.set(layers[layerGroup], labelCode, tileLayer)
                 }
             })
+            store.addState('listOfLayers', layers)
         }
     }).catch(err => {
         console.error(err)
