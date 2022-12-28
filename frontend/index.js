@@ -3,6 +3,9 @@ import { name, version, description } from '../package.json';
 import './assets';
 // Import all publishable modules.
 import * as ui from './ui';
+// Get all available layers
+import { getGeoTypeLayers } from './ui/Util';
+getGeoTypeLayers();
 
 export const lpis = {
     name,

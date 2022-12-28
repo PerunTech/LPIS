@@ -59,7 +59,19 @@ export const lpis = () => {
         }
     });
 
-    layerList[1]['Иницијални податоци']['Иницијален СИЗП (ажуриран)'].addTo(Map)
+    let overlaysList = layerList[1]
+    const overlays = store.getState().listOfLayers
+    if (overlays && Object.keys(overlays).length > 0) {
+        overlaysList = overlays
+        const neededGroup = 'Иницијални податоци'
+        const layerToAddToMap = 'mkd:VPHYSICAL_BLOCK_WMS2'
+        if (overlaysList?.[neededGroup]?.[layerToAddToMap]) {
+            overlaysList[neededGroup][layerToAddToMap].addTo(Map)
+        }
+    } else {
+        overlaysList['Иницијални податоци']['Иницијален СИЗП (ажуриран)'].addTo(Map)
+    }
+
     Map.setView(SYS_CENTER, 3);
 
     return ui.init(_token)
@@ -68,7 +80,7 @@ export const lpis = () => {
         .addControl(LayerPanel, {}, { position: 'right' })
         .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
         .withNavigationControl()
-        .addRasterLayers(layerList[0], layerList[1], { collapsed: false, position: 'right' })
+        .addRasterLayers(layerList[0], overlaysList, { collapsed: false, position: 'right' })
         .withWindRose()
         .render('lpis-map');
 }
