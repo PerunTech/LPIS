@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.prtech.spatial.SpatialUtil;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
@@ -25,7 +26,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
 import com.vividsolutions.jts.io.svarog_geojson.GeoJsonWriter;
 
-public class LpisUtil {
+public class LpisUtil extends SpatialUtil {
 	private static final Logger log = LogManager.getLogger(LpisUtil.class.getName());
 
 	public static Boolean excludeField(String fieldName) {
@@ -49,6 +50,7 @@ public class LpisUtil {
 					}
 
 			}
+			
 		}
 		if (geom.getUserData() != null)
 			bestCandidate.setUserData(geom.getUserData());
