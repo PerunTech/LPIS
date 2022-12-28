@@ -21,6 +21,8 @@ import com.prtech.svarog.SvUtil;
 import com.prtech.svarog.SvSDITile.SDIRelation;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
+import com.prtech.svarog_common.DbSearchCriterion;
+import com.prtech.svarog_common.DbSearchCriterion.DbCompareOperand;
 import com.prtech.svarog_common.ResponseHandler;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -86,7 +88,7 @@ public class ConfigTest {
 		return sessionId;
 	}
 
-	@Test
+	//@Test
 	public void testOverLap() throws ParseException {
 		try {
 
@@ -125,7 +127,7 @@ public class ConfigTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testCovers() throws ParseException {
 		try {
 
@@ -676,5 +678,21 @@ public class ConfigTest {
 	}
 
 	;
+	//@Test
+	public void testMultiGeomError() {
+		try (SvReader svr = new SvReader(getUserSessionIdForTestPurpose())) {
+			DbSearchCriterion cr = new DbSearchCriterion("APP_ID", DbCompareOperand.EQUAL, 593342L);
+			DbDataArray apps = svr.getObjects(cr, SvReader.getTypeIdByName("APPLICATION"), null, 0, 0);
+			DbDataObject dboApplication = apps.get(0); 
+			DbDataObject dboFarmer = svr.getObjectById(dboApplication.getParentId(), SvCore.getTypeIdByName(CC.FARMER),
+					new DateTime(dboApplication.getVal("SUBMIT_DATE").toString()));
+			Point point = SvUtil.sdiFactory
+					.createPoint(new Coordinate(Double.parseDouble("7531106.825"), Double.parseDouble("4544944.444")));
+			//dw.getIntersectionsByParent(svr, point, SvCore.getTypeIdByName(CC.AGRI_PARCEL), dboFarmer.getObjectId(),
+			//		new DateTime(dboApplication.getVal("SUBMIT_DATE").toString()));
+		} catch (SvException e) {
+			//log4j.error(e);
+		}
+	}
 }
 
