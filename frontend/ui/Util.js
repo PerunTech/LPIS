@@ -290,3 +290,44 @@ export const getRandomPointInPolygon = (polygon) => {
         return getRandomPointInPolygon(polygon)
     }
 }
+
+export const getGeoTypeLayers = () => {
+    const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
+    const tableName = 'GEO_LAYER_TYPE'
+    const server = window.server.substr(0, window.server.lastIndexOf('/'))
+    let geoService = `${server}/geoserver/mk/wms`
+    http.call('get-layers', {
+        url: `${window.server}/ReactElements/getTableData/${token}/${tableName}/100`
+    }).then(res => {
+        if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
+            const layers = {}
+            res.data.forEach(geoTypeLayer => {
+                const moduleName = geoTypeLayer?.[`${tableName}.MODULE_NAME`]
+                const layerType = geoTypeLayer?.[`${tableName}.LAYER_TYPE`]
+                const layerGroup = geoTypeLayer?.[`${tableName}.LAYER_GROUP`] || 'Останати слоеви'
+                const title = geoTypeLayer?.[`${tableName}.TITLE`]
+                const labelCode = geoTypeLayer?.[`${tableName}.LABEL_CODE`] || title
+                if (strcmp(moduleName, 'lpis') && !strcmp(layerType, '1')) {
+                    const tileLayerOptions = {
+                        layers: title,
+                        format: 'image/png',
+                        transparent: true,
+                        tiled: true,
+                        isOverlay: true,
+                    }
+                    if (!layers[layerGroup]) {
+                        layers[layerGroup] = {}
+                    }
+                    if (strcmp(title, 'mkd:VAGRI_PARCEL_WMS') || strcmp(title, 'mkd:VPHYSICAL_BLOCK_WMS2')) {
+                        geoService = 'http://192.168.9.73:8070/geoserver/mkd/wms'
+                    }
+                    const tileLayer = factory.tileLayer.wms(geoService, tileLayerOptions)
+                    Reflect.set(layers[layerGroup], labelCode, tileLayer)
+                }
+            })
+            store.addState('listOfLayers', layers)
+        }
+    }).catch(err => {
+        console.error(err)
+    })
+}
