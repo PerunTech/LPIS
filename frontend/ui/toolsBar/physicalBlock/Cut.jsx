@@ -4,12 +4,12 @@ import { config } from './Config';
 import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { ProcessButton } from '../ProcessButton';
-import { decodeResponse, getRandomPointInPolygon } from '../../Util';
+import { decodeResponse, getRandomPointInPolygon, strcmp } from '../../Util';
 import { getPhysicalBlockInfo } from './Load';
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
-const { draw: { polygon } } = tools;
+const { draw: { polygon }, markerPoints } = tools;
 const { Icon, DrawActions } = ui;
 const { alertUser } = elements;
 const { useReducer, useEffect } = React;
@@ -17,8 +17,8 @@ const { useReducer, useEffect } = React;
 const _id = 'cut-pb';
 
 const _Cut = ({ processID, loadedPhysicalBlocks }) => {
-  const [{ point, layer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { point: {}, layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
+  const [{ point, layer, selectedLayer, data, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { point: {}, layer: {}, selectedLayer: {}, data: {}, loading: false, isGuided: false, showForm: false });
 
   useEffect(() => {
     return () => {
@@ -27,16 +27,34 @@ const _Cut = ({ processID, loadedPhysicalBlocks }) => {
     }
   }, [])
 
+  const initAction = (layer, layers) => {
+    Object.values(layers).forEach(layer => {
+      layer.setStyle({ fillColor: '#f8f8ff' })
+      layer.off('mouseover mouseout click')
+    })
+    Map.on('new_shape', e => cutPB(e, layer));
+    polygon.enable(config);
+    markerPoints.enable(layer, config);
+  }
+
+  const _setBlockEvents = layers => {
+    Object.values(layers).forEach(layer => {
+      layer.on('mouseover', function () { this.setStyle({ fillColor: '#000000' }) })
+        .on('mouseout', function () { this.setStyle({ fillColor: '#f8f8ff' }) })
+        .on('click', function () {
+          initAction(this, layers);
+        })
+    })
+  }
+
   const enable = () => {
     if (!Object.keys(loadedPhysicalBlocks).length > 0) {
       alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за отсекување')
     } else {
-      Map.on('new_shape', e => cutPB(e));
       // state setters
       store.dispatch({ processID: _id });
       setState({ loading: false, isGuided: true, showForm: false })
-      // init draw handler
-      polygon.enable(config);
+      _setBlockEvents(loadedPhysicalBlocks)
     }
   }
 
@@ -54,21 +72,32 @@ const _Cut = ({ processID, loadedPhysicalBlocks }) => {
     }
     // Reset state, internal and application-wide.
     Map.off('new_shape');
-    setState({ point: {}, layer: {}, data: {}, loading: false, isGuided: false, showForm: false });
+    setState({ point: {}, layer: {}, selectedLayer: {}, data: {}, loading: false, isGuided: false, showForm: false });
     store.dispatch({ processID: '' });
     // We remove the working geometry, save process will add the result, as well as additional vectors.
     layer.removeFrom && layer.removeFrom(Map);
     polygon.disable('force');
+    Map.eachLayer(function (layer) {
+      if (!!layer.toGeoJSON) {
+        if (layer?.options?.name && strcmp(layer.options.name, 'marker-point')) {
+          Map.removeLayer(layer);
+        }
+      }
+    })
   }
 
-  const cutPB = e => {
+  const cutPB = (e, selectedLayer) => {
     if (e && e.layer) {
       setState({ loading: true })
+      const selectedLayerId = selectedLayer.feature.id
       http.call(_id, {
         url: '/spatial/geometry/hole/{init.token}/PHYSICAL_BLOCK/' + 0,
         method: 'post',
         responseType: 'arraybuffer',
-        data: JSON.stringify(factory.GeoJSON.fromLayer(e.layer))
+        data: JSON.stringify({
+          OBJECT_ID: selectedLayerId,
+          GEOM: factory.GeoJSON.fromLayer(e.layer)
+        })
       }).then(response => {
         const buff = geobuf.decode(protobuf(response));
         const geojson = factory.geoJSON(buff, config.pathOptions);
@@ -126,12 +155,16 @@ const _Cut = ({ processID, loadedPhysicalBlocks }) => {
   }
 
   const renderGuideForm = () => {
+    let msg = ['Изберете физички блок кој ќе биде предмет на отсекување', '']
+    if (Object.keys(selectedLayer).length > 0) {
+      msg = ['Алатката за отсекување физички блок е активна', '']
+    }
     return (
       <Guidance id={_id}
         finish={() => polygon._finishShape()}
         undo={() => polygon._removeLastVertex()}
         disable={() => disable()}
-        msg={['Алатката за отсекување физички блок е активна', '']}
+        msg={msg}
         title='Отсечи блок'
       />
     )
