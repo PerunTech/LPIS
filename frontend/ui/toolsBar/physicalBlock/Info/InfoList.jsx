@@ -1,5 +1,5 @@
 import { React, elements } from 'perun-core'
-import { translateLandCoverCode } from '../../../Util';
+import { translateLandCoverCode } from '../Util';
 
 const { ReactBootstrap } = elements;
 const { ListGroup } = ReactBootstrap;
