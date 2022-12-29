@@ -88,6 +88,8 @@ const _Load = ({ processID, physicalBlocksHaveBeenLoaded: physicalBlocksHaveBeen
         if (!!layer.toGeoJSON) {
           if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'PHYSICAL_BLOCK')) {
             Map.removeLayer(layer);
+          } else if (layer?.options?.name && strcmp(layer.options.name, 'marker-point')) {
+            Map.removeLayer(layer);
           }
         }
       });
