@@ -1,13 +1,13 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../Spatial';
 import { config } from './Config';
-import { decodeResponse } from '../../Util';
 import { Guidance } from '../agriParcel/Guidance';
 import { ProcessButton } from '../ProcessButton';
+import { decodeResponse, strcmp } from '../../Util';
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
-const { draw: { line } } = tools;
+const { draw: { line }, markerPoints } = tools;
 const { Icon } = ui;
 const { useReducer, useEffect } = React;
 const { alertUser } = elements;
@@ -15,7 +15,8 @@ const { alertUser } = elements;
 const _id = 'split-pb';
 
 const _Split = ({ processID, loadedPhysicalBlocks }) => {
-  const [{ loading }, setState] = useReducer((currState, update) => ({ ...currState, ...update }), { loading: false });
+  const [{ loading, selectedLayer }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { loading: false, selectedLayer: {} });
 
   useEffect(() => {
     return () => {
@@ -29,6 +30,26 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
     }
   }, [])
 
+  const initAction = (layer, layers) => {
+    setState({ selectedLayer: layer })
+    Object.values(layers).forEach(layer => {
+      layer.setStyle({ fillColor: '#f8f8ff' })
+      layer.off('mouseover mouseout click')
+    })
+    markerPoints.enable(layer, config);
+    _handleLayerClick(layer)
+  }
+
+  const _setBlockEvents = layers => {
+    Object.values(layers).forEach(layer => {
+      layer.on('mouseover', function () { this.setStyle({ fillColor: '#000000' }) })
+        .on('mouseout', function () { this.setStyle({ fillColor: '#f8f8ff' }) })
+        .on('click', function () {
+          initAction(this, layers);
+        })
+    })
+  }
+
   const cleanup = (lineLayer) => {
     store.dispatch({ processID: '' })
     disable()
@@ -37,13 +58,20 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
     if (lineLayer) {
       lineLayer.removeFrom(Map);
     }
+    Map.eachLayer(function (layer) {
+      if (!!layer.toGeoJSON) {
+        if (layer?.options?.name && strcmp(layer.options.name, 'marker-point')) {
+          Map.removeLayer(layer);
+        }
+      }
+    })
   }
 
-  const _enableLine = point => {
+  const _enableLine = (point, selectedLayer) => {
     Map.on('new_shape', e => {
       if (e && e.layer) {
         const title = 'Дали сакате да го поделите физичкиот блок?'
-        alertUser(true, 'warning', title, '', () => splitPB(e.layer, point), () => cleanup(e.layer), true, 'Да', 'Не')
+        alertUser(true, 'warning', title, '', () => splitPB(e.layer, point, selectedLayer), () => cleanup(e.layer), true, 'Да', 'Не')
       } else {
         cleanup(e.layer);
       }
@@ -51,17 +79,17 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
     line.enable(config);
   }
 
-  const _handleLayerClick = (ap, agriParcels) => {
-    ap.on('click', function (e) {
+  const _handleLayerClick = (pb) => {
+    pb.on('click', function (e) {
       const latLng = e.latlng
       // Get the correct coordinates for the current CRS
       const point = Map.transform(latLng);
-      agriParcels.forEach(ap => ap.off('click'))
+      pb.off('click')
       // Create a marker & add it to the map
       const markerConfig = { icon: factory.divIcon({ className: 'marker-icon' }) }
       const marker = factory.marker(latLng, markerConfig)
       marker.addTo(Map)
-      _enableLine(point);
+      _enableLine(point, pb);
     });
   }
 
@@ -70,25 +98,28 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
       alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за делење')
       disable()
     } else {
-      const pbs = Object.values(loadedPhysicalBlocks)
-      pbs.forEach(pb => _handleLayerClick(pb, pbs))
+      _setBlockEvents(loadedPhysicalBlocks)
       store.dispatch({ processID: _id })
     }
   };
 
-  const splitPB = (lineLayer, point) => {
+  const splitPB = (lineLayer, point, selectedLayer) => {
     setState({ loading: true })
+    const selectedLayerId = selectedLayer.feature.id
     const { x, y } = point
     http.call(_id, {
       url: `/lpis/split/agriParcel/{init.token}/PHYSICAL_BLOCK/0/${x}/${y}`,
       method: 'post',
       responseType: 'arraybuffer',
-      data: JSON.stringify(factory.GeoJSON.fromLayer(lineLayer))
+      data: JSON.stringify({
+        OBJECT_ID: selectedLayerId,
+        GEOM: factory.GeoJSON.fromLayer(lineLayer)
+      })
     }).then(response => {
       setState({ loading: false })
       const geojson = factory.geoJSON(geobuf.decode(protobuf(response)), config.pathOptions);
       const numOfPhysicalBlocks = geojson.getLayers().length
-      const msg = numOfPhysicalBlocks === 1 ? 'Добиена е еден нов физички блок.' : `Добиени се ${numOfPhysicalBlocks} нови физички блокови.`
+      const msg = numOfPhysicalBlocks === 1 ? 'Добиен е еден нов физички блок.' : `Добиени се ${numOfPhysicalBlocks} нови физички блокови.`
       alertUser(true, 'success', 'Успешно поделен физички блок', msg)
       cleanup(lineLayer);
     }).catch(error => {
@@ -114,8 +145,12 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
   }
 
   const renderGuideForm = () => {
+    let msg = ['Изберете физички блок кој ќе биде предмет на поделба', '']
+    if (Object.keys(selectedLayer).length > 0) {
+      msg = ['Алатката за поделба на физички блок е активна', '']
+    }
     return (
-      <Guidance id={_id} msg={['Алатката за поделба на физички блок е активна', '']} title='Подели блок'
+      <Guidance id={_id} msg={msg} title='Подели блок'
         finish={() => line._finishShape()}
         undo={() => line._removeLastVertex()}
         disable={disable}
