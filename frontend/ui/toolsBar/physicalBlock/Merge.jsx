@@ -69,7 +69,7 @@ const _Merge = ({ processID, loadedPhysicalBlocks }) => {
       geojson.getLayers().forEach(layer => {
         point = Map.transform(layer.getBounds().getCenter());
       })
-      const msg = numOfNewPhysicalBlocks === 1 ? 'Добиен е еден нов физички блок.' : `Добиени се ${numOfNewPhysicalBlocks} нови физички блок.`
+      const msg = numOfNewPhysicalBlocks === 1 ? 'Добиен е еден нов физички блок.' : `Добиени се ${numOfNewPhysicalBlocks} нови физички блокови.`
       alertUser(true, 'success', 'Успешно споени физички блок', msg)
       cleanup(lineLayer, true, point);
     }).catch(error => {
