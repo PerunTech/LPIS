@@ -28,6 +28,7 @@ const _Fill = ({ processID, loadedPhysicalBlocks }) => {
   }, [])
 
   const initAction = (layer, layers) => {
+    setState({ selectedLayer: layer })
     Object.values(layers).forEach(layer => {
       layer.setStyle({ fillColor: '#f8f8ff' })
       layer.off('mouseover mouseout click')
