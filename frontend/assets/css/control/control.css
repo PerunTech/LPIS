@@ -8,7 +8,7 @@
 }
 
 #farm-registry-map #dataList.parcels-data-list {
-  max-height: calc(100vh - 380px) !important;
+  max-height: calc(100vh - 430px) !important;
 }
 
 #farm-registry-map #dataList.parcel-info-data-list {

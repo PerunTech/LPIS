@@ -4,6 +4,7 @@ import { DataList } from '..';
 import { FarmDataGridInfoHeader } from './FarmDataGridInfoHeader';
 import { FarmDataGridNumOfParcels } from './FarmDataGridNumOfParcels';
 import { FarmDataGridHeader } from './FarmDataGridHeader';
+import { StartEndDigitization } from './StartEndDigitization';
 import { CadastreSearch } from './CadastreSearch';
 import { LpisSearch } from './LpisSearch';
 import { ParcelInfo } from './ParcelInfo';
@@ -50,6 +51,7 @@ const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer 
       </div>
       {actionType === 'sizp' && isOpen && (
         <React.Fragment>
+          <StartEndDigitization />
           <div className='d-flex flex-row justify-content-center align-items-center' style={{ gap: '1vh' }}>
             <ParcelInfo />
             <CadastreSearch />
