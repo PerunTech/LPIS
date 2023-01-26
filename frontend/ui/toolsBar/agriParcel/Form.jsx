@@ -1,12 +1,13 @@
 import { React, PropTypes } from 'perun-core';
-import { ui } from '../../../Spatial';
+import { ui, core } from '../../../Spatial';
 import { Main, Aux, Admin } from './Steps';
 
 const { Button, Modal, Wizard } = ui;
+const { connect } = core;
 
-export function Form ({
+function _Form ({
     formData, onSubmit, onChange, children, isSimple, className, disableSubmitBtn, showDeleteBtn, onDeleteFn, deleteBtnLabel, deleteBtnClassName,
-    formTitle, buttonLabel, schema, uiSchema
+    formTitle, buttonLabel, schema, uiSchema, digitizationIsActive
 }) {
     if (!isSimple) {
         return <Modal id='measure-dialog'
@@ -20,9 +21,9 @@ export function Form ({
             </Modal.Title>
             <Modal.Body className='ap-modal-body' >
                 <Wizard >
-                    {[<Main key='main' onChange={onChange} formData={formData} />,
-                    <Aux key='aux' onChange={onChange} formData={formData} />,
-                    <Admin key='admin' onChange={onChange} onSubmit={onSubmit} formData={formData} />]}
+                    {[<Main key='main' onChange={onChange} formData={formData} digitizationIsActive={digitizationIsActive} />,
+                    <Aux key='aux' onChange={onChange} formData={formData} digitizationIsActive={digitizationIsActive} />,
+                    <Admin key='admin' onChange={onChange} onSubmit={onSubmit} formData={formData} digitizationIsActive={digitizationIsActive} />]}
                 </Wizard>
             </Modal.Body>
         </Modal>;
@@ -63,7 +64,8 @@ export function Form ({
     }
 }
 
-Form.propTypes = {
+_Form.propTypes = {
+    digitizationIsActive: PropTypes.bool,
     formData: PropTypes.object,
     onSubmit: PropTypes.func.isRequired,
     onChange: PropTypes.func,
@@ -78,3 +80,5 @@ Form.propTypes = {
     buttonLabel: PropTypes.string,
     children: PropTypes.node
 }
+
+export const Form = connect(state => ({ digitizationIsActive: state.farmRegistry?.digitizationIsActive }))(_Form)

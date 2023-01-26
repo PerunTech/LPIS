@@ -7,7 +7,7 @@ const { useState } = React;
 const { Form, Button } = ui;
 
 /* Main Metadata */
-export function Main ({ formData, onChange, next }) {
+export function Main ({ formData, onChange, next, digitizationIsActive }) {
     // This state key is for re-rendering the form
     const [state, toggleState] = useState(false)
     const data = formData
@@ -27,7 +27,8 @@ export function Main ({ formData, onChange, next }) {
             onChange(e)
         }}
         onSubmit={() => next()}
-        className='rjsf ap-form-main' >
+        className='rjsf ap-form-main'
+        disabled={!digitizationIsActive} >
         <div id='formActions' >
             <Button type='submit' size='' className='next' > Следно </Button>
         </div>
@@ -38,10 +39,11 @@ Main.propTypes = {
     formData: PropTypes.any,
     onChange: PropTypes.func,
     next: PropTypes.func,
+    digitizationIsActive: PropTypes.bool,
 };
 
 /* Aux Metadata */
-export function Aux ({ formData, onChange, prev, next }) {
+export function Aux ({ formData, onChange, prev, next, digitizationIsActive }) {
     const data = formData
     const uiSchema = metadataAux.uiSchema
     if (data && data.LAND_COVER_CODE && !strcmp(data.LAND_COVER_CODE, '320')) {
@@ -56,7 +58,8 @@ export function Aux ({ formData, onChange, prev, next }) {
         formData={data}
         onChange={onChange}
         onSubmit={() => next()}
-        className='rjsf ap-form-aux' >
+        className='rjsf ap-form-aux'
+        disabled={!digitizationIsActive} >
         <div id='formActions' >
             <Button type='button' size='' className='prev' onClick={prev} > Назад </Button>
             <Button type='submit' size='' className='next' > Следно </Button>
@@ -69,19 +72,21 @@ Aux.propTypes = {
     onChange: PropTypes.func,
     prev: PropTypes.func,
     next: PropTypes.func,
+    digitizationIsActive: PropTypes.bool,
 };
 
-/* Aux Metadata */
-export function Admin ({ formData, onChange, prev, onSubmit }) {
+/* Admin Metadata */
+export function Admin ({ formData, onChange, prev, onSubmit, digitizationIsActive }) {
     return <Form schema={metadataAdmin.schema}
         uiSchema={metadataAdmin.uiSchema}
         formData={formData}
         onChange={onChange}
         onSubmit={onSubmit}
-        className='rjsf ap-form-admin' >
+        className='rjsf ap-form-admin'
+        disabled={!digitizationIsActive} >
         <div id='formActions' >
             <Button type='button' size='' className='prev' onClick={prev} > Назад </Button>
-            <Button type='submit' size='' className='next' > Зачувај </Button>
+            {digitizationIsActive && <Button type='submit' size='' className='next' > Зачувај </Button>}
         </div>
     </Form>;
 }
@@ -90,5 +95,6 @@ Admin.propTypes = {
     formData: PropTypes.any,
     onChange: PropTypes.func,
     prev: PropTypes.func,
-    onSubmit: PropTypes.func
+    onSubmit: PropTypes.func,
+    digitizationIsActive: PropTypes.bool,
 };
