@@ -24,7 +24,7 @@ const dataCategories = (function () {
  * 
  * @param {*} props 
  */
-const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer }) => {
+const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer, canRenderTheDigitizationButton }) => {
   const [data, setData] = useState(categories);
   const [isOpen, setOpen] = useState(true);
 
@@ -51,7 +51,7 @@ const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer 
       </div>
       {actionType === 'sizp' && isOpen && (
         <React.Fragment>
-          <StartEndDigitization />
+          {canRenderTheDigitizationButton && <StartEndDigitization />}
           <div className='d-flex flex-row justify-content-center align-items-center' style={{ gap: '1vh' }}>
             <ParcelInfo />
             <CadastreSearch />
@@ -87,5 +87,6 @@ _DataPanel.propTypes = {
 
 export const DataPanel = connect(state => ({
   processID: state.app.processID, actionType: state.farmRegistry?.actionType,
-  farmData: state.farmRegistry?.agriParcels, showParcelInfoContainer: state.farmRegistry?.showParcelInfoContainer
+  farmData: state.farmRegistry?.agriParcels, showParcelInfoContainer: state.farmRegistry?.showParcelInfoContainer,
+  canRenderTheDigitizationButton: state.farmRegistry?.canRenderTheDigitizationButton
 }))(_DataPanel);
