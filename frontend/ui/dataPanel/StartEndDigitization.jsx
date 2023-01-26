@@ -48,5 +48,4 @@ const _StartEndDigitization = ({ farmObjId, digitizationIsActive }) => {
 export const StartEndDigitization = connect(state => ({
   farmObjId: state.farmRegistry?.farmObjId,
   digitizationIsActive: state.farmRegistry?.digitizationIsActive,
-  sysParamObj: state.farmRegistry?.sysParamObj
 }))(_StartEndDigitization)

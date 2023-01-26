@@ -91,8 +91,7 @@ export const farmRegLpis = () => {
         'fic': '', 'fullName': '', 'tableName': '', 'selectedParcelId': '', 'selectedCropParcelId': '', 'saveIsPending': false,
         'showCadParcels': false, 'hiddenAssets': [], 'parcelHistory': [], 'theSearchedParcelWasRemoved': false, 'parcelsHaveBeenLoaded': false,
         'showParcelInfoContainer': false, 'farmInfo': undefined, 'parcelInfo': undefined, 'historyEditEnabled': false, 'historyParcelToEdit': {},
-        'editFormWasClosed': false, 'parcelHistoryModalWasClosed': false, 'digitizationIsActive': false, 'canRenderTheDigitizationButton': false,
-        'sysParamObj': {}
+        'editFormWasClosed': false, 'parcelHistoryModalWasClosed': false, 'digitizationIsActive': false, 'canRenderTheDigitizationButton': false
     })
     const _token = redux.store.getState().security.svSession;
     getFarmMapAssets(true)
