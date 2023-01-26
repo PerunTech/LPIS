@@ -124,6 +124,17 @@ function handleCropParcelClick (layer) {
     store.dispatch({ selectedCropParcelId: layer.feature.id, selectedParcelId: String(layer.feature?.properties?.AGRI_PARCEL_ID) })
 }
 
+export const getFarmDigitizationState = objectId => {
+    const token = perunStore.getState().security.svSession
+    const url = `${window.server}/WsConf/params/get/${token}/LPIS-DGTZ/${objectId}`
+    http.call('getFarmDigitizationState', { url }).then(res => {
+        store.dispatch({ canRenderTheDigitizationButton: true, digitizationIsActive: res.data.VALUE })
+    }).catch(err => {
+        console.error(err)
+        store.dispatch({ canRenderTheDigitizationButton: true, digitizationIsActive: false })
+    })
+}
+
 const getFarmData = objectId => {
     const token = perunStore.getState().security.svSession
     const url = `${window.server}/ReactElements/getRowDataByObjectId/${token}/${objectId}/FARMER`
@@ -190,6 +201,7 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
         if (validParams) {
             // Get the farm data only when we first call this function
             if (fitBounds) {
+                getFarmDigitizationState(farmObjId)
                 getFarmData(farmObjId)
                 layerList[1]['СИЗП']['СИЗП'].addTo(Map)
             }
