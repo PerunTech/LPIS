@@ -30,7 +30,10 @@ const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer,
 
   useEffect(() => {
     return () => {
-      store.dispatch({ 'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'farmObjId': '', 'farmObjTypeId': '', 'actionType': '' })
+      store.dispatch({
+        'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {},
+        'farmObjId': '', 'farmObjTypeId': '', 'actionType': '', 'canRenderTheDigitizationButton': false
+      })
     }
   }, [])
 
