@@ -2,7 +2,7 @@ import { React, elements } from 'perun-core'
 import { core, ui } from '../../Spatial'
 
 const { store, connect } = core
-const { Button } = ui
+const { Button, Icon } = ui
 const { alertUser } = elements
 
 const _ParcelInfo = ({ farmInfo, parcelInfo, showParcelInfoContainer }) => {
@@ -14,10 +14,23 @@ const _ParcelInfo = ({ farmInfo, parcelInfo, showParcelInfoContainer }) => {
     }
   }
 
+  const getIconName = () => {
+    let iconName = 'docs'
+    if (!showParcelInfoContainer) {
+      iconName = 'info'
+    }
+    return iconName
+  }
+
   return (
     <React.Fragment>
-      <Button variant='dark' className='mt-1' onClick={toggleParcelInfoContainer}>
-        {!showParcelInfoContainer ? 'Информации за парцела' : 'Листа на парцели'}
+      <Button
+        variant='dark'
+        className='d-flex flex-row justify-content-center align-items-center mt-1 rounded data-panel-btn'
+        onClick={toggleParcelInfoContainer}
+      >
+        <Icon name={getIconName()} size='20px' />
+        <span style={{ margin: '3px 3px 0 3px' }}>{!showParcelInfoContainer ? 'Информации за парцела' : 'Листа на парцели'}</span>
       </Button>
     </React.Fragment>
   )
