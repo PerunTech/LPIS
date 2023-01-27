@@ -12,7 +12,7 @@
 }
 
 #farm-registry-map #dataList.parcel-info-data-list {
-  max-height: calc(100vh - 200px) !important;
+  max-height: calc(100vh - 250px) !important;
 }
 
 #farm-registry-map .cad-intersection-tooltip {
