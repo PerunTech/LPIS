@@ -2,18 +2,11 @@ import { React, elements } from 'perun-core'
 import { core, ui } from '../../Spatial'
 import { getFarmDigitizationState, strcmp } from '../Util'
 
-const { connect, store, http } = core
+const { connect, http } = core
 const { Button } = ui
 const { alertUser } = elements
-const { useEffect } = React
 
 const _StartEndDigitization = ({ farmObjId, digitizationIsActive }) => {
-  useEffect(() => {
-    return () => {
-      store.dispatch({ canRenderTheDigitizationButton: false })
-    }
-  }, [])
-
   const setDigitizationState = () => {
     const url = `/WsConf/params/set/boolean/{init.token}/LPIS-DGTZ/${farmObjId}/${!digitizationIsActive}`
     http.call('setDigitizationState', { url }).then((res) => {
