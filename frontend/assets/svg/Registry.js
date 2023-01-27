@@ -1702,6 +1702,35 @@ export const _registry = {
 		c2.6,2.6,6.1,4,9.5,4s6.9-1.3,9.5-4c5.3-5.3,5.3-13.8,0-19.1L145.188,238.575z"/>
             </g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g>
         </React.Fragment>
+    },
+    'search': {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 64 64',
+        path: <React.Fragment>
+            <circle stroke='#000000' cx="24" cy="24" r="16" /><line fill='#ffffff' stroke='#ffffff' x1="56" y1="56" x2="35.31" y2="35.31" />
+        </React.Fragment>
+    },
+    'info': {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 24 24',
+        path: <React.Fragment>
+            <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+                <g id="Info">
+                    <rect id="Rectangle" fillRule="nonzero" x="0" y="0" width="24" height="24">
+                    </rect>
+                    <circle id="Oval" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" cx="12" cy="12" r="9">
+                    </circle>
+                    <line x1="12" y1="16" x2="12" y2="12" id="Path" stroke="#ffffff" strokeWidth="2" strokeLinecap="round">
+                    </line>
+                    <line x1="12" y1="8.25" x2="12" y2="8.375" id="Path" stroke="#ffffff" strokeWidth="2" strokeLinecap="round">
+                    </line>
+                </g>
+            </g>
+        </React.Fragment>
     }
 }
 Object.entries(_registry).forEach(v => assets.setSVG(v[0], v[1]));
