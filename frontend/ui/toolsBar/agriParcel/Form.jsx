@@ -3,13 +3,14 @@ import { ui, core } from '../../../Spatial';
 import { Main, Aux, Admin } from './Steps';
 
 const { Button, Modal, Wizard } = ui;
-const { connect } = core;
+const { store } = core;
 
-function _Form ({
+export function Form ({
     formData, onSubmit, onChange, children, isSimple, className, disableSubmitBtn, showDeleteBtn, onDeleteFn, deleteBtnLabel, deleteBtnClassName,
-    formTitle, buttonLabel, schema, uiSchema, digitizationIsActive
+    formTitle, buttonLabel, schema, uiSchema
 }) {
     if (!isSimple) {
+        const digitizationIsActive = store.getState()?.farmRegistry?.digitizationIsActive
         return <Modal id='measure-dialog'
             show
             backdrop={false}
@@ -64,8 +65,7 @@ function _Form ({
     }
 }
 
-_Form.propTypes = {
-    digitizationIsActive: PropTypes.bool,
+Form.propTypes = {
     formData: PropTypes.object,
     onSubmit: PropTypes.func.isRequired,
     onChange: PropTypes.func,
@@ -80,5 +80,3 @@ _Form.propTypes = {
     buttonLabel: PropTypes.string,
     children: PropTypes.node
 }
-
-export const Form = connect(state => ({ digitizationIsActive: state.farmRegistry?.digitizationIsActive }))(_Form)
