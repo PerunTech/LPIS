@@ -371,12 +371,13 @@ public class AgriParcel {
 				dboNew.setValuesMap(dbo.getValuesMap());
 				SvGeometry.setGeometry(dboNew, other);
 				// run custom presave checks
-				try (SvExecManager svx = new SvExecManager(svg)) {
-					Map<String, Object> params = new HashMap<>();
-					params.put("PARCEL", dboNew);
-					params.put("SEQUENCE_NAME", sequenceName);
-					dboNew = (DbDataObject) svx.execute(customExecutor, params, null);
-				}
+				if (!customExecutor.equals(CC.NO_CUSTOM_EXEC))
+					try (SvExecManager svx = new SvExecManager(svg)) {
+						Map<String, Object> params = new HashMap<>();
+						params.put("PARCEL", dboNew);
+						params.put("SEQUENCE_NAME", sequenceName);
+						dboNew = (DbDataObject) svx.execute(customExecutor, params, null);
+					}
 				dba.addDataItem(dboNew);
 			}
 			svg.setSkipSpatialValidations(true);
@@ -670,11 +671,11 @@ public class AgriParcel {
 					ap = (DbDataObject) svx.execute(customExecutor, params, null);
 				}
 
-				if (ap.getObjectId().equals(0L) && !sequenceName.equals(CC.NO_SEQUENCE)) {
-					Long extId = getExternalSequence(svr, sequenceName);
-					ap.setVal(CC.OLD_ID, extId);
-				}
-			
+			if (ap.getObjectId().equals(0L) && !sequenceName.equals(CC.NO_SEQUENCE)) {
+				Long extId = getExternalSequence(svr, sequenceName);
+				ap.setVal(CC.OLD_ID, extId);
+			}
+
 			Collection<Geometry> neighbours = this.overlappedNeighbours(svg, geom, ap.getParentId(), typeId);
 			geom = parcelAlignment(svg, ap, cutPB, cutAP, alignNB, result);
 			// check minimum parcel size

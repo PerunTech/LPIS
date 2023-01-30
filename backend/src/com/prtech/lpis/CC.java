@@ -87,4 +87,5 @@ public class CC {
 	public static final String CUSTOM_EXEC_NAME = "CUSTOM_EXEC_NAME";
 	public static final String NO_CUSTOM_EXEC = "NO_CUSTOM_EXEC";
 	public static final String PRESAVE_AGRI_PARCEL = "PRESAVE_AGRI_PARCEL";
+	public static final String FARM_DIGITIZING = "FARM_DIGITIZING";
 }
