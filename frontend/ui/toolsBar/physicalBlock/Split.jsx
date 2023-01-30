@@ -3,6 +3,7 @@ import { core, ui, data, tools } from '../../../Spatial';
 import { config } from './Config';
 import { Guidance } from '../agriParcel/Guidance';
 import { ProcessButton } from '../ProcessButton';
+import { getPhysicalBlockInfo } from './Load';
 import { decodeResponse, strcmp } from '../../Util';
 
 const { Map, store, factory, http } = core;
@@ -118,6 +119,17 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
     }).then(response => {
       setState({ loading: false })
       const geojson = factory.geoJSON(geobuf.decode(protobuf(response)), config.pathOptions);
+      geojson.getLayers().forEach(layer => {
+        Object.values(loadedPhysicalBlocks).forEach(loadedLayer => {
+          if (loadedLayer.feature.id === layer.feature.id) {
+            // Remove the loaded layer from the map & from the loadedPhysicalBlocks object
+            loadedLayer.removeFrom(Map)
+            Reflect.deleteProperty(loadedPhysicalBlocks, loadedLayer.feature.id)
+            // Get the layer once again, using the point as the WS param
+            getPhysicalBlockInfo(point)
+          }
+        })
+      })
       const numOfPhysicalBlocks = geojson.getLayers().length
       const msg = numOfPhysicalBlocks === 1 ? 'Добиен е еден нов физички блок.' : `Добиени се ${numOfPhysicalBlocks} нови физички блокови.`
       alertUser(true, 'success', 'Успешно поделен физички блок', msg)
