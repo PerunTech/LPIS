@@ -18,7 +18,10 @@ const { useEffect, useReducer } = React;
 const _id = 'editAP';
 const _layerGroup = factory.layerGroup();
 
-const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending, historyEditEnabled, historyParcelToEdit, parcelHistoryModalWasClosed }) => {
+const _Edit = ({
+  processID, farmObjId, agriParcels, saveIsPending, digitizationIsActive,
+  historyEditEnabled, historyParcelToEdit, parcelHistoryModalWasClosed
+}) => {
   const [{ layer, geojson, data, permanentCropData, loading, isGuided, showForm, showGuidanceButton, showPermanentCropForm, allPermanentCrops }, setState] = useReducer(
     (currState, update) => ({ ...currState, ...update }),
     {
@@ -260,9 +263,9 @@ const _Edit = ({ processID, farmObjId, agriParcels, saveIsPending, historyEditEn
     return (
       <Guidance id={_id} disable={() => disable()} msg={msg} title='Уреди земјоделска парцела'>
         {showGuidanceButton && <div className='mt-2'>
-          <Button className='next' size='' onClick={onSubmit}>
+          {digitizationIsActive && <Button className='next' size='' onClick={onSubmit}>
             Зачувај
-          </Button>
+          </Button>}
           <Button className='next' size='' onClick={handleShowForm}>
             Прикажи форма
           </Button>
@@ -373,4 +376,5 @@ export const Edit = core.connect(state => ({
   historyEditEnabled: state.farmRegistry?.historyEditEnabled,
   historyParcelToEdit: state.farmRegistry?.historyParcelToEdit,
   parcelHistoryModalWasClosed: state.farmRegistry?.parcelHistoryModalWasClosed,
+  digitizationIsActive: state.farmRegistry?.digitizationIsActive,
 }))(_Edit)

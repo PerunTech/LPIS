@@ -8,7 +8,7 @@ import { setCadParcelLabel } from '../toolsBar/cropParcel/Util'
 const { schema: initialSchema, uiSchema: initialUiSchema } = cadastreSearchFormSchema()
 const { http, factory, Map, connect } = core
 const { geobuf, protobuf } = data
-const { Button, DrawActions } = ui
+const { Button, Icon, DrawActions } = ui
 const { alertUser } = elements
 const { useReducer } = React
 
@@ -139,7 +139,10 @@ const _CadastreSearch = () => {
 
   return (
     <React.Fragment>
-      <Button variant='dark' className='mt-1' onClick={toggleSearchForm}>Пребарај катастар</Button>
+      <Button variant='dark' className='d-flex flex-row justify-content-center align-items-center mt-1 rounded' onClick={toggleSearchForm}>
+        <Icon name='search' size='20px' />
+        <span style={{ margin: '3px 3px 0 3px' }}>Пребарај катастар</span>
+      </Button>
       {showForm && renderComponent()}
       {loading && <Loading />}
     </React.Fragment>

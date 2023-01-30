@@ -1,14 +1,16 @@
 import { React, PropTypes } from 'perun-core';
-import { ui } from '../../../Spatial';
+import { ui, core } from '../../../Spatial';
 import { Main, Aux, Admin } from './Steps';
 
 const { Button, Modal, Wizard } = ui;
+const { store } = core;
 
 export function Form ({
     formData, onSubmit, onChange, children, isSimple, className, disableSubmitBtn, showDeleteBtn, onDeleteFn, deleteBtnLabel, deleteBtnClassName,
     formTitle, buttonLabel, schema, uiSchema
 }) {
     if (!isSimple) {
+        const digitizationIsActive = store.getState()?.farmRegistry?.digitizationIsActive
         return <Modal id='measure-dialog'
             show
             backdrop={false}
@@ -20,9 +22,9 @@ export function Form ({
             </Modal.Title>
             <Modal.Body className='ap-modal-body' >
                 <Wizard >
-                    {[<Main key='main' onChange={onChange} formData={formData} />,
-                    <Aux key='aux' onChange={onChange} formData={formData} />,
-                    <Admin key='admin' onChange={onChange} onSubmit={onSubmit} formData={formData} />]}
+                    {[<Main key='main' onChange={onChange} formData={formData} digitizationIsActive={digitizationIsActive} />,
+                    <Aux key='aux' onChange={onChange} formData={formData} digitizationIsActive={digitizationIsActive} />,
+                    <Admin key='admin' onChange={onChange} onSubmit={onSubmit} formData={formData} digitizationIsActive={digitizationIsActive} />]}
                 </Wizard>
             </Modal.Body>
         </Modal>;

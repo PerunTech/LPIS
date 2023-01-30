@@ -10,7 +10,7 @@ import { bufferToString, strcmp } from '../Util'
 const { schema, uiSchema } = lpisSearchFormSchema()
 const { http, factory, Map, store, connect } = core
 const { geobuf, protobuf } = data
-const { Button, DrawActions } = ui
+const { Button, Icon, DrawActions } = ui
 const { alertUser } = elements
 const { useReducer, useEffect } = React
 
@@ -110,7 +110,10 @@ const _LpisSearch = ({ theSearchedParcelWasRemoved }) => {
 
   return (
     <React.Fragment>
-      <Button variant='dark' className='mt-1' onClick={toggleSearchForm}>Пребарај СИЗП</Button>
+      <Button variant='dark' className='d-flex flex-row justify-content-center align-items-center mt-1 rounded' onClick={toggleSearchForm}>
+        <Icon name='search' size='20px' />
+        <span style={{ margin: '3px 3px 0 3px' }}>Пребарај СИЗП</span>
+      </Button>
       {showForm && renderComponent()}
       {loading && <Loading />}
     </React.Fragment>
