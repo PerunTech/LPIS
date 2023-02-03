@@ -11,7 +11,10 @@ const _StartEndDigitization = ({ farmObjId, digitizationIsActive }) => {
     const url = `/WsConf/params/set/boolean/{init.token}/LPIS-DGTZ/${farmObjId}/${!digitizationIsActive}`
     http.call('setDigitizationState', { url }).then((res) => {
       const resType = res.data?.type?.toLowerCase() || 'info'
-      const title = strcmp(resType, 'success') ? 'Успешно зачувување' : ''
+      let title = ''
+      if (strcmp(resType, 'success')) {
+        title = digitizationIsActive ? 'Успешно завршена дигитизација' : 'Успешно започната дигитизација'
+      }
       alertUser(true, resType, title)
       getFarmDigitizationState(farmObjId)
     }).catch((error) => {
