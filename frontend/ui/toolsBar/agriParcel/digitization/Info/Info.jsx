@@ -11,19 +11,28 @@ const { alertUser } = elements;
 const { useEffect, useReducer } = React;
 const _id = 'help';
 
-const _Info = ({ processID }) => {
+const _Info = ({ processID, activateInfoProcess }) => {
   const [{ isGuided, loading }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
     { isGuided: false, loading: false });
 
   useEffect(() => {
     return () => {
-      store.dispatch({ showParcelInfoContainer: false, farmInfo: undefined, parcelInfo: undefined })
+      store.dispatch({ showParcelInfoContainer: false, activateInfoProcess: false, farmInfo: undefined, parcelInfo: undefined })
       Map.off('click')
     }
   }, [])
 
-  const enable = () => {
+  useEffect(() => {
+    if (activateInfoProcess) {
+      enable(true)
+    }
+  }, [activateInfoProcess])
+
+  const enable = (resetStoreState) => {
+    if (resetStoreState) {
+      store.dispatch({ activateInfoProcess: false })
+    }
     setState({ isGuided: true })
     store.dispatch({ processID: _id });
     Map.on('click', (e) => {
@@ -90,4 +99,7 @@ const _Info = ({ processID }) => {
   )
 };
 
-export const Info = core.connect((state) => ({ processID: state.app.processID }))(_Info);
+export const Info = core.connect((state) => ({
+  processID: state.app.processID,
+  activateInfoProcess: state.farmRegistry?.activateInfoProcess,
+}))(_Info);
