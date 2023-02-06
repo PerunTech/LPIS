@@ -88,4 +88,8 @@ public class CC {
 	public static final String NO_CUSTOM_EXEC = "NO_CUSTOM_EXEC";
 	public static final String PRESAVE_AGRI_PARCEL = "PRESAVE_AGRI_PARCEL";
 	public static final String FARM_DIGITIZING = "FARM_DIGITIZING";
+	public static final String FARM_DIGITIZING_PARAM = "LPIS-DGTZ";
+	public static final String FALSE = "false";
+	public static final String FARM_DIGITIZING_LIST = "LPIS-DGLST";
+	public static final String LPIS_QA_TASKS = "LPIS_QA_TASKS";
 }

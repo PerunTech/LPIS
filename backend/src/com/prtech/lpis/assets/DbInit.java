@@ -98,6 +98,76 @@ public class DbInit implements IDbInit {
 		dbe.setDbTableFields(dbTableFields);
 		return dbe;
 	}
+	// table USER_PARAMS
+		private static DbDataTable getLPISQATasks() {
+			DbDataTable dbt = new DbDataTable();
+			dbt.setDbTableName(CC.LPIS_QA_TASKS);
+			dbt.setDbRepoName(Sv.MASTER_REPO_NAME+"_sdi");
+			dbt.setDbSchema(Sv.DEFAULT_SCHEMA);
+			dbt.setIsSystemTable(true);
+			dbt.setIsRepoTable(false);
+			dbt.setIsConfigTable(false);
+			dbt.setLabel_code(Sv.MASTER_REPO + Sv.DOT + CC.LPIS_QA_TASKS.toLowerCase());
+			dbt.setUse_cache(true);
+
+			// f1
+			DbDataField dbf1 = new DbDataField();
+			dbf1.setDbFieldName(Sv.PKID);
+			dbf1.setIsPrimaryKey(true);
+			dbf1.setDbFieldType(DbFieldType.NUMERIC);
+			dbf1.setDbFieldSize(18);
+			dbf1.setDbFieldScale(0);
+			dbf1.setIsNull(false);
+			dbf1.setLabel_code(Sv.MASTER_REPO + Sv.DOT + Sv.TABLE_META_PKID);
+
+			// f1
+			DbDataField dbf2 = new DbDataField();
+			dbf2.setDbFieldName("USER_ID");
+			dbf2.setDbFieldType(DbFieldType.NUMERIC);
+			dbf2.setDbFieldSize(18);
+			dbf2.setDbFieldScale(0);
+			dbf2.setIsNull(true);
+			dbf2.setLabel_code("lpis.qa_user_id");
+			
+			// f1
+			DbDataField dbf3 = new DbDataField();
+			dbf3.setDbFieldName("PARCEL_OBJ_ID");
+			dbf3.setDbFieldType(DbFieldType.NUMERIC);
+			dbf3.setDbFieldSize(18);
+			dbf3.setDbFieldScale(0);
+			dbf3.setIsNull(false);
+			dbf3.setIndexName("IDX_LPISQA_PARCEL_OBJ");
+			dbf3.setRefereftialField(Sv.OBJECT_ID);
+			dbf3.setReferentialTable(CC.AGRI_PARCEL);
+			dbf3.setLabel_code("lpis.qa_parce_obj_id");
+			
+			// f4
+			DbDataField dbf4 = new DbDataField();
+			dbf4.setDbFieldName("TASK_COMMENT");
+			dbf4.setDbFieldType(DbFieldType.NVARCHAR);
+			dbf4.setDbFieldSize(1000);
+			dbf4.setIsUnique(false);
+			dbf4.setIsNull(true);
+			dbf4.setLabel_code("lpis.qa_comment");
+			
+			// f1
+			DbDataField dbf5 = new DbDataField();
+			dbf5.setDbFieldName("CREATION_DATE");
+			dbf5.setDbFieldType(DbFieldType.DATE);
+			dbf5.setIsNull(false);
+			dbf5.setIndexName("IDX_LPISQA_DATE");
+			dbf5.setLabel_code("lpis.qa_task_date");
+
+			DbDataField[] dbTableFields = new DbDataField[5];
+			dbTableFields[0] = dbf1;
+			dbTableFields[1] = dbf2;
+			dbTableFields[2] = dbf3;
+			dbTableFields[3] = dbf4;
+			dbTableFields[4] = dbf5;
+			dbt.setDbTableFields(dbTableFields);
+			return dbt;
+		}
+		
 	
 	public static DbDataTable createAPOverlap () {
 		DbDataTable dbt = new DbDataTable();

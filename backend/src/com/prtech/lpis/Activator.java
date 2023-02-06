@@ -11,6 +11,10 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.prtech.svarog.SvConf;
+import com.prtech.svarog.SvCore;
+import com.prtech.svarog.SvException;
+import com.prtech.svarog.svCONST;
+import com.prtech.svarog_common.ISvOnSave;
 import com.prtech.svarog_interfaces.IPerunPlugin;
 import com.prtech.svarog_interfaces.ISvExecutor;
 import com.prtech.svarog_interfaces.ISvExecutorGroup;
@@ -30,9 +34,10 @@ public class Activator implements BundleActivator {
 	 */
 	static final Logger log4j = SvConf.getLogger(Activator.class);
 
+	static final ISvOnSave paramBefore = new ParamBeforeSave();
 	/**
-	 * The context path on the http server under which the static content from
-	 * the /www folder inside the bundle will be served.
+	 * The context path on the http server under which the static content from the
+	 * /www folder inside the bundle will be served.
 	 */
 	static final String httpContextPath = "/" + Config.getProjectName();
 
@@ -58,8 +63,7 @@ public class Activator implements BundleActivator {
 	}
 
 	/**
-	 * List of web-services (JAXRS Service classes). Client-server
-	 * communication.
+	 * List of web-services (JAXRS Service classes). Client-server communication.
 	 */
 	private ArrayList<Class<?>> webServices = initWebServices();
 
@@ -73,7 +77,7 @@ public class Activator implements BundleActivator {
 		// add executors here.
 		return list;
 	}
-	
+
 	/**
 	 * List of executorGroup objects to be used for initialisation
 	 * 
@@ -91,38 +95,36 @@ public class Activator implements BundleActivator {
 	 * communication.
 	 */
 	private ArrayList<ISvExecutor> executors = initExecutors();
-	
+
 	/**
 	 * List of classes implementing ISvExecutorGroup which we will later use for
 	 * registration in the bundle startup
 	 */
 	private ArrayList<ISvExecutorGroup> executorGroupServiceClasses = initExecutorGroups();
 
-
 	/**
-	 * Member used to track the http services in order to register path for
-	 * serving static JS/Other content
+	 * Member used to track the http services in order to register path for serving
+	 * static JS/Other content
 	 */
 	@SuppressWarnings("rawtypes")
 	private ServiceTracker httpTracker;
 
 	/**
 	 * Implements BundleActivator.start(). Registers all instances of the JAXRS
-	 * services as well as all objects implementing ISvExecutor interfaces using
-	 * the bundle context;
+	 * services as well as all objects implementing ISvExecutor interfaces using the
+	 * bundle context;
 	 * 
-	 * @param context
-	 *            the framework context for the bundle.
+	 * @param context the framework context for the bundle.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void start(BundleContext context) {
 
 		ServiceRegistration svc = null;
-		log4j.info("Starting " + Config.getDescription() +" OSGI bundle");
+		log4j.info("Starting " + Config.getDescription() + " OSGI bundle");
 
 		IPerunPlugin publisher = new PerunPluginInfo();
-		log4j.info("Registering "+ Config.getDescription() +" plugin with Svarog");
-		svc = context.registerService(IPerunPlugin.class.getName(), publisher, null);		
+		log4j.info("Registering " + Config.getDescription() + " plugin with Svarog");
+		svc = context.registerService(IPerunPlugin.class.getName(), publisher, null);
 
 		for (Class<?> ws : webServices) {
 			try {
@@ -145,7 +147,7 @@ public class Activator implements BundleActivator {
 			if (svc != null)
 				this.services.add(svc);
 		}
-		
+
 		for (ISvExecutorGroup eg : executorGroupServiceClasses) {
 			try {
 				log4j.info("Registering executor group service class: " + eg.getClass().getName());
@@ -156,7 +158,7 @@ public class Activator implements BundleActivator {
 			if (svc != null)
 				this.services.add(svc);
 		}
-		
+
 		httpTracker = new ServiceTracker(context, HttpService.class.getName(), null) {
 			public void removedService(ServiceReference reference, Object service) {
 				// HTTP service is no longer available, unregister our
@@ -182,18 +184,21 @@ public class Activator implements BundleActivator {
 		};
 		// start tracking all HTTP services...
 		httpTracker.open();
+		Long taskType;
+		SvCore.registerOnSaveCallback(paramBefore, svCONST.OBJECT_TYPE_USER_PARAMS);
 	}
 
 	/**
-	 * Implements BundleActivator.stop(). Unregistering all services which have
-	 * been registered
+	 * Implements BundleActivator.stop(). Unregistering all services which have been
+	 * registered
 	 * 
-	 * @param context
-	 *            the framework context for the bundle.
+	 * @param context the framework context for the bundle.
 	 */
 	public void stop(BundleContext context) throws Exception {
 		for (ServiceRegistration svc : services) {
 			svc.unregister();
 		}
+		SvCore.unregisterOnSaveCallback(paramBefore, svCONST.OBJECT_TYPE_USER_PARAMS);
+
 	};
 }
