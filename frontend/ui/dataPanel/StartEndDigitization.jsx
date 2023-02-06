@@ -11,7 +11,10 @@ const _StartEndDigitization = ({ farmObjId, digitizationIsActive }) => {
     const url = `/WsConf/params/set/boolean/{init.token}/LPIS-DGTZ/${farmObjId}/${!digitizationIsActive}`
     http.call('setDigitizationState', { url }).then((res) => {
       const resType = res.data?.type?.toLowerCase() || 'info'
-      const title = strcmp(resType, 'success') ? 'Успешно зачувување' : ''
+      let title = ''
+      if (strcmp(resType, 'success')) {
+        title = digitizationIsActive ? 'Успешно завршена дигитизација' : 'Успешно започната дигитизација'
+      }
       alertUser(true, resType, title)
       getFarmDigitizationState(farmObjId)
     }).catch((error) => {
@@ -29,8 +32,11 @@ const _StartEndDigitization = ({ farmObjId, digitizationIsActive }) => {
 
   return (
     <React.Fragment>
-      <div className='d-flex flex-row justify-content-center align-items-center mt-1 mb-1'>
-        <Button variant='dark' size='normal' onClick={onClick}>
+      <div className='d-flex flex-row justify-content-center align-items-center mt-1 mb-1' style={{ gap: '5px' }}>
+        <span style={{ color: digitizationIsActive ? 'green' : 'red', fontWeight: 'bold', fontSize: '14px' }}>
+          {digitizationIsActive ? 'Дигитизацијата е отворена' : 'Дигитизацијата е затворена'}
+        </span>
+        <Button variant='dark' size='normal' onClick={onClick} style={{ fontSize: '14px' }}>
           {digitizationIsActive ? 'Заврши дигитизација' : 'Започни дигитизација'}
         </Button>
       </div>

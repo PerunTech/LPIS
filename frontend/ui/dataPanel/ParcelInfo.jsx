@@ -1,14 +1,13 @@
-import { React, elements } from 'perun-core'
+import { React } from 'perun-core'
 import { core, ui } from '../../Spatial'
 
 const { store, connect } = core
 const { Button, Icon } = ui
-const { alertUser } = elements
 
 const _ParcelInfo = ({ farmInfo, parcelInfo, showParcelInfoContainer }) => {
   const toggleParcelInfoContainer = () => {
     if (!farmInfo && !parcelInfo) {
-      alertUser(true, 'info', 'Нема избрана парцела за која може да се прикажат информации')
+      store.dispatch({ activateInfoProcess: true })
     } else {
       store.dispatch({ showParcelInfoContainer: !showParcelInfoContainer })
     }
