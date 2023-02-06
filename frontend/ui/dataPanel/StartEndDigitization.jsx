@@ -32,8 +32,11 @@ const _StartEndDigitization = ({ farmObjId, digitizationIsActive }) => {
 
   return (
     <React.Fragment>
-      <div className='d-flex flex-row justify-content-center align-items-center mt-1 mb-1'>
-        <Button variant='dark' size='normal' onClick={onClick}>
+      <div className='d-flex flex-row justify-content-center align-items-center mt-1 mb-1' style={{ gap: '5px' }}>
+        <span style={{ color: digitizationIsActive ? 'green' : 'red', fontWeight: 'bold', fontSize: '14px' }}>
+          {digitizationIsActive ? 'Дигитизацијата е отворена' : 'Дигитизацијата е затворена'}
+        </span>
+        <Button variant='dark' size='normal' onClick={onClick} style={{ fontSize: '14px' }}>
           {digitizationIsActive ? 'Заврши дигитизација' : 'Започни дигитизација'}
         </Button>
       </div>
