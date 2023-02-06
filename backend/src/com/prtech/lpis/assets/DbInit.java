@@ -1173,7 +1173,8 @@ public class DbInit implements IDbInit {
 		dbtList.add(addSortOrder(DbInit.createAPOverlap()));
 		dbtList.add(addSortOrder(DbInit.createCadIntersection()));
 		dbtList.add(addSortOrder(createGeoLayerType()));
-
+		dbtList.add(addSortOrder(DbInit.getLPISQATasks()));
+		
 		return dbtList;
 	}
 
