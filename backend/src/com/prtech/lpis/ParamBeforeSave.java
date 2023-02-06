@@ -17,11 +17,12 @@ import com.prtech.svarog_common.ISvOnSave;
 public class ParamBeforeSave implements ISvOnSave {
 
 	static final Logger log4j = SvConf.getLogger(ParamBeforeSave.class);
+
 	@Override
 	public boolean beforeSave(SvCore parentCore, DbDataObject dbo) throws SvException {
 		// TODO Auto-generated method stub
 		String name = (String) dbo.getVal(Sv.PARAM_NAME);
-		String value = (String) dbo.getVal(Sv.PARAM_VALUE);
+		String value = dbo.getVal(Sv.PARAM_VALUE) != null ? dbo.getVal(Sv.PARAM_VALUE).toString() : null;
 		Long taskType = SvCore.getTypeIdByName(CC.LPIS_QA_TASKS);
 		DbDataArray tasksToSave = new DbDataArray();
 		boolean allowSave = true;
@@ -46,11 +47,9 @@ public class ParamBeforeSave implements ISvOnSave {
 					if (tasksToSave.size() > 0) {
 						svw.saveObject(tasksToSave);
 					}
-				}
-				catch(SvException e)
-				{
-					log4j.error("Can't create QA tasks",e);	
-					allowSave=false;
+				} catch (SvException e) {
+					log4j.error("Can't create QA tasks", e);
+					allowSave = false;
 				}
 			}
 
