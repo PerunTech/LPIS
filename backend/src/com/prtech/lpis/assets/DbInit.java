@@ -122,7 +122,7 @@ public class DbInit implements IDbInit {
 
 			// f1
 			DbDataField dbf2 = new DbDataField();
-			dbf2.setDbFieldName("USER_ID");
+			dbf2.setDbFieldName("OPERATOR_OBJ_ID");
 			dbf2.setDbFieldType(DbFieldType.NUMERIC);
 			dbf2.setDbFieldSize(18);
 			dbf2.setDbFieldScale(0);
