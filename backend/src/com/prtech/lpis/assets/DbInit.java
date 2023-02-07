@@ -153,7 +153,8 @@ public class DbInit implements IDbInit {
 			// f1
 			DbDataField dbf5 = new DbDataField();
 			dbf5.setDbFieldName("CREATION_DATE");
-			dbf5.setDbFieldType(DbFieldType.DATE);
+			dbf5.setDbFieldType(DbFieldType.TIMESTAMP);
+			dbf5.setDbFieldScale(0);
 			dbf5.setIsNull(false);
 			dbf5.setIndexName("IDX_LPISQA_DATE");
 			dbf5.setLabel_code("lpis.qa_task_date");

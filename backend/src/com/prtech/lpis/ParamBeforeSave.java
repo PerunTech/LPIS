@@ -2,6 +2,7 @@ package com.prtech.lpis;
 
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
@@ -40,7 +41,7 @@ public class ParamBeforeSave implements ISvOnSave {
 						if (task == null & parcel.getDtInsert().isAfter(dbo.getDtInsert())) {
 							DbDataObject dbtask = new DbDataObject(taskType);
 							dbtask.setVal("PARCEL_OBJ_ID", parcel.getObjectId());
-							dbtask.setVal("CREATION_DATE", new DateTime());
+							dbtask.setVal("CREATION_DATE", new LocalDate());
 							tasksToSave.addDataItem(dbtask);
 						}
 					}
