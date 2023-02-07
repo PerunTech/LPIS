@@ -248,15 +248,17 @@ public class ApplicationServices {
 		return Response.ok().entity(jrh.getAll().toString()).build();
 
 	}
+
 	@Path("/tasks/date/{token}/{date}")
 	@GET
 	@Produces("application/pbf")
-	public Response getTasks(@PathParam("token") String token, @PathParam("date") DateTime date,
+	public Response getTasks(@PathParam("token") String token, @PathParam("date") String date,
 			@Context HttpServletRequest httpRequest) {
 		ResponseHandler jrh = new ResponseHandler();
 		final DbDataArray result = new DbDataArray();
 		try (SvReader svr = new SvReader(token)) {
-			DbDataArray dba = getTaskParcels(date, svr);
+			DateTime dt = new DateTime(date);
+			DbDataArray dba = getTaskParcels(dt, svr);
 			result.setItems(dba.getItems());
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
@@ -287,7 +289,7 @@ public class ApplicationServices {
 		return svr.getObjects(dqe, null, null);
 
 	}
-	
+
 	void setMetaData(Geometry g) {
 		if (g.getUserData() != null) {
 			if (g.getUserData() instanceof Map) {
@@ -435,8 +437,8 @@ public class ApplicationServices {
 			AgriParcel ap = (new AgriParcel());
 			String externalSequence = ap.getExternalSequenceName(objectName);
 			String customExecutor = ap.getCustomExecutorName(objectName);
-			Collection<Geometry> split = ap.splitParcel(svg, geom, parentId, objectName, x, y,
-					externalSequence, customExecutor);
+			Collection<Geometry> split = ap.splitParcel(svg, geom, parentId, objectName, x, y, externalSequence,
+					customExecutor);
 			result.addAll(split);
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.splitParcel");
@@ -499,8 +501,6 @@ public class ApplicationServices {
 		return saveParcel(token, CC.AGRI_PARCEL, objectId, parentId, cutPB, cutAP, alignAP, formVals, httpRequest);
 	};
 
-
-
 	@Path("/parcels/save/{token}/{objectName}/{objectId}/{parentId}/{cutPB}/{cutAP}/{alignAP}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -516,9 +516,9 @@ public class ApplicationServices {
 			AgriParcel ap = (new AgriParcel());
 			String externalSequence = ap.getExternalSequenceName(objectName);
 			String customExecutor = ap.getCustomExecutorName(objectName);
-			
-			ap.saveAgriParcel(svr, objectId, typeId, parentId, cutPB, cutAP, alignAP, metadata, true,
-					null, externalSequence, customExecutor);
+
+			ap.saveAgriParcel(svr, objectId, typeId, parentId, cutPB, cutAP, alignAP, metadata, true, null,
+					externalSequence, customExecutor);
 
 		} catch (Exception e) {
 			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.saveParcel");
