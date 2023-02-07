@@ -158,13 +158,25 @@ public class DbInit implements IDbInit {
 			dbf5.setIsNull(false);
 			dbf5.setIndexName("IDX_LPISQA_DATE");
 			dbf5.setLabel_code("lpis.qa_task_date");
+			
+			// f1
+			DbDataField dbf6 = new DbDataField();
+			dbf6.setDbFieldName("OLD_ID");
+			dbf6.setDbFieldType(DbFieldType.NUMERIC);
+			dbf6.setDbFieldSize(18);
+			dbf6.setDbFieldScale(0);
+			dbf6.setIsNull(false);
+			dbf6.setIndexName("IDX_LPISSIZP_ID");
+			dbf6.setLabel_code("lpis.qa_task_old_parcel_id");
 
-			DbDataField[] dbTableFields = new DbDataField[5];
+
+			DbDataField[] dbTableFields = new DbDataField[6];
 			dbTableFields[0] = dbf1;
 			dbTableFields[1] = dbf2;
 			dbTableFields[2] = dbf3;
 			dbTableFields[3] = dbf4;
 			dbTableFields[4] = dbf5;
+			dbTableFields[5] = dbf6;
 			dbt.setDbTableFields(dbTableFields);
 			return dbt;
 		}

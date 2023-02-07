@@ -42,6 +42,7 @@ public class ParamBeforeSave implements ISvOnSave {
 							DbDataObject dbtask = new DbDataObject(taskType);
 							dbtask.setVal("PARCEL_OBJ_ID", parcel.getObjectId());
 							dbtask.setVal("CREATION_DATE", new LocalDate());
+							dbtask.setVal("OLD_ID", parcel.getVal("OLD_ID"));
 							tasksToSave.addDataItem(dbtask);
 						}
 					}
