@@ -65,6 +65,10 @@ import com.prtech.svarog.SvWriter;
 import com.prtech.svarog.svCONST;
 import com.prtech.svarog_common.DbDataArray;
 import com.prtech.svarog_common.DbDataObject;
+import com.prtech.svarog_common.DbQueryExpression;
+import com.prtech.svarog_common.DbQueryObject;
+import com.prtech.svarog_common.DbQueryObject.DbJoinType;
+import com.prtech.svarog_common.DbQueryObject.LinkType;
 import com.prtech.svarog_common.DbSearchCriterion;
 import com.prtech.svarog_common.DbSearchExpression;
 import com.prtech.svarog_common.IDbFilter;
@@ -244,7 +248,46 @@ public class ApplicationServices {
 		return Response.ok().entity(jrh.getAll().toString()).build();
 
 	}
+	@Path("/tasks/date/{token}/{date}")
+	@GET
+	@Produces("application/pbf")
+	public Response getTasks(@PathParam("token") String token, @PathParam("date") DateTime date,
+			@Context HttpServletRequest httpRequest) {
+		ResponseHandler jrh = new ResponseHandler();
+		final DbDataArray result = new DbDataArray();
+		try (SvReader svr = new SvReader(token)) {
+			DbDataArray dba = getTaskParcels(date, svr);
+			result.setItems(dba.getItems());
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
+		}
 
+		StreamingOutput pbfStream = new StreamingOutput() {
+			public void write(OutputStream stream) throws IOException {
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+				enc.writeDbDataArray(result);
+			};
+		};
+		return Response.ok(pbfStream, "application/pbf").build();
+	}
+
+	DbDataArray getTaskParcels(DateTime date, SvReader svr) throws SvException {
+
+		DbSearchCriterion search = new DbSearchCriterion(CC.CREATION_DATE, DbCompareOperand.EQUAL, date);
+		DbQueryObject dqo = new DbQueryObject(SvCore.getDbtByName(CC.LPIS_QA_TASKS), search, null, DbJoinType.INNER);
+		dqo.setLinkToNextType(LinkType.DENORMALIZED_REVERSE);
+		dqo.setIsReturnType(false);
+		DbQueryObject dqoAgri = new DbQueryObject(SvCore.getDbtByName(CC.AGRI_PARCEL), null, null, DbJoinType.INNER);
+		dqoAgri.setIsReturnType(true);
+
+		DbQueryExpression dqe = new DbQueryExpression();
+		dqe.addItem(dqo);
+		dqo.setDenormalizedFieldName(CC.PARCEL_OBJ_ID);
+		dqe.addItem(dqoAgri);
+		return svr.getObjects(dqe, null, null);
+
+	}
+	
 	void setMetaData(Geometry g) {
 		if (g.getUserData() != null) {
 			if (g.getUserData() instanceof Map) {

@@ -92,4 +92,6 @@ public class CC {
 	public static final String FALSE = "false";
 	public static final String FARM_DIGITIZING_LIST = "LPIS-DGLST";
 	public static final String LPIS_QA_TASKS = "LPIS_QA_TASKS";
+	public static final String CREATION_DATE = "CREATION_DATE";
+	public static final String PARCEL_OBJ_ID = "PARCEL_OBJ_ID";
 }

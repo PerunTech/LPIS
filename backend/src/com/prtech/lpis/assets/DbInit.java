@@ -131,7 +131,7 @@ public class DbInit implements IDbInit {
 			
 			// f1
 			DbDataField dbf3 = new DbDataField();
-			dbf3.setDbFieldName("PARCEL_OBJ_ID");
+			dbf3.setDbFieldName(CC.PARCEL_OBJ_ID);
 			dbf3.setDbFieldType(DbFieldType.NUMERIC);
 			dbf3.setDbFieldSize(18);
 			dbf3.setDbFieldScale(0);
@@ -152,7 +152,7 @@ public class DbInit implements IDbInit {
 			
 			// f1
 			DbDataField dbf5 = new DbDataField();
-			dbf5.setDbFieldName("CREATION_DATE");
+			dbf5.setDbFieldName(CC.CREATION_DATE);
 			dbf5.setDbFieldType(DbFieldType.TIMESTAMP);
 			dbf5.setDbFieldScale(0);
 			dbf5.setIsNull(false);
@@ -161,7 +161,7 @@ public class DbInit implements IDbInit {
 			
 			// f1
 			DbDataField dbf6 = new DbDataField();
-			dbf6.setDbFieldName("OLD_ID");
+			dbf6.setDbFieldName(CC.OLD_ID);
 			dbf6.setDbFieldType(DbFieldType.NUMERIC);
 			dbf6.setDbFieldSize(18);
 			dbf6.setDbFieldScale(0);

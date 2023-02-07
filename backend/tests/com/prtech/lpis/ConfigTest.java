@@ -88,7 +88,7 @@ public class ConfigTest {
 		return sessionId;
 	}
 
-	//@Test
+	// @Test
 	public void testOverLap() throws ParseException {
 		try {
 
@@ -127,7 +127,7 @@ public class ConfigTest {
 		}
 	}
 
-	//@Test
+	// @Test
 	public void testCovers() throws ParseException {
 		try {
 
@@ -330,7 +330,7 @@ public class ConfigTest {
 		 */
 	}
 
-	//@Test
+	// @Test
 	public void testParcelIntersect() throws SvException, ParseException {
 
 		int lock = 0;
@@ -502,7 +502,7 @@ public class ConfigTest {
 
 	}
 
-	//@Test
+	// @Test
 	public void saveTest() throws SvException, SQLException, ParseException {
 		Gson g = new Gson();
 		String input = "{\"TERRACE\":false,\"DESCRIPTOR\":\"AGRI_PARCEL\",\"EXPOSITION_AVG\":0,\"COMMON_USE\":false,\"ALLOWED_AREA\":\"15783.6021\",\"CHANGED_BORDER\":false,\"IRRIGATION\":false,\"ORGANIC\":false,\"type\":\"574968807\",\"OLD_ID\":4228188,\"Z_AVG\":\"0\",\"SLOPE_AVG\":0,\"LANDSCAPE_FEATURES\":false,\"CERTIFICATE_OF_USE\":false,\"AREA\":\"15783.6021\",\"LAND_COVER_CODE_2\":\"0\",\"parent_id\":\"20313\",\"LAND_COVER_CODE\":\"200\",\"ELIGIBILITY_COEF\":100,\"CENTROID\":\"POINT (7584030.73 4636895.15)\",\"status\":\"VALID\",\"PERIMETER\":\"542.8085\",\"INVISIBLE_BORDER\":false,\"OBJECT_ID\":712382550,\"GEOM\":{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[7584017.1907,4636997.0277],[7584046.4533,4636951.6094],[7584047.6154,4636951.6232],[7584052.8605,4636943.3543],[7584057.4298,4636936.0772],[7584077.7781,4636900.3285],[7584083.6399,4636889.0678],[7584089.9272,4636876.9236],[7584097.6587,4636862.0195],[7584104.8129,4636839.7773],[7584112.1006,4636834.3096],[7584055.1597,4636798.2013],[7584041.2032,4636791.9267],[7583948.0825,4636957.8882],[7583970.759,4636970.9304],[7584017.1907,4636997.0277]]]},\"id\":\"712382550\",\"properties\":{\"TERRACE\":false,\"DESCRIPTOR\":\"AGRI_PARCEL\",\"EXPOSITION_AVG\":0,\"COMMON_USE\":false,\"ALLOWED_AREA\":\"15783.6021\",\"CHANGED_BORDER\":false,\"IRRIGATION\":false,\"ORGANIC\":false,\"type\":\"574968807\",\"OLD_ID\":4228188,\"Z_AVG\":\"0\",\"SLOPE_AVG\":0,\"LANDSCAPE_FEATURES\":false,\"CERTIFICATE_OF_USE\":false,\"AREA\":\"15783.6021\",\"LAND_COVER_CODE_2\":\"0\",\"parent_id\":\"20313\",\"LAND_COVER_CODE\":\"200\",\"ELIGIBILITY_COEF\":100,\"CENTROID\":\"POINT (7584030.73 4636895.15)\",\"status\":\"VALID\",\"PERIMETER\":\"542.8085\",\"INVISIBLE_BORDER\":false}}}";
@@ -520,13 +520,13 @@ public class ConfigTest {
 				AgriParcel ap = (new AgriParcel());
 				String externalSequence = ap.getExternalSequenceName(CC.AGRI_PARCEL);
 				String customExecutor = ap.getCustomExecutorName(CC.AGRI_PARCEL);
-				ap.saveAgriParcel(svr, j.get(Sv.OBJECT_ID).getAsLong(), layerTypeId,parent, 2, 2, 0,
-						j, true, null, externalSequence,customExecutor);
+				ap.saveAgriParcel(svr, j.get(Sv.OBJECT_ID).getAsLong(), layerTypeId, parent, 2, 2, 0, j, true, null,
+						externalSequence, customExecutor);
 			}
 		}
 	}
 
-	//@Test
+	// @Test
 	public void saveTestSplit() throws SvException, SQLException, ParseException {
 		Gson g = new Gson();
 		String input = "{\"EXPOSITION_AVG\":287,\"COMMON_USE\":false,\"ALLOWED_AREA\":\"1370.4128\",\"IRRIGATION\":false,\"NOTE_FARMER\":\"парцелата е сопственост\",\"ORGANIC\":false,\"DT_INSERT\":\"2022-09-01T13:24:19.250+02:00\",\"type\":\"574968807\",\"OLD_ID\":1644110,\"KO_ID\":30522,\"LANDSCAPE_FEATURES\":false,\"CERTIFICATE_OF_USE\":true,\"AREA\":\"1370.4128\",\"LAND_COVER_CODE\":\"200\",\"CENTROID\":\"POINT (7604004.87 4630487.52)\",\"SOIL_TYPE\":\"K; Колувијална почва\",\"ORG_UNIT_NAME\":\"ШТИП\",\"TERRACE\":false,\"DESCRIPTOR\":\"AGRI_PARCEL\",\"CHANGED_BORDER\":false,\"USER_NAME\":\"\",\"Z_AVG\":\"299.853\",\"SLOPE_AVG\":1,\"HAS_OVERLAP_PB\":false,\"HOME_NAME\":\"1134ВАДА\",\"PARCEL_INTERSECT\":\"КАРБИНЦИ ВОН-ГРАД-1134; \",\"LAND_COVER_CODE_2\":\"0\",\"parent_id\":\"35272\",\"ELIGIBILITY_COEF\":100,\"LPIS_REVISION\":380700,\"status\":\"VALID\",\"PERIMETER\":\"248.759\",\"INVISIBLE_BORDER\":false,\"OBJECT_ID\":657855955,\"GEOM\":{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[7604016.488,4630487.7064],[7604025.8643,4630494.3975],[7604054.2278,4630515.4742],[7604045.39,4630523.1211],[7604027.4424,4630511.528],[7604016.488,4630487.7064]]]},\"id\":\"657855955\",\"properties\":{\"EXPOSITION_AVG\":287,\"COMMON_USE\":false,\"ALLOWED_AREA\":\"1370.4128\",\"IRRIGATION\":false,\"NOTE_FARMER\":\"парцелата е сопственост\",\"ORGANIC\":false,\"DT_INSERT\":\"2022-09-01T13:24:19.250+02:00\",\"type\":\"574968807\",\"OLD_ID\":1644110,\"KO_ID\":30522,\"LANDSCAPE_FEATURES\":false,\"CERTIFICATE_OF_USE\":true,\"AREA\":\"1370.4128\",\"LAND_COVER_CODE\":\"200\",\"CENTROID\":\"POINT (7604004.87 4630487.52)\",\"SOIL_TYPE\":\"K; Колувијална почва\",\"ORG_UNIT_NAME\":\"ШТИП\",\"TERRACE\":false,\"DESCRIPTOR\":\"AGRI_PARCEL\",\"CHANGED_BORDER\":false,\"USER_NAME\":\"\",\"Z_AVG\":\"299.853\",\"SLOPE_AVG\":1,\"HAS_OVERLAP_PB\":false,\"HOME_NAME\":\"1134ВАДА\",\"PARCEL_INTERSECT\":\"КАРБИНЦИ ВОН-ГРАД-1134; \",\"LAND_COVER_CODE_2\":\"0\",\"parent_id\":\"35272\",\"ELIGIBILITY_COEF\":100,\"LPIS_REVISION\":380700,\"status\":\"VALID\",\"PERIMETER\":\"248.759\",\"INVISIBLE_BORDER\":false}}}";
@@ -544,13 +544,13 @@ public class ConfigTest {
 				Long layerTypeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 				String externalSequence = ap.getExternalSequenceName(CC.AGRI_PARCEL);
 				String customExecutor = ap.getCustomExecutorName(CC.AGRI_PARCEL);
-				ap.saveAgriParcel(svr, j.get(Sv.OBJECT_ID).getAsLong(), layerTypeId,parent, 2, 2, 2,
-						new JsonObject(), true, geom, externalSequence,customExecutor);
+				ap.saveAgriParcel(svr, j.get(Sv.OBJECT_ID).getAsLong(), layerTypeId, parent, 2, 2, 2, new JsonObject(),
+						true, geom, externalSequence, customExecutor);
 			}
 		}
 	}
 
-	//@Test
+	// @Test
 	public void saveTestSplit2() throws SvException, SQLException, ParseException {
 		Gson g = new Gson();
 		String input = "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[7551313.9523,4528825.608],[7551324.5958,4528809.6914],[7551395.0397,4528772.8724]]}}";
@@ -559,8 +559,8 @@ public class ConfigTest {
 		String token = getUserSessionIdForTestPurpose();
 		// Ova e IZ Pela 21345L
 		if (!token.equals(CC.EMPTY_STRING)) {
-			try (SvGeometry svg = new SvGeometry(token); ) {
-				
+			try (SvGeometry svg = new SvGeometry(token);) {
+
 				Object[] svcs = new Object[1];
 				svcs[0] = new LPISExecutors();
 				SvExecManager.setOSGIServices(svcs);
@@ -568,11 +568,24 @@ public class ConfigTest {
 				Long layerTypeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 				String externalSequence = ap.getExternalSequenceName(CC.AGRI_PARCEL);
 				String customExecutor = ap.getCustomExecutorName(CC.AGRI_PARCEL);
-				ap.splitParcel(svg, geom, 21345L, "AGRI_PARCEL", 7551357.559, 4528819.0283, externalSequence, customExecutor);
+				ap.splitParcel(svg, geom, 21345L, "AGRI_PARCEL", 7551357.559, 4528819.0283, externalSequence,
+						customExecutor);
 			}
 		}
 	}
+
 	//@Test
+	public void taskTest() throws SvException, SQLException, ParseException {
+
+		String token = getUserSessionIdForTestPurpose();
+		try (SvReader svr = new SvReader(token)) {
+			DateTime date = new DateTime("2023-02-07");
+			DbDataArray arr = (new ApplicationServices()).getTaskParcels(date, svr);
+			System.out.println(arr.toSimpleJson().toString());
+		}
+	}
+
+	// @Test
 	public void autFixTest() throws SvException, SQLException, ParseException {
 		Gson g = new Gson();
 		String input = "{\"TERRACE\":false,\"DESCRIPTOR\":\"AGRI_PARCEL\",\"EXPOSITION_AVG\":0,\"COMMON_USE\":false,\"ALLOWED_AREA\":\"166.9375\",\"CHANGED_BORDER\":false,\"IRRIGATION\":false,\"ORGANIC\":false,\"type\":\"574968807\",\"OLD_ID\":4228098,\"Z_AVG\":\"0\",\"SLOPE_AVG\":0,\"LANDSCAPE_FEATURES\":false,\"CERTIFICATE_OF_USE\":false,\"AREA\":\"166.9375\",\"LAND_COVER_CODE_2\":\"0\",\"parent_id\":\"35272\",\"LAND_COVER_CODE\":\"200\",\"ELIGIBILITY_COEF\":100,\"CENTROID\":\"POINT (7604044.01 4630515.18)\",\"status\":\"TOPO_ERR\",\"PERIMETER\":\"75.9443\",\"INVISIBLE_BORDER\":false,\"OBJECT_ID\":711952853,\"GEOM\":{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[7604028.5991,4630511.9893],[7604028.4297,4630512.209],[7604045.3053,4630523.231],[7604045.39,4630523.1211],[7604054.2278,4630515.4742],[7604038.5252,4630503.8028],[7604038.5252,4630503.8028],[7604042.3898,4630506.6364],[7604034.2754,4630515.9602],[7604028.5991,4630511.9893]]]},\"id\":\"711952853\",\"properties\":{\"TERRACE\":false,\"DESCRIPTOR\":\"AGRI_PARCEL\",\"EXPOSITION_AVG\":0,\"COMMON_USE\":false,\"ALLOWED_AREA\":\"166.9375\",\"CHANGED_BORDER\":false,\"IRRIGATION\":false,\"ORGANIC\":false,\"type\":\"574968807\",\"OLD_ID\":4228098,\"Z_AVG\":\"0\",\"SLOPE_AVG\":0,\"LANDSCAPE_FEATURES\":false,\"CERTIFICATE_OF_USE\":false,\"AREA\":\"166.9375\",\"LAND_COVER_CODE_2\":\"0\",\"parent_id\":\"35272\",\"LAND_COVER_CODE\":\"200\",\"ELIGIBILITY_COEF\":100,\"CENTROID\":\"POINT (7604044.01 4630515.18)\",\"status\":\"TOPO_ERR\",\"PERIMETER\":\"75.9443\",\"INVISIBLE_BORDER\":false}}}";
@@ -591,7 +604,7 @@ public class ConfigTest {
 		}
 	}
 
-	//@Test
+	// @Test
 	public void checkTest() throws SvException, SQLException, ParseException {
 		Gson g = new Gson();
 		String input = "{\"D_FROM\":\"2019-01-10 12:10:59.947535\",\"USER_ID_INSERT\":\"0\",\"LAND_USE_ID\":\"200\",\"PERIM\":\"811.819201490267\",\"STATE\":\"P\",\"USER_ID\":\"0\",\"type\":\"0\",\"FILE_NAME\":\"ILPIS_IMPORT_2018\",\"INT_ID\":\"71766\",\"ID_ILPIS\":\"85994\",\"STATUS\":\"P\",\"AREA\":\"28920.8098999139\",\"parent_id\":\"20313\",\"D_INSERT\":\"2019-01-10 12:10:59.947535\",\"ID\":\"105851\",\"Y_C\":\"4636883\",\"X_C\":\"7583705\",\"status\":\"VALID\",\"GEOMETRY\":\"oracle.sql.STRUCT@120311d9\",\"LAND_COVER_CODE\":\"200\",\"HOME_NAME\":\"\",\"NOTE_INSERT\":\"\",\"NOTE_FARMER\":\"\",\"NOTE_ORGANISATION\":\"\",\"LAND_COVER_CODE_2\":\"0\",\"TERRACE\":false,\"IRRIGATION\":false,\"LANDSCAPE_FEATURES\":false,\"INVISIBLE_BORDER\":false,\"CHANGED_BORDER\":false,\"EXPOSITION_AVG\":0,\"SLOPE_AVG\":0,\"Z_AVG\":\"0\",\"ELIGIBILITY_COEF\":100,\"ORGANIC\":false,\"COMMON_USE\":false,\"CERTIFICATE_OF_USE\":false,\"SOIL_TYPE\":\"\",\"GEOM\":{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[7583795.4522,4636989.2981],[7583803.8588,4636973.4019],[7583532.3589,4636820.1356],[7583528.1764,4636829.8613],[7583795.4522,4636989.2981]]]},\"id\":0,\"properties\":{\"D_FROM\":\"2019-01-10 12:10:59.947535\",\"USER_ID_INSERT\":\"0\",\"LAND_USE_ID\":\"200\",\"PERIM\":\"811.819201490267\",\"STATE\":\"P\",\"USER_ID\":\"0\",\"type\":\"0\",\"FILE_NAME\":\"ILPIS_IMPORT_2018\",\"INT_ID\":\"71766\",\"ID_ILPIS\":\"85994\",\"STATUS\":\"P\",\"AREA\":\"28920.8098999139\",\"parent_id\":\"20313\",\"D_INSERT\":\"2019-01-10 12:10:59.947535\",\"ID\":\"105851\",\"Y_C\":\"4636883\",\"X_C\":\"7583705\",\"status\":\"VALID\",\"GEOMETRY\":\"oracle.sql.STRUCT@120311d9\",\"LAND_COVER_CODE\":\"200\"}},\"X\":7583641.8845,\"Y\":4636888.9607,\"OBJECT_ID\":0}";
@@ -609,42 +622,36 @@ public class ConfigTest {
 
 	}
 
-	/*@Test
-	public void sliverTest() throws SvException, SQLException, ParseException {
-		Gson g = new Gson();
-		String input = "{\"TERRACE\":false,\"DESCRIPTOR\":\"AGRI_PARCEL\",\"EXPOSITION_AVG\":0,\"COMMON_USE\":false,\"ALLOWED_AREA\":\"1158.4723\",\"CHANGED_BORDER\":false,\"IRRIGATION\":false,\"ORGANIC\":false,\"type\":\"574968807\",\"OLD_ID\":4228110,\"Z_AVG\":\"0\",\"SLOPE_AVG\":0,\"HAS_OVERLAP_PB\":false,\"LANDSCAPE_FEATURES\":false,\"CERTIFICATE_OF_USE\":false,\"AREA\":\"1158.4723\",\"LAND_COVER_CODE_2\":\"0\",\"parent_id\":\"35272\",\"LAND_COVER_CODE\":\"200\",\"ELIGIBILITY_COEF\":100,\"CENTROID\":\"POINT (7604009.68 4630491.76)\",\"status\":\"VALID\",\"PERIMETER\":\"240.8243\",\"INVISIBLE_BORDER\":false,\"OBJECT_ID\":711953372,\"GEOM\":{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[7604001.7859,4630481.493],[7603961.1084,4630455.6822],[7603956.7181,4630460.3948],[7603991.9932,4630486.2378],[7604027.4424,4630511.528],[7604045.2238,4630523.1187],[7604054.2278,4630515.4742],[7604025.8643,4630494.3975],[7604022.6563,4630492.1289],[7604010.6471,4630483.622],[7604003.5713,4630478.7419],[7604001.7859,4630481.493]]]},\"id\":\"711953372\",\"properties\":{\"TERRACE\":false,\"DESCRIPTOR\":\"AGRI_PARCEL\",\"EXPOSITION_AVG\":0,\"COMMON_USE\":false,\"ALLOWED_AREA\":\"1158.4723\",\"CHANGED_BORDER\":false,\"IRRIGATION\":false,\"ORGANIC\":false,\"type\":\"574968807\",\"OLD_ID\":4228110,\"Z_AVG\":\"0\",\"SLOPE_AVG\":0,\"HAS_OVERLAP_PB\":false,\"LANDSCAPE_FEATURES\":false,\"CERTIFICATE_OF_USE\":false,\"AREA\":\"1158.4723\",\"LAND_COVER_CODE_2\":\"0\",\"parent_id\":\"35272\",\"LAND_COVER_CODE\":\"200\",\"ELIGIBILITY_COEF\":100,\"CENTROID\":\"POINT (7604009.68 4630491.76)\",\"status\":\"VALID\",\"PERIMETER\":\"240.8243\",\"INVISIBLE_BORDER\":false}}}";
-		JsonObject j = g.fromJson(input, JsonObject.class);
-		String token = getUserSessionIdForTestPurpose();
-		// Ova e IZ Pela 21345L
-		if (!token.equals(CC.EMPTY_STRING)) {
-
-
-			AgriParcel ap=new AgriParcel();
-
-			Geometry geom = Util.jsonToGeometry(j.get("GEOM"));
-			Collection<Geometry> neighbours = ap.overlappedNeighbours(svg, geom, parentId, typeId);
-
-						Geometry bufferedAP = geom
-					.buffer(SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE));
-
-			Collection<Geometry> neighboursNearBy = aps.overlappedNeighbours(svg, bufferedAP, parentId, typeId);
-			
-			Collection<Geometry> slivers = new ArrayList<>();
-			for (Geometry overlap : overlapped)
-				geom = geom.difference(overlap);
-
-			for (Geometry near : nearby) {
-				Geometry sliver = ap.calculateSliver((Polygon) geom, (Polygon) near);
-				for (int i = 0; i < sliver.getNumGeometries(); i++) {
-					Geometry gs = sliver.getGeometryN(i);
-					if (gs.getArea() > ap.minSliverArea && gs.getArea() < (gs.getLength() * sliverRatio))
-						slivers.add(gs);
-				}
-			}
-		}
-	}
-*/
-	//@Test
+	/*
+	 * @Test public void sliverTest() throws SvException, SQLException,
+	 * ParseException { Gson g = new Gson(); String input =
+	 * "{\"TERRACE\":false,\"DESCRIPTOR\":\"AGRI_PARCEL\",\"EXPOSITION_AVG\":0,\"COMMON_USE\":false,\"ALLOWED_AREA\":\"1158.4723\",\"CHANGED_BORDER\":false,\"IRRIGATION\":false,\"ORGANIC\":false,\"type\":\"574968807\",\"OLD_ID\":4228110,\"Z_AVG\":\"0\",\"SLOPE_AVG\":0,\"HAS_OVERLAP_PB\":false,\"LANDSCAPE_FEATURES\":false,\"CERTIFICATE_OF_USE\":false,\"AREA\":\"1158.4723\",\"LAND_COVER_CODE_2\":\"0\",\"parent_id\":\"35272\",\"LAND_COVER_CODE\":\"200\",\"ELIGIBILITY_COEF\":100,\"CENTROID\":\"POINT (7604009.68 4630491.76)\",\"status\":\"VALID\",\"PERIMETER\":\"240.8243\",\"INVISIBLE_BORDER\":false,\"OBJECT_ID\":711953372,\"GEOM\":{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[7604001.7859,4630481.493],[7603961.1084,4630455.6822],[7603956.7181,4630460.3948],[7603991.9932,4630486.2378],[7604027.4424,4630511.528],[7604045.2238,4630523.1187],[7604054.2278,4630515.4742],[7604025.8643,4630494.3975],[7604022.6563,4630492.1289],[7604010.6471,4630483.622],[7604003.5713,4630478.7419],[7604001.7859,4630481.493]]]},\"id\":\"711953372\",\"properties\":{\"TERRACE\":false,\"DESCRIPTOR\":\"AGRI_PARCEL\",\"EXPOSITION_AVG\":0,\"COMMON_USE\":false,\"ALLOWED_AREA\":\"1158.4723\",\"CHANGED_BORDER\":false,\"IRRIGATION\":false,\"ORGANIC\":false,\"type\":\"574968807\",\"OLD_ID\":4228110,\"Z_AVG\":\"0\",\"SLOPE_AVG\":0,\"HAS_OVERLAP_PB\":false,\"LANDSCAPE_FEATURES\":false,\"CERTIFICATE_OF_USE\":false,\"AREA\":\"1158.4723\",\"LAND_COVER_CODE_2\":\"0\",\"parent_id\":\"35272\",\"LAND_COVER_CODE\":\"200\",\"ELIGIBILITY_COEF\":100,\"CENTROID\":\"POINT (7604009.68 4630491.76)\",\"status\":\"VALID\",\"PERIMETER\":\"240.8243\",\"INVISIBLE_BORDER\":false}}}"
+	 * ; JsonObject j = g.fromJson(input, JsonObject.class); String token =
+	 * getUserSessionIdForTestPurpose(); // Ova e IZ Pela 21345L if
+	 * (!token.equals(CC.EMPTY_STRING)) {
+	 * 
+	 * 
+	 * AgriParcel ap=new AgriParcel();
+	 * 
+	 * Geometry geom = Util.jsonToGeometry(j.get("GEOM")); Collection<Geometry>
+	 * neighbours = ap.overlappedNeighbours(svg, geom, parentId, typeId);
+	 * 
+	 * Geometry bufferedAP = geom
+	 * .buffer(SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE,
+	 * CC.DEFAULT_MERGE_TOLERANCE));
+	 * 
+	 * Collection<Geometry> neighboursNearBy = aps.overlappedNeighbours(svg,
+	 * bufferedAP, parentId, typeId);
+	 * 
+	 * Collection<Geometry> slivers = new ArrayList<>(); for (Geometry overlap :
+	 * overlapped) geom = geom.difference(overlap);
+	 * 
+	 * for (Geometry near : nearby) { Geometry sliver = ap.calculateSliver((Polygon)
+	 * geom, (Polygon) near); for (int i = 0; i < sliver.getNumGeometries(); i++) {
+	 * Geometry gs = sliver.getGeometryN(i); if (gs.getArea() > ap.minSliverArea &&
+	 * gs.getArea() < (gs.getLength() * sliverRatio)) slivers.add(gs); } } } }
+	 */
+	// @Test
 	public void savePCTest() throws SvException, SQLException, ParseException {
 		Gson g = new Gson();
 		String input = "{\"PERM_CROP_TYPE_ID\":8,\"PLANT_AREA\":500,\"NUMBER_OF_TREES\":111,\"PARCEL_ID\":711855648,\"LPIS_PARCEL_ID\":4228057}";
@@ -658,7 +665,7 @@ public class ConfigTest {
 		}
 	}
 
-	//@Test
+	// @Test
 	public void saveMergeTest() throws SvException, SQLException, ParseException {
 		Gson g = new Gson();
 		String input = "{\"PERM_CROP_TYPE_ID\":8,\"PLANT_AREA\":500,\"NUMBER_OF_TREES\":111,\"PARCEL_ID\":711855648,\"LPIS_PARCEL_ID\":4228057}";
@@ -678,21 +685,22 @@ public class ConfigTest {
 	}
 
 	;
-	//@Test
+
+	// @Test
 	public void testMultiGeomError() {
 		try (SvReader svr = new SvReader(getUserSessionIdForTestPurpose())) {
 			DbSearchCriterion cr = new DbSearchCriterion("APP_ID", DbCompareOperand.EQUAL, 593342L);
 			DbDataArray apps = svr.getObjects(cr, SvReader.getTypeIdByName("APPLICATION"), null, 0, 0);
-			DbDataObject dboApplication = apps.get(0); 
+			DbDataObject dboApplication = apps.get(0);
 			DbDataObject dboFarmer = svr.getObjectById(dboApplication.getParentId(), SvCore.getTypeIdByName(CC.FARMER),
 					new DateTime(dboApplication.getVal("SUBMIT_DATE").toString()));
 			Point point = SvUtil.sdiFactory
 					.createPoint(new Coordinate(Double.parseDouble("7531106.825"), Double.parseDouble("4544944.444")));
-			//dw.getIntersectionsByParent(svr, point, SvCore.getTypeIdByName(CC.AGRI_PARCEL), dboFarmer.getObjectId(),
-			//		new DateTime(dboApplication.getVal("SUBMIT_DATE").toString()));
+			// dw.getIntersectionsByParent(svr, point,
+			// SvCore.getTypeIdByName(CC.AGRI_PARCEL), dboFarmer.getObjectId(),
+			// new DateTime(dboApplication.getVal("SUBMIT_DATE").toString()));
 		} catch (SvException e) {
-			//log4j.error(e);
+			// log4j.error(e);
 		}
 	}
 }
-
