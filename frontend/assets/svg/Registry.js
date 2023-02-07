@@ -1731,6 +1731,20 @@ export const _registry = {
                 </g>
             </g>
         </React.Fragment>
+    },
+    'start': {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 1920 1920',
+        path: <path d="M1827.701 303.065 698.835 1431.801 92.299 825.266 0 917.564 698.835 1616.4 1919.869 395.234z" fillRule="evenodd" />
+    },
+    'stop': {
+        version: '1.1',
+        x: '0px',
+        y: '0px',
+        viewBox: '0 0 1920 1920',
+        path: <path d="M1827.701 0 960.065 867.636 92.3 0 0 92.168l867.636 867.767L0 1827.57 92.299 1920l867.766-867.766L1827.701 1920l92.168-92.43-867.635-867.635 867.635-867.767z" fillRule="evenodd" />
     }
 }
 Object.entries(_registry).forEach(v => assets.setSVG(v[0], v[1]));
