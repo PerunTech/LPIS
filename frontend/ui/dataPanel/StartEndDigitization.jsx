@@ -45,7 +45,7 @@ const _StartEndDigitization = ({ farmObjId, digitizationIsActive }) => {
           }}
           title={digitizationIsActive ? 'Дигитизацијата е отворена' : 'Дигитизацијата е затворена'}
         >
-          <Icon name={digitizationIsActive ? 'stop' : 'start'} size={digitizationIsActive ? '17px' : '21px'} />
+          <Icon name={digitizationIsActive ? 'stop' : 'start'} size={digitizationIsActive ? '16px' : '19px'} />
           <span className='ml-2'>{digitizationIsActive ? 'Заврши дигитизација' : 'Започни дигитизација'}</span>
         </Button>
       </div>
