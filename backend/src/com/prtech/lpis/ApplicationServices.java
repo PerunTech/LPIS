@@ -257,6 +257,7 @@ public class ApplicationServices {
 		ResponseHandler jrh = new ResponseHandler();
 		final DbDataArray result = new DbDataArray();
 		try (SvReader svr = new SvReader(token)) {
+			svr.setIncludeGeometries(true);
 			DateTime dt = new DateTime(date);
 			DbDataArray dba = getTaskParcels(dt, svr);
 			result.setItems(dba.getItems());

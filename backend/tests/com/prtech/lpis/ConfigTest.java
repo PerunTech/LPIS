@@ -580,8 +580,13 @@ public class ConfigTest {
 		String token = getUserSessionIdForTestPurpose();
 		try (SvReader svr = new SvReader(token)) {
 			DateTime date = new DateTime("2023-02-07");
+			svr.setIncludeGeometries(true);
 			DbDataArray arr = (new ApplicationServices()).getTaskParcels(date, svr);
+			if (!arr.get(0).getHasGeometry())
+				fail("no geometry loaded");
+
 			System.out.println(arr.toSimpleJson().toString());
+
 		}
 	}
 
