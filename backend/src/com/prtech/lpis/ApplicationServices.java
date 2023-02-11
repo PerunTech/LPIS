@@ -277,7 +277,7 @@ public class ApplicationServices {
 	@Path("/tasks/sample/{token}/{sampleId}")
 	@GET
 	@Produces("application/pbf")
-	public Response getTasks(@PathParam("token") String token, @PathParam("date") Long sampleId,
+	public Response getTasks(@PathParam("token") String token, @PathParam("sampleId") Long sampleId,
 			@Context HttpServletRequest httpRequest) {
 		ResponseHandler jrh = new ResponseHandler();
 		final DbDataArray result = new DbDataArray();
