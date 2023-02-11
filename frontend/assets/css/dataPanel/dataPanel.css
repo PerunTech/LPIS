@@ -18,12 +18,14 @@
   border-color: #f9f9f9;
 }
 
-#data-panel .data-list-utils button {
+#farm-registry-map #data-panel .data-list-utils button,
+#lpis-map #data-panel .data-list-utils button {
   background-color: #f9f9f9;
   border-color: #f9f9f9;
 }
 
-#data-panel .data-list-utils .btn-light:hover:not(.disabled) {
+#farm-registry-map #data-panel .data-list-utils .btn-light:hover:not(.disabled),
+#lpis-map #data-panel .data-list-utils .btn-light:hover:not(.disabled) {
   background-color: #e2e6ea;
   border-color: #dae0e5;
 }
