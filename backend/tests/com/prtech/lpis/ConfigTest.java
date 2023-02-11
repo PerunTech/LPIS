@@ -589,6 +589,21 @@ public class ConfigTest {
 
 		}
 	}
+	
+	//@Test
+	public void sampleTest() throws SvException, SQLException, ParseException {
+
+		String token = getUserSessionIdForTestPurpose();
+		try (SvReader svr = new SvReader(token)) {
+			svr.setIncludeGeometries(true);
+			DbDataArray arr = (new ApplicationServices()).getSampleParcels(722147874L, svr);
+			if (!arr.get(0).getHasGeometry())
+				fail("no geometry loaded");
+
+			System.out.println(arr.toSimpleJson().toString());
+
+		}
+	}
 
 	// @Test
 	public void autFixTest() throws SvException, SQLException, ParseException {

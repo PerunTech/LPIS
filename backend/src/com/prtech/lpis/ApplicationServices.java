@@ -274,6 +274,47 @@ public class ApplicationServices {
 		return Response.ok(pbfStream, "application/pbf").build();
 	}
 
+	@Path("/tasks/sample/{token}/{sampleId}")
+	@GET
+	@Produces("application/pbf")
+	public Response getTasks(@PathParam("token") String token, @PathParam("date") Long sampleId,
+			@Context HttpServletRequest httpRequest) {
+		ResponseHandler jrh = new ResponseHandler();
+		final DbDataArray result = new DbDataArray();
+		try (SvReader svr = new SvReader(token)) {
+			svr.setIncludeGeometries(true);
+			DbDataArray dba = getSampleParcels(sampleId, svr);
+			result.setItems(dba.getItems());
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
+		}
+
+		StreamingOutput pbfStream = new StreamingOutput() {
+			public void write(OutputStream stream) throws IOException {
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+				enc.writeDbDataArray(result);
+			};
+		};
+		return Response.ok(pbfStream, "application/pbf").build();
+	}	
+	DbDataArray getSampleParcels(Long sampleId, SvReader svr) throws SvException {
+
+		DbSearchCriterion search = new DbSearchCriterion("PARENT_ID", DbCompareOperand.EQUAL, sampleId);
+		
+		DbQueryObject dqo = new DbQueryObject(SvCore.getDbtByName("SAMPLE_ITEM"), search, null, DbJoinType.INNER);
+		dqo.setLinkToNextType(LinkType.DENORMALIZED_REVERSE);
+		dqo.setIsReturnType(false);
+		DbQueryObject dqoAgri = new DbQueryObject(SvCore.getDbtByName(CC.AGRI_PARCEL), null, null, DbJoinType.INNER);
+		dqoAgri.setIsReturnType(true);
+
+		DbQueryExpression dqe = new DbQueryExpression();
+		dqe.addItem(dqo);
+		dqo.setDenormalizedFieldName("DB_OBJ_ID");
+		dqe.addItem(dqoAgri);
+		return svr.getObjects(dqe, null, null);
+
+	}
+	
 	DbDataArray getTaskParcels(DateTime date, SvReader svr) throws SvException {
 
 		DbSearchCriterion search = new DbSearchCriterion(CC.CREATION_DATE, DbCompareOperand.EQUAL, date);
