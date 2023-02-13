@@ -339,10 +339,16 @@ public class ApplicationServices {
 
 	void addFicToParcels(DbDataArray parcels, SvReader svr) throws SvException {
 		Long farmTypeId = SvCore.getTypeIdByName("FARMER");
+		String farmFic = null;
 		for (DbDataObject prc : parcels.getItems()) {
-			DbDataObject farm = svr.getObjectById(prc.getObjectId(), farmTypeId, null);
-			prc.setVal("FIC", farm.getVal("FIC"));
+			if (prc.getParentId() > 0L) {
+				DbDataObject farm = svr.getObjectById(prc.getParentId(), farmTypeId, null);
+				farmFic = farm != null ? (String) farm.getVal("FIC") : "Н/А";
+			} else
+				farmFic = "Заедничка Употреба";
+			prc.setVal("FIC", farmFic);
 			prc.setIsDirty(false);
+
 		}
 
 	}
