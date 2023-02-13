@@ -296,11 +296,12 @@ public class ApplicationServices {
 			};
 		};
 		return Response.ok(pbfStream, "application/pbf").build();
-	}	
+	}
+
 	DbDataArray getSampleParcels(Long sampleId, SvReader svr) throws SvException {
 
 		DbSearchCriterion search = new DbSearchCriterion("PARENT_ID", DbCompareOperand.EQUAL, sampleId);
-		
+
 		DbQueryObject dqo = new DbQueryObject(SvCore.getDbtByName("SAMPLE_ITEM"), search, null, DbJoinType.INNER);
 		dqo.setLinkToNextType(LinkType.DENORMALIZED_REVERSE);
 		dqo.setIsReturnType(false);
@@ -311,10 +312,12 @@ public class ApplicationServices {
 		dqe.addItem(dqo);
 		dqo.setDenormalizedFieldName("DB_OBJ_ID");
 		dqe.addItem(dqoAgri);
-		return svr.getObjects(dqe, null, null);
+		DbDataArray parcels = svr.getObjects(dqe, null, null);
+		addFicToParcels(parcels, svr);
+		return parcels;
 
 	}
-	
+
 	DbDataArray getTaskParcels(DateTime date, SvReader svr) throws SvException {
 
 		DbSearchCriterion search = new DbSearchCriterion(CC.CREATION_DATE, DbCompareOperand.EQUAL, date);
@@ -323,12 +326,24 @@ public class ApplicationServices {
 		dqo.setIsReturnType(false);
 		DbQueryObject dqoAgri = new DbQueryObject(SvCore.getDbtByName(CC.AGRI_PARCEL), null, null, DbJoinType.INNER);
 		dqoAgri.setIsReturnType(true);
-
 		DbQueryExpression dqe = new DbQueryExpression();
 		dqe.addItem(dqo);
 		dqo.setDenormalizedFieldName(CC.PARCEL_OBJ_ID);
 		dqe.addItem(dqoAgri);
-		return svr.getObjects(dqe, null, null);
+		// return svr.getObjects(dqe, null, null);
+		DbDataArray parcels = svr.getObjects(dqe, null, null);
+		addFicToParcels(parcels, svr);
+		return parcels;
+
+	}
+
+	void addFicToParcels(DbDataArray parcels, SvReader svr) throws SvException {
+		Long farmTypeId = SvCore.getTypeIdByName("FARMER");
+		for (DbDataObject prc : parcels.getItems()) {
+			DbDataObject farm = svr.getObjectById(prc.getObjectId(), farmTypeId, null);
+			prc.setVal("FIC", farm.getVal("FIC"));
+			prc.setIsDirty(false);
+		}
 
 	}
 
