@@ -43,9 +43,10 @@ import org.json.simple.JSONObject;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.prtech.perun.PerunUtil;
 import com.prtech.perun_core.ws.Rc;
 import com.prtech.spatial.SC;
-import com.prtech.spatial.Util;
+import com.prtech.spatial.SpatialUtil;
 import com.prtech.spatial.geobuf.GeobufEncoder;
 import com.prtech.svarog.I18n;
 import com.prtech.svarog.Sv;
@@ -298,6 +299,37 @@ public class ApplicationServices {
 		return Response.ok(pbfStream, "application/pbf").build();
 	}
 
+	@Path("/get/control/results/{token}/{controlId}")
+	@GET
+	@Produces("application/pbf")
+	public Response getControlResults(@PathParam("token") String token, @PathParam("controlId") Long controlId,
+			@Context HttpServletRequest httpRequest) {
+		ResponseHandler jrh = new ResponseHandler();
+		final DbDataArray result = new DbDataArray();
+		try (SvReader svr = new SvReader(token)) {
+			svr.setIncludeGeometries(true);
+			ArrayList<DbDataObject> results = new ArrayList<>();
+			DbDataArray dba = svr.getObjectsByParentId(controlId, SvCore.getTypeIdByName("SUBCONTROL"), null);
+			for (DbDataObject subcontrol : dba.getItems()) {
+				DbDataArray dba1 = svr.getObjectsByParentId(subcontrol.getObjectId(),
+						SvCore.getTypeIdByName("SPATIAL_CONTROL"), null);
+				results.addAll(dba1.getItems());
+			}
+			result.setItems(results);
+		} catch (Exception e) {
+			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
+		}
+
+		StreamingOutput pbfStream = new StreamingOutput() {
+			public void write(OutputStream stream) throws IOException {
+				GeobufEncoder enc = new GeobufEncoder(stream, precisionScale);
+				enc.writeDbDataArray(result);
+			};
+		};
+		return Response.ok(pbfStream, "application/pbf").build();
+	}
+
+
 	DbDataArray getSampleParcels(Long sampleId, SvReader svr) throws SvException {
 
 		DbSearchCriterion search = new DbSearchCriterion("PARENT_ID", DbCompareOperand.EQUAL, sampleId);
@@ -313,7 +345,7 @@ public class ApplicationServices {
 		dqo.setDenormalizedFieldName("DB_OBJ_ID");
 		dqe.addItem(dqoAgri);
 		DbDataArray parcels = svr.getObjects(dqe, null, null);
-		addFicToParcels(parcels, svr);
+		PerunUtil.denormaliseFieldFromParent(parcels, svr, "FARMER", "FIC", "Заедничка употреба");
 		return parcels;
 
 	}
@@ -332,24 +364,8 @@ public class ApplicationServices {
 		dqe.addItem(dqoAgri);
 		// return svr.getObjects(dqe, null, null);
 		DbDataArray parcels = svr.getObjects(dqe, null, null);
-		addFicToParcels(parcels, svr);
+		PerunUtil.denormaliseFieldFromParent(parcels, svr, "FARMER", "FIC", "Заедничка употреба");
 		return parcels;
-
-	}
-
-	void addFicToParcels(DbDataArray parcels, SvReader svr) throws SvException {
-		Long farmTypeId = SvCore.getTypeIdByName("FARMER");
-		String farmFic = null;
-		for (DbDataObject prc : parcels.getItems()) {
-			if (prc.getParentId() > 0L) {
-				DbDataObject farm = svr.getObjectById(prc.getParentId(), farmTypeId, null);
-				farmFic = farm != null ? (String) farm.getVal("FIC") : "Н/А";
-			} else
-				farmFic = "Заедничка Употреба";
-			prc.setVal("FIC", farmFic);
-			prc.setIsDirty(false);
-
-		}
 
 	}
 
@@ -403,7 +419,7 @@ public class ApplicationServices {
 			}
 
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
+			return PerunUtil.handleException(e, jrh, token);
 		}
 
 		StreamingOutput pbfStream = new StreamingOutput() {
@@ -437,7 +453,7 @@ public class ApplicationServices {
 			Long typeId = SvCore.getTypeIdByName("PHYSICAL_BLOCK");
 			DbDataArray fieldSet = SvCore.getFields(typeId);
 			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
-			JsonObject metadata = Util.dataToJson(formVals);
+			JsonObject metadata = SpatialUtil.dataToJson(formVals);
 
 			if (isUpdate) {
 				pb = svr.getObjectById(objectId, typeId, null);
@@ -449,13 +465,14 @@ public class ApplicationServices {
 			// Map form values to dbo fields
 			for (DbDataObject field : fieldSet.getItems()) {
 				String fieldName = field.getVal("FIELD_NAME").toString();
-				if (Util.excludeField(fieldName) && !"".equalsIgnoreCase(field.getVal("FIELD_TYPE").toString())) {
-					pb = Util.addValueToDataObject(pb, fieldName, field, metadata);
+				if (SpatialUtil.excludeField(fieldName)
+						&& !"".equalsIgnoreCase(field.getVal("FIELD_TYPE").toString())) {
+					pb = SpatialUtil.addValueToDataObject(pb, fieldName, field, metadata);
 				}
 			}
 
-			SvGeometry.setGeometry(pb, Util.jsonToGeometry(metadata.get("GEOM")));
-			Util.calculateGeometryDerivatives(pb);
+			SvGeometry.setGeometry(pb, SpatialUtil.jsonToGeometry(metadata.get("GEOM")));
+			SpatialUtil.calculateGeometryDerivatives(pb);
 			svg.saveGeometry(pb);
 		} catch (Exception e) {
 			if (e instanceof SvException) {
@@ -485,6 +502,31 @@ public class ApplicationServices {
 
 	}
 
+	@Path("/getControls/{token}/{FIC}")
+	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response hasControl(@PathParam("token") final String token, @PathParam("FIC") final String FIC,
+			@Context HttpServletRequest httpRequest) {
+		ResponseHandler jrh = new ResponseHandler();
+		DbDataArray result = new DbDataArray();
+		try (SvReader svr = new SvReader(token)) {
+			DbSearchCriterion dbs = new DbSearchCriterion("BID", DbCompareOperand.EQUAL, FIC);
+			DbSearchCriterion dbs1 = new DbSearchCriterion("SUBJECT_OF_CONTROL", DbCompareOperand.NOTEQUAL,
+					"LIVESTOCK");
+			DbSearchExpression ex = new DbSearchExpression();
+			ex.addDbSearchItem(dbs1);
+			ex.addDbSearchItem(dbs1);
+			DbDataArray dba = svr.getObjects(dbs, SvCore.getTypeIdByName("CONTROL"), null, null, null);
+			result.setItems(dba.getItems());
+		} catch (Exception e) {
+			return PerunUtil.handleException(e, jrh, token);
+		}
+
+		return Response.ok().entity(result.toSimpleJson().toString()).build();
+
+	}
+
 	@Path("/parcel/split/{token}/{objectName}/{parentId}/{x}/{y}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -496,7 +538,7 @@ public class ApplicationServices {
 
 		final Collection<Geometry> result = new ArrayList<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
-			Geometry geom = Util.getInputGeometry(formVals, null);
+			Geometry geom = SpatialUtil.getInputGeometry(formVals, null);
 			AgriParcel ap = (new AgriParcel());
 			String externalSequence = ap.getExternalSequenceName(objectName);
 			String customExecutor = ap.getCustomExecutorName(objectName);
@@ -504,7 +546,7 @@ public class ApplicationServices {
 					customExecutor);
 			result.addAll(split);
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.splitParcel");
+			return SpatialUtil.handleException(e, new ResponseHandler(), "lpis.error.splitParcel");
 		}
 
 		StreamingOutput pbfStream = new StreamingOutput() {
@@ -539,7 +581,7 @@ public class ApplicationServices {
 				response = Response.ok().entity(jrh.getAll().toString()).build();
 			}
 		} catch (Exception e) {
-			response = com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), objectName);
+			response = SpatialUtil.handleException(e, new ResponseHandler(), objectName);
 		} finally {
 			if (lock != 0)
 				try {
@@ -574,7 +616,7 @@ public class ApplicationServices {
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvReader svr = new SvReader(token)) {
 
-			JsonObject metadata = Util.dataToJson(formVals);
+			JsonObject metadata = SpatialUtil.dataToJson(formVals);
 			Long typeId = SvCore.getTypeIdByName(objectName);
 			AgriParcel ap = (new AgriParcel());
 			String externalSequence = ap.getExternalSequenceName(objectName);
@@ -584,7 +626,7 @@ public class ApplicationServices {
 					externalSequence, customExecutor);
 
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.saveParcel");
+			return SpatialUtil.handleException(e, new ResponseHandler(), "lpis.error.saveParcel");
 		}
 
 		StreamingOutput pbfStream = new StreamingOutput() {
@@ -684,7 +726,7 @@ public class ApplicationServices {
 			}
 
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
+			return PerunUtil.handleException(e, new ResponseHandler(), "lpis.error.delete_parcel");
 		}
 
 		StreamingOutput pbfStream = new StreamingOutput() {
@@ -750,7 +792,7 @@ public class ApplicationServices {
 			}
 
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToRemoveObject");
+			return PerunUtil.handleException(e, jrh, "error.perun.failedToRemoveObject");
 		}
 		jrh.create(MessageType.SUCCESS, I18n.getText("parcel.detached.from.farm"),
 				I18n.getText("parcel.detached.from.farm"));
@@ -1010,12 +1052,12 @@ public class ApplicationServices {
 			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
 		final Set<Geometry> result = new HashSet<Geometry>();
 		try (SvGeometry svg = new SvGeometry(token)) {
-			LineString lineString = (LineString) Util.getInputGeometry(formVals, null);
+			LineString lineString = (LineString) SpatialUtil.getInputGeometry(formVals, null);
 
 			result.add(new AgriParcel().mergeGeometryConfirm(svg, objectName, parentId, lineString, true));
 		} catch (SvException e) {
 			ResponseHandler jrh = new ResponseHandler();
-			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
+			return SpatialUtil.handleException(e, jrh, token);
 		}
 
 		StreamingOutput pbfStream = new StreamingOutput() {
@@ -1257,7 +1299,7 @@ public class ApplicationServices {
 			svr.setIncludeGeometries(true);
 			svg.setSkipSpatialValidations(true);
 			cu = new CommonUse();
-			metadata = Util.dataToJson(formVals);
+			metadata = SpatialUtil.dataToJson(formVals);
 			Long typeId = SvCore.getTypeIdByName(CC.COMMON_USE);
 			DbDataArray fieldSet = SvCore.getFields(typeId);
 			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
@@ -1279,9 +1321,9 @@ public class ApplicationServices {
 			// Map form values to dbo fields
 			for (DbDataObject field : fieldSet.getItems()) {
 				String fieldName = field.getVal(CC.FIELD_NAME).toString();
-				if (Util.excludeField(fieldName)
+				if (SpatialUtil.excludeField(fieldName)
 						&& !CC.EMPTY_STRING.equalsIgnoreCase(field.getVal(CC.FIELD_TYPE).toString())) {
-					commonUse = Util.addValueToDataObject(commonUse, fieldName, field, metadata);
+					commonUse = SpatialUtil.addValueToDataObject(commonUse, fieldName, field, metadata);
 				}
 			}
 
@@ -1304,7 +1346,7 @@ public class ApplicationServices {
 			Long typeId = SvCore.getTypeIdByName(CC.AGRI_PARCEL);
 			AgriParcel aps = new AgriParcel();
 
-			Geometry geom = Util.jsonToGeometry(json.get("GEOM"));
+			Geometry geom = SpatialUtil.jsonToGeometry(json.get("GEOM"));
 			if (geom.getGeometryType().equals("LineString"))
 				geom = aps.generatePolygon(svg, (LineString) geom, typeId);
 
@@ -1377,7 +1419,7 @@ public class ApplicationServices {
 		ResponseHandler rhs = new ResponseHandler();
 		try {
 
-			json = Util.dataToJson(formVals);
+			json = SpatialUtil.dataToJson(formVals);
 			json = parcelChecks(token, json);
 
 		} catch (Exception e) {
@@ -1402,8 +1444,8 @@ public class ApplicationServices {
 		ResponseHandler rhs = new ResponseHandler();
 		try (SvGeometry svg = new SvGeometry(token);) {
 
-			json = Util.dataToJson(formVals);
-			Geometry gp = Util.jsonToGeometry(json.get("GEOM"));
+			json = SpatialUtil.dataToJson(formVals);
+			Geometry gp = SpatialUtil.jsonToGeometry(json.get("GEOM"));
 			Set<Geometry> geoms = new HashSet<Geometry>();
 			Collection<Geometry> gg = (new AgriParcel()).getPBIntersections(svg, gp);
 
@@ -1435,8 +1477,8 @@ public class ApplicationServices {
 		ResponseHandler rhs = new ResponseHandler();
 		try (SvGeometry svg = new SvGeometry(token);) {
 
-			json = Util.dataToJson(formVals);
-			Geometry gp = Util.jsonToGeometry(json.get("GEOM"));
+			json = SpatialUtil.dataToJson(formVals);
+			Geometry gp = SpatialUtil.jsonToGeometry(json.get("GEOM"));
 			Collection<Geometry> gg = getPhysicalBlock(svg, gp.getEnvelopeInternal(), "ext_lpis.ilpis", "geometry");
 			Geometry greatest = null;
 			for (Geometry pb : gg) {
@@ -1557,7 +1599,7 @@ public class ApplicationServices {
 							Sv.DEFAULT_MIN_POINT_DISTANCE);
 					for (Geometry g : geomArr) {
 						DbDataObject prc = (DbDataObject) g.getUserData();
-						if (!g.isSimple() || !g.isValid() || Util.hasDuplicates((Polygon) g, minPointDistance))
+						if (!g.isSimple() || !g.isValid() || SpatialUtil.hasDuplicates((Polygon) g, minPointDistance))
 							prc.setStatus(CC.TOPO_ERR);
 					}
 
@@ -1592,8 +1634,8 @@ public class ApplicationServices {
 
 		try {
 			svg = new SvGeometry(token);
-			json = Util.dataToJson(formVals);
-			geom = Util.jsonToGeometry(json.get("GEOM"));
+			json = SpatialUtil.dataToJson(formVals);
+			geom = SpatialUtil.jsonToGeometry(json.get("GEOM"));
 
 			// Perform cut of agri parcel against a container physical block.
 			// In case of multiple blocks, use the block that lends maximum size to the
@@ -1641,7 +1683,7 @@ public class ApplicationServices {
 			}
 			// revert user data, do not return as part of json.
 			containedAP.setUserData(null);
-			json.addProperty("GEOM", Util.geometryToJson(containedAP));
+			json.addProperty("GEOM", SpatialUtil.geometryToJson(containedAP));
 			result = new JsonObject();
 			result.add("layer", json);
 			result.addProperty("check", neighbourAPoverlap);
@@ -1685,7 +1727,7 @@ public class ApplicationServices {
 		double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
 		for (DbDataObject prc : result.getItems()) {
 			Geometry g = SvGeometry.getGeometry(prc);
-			if (!g.isSimple() || !g.isValid() || Util.hasDuplicates((Polygon) g, minPointDistance))
+			if (!g.isSimple() || !g.isValid() || SpatialUtil.hasDuplicates((Polygon) g, minPointDistance))
 				prc.setStatus(CC.TOPO_ERR);
 		}
 	}
@@ -1711,7 +1753,7 @@ public class ApplicationServices {
 		ResponseHandler jrh = new ResponseHandler();
 		JsonObject metadata = new JsonObject();
 
-		metadata = Util.dataToJson(formVals);
+		metadata = SpatialUtil.dataToJson(formVals);
 		try {
 			DbDataObject result = (new PermanentCrop()).savePermanentCrop(token, objectId, parentId, metadata);
 		} catch (Exception e) {
