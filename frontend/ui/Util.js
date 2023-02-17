@@ -6,6 +6,7 @@ import { layerList } from '../config/layerList';
 import { setAPLabel, setCPLabel } from '.';
 import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
 import { config as cpConfig } from './toolsBar/cropParcel/Config';
+import { config as crConfig } from './toolsBar/controlResults/Config';
 
 const history = createHashHistory();
 const { alertUser } = elements;
@@ -135,6 +136,53 @@ export const getFarmDigitizationState = objectId => {
     })
 }
 
+const getControlResults = (controls) => {
+    const promises = controls.map(async control => {
+        const { objectId, year } = control
+        const url = `/lpis/get/control/results/{init.token}/${objectId}`
+        const reqConfig = { url, method: 'get', responseType: 'arraybuffer' }
+        return await http.call('getControlResults', reqConfig).then(response => ({ response, objectId, year })).catch(err => console.error(err))
+    })
+
+    const controlResults = []
+    Promise.all(promises).then(promise => {
+        promise.forEach(result => {
+            const { objectId, year, response } = result
+            const data = geobuf.decode(protobuf(response));
+            const geojson = factory.geoJSON(data, crConfig.pathOptions);
+            const layers = geojson.getLayers();
+            if (layers.length > 0) {
+                layers.forEach(layer => {
+                    const controlResult = { controlObjId: objectId, year, layer }
+                    controlResults.push(controlResult)
+                })
+            }
+        })
+    }).catch(err => {
+        console.error(err)
+    }).finally(() => {
+        store.dispatch({ controlResults })
+    })
+}
+
+const getControls = (fic) => {
+    const url = `/ReactElements/getTableWithFilter/{init.token}/CONTROL/BID/${fic}/100`
+    http.call('getControls', { url, method: 'get' }).then(res => {
+        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+            const controls = []
+            res.data.forEach(control => {
+                controls.push({
+                    objectId: control['CONTROL.OBJECT_ID'],
+                    year: control['CONTROL.YEAR']
+                })
+            })
+            getControlResults(controls)
+        }
+    }).catch(err => {
+        console.error(err)
+    })
+}
+
 const getFarmData = objectId => {
     const token = perunStore.getState().security.svSession
     const url = `${window.server}/ReactElements/getRowDataByObjectId/${token}/${objectId}/FARMER`
@@ -144,6 +192,9 @@ const getFarmData = objectId => {
             const fic = farmData['FARMER.FIC'] || ''
             const fullName = farmData['FARMER.FULL_NAME'] || ''
             store.dispatch({ fic, fullName })
+            if (fic) {
+                getControls(fic)
+            }
         }
     }).catch(err => {
         console.error(err)
