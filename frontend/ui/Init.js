@@ -92,7 +92,7 @@ export const farmRegLpis = () => {
         'showCadParcels': false, 'hiddenAssets': [], 'parcelHistory': [], 'theSearchedParcelWasRemoved': false, 'parcelsHaveBeenLoaded': false,
         'showParcelInfoContainer': false, 'farmInfo': undefined, 'parcelInfo': undefined, 'historyEditEnabled': false, 'historyParcelToEdit': {},
         'editFormWasClosed': false, 'parcelHistoryModalWasClosed': false, 'digitizationIsActive': false, 'canRenderTheDigitizationButton': false,
-        'activateInfoProcess': false
+        'activateInfoProcess': false, 'controlResults': []
     })
     const _token = redux.store.getState().security.svSession;
     getFarmMapAssets(true)
