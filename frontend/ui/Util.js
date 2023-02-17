@@ -6,6 +6,7 @@ import { layerList } from '../config/layerList';
 import { setAPLabel, setCPLabel } from '.';
 import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
 import { config as cpConfig } from './toolsBar/cropParcel/Config';
+import { config as crConfig } from './toolsBar/controlResults/Config';
 
 const history = createHashHistory();
 const { alertUser } = elements;
@@ -148,7 +149,7 @@ const getControlResults = (controls) => {
         promise.forEach(result => {
             const { objectId, year, response } = result
             const data = geobuf.decode(protobuf(response));
-            const geojson = factory.geoJSON(data, cpConfig.pathOptions);
+            const geojson = factory.geoJSON(data, crConfig.pathOptions);
             const layers = geojson.getLayers();
             if (layers.length > 0) {
                 layers.forEach(layer => {
