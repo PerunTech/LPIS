@@ -165,6 +165,8 @@ const _Rows = ({ rows }) => {
         cropLabel = translatedLabel
       }
     }
+    const area = Math.round(Number(rowData.AREA)) + ` ${unit}`
+    const areaWithinParcel = Math.round(Number(rowData.AREA_WITHIN_PARCEL)) + ` ${unit}`
     return (
       <div className='container' key={id} id={id}>
         <ButtonGroup className='control-results-data-grid-row' key={`${id}_${i + 1}`}>
@@ -172,8 +174,8 @@ const _Rows = ({ rows }) => {
           <Button disabled className='control-results-data-grid-column'>{translateStatus(status)}</Button>
           <Button disabled className='control-results-data-grid-column'>{rowData.CONTROLLED_LAND_USE}</Button>
           <Button disabled className='control-results-data-grid-column' title={cropLabel}>{cropLabel}</Button>
-          <Button disabled className='control-results-data-grid-column'>{Math.round(Number(rowData.AREA)) + ` ${unit}`}</Button>
-          <Button disabled className='control-results-data-grid-column'>{Math.round(Number(rowData.AREA_WITHIN_PARCEL)) + ` ${unit}`}</Button>
+          <Button disabled className='control-results-data-grid-column' title={area}>{area}</Button>
+          <Button disabled className='control-results-data-grid-column' title={areaWithinParcel}>{areaWithinParcel}</Button>
           <Button disabled className='control-results-data-grid-column'>{rowData.TOLERANCE_RATIO && Math.round(rowData.TOLERANCE_RATIO)}</Button>
           <Button disabled className='control-results-data-grid-column'>{rowData.CONTROLLED_NO_PLANTS}</Button>
           <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el.layer)} title='Оди до резултат'>
