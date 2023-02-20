@@ -8,7 +8,7 @@ const { alertUser } = elements
 const _ControlResults = ({ controlResults, showControlResultsContainer }) => {
   const toggleControlResultsContainer = () => {
     if (controlResults.length > 0) {
-      store.dispatch({ showControlResultsContainer: !showControlResultsContainer })
+      store.dispatch({ showControlResultsContainer: !showControlResultsContainer, showParcelInfoContainer: false })
     } else {
       alertUser(true, 'info', 'Не се пронајдени резултати од контрола')
     }
