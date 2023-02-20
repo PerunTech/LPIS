@@ -9,7 +9,7 @@ const _ParcelInfo = ({ farmInfo, parcelInfo, showParcelInfoContainer }) => {
     if (!farmInfo && !parcelInfo) {
       store.dispatch({ activateInfoProcess: true })
     } else {
-      store.dispatch({ showParcelInfoContainer: !showParcelInfoContainer })
+      store.dispatch({ showParcelInfoContainer: !showParcelInfoContainer, showControlResultsContainer: false })
     }
   }
 

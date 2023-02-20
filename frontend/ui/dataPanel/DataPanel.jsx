@@ -8,6 +8,8 @@ import { StartEndDigitization } from './StartEndDigitization';
 import { CadastreSearch } from './CadastreSearch';
 import { LpisSearch } from './LpisSearch';
 import { ParcelInfo } from './ParcelInfo';
+import { ControlResults } from './ControlResults';
+import { ControlResultsDataGridHeader } from './ControlResultsDataGridHeader';
 
 const { Button, Icon } = ui;
 const { store, connect } = core;
@@ -24,7 +26,7 @@ const dataCategories = (function () {
  * 
  * @param {*} props 
  */
-const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer, canRenderTheDigitizationButton }) => {
+const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer, showControlResultsContainer, canRenderTheDigitizationButton }) => {
   const [data, setData] = useState(categories);
   const [isOpen, setOpen] = useState(true);
 
@@ -54,7 +56,10 @@ const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer,
       </div>
       {actionType === 'sizp' && isOpen && (
         <React.Fragment>
-          {canRenderTheDigitizationButton && <StartEndDigitization />}
+          <div className='d-flex flex-row justify-content-center align-items-center mt-1 mb-1' style={{ gap: '5px' }}>
+            {canRenderTheDigitizationButton && <StartEndDigitization />}
+            <ControlResults />
+          </div>
           <div className='d-flex flex-row justify-content-center align-items-center' style={{ gap: '1vh' }}>
             <ParcelInfo />
             <CadastreSearch />
@@ -64,11 +69,17 @@ const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer,
       )}
       {(actionType === 'sizp' || actionType === 'pplan' || actionType === 'preview') && isOpen &&
         <React.Fragment>
-          {!showParcelInfoContainer && (
+          {!showParcelInfoContainer && !showControlResultsContainer && (
             <React.Fragment>
               <FarmDataGridInfoHeader />
               <FarmDataGridNumOfParcels rows={farmData} />
               <FarmDataGridHeader gridType='agri_parcel' />
+            </React.Fragment>
+          )}
+          {!showParcelInfoContainer && showControlResultsContainer && (
+            <React.Fragment>
+              <FarmDataGridInfoHeader />
+              <ControlResultsDataGridHeader />
             </React.Fragment>
           )}
         </React.Fragment>
@@ -91,5 +102,6 @@ _DataPanel.propTypes = {
 export const DataPanel = connect(state => ({
   processID: state.app.processID, actionType: state.farmRegistry?.actionType,
   farmData: state.farmRegistry?.agriParcels, showParcelInfoContainer: state.farmRegistry?.showParcelInfoContainer,
-  canRenderTheDigitizationButton: state.farmRegistry?.canRenderTheDigitizationButton
+  canRenderTheDigitizationButton: state.farmRegistry?.canRenderTheDigitizationButton,
+  showControlResultsContainer: state.farmRegistry?.showControlResultsContainer,
 }))(_DataPanel);
