@@ -53,7 +53,7 @@ const _Info = ({ processID, activateInfoProcess }) => {
             }
           })
           setState({ loading: false })
-          store.dispatch({ farmInfo, parcelInfo, showParcelInfoContainer: true })
+          store.dispatch({ farmInfo, parcelInfo, showParcelInfoContainer: true, showControlResultsContainer: false })
         } else {
           setState({ loading: false })
           alertUser(true, 'info', 'Нема податоци за избраната парцела или не е избрана парцела од мапата');
