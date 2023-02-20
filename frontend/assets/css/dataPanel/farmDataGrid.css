@@ -195,3 +195,36 @@
   color: #dc3545;
   border: 1px solid #dc3545;
 }
+
+.control-results-data-grid-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #00000025;
+}
+
+.control-results-data-grid-column-index,
+.control-results-data-grid-row .data-grid-index {
+  background-color: transparent !important;
+  border: none !important;
+  flex: 0 0 10px !important;
+}
+
+.control-results-data-grid-column {
+  flex: 0 0 69px !important;
+  width: 70px;
+  height: 50px;
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.control-results-data-grid-row .control-results-data-grid-column {
+  flex: 0 0 68px !important;
+  height: 30px;
+  text-align: center;
+  opacity: 1;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}

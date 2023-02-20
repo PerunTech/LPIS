@@ -31,25 +31,21 @@ const _StartEndDigitization = ({ farmObjId, digitizationIsActive }) => {
   }
 
   return (
-    <React.Fragment>
-      <div className='d-flex flex-row justify-content-center align-items-center mt-1 mb-1' style={{ gap: '5px' }}>
-        <Button
-          variant='dark'
-          size='normal'
-          onClick={onClick}
-          style={{
-            fontSize: '14px',
-            width: '200px',
-            backgroundColor: digitizationIsActive ? '#850000' : '#174c20',
-            borderColor: digitizationIsActive ? '#850000' : '#174c20'
-          }}
-          title={digitizationIsActive ? 'Дигитизацијата е отворена' : 'Дигитизацијата е затворена'}
-        >
-          <Icon name={digitizationIsActive ? 'stop' : 'start'} size={digitizationIsActive ? '16px' : '19px'} />
-          <span className='ml-2'>{digitizationIsActive ? 'Заврши дигитизација' : 'Започни дигитизација'}</span>
-        </Button>
-      </div>
-    </React.Fragment>
+    <Button
+      variant='dark'
+      size='normal'
+      onClick={onClick}
+      style={{
+        fontSize: '14px',
+        width: '200px',
+        backgroundColor: digitizationIsActive ? '#850000' : '#174c20',
+        borderColor: digitizationIsActive ? '#850000' : '#174c20'
+      }}
+      title={digitizationIsActive ? 'Дигитизацијата е отворена' : 'Дигитизацијата е затворена'}
+    >
+      <Icon name={digitizationIsActive ? 'stop' : 'start'} size={digitizationIsActive ? '16px' : '19px'} />
+      <span className='ml-2'>{digitizationIsActive ? 'Заврши дигитизација' : 'Започни дигитизација'}</span>
+    </Button>
   )
 }
 

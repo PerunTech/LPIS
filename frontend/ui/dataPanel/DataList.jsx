@@ -2,10 +2,13 @@ import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { DataGrid } from '..';
 import { FarmDataGrid } from './FarmDataGrid';
+import { ControlResultsDataGrid } from './ControlResultsDataGrid';
 import { InfoList } from '../toolsBar/agriParcel/digitization/Info/InfoList';
 import { strcmp } from '../Util';
 
-export const _DataList = ({ data, setData, actionType, showParcelInfoContainer, loadedPhysicalBlocks, farmData, layers, pauseGrid }) => {
+export const _DataList = ({
+    data, setData, actionType, showParcelInfoContainer, showControlResultsContainer, controlResults, loadedPhysicalBlocks, farmData, layers, pauseGrid
+}) => {
     let dataListContainerClassName = 'parcels-data-list'
     if (showParcelInfoContainer) {
         dataListContainerClassName = 'parcel-info-data-list'
@@ -32,10 +35,11 @@ export const _DataList = ({ data, setData, actionType, showParcelInfoContainer, 
                     setData(core.util.replaceElement(data, id, { ...data[id], isOpen: !(el.isOpen) }))} >
                 {<DataGrid type={el} rows={getRows(el)} />}
             </ui.TreeNode>)}
-        {(actionType === 'sizp' || actionType === 'pplan' || actionType === 'preview') && !showParcelInfoContainer &&
+        {(actionType === 'sizp' || actionType === 'pplan' || actionType === 'preview') && !showParcelInfoContainer && !showControlResultsContainer &&
             <FarmDataGrid type='agri_parcel' rows={farmData} actionType={actionType} />
         }
         {actionType === 'sizp' && showParcelInfoContainer && <InfoList />}
+        {actionType === 'sizp' && showControlResultsContainer && <ControlResultsDataGrid type='control_results' rows={controlResults} />}
     </div>
 }
 
@@ -68,5 +72,7 @@ export const DataList = core.connect(state =>
     actionType: state.farmRegistry?.actionType,
     farmData: state.farmRegistry?.agriParcels,
     showParcelInfoContainer: state.farmRegistry?.showParcelInfoContainer,
+    showControlResultsContainer: state.farmRegistry?.showControlResultsContainer,
+    controlResults: state.farmRegistry?.controlResults,
     loadedPhysicalBlocks: state.lpis?.loadedPhysicalBlocks,
 }))(_DataList);
