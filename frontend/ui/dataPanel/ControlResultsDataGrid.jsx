@@ -69,7 +69,10 @@ const toggleAssetFromMap = (id) => {
 
 const _ControlResultsDataGrid = ({ type, rows }) => {
   useEffect(() => {
-    rows.forEach(row => row.layer.addTo(Map))
+    rows.forEach(row => {
+      row.layer.addTo(Map)
+      row.layer.bringToBack()
+    })
 
     return () => {
       Map.eachLayer(function (layer) {
