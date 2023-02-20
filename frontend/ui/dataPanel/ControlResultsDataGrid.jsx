@@ -67,13 +67,8 @@ const toggleAssetFromMap = (id) => {
   return visible;
 };
 
-const _ControlResultsDataGrid = ({ type, rows }) => {
+export const ControlResultsDataGrid = ({ type, rows }) => {
   useEffect(() => {
-    rows.forEach(row => {
-      row.layer.addTo(Map)
-      row.layer.bringToBack()
-    })
-
     return () => {
       Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
@@ -87,20 +82,32 @@ const _ControlResultsDataGrid = ({ type, rows }) => {
     }
   }, [])
 
+  useEffect(() => {
+    Map.eachLayer(function (layer) {
+      if (!!layer.toGeoJSON) {
+        if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'spatial_control')) {
+          Map.removeLayer(layer);
+        }
+      }
+    });
+
+    store.dispatch({ hiddenControlResultAssets: [] })
+
+    rows.forEach(row => {
+      row.layer.addTo(Map)
+      row.layer.bringToBack()
+    })
+  }, [rows])
+
   return <div id={type + '-grid'} className='data-grid'>
     {rows.length > 0 ? <_Rows rows={rows} /> : <_NoData />}
   </div>
 };
 
-_ControlResultsDataGrid.propTypes = {
+ControlResultsDataGrid.propTypes = {
   type: PropTypes.string,
   rows: PropTypes.array
 };
-
-export const ControlResultsDataGrid = core.connect(state => ({
-  selectedParcelId: state.farmRegistry?.selectedParcelId, pplanRows: state.farmRegistry?.farmPPlanData,
-  cadIntersectionRows: state.farmRegistry?.cadIntersections, showCadParcels: state.farmRegistry?.showCadParcels
-}))(_ControlResultsDataGrid)
 
 /* ----------------------------- */
 /*        NO DATA FOUND          */

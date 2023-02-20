@@ -12,6 +12,8 @@ export const _DataList = ({
     let dataListContainerClassName = 'parcels-data-list'
     if (showParcelInfoContainer) {
         dataListContainerClassName = 'parcel-info-data-list'
+    } else if (showControlResultsContainer) {
+        dataListContainerClassName = 'control-results-data-list'
     }
 
     const getRows = el => {
@@ -73,6 +75,5 @@ export const DataList = core.connect(state =>
     farmData: state.farmRegistry?.agriParcels,
     showParcelInfoContainer: state.farmRegistry?.showParcelInfoContainer,
     showControlResultsContainer: state.farmRegistry?.showControlResultsContainer,
-    controlResults: state.farmRegistry?.controlResults,
     loadedPhysicalBlocks: state.lpis?.loadedPhysicalBlocks,
 }))(_DataList);
