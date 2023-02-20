@@ -10,6 +10,7 @@ import { LpisSearch } from './LpisSearch';
 import { ParcelInfo } from './ParcelInfo';
 import { ControlResults } from './ControlResults';
 import { ControlResultsDataGridHeader } from './ControlResultsDataGridHeader';
+import { strcmp } from '../Util';
 
 const { Button, Icon } = ui;
 const { store, connect } = core;
@@ -26,18 +27,46 @@ const dataCategories = (function () {
  * 
  * @param {*} props 
  */
-const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer, showControlResultsContainer, canRenderTheDigitizationButton }) => {
+const _DataPanel = ({
+  categories, farmData, actionType, showParcelInfoContainer, showControlResultsContainer, canRenderTheDigitizationButton, controlResults
+}) => {
   const [data, setData] = useState(categories);
   const [isOpen, setOpen] = useState(true);
+  const [years, setYears] = useState([]);
+  const [selectedYear, setSelectedYear] = useState(0);
+  const [controlResultsArr, setControlResultsArr] = useState([]);
 
   useEffect(() => {
+    getYears()
+
     return () => {
       store.dispatch({
-        'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'controlResults': [],
+        'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'controlResults': [], 'showControlResultsContainer': false,
         'farmObjId': '', 'farmObjTypeId': '', 'actionType': '', 'canRenderTheDigitizationButton': false
       })
     }
   }, [])
+
+  const getYears = () => {
+    const rangeOfYears = (start, end) => Array(end - start + 1).fill(start).map((year, index) => year + index)
+    const startYear = 2021
+    const currentYear = new Date().getFullYear()
+    const years = rangeOfYears(startYear, currentYear)
+    setYears(years)
+    setSelectedYear(currentYear)
+    filterControlResults(String(currentYear))
+  }
+
+  const filterControlResults = (year) => {
+    const controlResultsArr = controlResults?.slice()
+    const filteredControlResultsArr = controlResultsArr.filter(control => strcmp(control.year, year))
+    setControlResultsArr(filteredControlResultsArr)
+  }
+
+  const onControlYearChange = (e) => {
+    setSelectedYear(Number(e.target.value))
+    filterControlResults(e.target.value)
+  }
 
   const getDataPanelWidth = () => {
     let width = ''
@@ -79,12 +108,25 @@ const _DataPanel = ({ categories, farmData, actionType, showParcelInfoContainer,
           {!showParcelInfoContainer && showControlResultsContainer && (
             <React.Fragment>
               <FarmDataGridInfoHeader />
+              <div className='d-flex flex-row justify-content-center align-items-baseline' style={{ gap: '10px' }}>
+                <label htmlFor='controlYear' style={{ fontSize: 'small' }}>Година на контрола</label>
+                <select
+                  name='controlYear'
+                  id='controlYear'
+                  value={selectedYear}
+                  className='form-control'
+                  style={{ width: '25%', fontSize: 'small' }}
+                  onChange={onControlYearChange}
+                >
+                  {years.map(year => <option key={year} value={year}>{year}</option>)}
+                </select>
+              </div>
               <ControlResultsDataGridHeader />
             </React.Fragment>
           )}
         </React.Fragment>
       }
-      {isOpen && <DataList data={data} setData={setData} />}
+      {isOpen && <DataList data={data} setData={setData} controlResults={controlResultsArr} />}
     </div>
   );
 }
@@ -104,4 +146,5 @@ export const DataPanel = connect(state => ({
   farmData: state.farmRegistry?.agriParcels, showParcelInfoContainer: state.farmRegistry?.showParcelInfoContainer,
   canRenderTheDigitizationButton: state.farmRegistry?.canRenderTheDigitizationButton,
   showControlResultsContainer: state.farmRegistry?.showControlResultsContainer,
+  controlResults: state.farmRegistry?.controlResults,
 }))(_DataPanel);
