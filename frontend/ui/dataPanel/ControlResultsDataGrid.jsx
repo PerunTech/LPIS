@@ -69,20 +69,6 @@ const toggleAssetFromMap = (id) => {
 
 export const ControlResultsDataGrid = ({ type, rows }) => {
   useEffect(() => {
-    return () => {
-      Map.eachLayer(function (layer) {
-        if (!!layer.toGeoJSON) {
-          if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'spatial_control')) {
-            Map.removeLayer(layer);
-          }
-        }
-      });
-
-      store.dispatch({ hiddenControlResultAssets: [] })
-    }
-  }, [])
-
-  useEffect(() => {
     Map.eachLayer(function (layer) {
       if (!!layer.toGeoJSON) {
         if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'spatial_control')) {

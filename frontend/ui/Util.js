@@ -208,6 +208,7 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
             // Remove everything when we first call this function
             if (fitBounds) {
                 Map.removeLayer(layer);
+                store.dispatch({ hiddenControlResultAssets: [] })
             } else {
                 // These are checks to skip the layers which have been manually loaded by the user using the agriParcel/digitization/Load.jsx component
                 // or the control result layers
