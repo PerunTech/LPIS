@@ -118,10 +118,12 @@ const _Edit = ({
     // Reset state, internal and application-wide.
     setState({
       layer: {}, data: {}, geojson: {}, permanentCropData: {}, isGuided: false,
-      showForm: false, showGuidanceButton: false, showPermanentCropForm: false, loading: false, allPermanentCrops: undefined,
+      showForm: false, showGuidanceButton: false, showPermanentCropForm: false, loading: false, allPermanentCrops: undefined
+    });
+    store.dispatch({
+      processID: '', minZoom: MAP_CONFIG.minZoom, parcelHistoryModalWasClosed: false,
       controlResultEditEnabled: false, copiedControlResultGeometry: {}
     });
-    store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom, parcelHistoryModalWasClosed: false });
     // We remove the working geometry, save process will add the result.
     layer.removeFrom && layer.removeFrom(Map);
     getFarmMapAssets()
