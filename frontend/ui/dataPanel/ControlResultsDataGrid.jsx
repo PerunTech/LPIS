@@ -113,6 +113,11 @@ const _NoData = () => (
 const _Rows = ({ rows }) => {
   const [isOpen, setOpen] = useState(true);
 
+  const copyGeometry = (e, el) => {
+    e.stopPropagation()
+    store.dispatch({ controlResultEditEnabled: true, copiedControlResultGeometry: el.layer })
+  }
+
   const zoomParcelAction = (e, el) => {
     e.stopPropagation();
     zoomParcel(el.getId());
@@ -171,6 +176,9 @@ const _Rows = ({ rows }) => {
           <Button disabled className='control-results-data-grid-column' title={areaWithinParcel}>{areaWithinParcel}</Button>
           <Button disabled className='control-results-data-grid-column'>{rowData.TOLERANCE_RATIO && Math.round(rowData.TOLERANCE_RATIO)}</Button>
           <Button disabled className='control-results-data-grid-column'>{rowData.CONTROLLED_NO_PLANTS}</Button>
+          <Button className='data-grid-util' onClick={e => copyGeometry(e, el)} title='Копирај геометрија за уредување'>
+            <Icon name='copy-geometry' size='14px' />
+          </Button>
           <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el.layer)} title='Оди до резултат'>
             <Icon name='pinpoint' size='14px' />
           </Button>
