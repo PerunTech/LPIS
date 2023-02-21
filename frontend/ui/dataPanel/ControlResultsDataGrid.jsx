@@ -67,7 +67,7 @@ const toggleAssetFromMap = (id) => {
   return visible;
 };
 
-export const ControlResultsDataGrid = ({ type, rows }) => {
+export const ControlResultsDataGrid = ({ type, rows, controlResultEditEnabled }) => {
   useEffect(() => {
     Map.eachLayer(function (layer) {
       if (!!layer.toGeoJSON) {
@@ -85,9 +85,11 @@ export const ControlResultsDataGrid = ({ type, rows }) => {
     })
   }, [rows])
 
-  return <div id={type + '-grid'} className='data-grid'>
-    {rows.length > 0 ? <_Rows rows={rows} /> : <_NoData />}
-  </div>
+  return (
+    <div id={type + '-grid'} className='data-grid'>
+      {rows.length > 0 ? <_Rows rows={rows} controlResultEditEnabled={controlResultEditEnabled} /> : <_NoData />}
+    </div>
+  )
 };
 
 ControlResultsDataGrid.propTypes = {
@@ -110,8 +112,13 @@ const _NoData = () => (
 /* -------------- */
 /*      ROWS      */
 /* ---------- --- */
-const _Rows = ({ rows }) => {
+const _Rows = ({ rows, controlResultEditEnabled }) => {
   const [isOpen, setOpen] = useState(true);
+
+  const copyGeometry = (e, el) => {
+    e.stopPropagation()
+    store.dispatch({ controlResultEditEnabled: true, copiedControlResultGeometry: el.layer })
+  }
 
   const zoomParcelAction = (e, el) => {
     e.stopPropagation();
@@ -171,6 +178,15 @@ const _Rows = ({ rows }) => {
           <Button disabled className='control-results-data-grid-column' title={areaWithinParcel}>{areaWithinParcel}</Button>
           <Button disabled className='control-results-data-grid-column'>{rowData.TOLERANCE_RATIO && Math.round(rowData.TOLERANCE_RATIO)}</Button>
           <Button disabled className='control-results-data-grid-column'>{rowData.CONTROLLED_NO_PLANTS}</Button>
+          <Button
+            disabled={controlResultEditEnabled}
+            className='data-grid-util'
+            style={{ pointerEvents: controlResultEditEnabled ? 'none' : 'unset' }}
+            onClick={e => copyGeometry(e, el)}
+            title='Копирај геометрија за уредување'
+          >
+            <Icon name='copy-geometry' size='14px' />
+          </Button>
           <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el.layer)} title='Оди до резултат'>
             <Icon name='pinpoint' size='14px' />
           </Button>

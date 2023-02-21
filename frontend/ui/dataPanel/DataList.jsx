@@ -7,7 +7,8 @@ import { InfoList } from '../toolsBar/agriParcel/digitization/Info/InfoList';
 import { strcmp } from '../Util';
 
 export const _DataList = ({
-    data, setData, actionType, showParcelInfoContainer, showControlResultsContainer, controlResults, loadedPhysicalBlocks, farmData, layers, pauseGrid
+    data, setData, actionType, showParcelInfoContainer, showControlResultsContainer,
+    controlResults, loadedPhysicalBlocks, farmData, layers, pauseGrid, controlResultEditEnabled
 }) => {
     let dataListContainerClassName = 'parcels-data-list'
     if (showParcelInfoContainer) {
@@ -41,7 +42,9 @@ export const _DataList = ({
             <FarmDataGrid type='agri_parcel' rows={farmData} actionType={actionType} />
         }
         {actionType === 'sizp' && showParcelInfoContainer && <InfoList />}
-        {actionType === 'sizp' && showControlResultsContainer && <ControlResultsDataGrid type='control_results' rows={controlResults} />}
+        {actionType === 'sizp' && showControlResultsContainer && (
+            <ControlResultsDataGrid type='control_results' rows={controlResults} controlResultEditEnabled={controlResultEditEnabled} />
+        )}
     </div>
 }
 
@@ -75,5 +78,6 @@ export const DataList = core.connect(state =>
     farmData: state.farmRegistry?.agriParcels,
     showParcelInfoContainer: state.farmRegistry?.showParcelInfoContainer,
     showControlResultsContainer: state.farmRegistry?.showControlResultsContainer,
+    controlResultEditEnabled: state.farmRegistry?.controlResultEditEnabled,
     loadedPhysicalBlocks: state.lpis?.loadedPhysicalBlocks,
 }))(_DataList);

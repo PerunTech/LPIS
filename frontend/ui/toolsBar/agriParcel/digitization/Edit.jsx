@@ -20,7 +20,8 @@ const _layerGroup = factory.layerGroup();
 
 const _Edit = ({
   processID, farmObjId, agriParcels, saveIsPending, digitizationIsActive,
-  historyEditEnabled, historyParcelToEdit, parcelHistoryModalWasClosed
+  historyEditEnabled, historyParcelToEdit, parcelHistoryModalWasClosed,
+  controlResultEditEnabled, copiedControlResultGeometry
 }) => {
   const [{ layer, geojson, data, permanentCropData, loading, isGuided, showForm, showGuidanceButton, showPermanentCropForm, allPermanentCrops }, setState] = useReducer(
     (currState, update) => ({ ...currState, ...update }),
@@ -49,6 +50,12 @@ const _Edit = ({
     }
   }, [parcelHistoryModalWasClosed])
 
+  useEffect(() => {
+    if (controlResultEditEnabled && copiedControlResultGeometry) {
+      enable()
+    }
+  }, [controlResultEditEnabled, copiedControlResultGeometry])
+
   const enable = () => {
     if (historyEditEnabled) {
       if (agriParcels.length > 0) {
@@ -59,6 +66,25 @@ const _Edit = ({
       setState({ isGuided: true, showForm: false, showPermanentCropForm: false, data: {}, permanentCropData: {}, layer: {}, allPermanentCrops: undefined })
       _editAP()
       initEdit(historyParcelToEdit)
+
+      Map.on('contextmenu', e => {
+        const p = Map.transform(e.latlng);
+        getParcelInfo(p)
+      })
+    } else if (controlResultEditEnabled) {
+      if (agriParcels.length > 0) {
+        agriParcels.forEach(ap => ap.off('mouseover mouseout click'))
+      }
+
+      store.dispatch({ processID: _id, minZoom: MIN_DIGI_SCALE });
+      setState({ isGuided: true, showForm: false, showPermanentCropForm: false, data: {}, permanentCropData: {}, layer: {}, allPermanentCrops: undefined })
+      _editAP()
+
+      // Find the agri parcel by the control result parcel object ID & set the agri parcel's geometry to the one from the copied/selected control result
+      const agriParcelToEdit = agriParcels.filter(ap => strcmp(ap.getId(), String(copiedControlResultGeometry.feature.properties.PARCEL_OBJ_ID)))[0]
+      agriParcelToEdit.feature.geometry = copiedControlResultGeometry.feature.geometry
+      initEdit(agriParcelToEdit)
+      Map.fitBounds(agriParcelToEdit.getBounds())
 
       Map.on('contextmenu', e => {
         const p = Map.transform(e.latlng);
@@ -94,7 +120,10 @@ const _Edit = ({
       layer: {}, data: {}, geojson: {}, permanentCropData: {}, isGuided: false,
       showForm: false, showGuidanceButton: false, showPermanentCropForm: false, loading: false, allPermanentCrops: undefined
     });
-    store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom, parcelHistoryModalWasClosed: false });
+    store.dispatch({
+      processID: '', minZoom: MAP_CONFIG.minZoom, parcelHistoryModalWasClosed: false,
+      controlResultEditEnabled: false, copiedControlResultGeometry: {}
+    });
     // We remove the working geometry, save process will add the result.
     layer.removeFrom && layer.removeFrom(Map);
     getFarmMapAssets()
@@ -377,4 +406,6 @@ export const Edit = core.connect(state => ({
   historyParcelToEdit: state.farmRegistry?.historyParcelToEdit,
   parcelHistoryModalWasClosed: state.farmRegistry?.parcelHistoryModalWasClosed,
   digitizationIsActive: state.farmRegistry?.digitizationIsActive,
+  controlResultEditEnabled: state.farmRegistry?.controlResultEditEnabled,
+  copiedControlResultGeometry: state.farmRegistry?.copiedControlResultGeometry,
 }))(_Edit)
