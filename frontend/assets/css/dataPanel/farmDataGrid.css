@@ -228,3 +228,7 @@
   white-space: nowrap;
   overflow: hidden;
 }
+
+.control-results-data-grid-row .control-results-data-grid-column-crop {
+  text-align: start !important;
+}

@@ -166,7 +166,7 @@ const _Rows = ({ rows }) => {
           <Button disabled className='data-grid-index' />
           <Button disabled className='control-results-data-grid-column'>{translateStatus(status)}</Button>
           <Button disabled className='control-results-data-grid-column'>{rowData.CONTROLLED_LAND_USE}</Button>
-          <Button disabled className='control-results-data-grid-column' title={cropLabel}>{cropLabel}</Button>
+          <Button disabled className='control-results-data-grid-column control-results-data-grid-column-crop' title={cropLabel}>{cropLabel}</Button>
           <Button disabled className='control-results-data-grid-column' title={area}>{area}</Button>
           <Button disabled className='control-results-data-grid-column' title={areaWithinParcel}>{areaWithinParcel}</Button>
           <Button disabled className='control-results-data-grid-column'>{rowData.TOLERANCE_RATIO && Math.round(rowData.TOLERANCE_RATIO)}</Button>
