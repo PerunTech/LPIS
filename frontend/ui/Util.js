@@ -144,7 +144,7 @@ const getControlResults = (controls) => {
         return await http.call('getControlResults', reqConfig).then(response => ({ response, objectId, year })).catch(err => console.error(err))
     })
 
-    const controlResults = []
+    const controlResults = [...store.getState()?.farmRegistry?.controlResults]
     Promise.all(promises).then(promise => {
         promise.forEach(result => {
             const { objectId, year, response } = result
