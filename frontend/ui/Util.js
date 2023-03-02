@@ -211,10 +211,13 @@ const getControls = (fic) => {
         if (res.data && Array.isArray(res.data) && res.data.length > 0) {
             const controls = []
             res.data.forEach(control => {
-                controls.push({
-                    objectId: control['CONTROL.OBJECT_ID'],
-                    year: control['CONTROL.YEAR']
-                })
+                const subjectOfControl = control['CONTROL.SUBJECT_OF_CONTROL']
+                if (!strcmp(subjectOfControl, 'LIVESTOCK')) {
+                    controls.push({
+                        objectId: control['CONTROL.OBJECT_ID'],
+                        year: control['CONTROL.YEAR']
+                    })
+                }
             })
             getControlResults(controls)
         }
