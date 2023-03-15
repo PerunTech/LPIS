@@ -184,7 +184,10 @@ const getControlResults = (controls) => {
         return await http.call('getControlResults', reqConfig).then(response => ({ response, objectId, year })).catch(err => console.error(err))
     })
 
+    const agriParcels = store.getState()?.farmRegistry?.agriParcels
     const controlResults = [...store.getState()?.farmRegistry?.controlResults]
+    const agriParcelsWithControlResultGeometries = []
+    let agriParcelsWithControlResultGeometriesGeoJSON = []
     Promise.all(promises).then(promise => {
         promise.forEach(result => {
             const { objectId, year, response } = result
@@ -195,8 +198,22 @@ const getControlResults = (controls) => {
                 layers.forEach(layer => {
                     const controlResult = { controlObjId: objectId, year, layer }
                     controlResults.push(controlResult)
+                    if (agriParcels?.length > 0) {
+                        agriParcels.forEach(ap => {
+                            if (strcmp(ap.getId(), String(layer.feature.properties.PARCEL_OBJ_ID))) {
+                                const agriParcel = factory.GeoJSON.fromLayer(ap)
+                                agriParcel.geometry = layer.feature.geometry
+                                agriParcelsWithControlResultGeometries.push(agriParcel)
+                                const geojson = factory.geoJSON(agriParcelsWithControlResultGeometries, apConfig);
+                                agriParcelsWithControlResultGeometriesGeoJSON = geojson.getLayers()
+                            }
+                        })
+                    }
+
                 })
             }
+
+            store.dispatch({ agriParcelsWithControlResultGeometries: agriParcelsWithControlResultGeometriesGeoJSON })
         })
     }).catch(err => {
         console.error(err)

@@ -21,7 +21,7 @@ const _layerGroup = factory.layerGroup();
 const _Edit = ({
   processID, farmObjId, agriParcels, saveIsPending, digitizationIsActive,
   historyEditEnabled, historyParcelToEdit, parcelHistoryModalWasClosed,
-  controlResultEditEnabled, copiedControlResultGeometry
+  controlResultEditEnabled, copiedControlResultGeometry, agriParcelsWithControlResultGeometries
 }) => {
   const [{ layer, geojson, data, permanentCropData, loading, isGuided, showForm, showGuidanceButton, showPermanentCropForm, allPermanentCrops }, setState] = useReducer(
     (currState, update) => ({ ...currState, ...update }),
@@ -81,8 +81,8 @@ const _Edit = ({
       _editAP()
 
       // Find the agri parcel by the control result parcel object ID & set the agri parcel's geometry to the one from the copied/selected control result
-      const agriParcelToEdit = agriParcels.filter(ap => strcmp(ap.getId(), String(copiedControlResultGeometry.feature.properties.PARCEL_OBJ_ID)))[0]
-      agriParcelToEdit.feature.geometry = copiedControlResultGeometry.feature.geometry
+      const agriParcelToEdit = agriParcelsWithControlResultGeometries.filter(ap => strcmp(ap.getId(), String(copiedControlResultGeometry.feature.properties.PARCEL_OBJ_ID)))[0]
+      agriParcelToEdit.addTo(Map)
       initEdit(agriParcelToEdit)
       Map.fitBounds(agriParcelToEdit.getBounds())
 
@@ -408,4 +408,5 @@ export const Edit = core.connect(state => ({
   digitizationIsActive: state.farmRegistry?.digitizationIsActive,
   controlResultEditEnabled: state.farmRegistry?.controlResultEditEnabled,
   copiedControlResultGeometry: state.farmRegistry?.copiedControlResultGeometry,
+  agriParcelsWithControlResultGeometries: state.farmRegistry?.agriParcelsWithControlResultGeometries,
 }))(_Edit)
