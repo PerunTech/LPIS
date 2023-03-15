@@ -41,8 +41,8 @@ const _DataPanel = ({
 
     return () => {
       store.dispatch({
-        'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'controlResults': [], 'showControlResultsContainer': false,
-        'farmObjId': '', 'farmObjTypeId': '', 'actionType': '', 'canRenderTheDigitizationButton': false
+        'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'controlResults': [], 'agriParcelsWithControlResultGeometries': [],
+        'showControlResultsContainer': false, 'farmObjId': '', 'farmObjTypeId': '', 'actionType': '', 'canRenderTheDigitizationButton': false
       })
     }
   }, [])
