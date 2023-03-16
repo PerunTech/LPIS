@@ -25,7 +25,7 @@ function _ProcessButton ({ id, ...props }) {
     return <ui.Button {...props}
         id={id}
         className={classNames.join(' ')}
-        disabled={String(props.processID).length > 0} >
+        disabled={!props.digitizationIsActive || String(props.processID).length > 0} >
         {props.children}
     </ui.Button>
 }
@@ -36,6 +36,6 @@ _ProcessButton.propTypes = {
     processID: PropTypes.string,
 }
 
-export const ProcessButton = core.connect(({ app }) => {
-    return { processID: app.processID };
+export const ProcessButton = core.connect((state) => {
+    return { processID: state.app.processID, digitizationIsActive: state.farmRegistry?.digitizationIsActive };
 })(_ProcessButton);
