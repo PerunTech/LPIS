@@ -169,28 +169,6 @@ public class LpisUtil extends SpatialUtil {
 		return dbo;
 	}
 
-	public static JsonObject dataToJson(MultivaluedMap<String, String> data) {
-		String formData = "";
-		JsonObject json = null;
-
-		try {
-			Gson gson = new Gson();
-			// handle empty, prep json, create data
-			for (Entry<String, List<String>> entry : data.entrySet()) {
-				if (entry.getKey() != null && !entry.getKey().isEmpty()) {
-					String key = entry.getKey();
-					formData = key;
-				}
-			}
-
-			json = gson.fromJson(formData, JsonObject.class);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-
-		return json;
-	}
-
 	public static String geometryToJson(Geometry g) {
 		GeoJsonWriter gjw = new GeoJsonWriter();
 		return gjw.write(g);

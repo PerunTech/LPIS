@@ -89,7 +89,7 @@ public class Reader {
 			// add common use to the parcel list
 			for (DbDataObject dboCommonParcel : commonUse.getItems()) {
 				DbDataObject dbp = svr.getObjectById((Long) dboCommonParcel.getVal(CC.PARCEL_ID),
-						SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
+						SvCore.getTypeIdByName(CC.AGRI_PARCEL), refDate);
 				if (dbp != null) {
 					BigDecimal allowedArea = ((BigDecimal) dbp.getVal(CC.AREA))
 							.multiply(((BigDecimal) dboCommonParcel.getVal(CC.PERCENTAGE)).divide(new BigDecimal(100)));
