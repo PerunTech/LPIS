@@ -315,7 +315,10 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
         if (validParams) {
             // Get the farm data only when we first call this function
             if (fitBounds) {
-                getFarmDigitizationState(farmObjId)
+                // Get the farm digitization state only for the appropriate action type
+                if (strcmp(actionType, 'sizp')) {
+                    getFarmDigitizationState(farmObjId)
+                }
                 getFarmData(farmObjId, actionType)
                 layerList[1]['СИЗП']['СИЗП'].addTo(Map)
             }
