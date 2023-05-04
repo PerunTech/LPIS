@@ -11,6 +11,10 @@
   max-height: calc(100vh - 430px) !important;
 }
 
+#farm-registry-map #dataList.parcels-data-list-pplan {
+  max-height: calc(100vh - 350px) !important;
+}
+
 #farm-registry-map #dataList.control-results-data-list {
   max-height: calc(100vh - 460px) !important;
 }
