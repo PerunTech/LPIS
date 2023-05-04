@@ -11,6 +11,9 @@ export const _DataList = ({
     controlResults, loadedPhysicalBlocks, farmData, layers, pauseGrid, controlResultEditEnabled
 }) => {
     let dataListContainerClassName = 'parcels-data-list'
+    if (strcmp(actionType, 'pplan')) {
+        dataListContainerClassName += ' parcels-data-list-pplan'
+    }
     if (showParcelInfoContainer) {
         dataListContainerClassName = 'parcel-info-data-list'
     } else if (showControlResultsContainer) {
