@@ -203,7 +203,7 @@ public class DbInit implements IDbInit {
 		dbf1.setIsNull(false);
 		dbf1.setLabel_code("overlap.pkid");
 		dbf1.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
-				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\"}}");
 		
 		/*
 		 * C2, [read-write, not null, form-hidden]
@@ -276,7 +276,7 @@ public class DbInit implements IDbInit {
 		dbf11.setIsNull(false);
 		dbf11.setLabel_code("overlap.farm1");
 		dbf11.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
-				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\"}}");
 		
 		/* C1N, [system, form-hidden] */
 		DbDataField dbf12 = new DbDataField();
@@ -288,7 +288,7 @@ public class DbInit implements IDbInit {
 		dbf12.setIsNull(false);
 		dbf12.setLabel_code("overlap.parcel_id1");
 		dbf12.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
-				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\"}}");
 		
 		/* C1N, [system, form-hidden] */
 		DbDataField dbf13 = new DbDataField();
@@ -301,7 +301,7 @@ public class DbInit implements IDbInit {
 		dbf13.setIsNull(false);
 		dbf13.setLabel_code("overlap.farm1");
 		dbf13.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
-				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\"}}");
 		
 		/* C1N, [system, form-hidden] */
 		DbDataField dbf14 = new DbDataField();
@@ -313,7 +313,7 @@ public class DbInit implements IDbInit {
 		dbf14.setIsNull(false);
 		dbf14.setLabel_code("overlap.parcel_id1");
 		dbf14.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
-				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\"}}");
 		
 		DbDataField[] fieldList = new DbDataField[10];
 		fieldList[0] = dbf1;
@@ -352,7 +352,7 @@ public class DbInit implements IDbInit {
 		dbf1.setIsNull(false);
 		dbf1.setLabel_code("physical_block.pkid");
 		dbf1.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
-				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\"}}");
 		
 		/*
 		 * C2, [read-write, not null, form-hidden]
@@ -495,7 +495,7 @@ public class DbInit implements IDbInit {
 		dbf1.setIsNull(false);
 		dbf1.setLabel_code("agri_parcel.pkid");
 		dbf1.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
-				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\"}}");
 		
 		/**
 		 * Geometry segment
@@ -844,7 +844,7 @@ public class DbInit implements IDbInit {
 		dbf1.setIsNull(false);
 		dbf1.setLabel_code("common_use.pkid");
 		dbf1.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
-				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\"}}");
 
 		DbDataField dbf2 = new DbDataField();
 		dbf2.setDbFieldName("PARCEL_ID");
@@ -945,7 +945,7 @@ public class DbInit implements IDbInit {
 		dbf1.setIsNull(false);
 		dbf1.setLabel_code("cad_intersections.pkid");
 		dbf1.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
-				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\"}}");
 
 		DbDataField dbf2 = new DbDataField();
 		dbf2.setDbFieldName("PARCEL_ID");
@@ -1089,7 +1089,7 @@ public class DbInit implements IDbInit {
 		dbf1.setIsNull(false);
 		dbf1.setLabel_code("permanent_crop.pkid");
 		dbf1.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false,\"sortable\":true,"
-				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\",}}");
+				+ "\"isDefaultSort\":true,\"defaultSortDirection\":\"DESC\"}}");
 
 		DbDataField dbf2 = new DbDataField();
 		dbf2.setDbFieldName("PARCEL_ID");
