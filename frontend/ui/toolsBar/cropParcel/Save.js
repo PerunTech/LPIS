@@ -14,6 +14,7 @@ export const saveCP = (data, callback) => {
 
     http.call('save_cp', {
         url: '/table/createTableRecord/{init.token}/LAND_USE_PLAN/' + id + '/null/0/null/null',
+        method: 'post',
         data: data
     }).then(response => {
         const data = response.data && response.data.data
