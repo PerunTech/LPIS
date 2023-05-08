@@ -4,7 +4,7 @@ import { metadata } from './Config';
 
 const { Button, Modal } = ui;
 
-export function Form ({formData, onSubmit, onChange, children, enumIdx, enumNames }) {
+export function Form ({ formData, onSubmit, onChange, children, enumIdx, enumNames }) {
     const getSchema = () => {
         const cfg = metadata.schema
         const cropCode = { ...cfg.properties.CROP_CODE }
@@ -12,24 +12,24 @@ export function Form ({formData, onSubmit, onChange, children, enumIdx, enumName
         cropCode.enumNames = ['Одбери...', ...enumNames];
         cropCode.default = -1// enumIdx[0] || 0
         cfg.properties.CROP_CODE = cropCode
-        
-        return { ...cfg  }
+
+        return { ...cfg }
     }
-    
+
     return <Modal id='measure-dialog'
-        show 
+        show
         backdrop={false}
         enforceFocus={false}
         container={document.getElementsByClassName('control-map')[0]} >
         <Modal.Title>
             <Button disabled className='as-label ap-modal-title' >Производна Парцела</Button>
-            { children }
+            {children}
         </Modal.Title>
-        <Modal.Body className='ap-modal-body' >
+        <Modal.Body className='ap-modal-body cp-modal-body' >
             <ui.Form
                 schema={getSchema()}
                 uiSchema={metadata.uiSchema}
-                formData={formData} 
+                formData={formData}
                 onSubmit={onSubmit}
                 onChange={onChange} >
                 <Button type='submit' size='' className='save-pb' >
@@ -46,6 +46,5 @@ Form.propTypes = {
     onChange: PropTypes.func.isRequired,
     children: PropTypes.node,
     enumIdx: PropTypes.array,
-    enumNames:PropTypes.array,
+    enumNames: PropTypes.array,
 }
-
