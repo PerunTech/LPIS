@@ -1,5 +1,6 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
+import { strcmp } from '../Util';
 
 /**
  * A Button HOC that actively listens to the registered application process and records 
@@ -21,11 +22,21 @@ function _ProcessButton ({ id, ...props }) {
     if (props.processID === id) {
         classNames.push('active')
     }
+    let isDisabled = false
+    if (strcmp(props.actionType, 'pplan')) {
+        if (String(props.processID).length > 0) {
+            isDisabled = true
+        }
+    } else {
+        if (!props.digitizationIsActive || String(props.processID).length > 0) {
+            isDisabled = true
+        }
+    }
 
     return <ui.Button {...props}
         id={id}
         className={classNames.join(' ')}
-        disabled={!props.digitizationIsActive || String(props.processID).length > 0} >
+        disabled={isDisabled} >
         {props.children}
     </ui.Button>
 }
@@ -37,5 +48,5 @@ _ProcessButton.propTypes = {
 }
 
 export const ProcessButton = core.connect((state) => {
-    return { processID: state.app.processID, digitizationIsActive: state.farmRegistry?.digitizationIsActive };
+    return { processID: state.app.processID, actionType: state.farmRegistry?.actionType, digitizationIsActive: state.farmRegistry?.digitizationIsActive };
 })(_ProcessButton);

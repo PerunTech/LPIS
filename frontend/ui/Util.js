@@ -243,7 +243,7 @@ const getControls = (fic) => {
     })
 }
 
-const getFarmData = objectId => {
+const getFarmData = (objectId, actionType) => {
     const token = perunStore.getState().security.svSession
     const url = `${window.server}/ReactElements/getRowDataByObjectId/${token}/${objectId}/FARMER`
     http.call('getFarmData', { url }).then(res => {
@@ -252,7 +252,8 @@ const getFarmData = objectId => {
             const fic = farmData['FARMER.FIC'] || ''
             const fullName = farmData['FARMER.FULL_NAME'] || ''
             store.dispatch({ fic, fullName })
-            if (fic) {
+            // Get the controls only for the appropriate action type
+            if (fic && strcmp(actionType, 'sizp')) {
                 getControls(fic)
             }
         }
@@ -314,8 +315,11 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
         if (validParams) {
             // Get the farm data only when we first call this function
             if (fitBounds) {
-                getFarmDigitizationState(farmObjId)
-                getFarmData(farmObjId)
+                // Get the farm digitization state only for the appropriate action type
+                if (strcmp(actionType, 'sizp')) {
+                    getFarmDigitizationState(farmObjId)
+                }
+                getFarmData(farmObjId, actionType)
                 layerList[1]['СИЗП']['СИЗП'].addTo(Map)
             }
             store.dispatch({ farmObjId, farmObjTypeId, actionType })
