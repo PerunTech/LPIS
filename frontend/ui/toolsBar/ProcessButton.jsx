@@ -28,8 +28,10 @@ function _ProcessButton ({ id, ...props }) {
             isDisabled = true
         }
     } else {
-        if (!props.digitizationIsActive || String(props.processID).length > 0) {
-            isDisabled = true
+        if (props.actionType) {
+            if (!props.digitizationIsActive || String(props.processID).length > 0) {
+                isDisabled = true
+            }
         }
     }
 

@@ -59,7 +59,7 @@ const _DataPanel = ({
 
   const filterControlResults = (year) => {
     const controlResultsArr = controlResults?.slice()
-    const filteredControlResultsArr = controlResultsArr.filter(control => strcmp(control.year, year))
+    const filteredControlResultsArr = controlResultsArr?.filter(control => strcmp(control.year, year))
     setControlResultsArr(filteredControlResultsArr)
   }
 
