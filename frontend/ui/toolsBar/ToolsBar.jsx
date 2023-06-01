@@ -8,7 +8,7 @@ const { store } = core;
 const { perunStore, logoutUser } = redux;
 const history = createHashHistory();
 
-const _ToolsBar = ({ actionType }) => {
+const _ToolsBar = ({ actionType, activeTab }) => {
     const handleHome = () => {
         history.push('/')
     }
@@ -26,6 +26,10 @@ const _ToolsBar = ({ actionType }) => {
         } else {
             history.goBack()
         }
+    }
+
+    const handleTabSelection = (key) => {
+        store.dispatch({ activeTab: key })
     }
 
     const getDefaultActiveKey = () => {
@@ -92,7 +96,7 @@ const _ToolsBar = ({ actionType }) => {
                 <Icon name='back' size='18px' style={{ fill: '#3a3a3a' }} />
             </Button>
         </div>
-        <Tabs defaultActiveKey={getDefaultActiveKey} >
+        <Tabs defaultActiveKey={getDefaultActiveKey} activeKey={activeTab} onSelect={(key) => handleTabSelection(key)}>
             <Tab eventKey='physical-block' title='Физички блокови' disabled={disableTab('physical-block')} >
                 <PhysicalBlock />
             </Tab>
@@ -132,7 +136,11 @@ const _ToolsBar = ({ actionType }) => {
 }
 
 _ToolsBar.propTypes = {
-    actionType: PropTypes.string
+    actionType: PropTypes.string,
+    activeTab: PropTypes.string
 }
 
-export const ToolsBar = core.connect(state => ({ actionType: state.farmRegistry?.actionType }))(_ToolsBar);
+export const ToolsBar = core.connect(state => ({
+    actionType: state.farmRegistry?.actionType,
+    activeTab: state.farmRegistry?.activeTab
+}))(_ToolsBar);
