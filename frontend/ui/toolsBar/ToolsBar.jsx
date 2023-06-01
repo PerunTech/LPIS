@@ -43,6 +43,7 @@ const _ToolsBar = ({ actionType }) => {
                 defaultActiveKey = 'physical-block'
                 break
         }
+        store.dispatch({ activeTab: defaultActiveKey })
         return defaultActiveKey
     }
 

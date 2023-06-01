@@ -28,9 +28,11 @@ function _ProcessButton ({ id, ...props }) {
             isDisabled = true
         }
     } else {
-        if (props.actionType) {
-            if (!props.digitizationIsActive || String(props.processID).length > 0) {
-                isDisabled = true
+        if (props.actionType && strcmp(props.actionType, 'sizp')) {
+            if (strcmp(props.activeTab, 'agri-parcel')) {
+                if (!props.digitizationIsActive || String(props.processID).length > 0) {
+                    isDisabled = true
+                }
             }
         }
     }
@@ -50,5 +52,10 @@ _ProcessButton.propTypes = {
 }
 
 export const ProcessButton = core.connect((state) => {
-    return { processID: state.app.processID, actionType: state.farmRegistry?.actionType, digitizationIsActive: state.farmRegistry?.digitizationIsActive };
+    return {
+        processID: state.app.processID,
+        actionType: state.farmRegistry?.actionType,
+        activeTab: state.farmRegistry?.activeTab,
+        digitizationIsActive: state.farmRegistry?.digitizationIsActive
+    };
 })(_ProcessButton);
