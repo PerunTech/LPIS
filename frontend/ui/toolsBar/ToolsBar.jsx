@@ -4,7 +4,8 @@ import { PhysicalBlock, LandscapeFeatures, AgriParcel, CropParcel, Measurement, 
 import { Digitization } from './agriParcel/digitization/Digitization';
 
 const { Tab, Tabs, Button, Icon, Selection } = ui;
-const { store, logoutUser } = redux;
+const { store } = core;
+const { perunStore, logoutUser } = redux;
 const history = createHashHistory();
 
 const _ToolsBar = ({ actionType }) => {
@@ -16,7 +17,7 @@ const _ToolsBar = ({ actionType }) => {
         if (actionType === 'pplan') {
             history.push('/main/iacs-claims/p_plan')
         } else if (actionType === 'preview') {
-            const ostcPathName = redux.store.getState()?.['otscm_iacs.ipardFarmerInfo']?.controlPath
+            const ostcPathName = perunStore.getState()?.['otscm_iacs.ipardFarmerInfo']?.controlPath
             if (ostcPathName) {
                 history.push(ostcPathName)
             } else {
@@ -117,10 +118,10 @@ const _ToolsBar = ({ actionType }) => {
         </Button>
         <Button
             onClick={() => {
-                store.dispatch(logoutUser(
+                perunStore.dispatch(logoutUser(
                     window.server
                     + '/SvSecurity/logout/'
-                    + store.getState().security.svSession));
+                    + perunStore.getState().security.svSession));
                 history.push('/');
             }}
             className='toolbar-logout'
