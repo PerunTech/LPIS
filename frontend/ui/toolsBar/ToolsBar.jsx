@@ -5,7 +5,7 @@ import { Digitization } from './agriParcel/digitization/Digitization';
 
 const { Tab, Tabs, Button, Icon, Selection } = ui;
 const { store } = core;
-const { perunStore, logoutUser } = redux;
+const { store: perunStore, logoutUser } = redux;
 const history = createHashHistory();
 
 const _ToolsBar = ({ actionType, activeTab }) => {
