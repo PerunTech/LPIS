@@ -10,7 +10,6 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 
-import com.prtech.lpis.importer.ImporterSDIByFarmExe;
 import com.prtech.svarog.SvConf;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
@@ -75,7 +74,6 @@ public class Activator implements BundleActivator {
 	 */
 	private ArrayList<ISvExecutor> initExecutors() {
 		ArrayList<ISvExecutor> list = new ArrayList<ISvExecutor>();
-		list.add(new ImporterSDIByFarmExe());
 		// add executors here.
 		return list;
 	}

@@ -19,12 +19,12 @@ import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
 import com.prtech.svarog.SvUtil;
 import com.prtech.svarog_common.DbDataObject;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.svarog_geojson.GeoJsonReader;
-import com.vividsolutions.jts.io.svarog_geojson.GeoJsonWriter;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
+import com.prtech.svarog_geojson.GeoJsonReader;
+import com.prtech.svarog_geojson.GeoJsonWriter;
 
 public class LpisUtil extends SpatialUtil {
 	private static final Logger log = LogManager.getLogger(LpisUtil.class.getName());
