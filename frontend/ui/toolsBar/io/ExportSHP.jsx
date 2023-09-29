@@ -3,6 +3,7 @@ import { core, ui } from '../../../Spatial';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { exportFile } from './Util';
+import { getLabel } from '../../Util';
 
 const { Button, Icon } = ui;
 const { store, factory } = core;
@@ -47,7 +48,7 @@ export const ExportSHP = () => {
   return (
     <Button onClick={handleClick}>
       <Icon name='shapefile' size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Извези SHP</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('export_shapefile')}</span>
     </Button>
   )
 }
