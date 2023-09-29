@@ -87,13 +87,13 @@ const _ToolsBar = ({ actionType, activeTab }) => {
             <Button
                 onClick={handleHome}
                 className='toolbar-left-button toolbar-left-home-button'
-                title='Кон почетна'>
+                title={getLabel('home')}>
                 <Icon name='home' size='18px' style={{ fill: '#3a3a3a' }} />
             </Button>
             <Button
                 onClick={handleBack}
                 className='toolbar-left-button'
-                title='Назад'>
+                title={getLabel('back')}>
                 <Icon name='back' size='18px' style={{ fill: '#3a3a3a' }} />
             </Button>
         </div>
@@ -130,7 +130,7 @@ const _ToolsBar = ({ actionType, activeTab }) => {
                 history.push('/');
             }}
             className='toolbar-logout'
-            title='Одјави се'>
+            title={getLabel('logout')}>
             <Icon name='logout' size='20px' />
         </Button>
     </div>;

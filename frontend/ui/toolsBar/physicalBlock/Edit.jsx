@@ -4,7 +4,7 @@ import { ProcessButton } from '../ProcessButton';
 import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { config as cfg } from './Config';
-import { decodeResponse } from '../../Util';
+import { decodeResponse, getLabel } from '../../Util';
 import { getPhysicalBlockInfo } from './Load';
 
 const { MIN_DIGI_SCALE, MAP_CONFIG } = config;
@@ -48,7 +48,7 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
 
   const enable = () => {
     if (!Object.keys(loadedPhysicalBlocks).length > 0) {
-      alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за уредување')
+      alertUser(true, 'info', getLabel('no_loaded_physical_blocks'), getLabel('load_physical_blocks_before_using_edit_tool'))
     } else {
       _layerGroup.addTo(Map);
       store.dispatch({ minZoom: MIN_DIGI_SCALE })
@@ -130,10 +130,10 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
   return (
     <ProcessButton
       id={_id}
-      title='Уреди блок'
+      title={getLabel('edit_physical_block')}
       onClick={enable} >
       <Icon name={_id} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Уреди блок</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('edit_physical_block')}</span>
       {processID === _id && componentToRender()}
       {loading && <Loading />}
     </ProcessButton>

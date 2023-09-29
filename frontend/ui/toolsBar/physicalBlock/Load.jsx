@@ -3,7 +3,7 @@ import { core, ui, data, tools } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { Guidance } from '../agriParcel/Guidance';
 import { config, loadPhysicalBlockMsg, setLoadedPhysicalBlockLabel } from './Config';
-import { strcmp } from '../../Util';
+import { getLabel, strcmp } from '../../Util';
 
 const { Map, store, connect, http, factory } = core;
 const { geobuf, protobuf } = data;
@@ -17,7 +17,7 @@ const _iconId = 'copy';
 const _secondaryIconId = 'erase';
 const _layerGroup = factory.layerGroup();
 
-export function getPhysicalBlockInfo (p, callback, setState) {
+export function getPhysicalBlockInfo(p, callback, setState) {
   const url = `/lpis/geometry/get/point/{init.token}/PHYSICAL_BLOCK/${p.x}/${p.y}`
   http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
     if (setState) {
@@ -45,14 +45,14 @@ export function getPhysicalBlockInfo (p, callback, setState) {
         setState({ physicalBlocksHaveBeenLoaded: true })
       }
     } else {
-      alertUser(true, 'info', 'Не е избран физички блок од мапата')
+      alertUser(true, 'info', getLabel('no_physical_block'))
       if (callback) {
         callback()
       }
     }
   }).catch(err => {
     console.error(err)
-    alertUser(true, 'error', 'Настана грешка')
+    alertUser(true, 'error', getLabel('something_went_wrong'))
     store.dispatch({ processID: '', physicalBlocksHaveBeenLoaded: false })
     if (callback) {
       callback()
@@ -82,7 +82,7 @@ const _Load = ({ processID, physicalBlocksHaveBeenLoaded: physicalBlocksHaveBeen
 
   const removeLoadedLayers = () => {
     if (!physicalBlocksHaveBeenLoaded && !physicalBlocksHaveBeenLoadedStore) {
-      alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови')
+      alertUser(true, 'info', getLabel('no_loaded_physical_blocks'))
     } else {
       Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
@@ -122,7 +122,7 @@ const _Load = ({ processID, physicalBlocksHaveBeenLoaded: physicalBlocksHaveBeen
   };
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} msg={loadPhysicalBlockMsg} title='Вчитај физички блок' />
+    return <Guidance id={_id} disable={disable} msg={loadPhysicalBlockMsg} title={getLabel('load_physical_block')} />
   }
 
   const renderComponent = () => {
@@ -139,13 +139,13 @@ const _Load = ({ processID, physicalBlocksHaveBeenLoaded: physicalBlocksHaveBeen
     <React.Fragment>
       <ProcessButton id={_id} onClick={enable}>
         <Icon name={_iconId} size='30px' />
-        <span style={{ display: "block", marginTop: '5px' }}>Вчитај</span>
+        <span style={{ display: "block", marginTop: '5px' }}>{getLabel('load_physical_block')}</span>
         {processID === _id && renderComponent()}
         {loading && <Loading />}
       </ProcessButton>
       <ProcessButton id={_secondaryId} onClick={removeLoadedLayers}>
         <Icon name={_secondaryIconId} size='30px' />
-        <span style={{ display: "block", marginTop: '5px' }}>Отстрани</span>
+        <span style={{ display: "block", marginTop: '5px' }}>{getLabel('remove_physical_block')}</span>
       </ProcessButton>
     </React.Fragment>
   );

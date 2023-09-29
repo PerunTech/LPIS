@@ -4,7 +4,7 @@ import { config } from './Config';
 import { Guidance } from '../agriParcel/Guidance';
 import { ProcessButton } from '../ProcessButton';
 import { getPhysicalBlockInfo } from './Load';
-import { decodeResponse, strcmp } from '../../Util';
+import { decodeResponse, getLabel, strcmp } from '../../Util';
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
@@ -96,7 +96,7 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
 
   const enable = () => {
     if (!Object.keys(loadedPhysicalBlocks).length > 0) {
-      alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за делење')
+      alertUser(true, 'info', getLabel('no_loaded_physical_blocks'), getLabel('load_physical_blocks_before_using_split_tool'))
       disable()
     } else {
       _setBlockEvents(loadedPhysicalBlocks)
@@ -162,7 +162,7 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
       msg = ['Алатката за поделба на физички блок е активна', '']
     }
     return (
-      <Guidance id={_id} msg={msg} title='Подели блок'
+      <Guidance id={_id} msg={msg} title={getLabel('split_physical_block')}
         finish={() => line._finishShape()}
         undo={() => line._removeLastVertex()}
         disable={disable}
@@ -171,9 +171,9 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable} title='Подели блок'>
+    <ProcessButton id={_id} onClick={enable} title={getLabel('split_physical_block')}>
       <Icon name={_id} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Подели блок</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('split_physical_block')}</span>
       {processID === _id && renderGuideForm()}
       {loading && <Loading />}
     </ProcessButton>

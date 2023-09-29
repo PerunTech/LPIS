@@ -4,7 +4,7 @@ import { config } from './Config';
 import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { ProcessButton } from '../ProcessButton';
-import { decodeResponse, strcmp } from '../../Util';
+import { decodeResponse, getLabel, strcmp } from '../../Util';
 import { getPhysicalBlockInfo } from './Load';
 
 const { Map, store, factory, http } = core;
@@ -50,7 +50,7 @@ const _Fill = ({ processID, loadedPhysicalBlocks }) => {
 
   const enable = () => {
     if (!Object.keys(loadedPhysicalBlocks).length > 0) {
-      alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за пополнување')
+      alertUser(true, 'info', getLabel('no_loaded_physical_blocks'), getLabel('load_physical_blocks_before_using_fill_tool'))
       disable()
     } else {
       // state setters
@@ -187,9 +187,9 @@ const _Fill = ({ processID, loadedPhysicalBlocks }) => {
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable} title='Пополни блок'>
+    <ProcessButton id={_id} onClick={enable} title={getLabel('fill_physical_block')}>
       <Icon name={_id} size='34px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Пополни блок</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('fill_physical_block')}</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>

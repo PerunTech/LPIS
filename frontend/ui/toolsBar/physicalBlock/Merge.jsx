@@ -2,7 +2,7 @@ import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../Spatial';
 import geomsIntersect from '@turf/boolean-intersects';
 import { config } from './Config';
-import { decodeResponse } from '../../Util';
+import { decodeResponse, getLabel } from '../../Util';
 import { Guidance } from '../agriParcel/Guidance';
 import { ProcessButton } from '../ProcessButton';
 import { getPhysicalBlockInfo } from './Load';
@@ -37,7 +37,7 @@ const _Merge = ({ processID, loadedPhysicalBlocks }) => {
 
   const enable = () => {
     if (!Object.keys(loadedPhysicalBlocks).length > 0) {
-      alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за спојување')
+      alertUser(true, 'info', getLabel('no_loaded_physical_blocks'), getLabel('load_physical_blocks_before_using_merge_tool'))
       disable()
     } else {
       Map.on('new_shape', e => {
@@ -107,9 +107,9 @@ const _Merge = ({ processID, loadedPhysicalBlocks }) => {
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable} title='Спои блок'>
+    <ProcessButton id={_id} onClick={enable} title={getLabel('merge_physical_block')}>
       <Icon name={_id} size='30px' style={{ marginTop: '2px' }} />
-      <span style={{ display: 'block', marginTop: '5px' }}>Спои блок</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('merge_physical_block')}</span>
       {loading && <Loading />}
       {processID === _id
         && <Guidance id={_id}
@@ -117,7 +117,7 @@ const _Merge = ({ processID, loadedPhysicalBlocks }) => {
           undo={() => line._removeLastVertex()}
           disable={disable}
           msg={['Алатката за спојување физички блокови е активна', '']}
-          title='Спои блок' />}
+          title={getLabel('merge_physical_block')} />}
     </ProcessButton>
   );
 };

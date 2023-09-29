@@ -4,7 +4,7 @@ import { ProcessButton } from '../ProcessButton';
 import { Guidance } from '../agriParcel/Guidance';
 import { Form } from './Form';
 import { config } from './Config';
-import { decodeResponse } from '../../Util';
+import { decodeResponse, getLabel } from '../../Util';
 import { getPhysicalBlockInfo } from './Load';
 
 const { Map, store, connect, factory, http } = core;
@@ -114,9 +114,11 @@ const _CreateBlock = ({ processID }) => {
   return (
     <ProcessButton
       id={_id}
-      onClick={enable} >
+      onClick={enable}
+      title={getLabel('draw_physical_block')}
+    >
       <Icon name={_id} size='34px' />
-      <span style={{ display: 'block', marginTop: '1px' }}>Нацртај блок</span>
+      <span style={{ display: 'block', marginTop: '1px' }}>{getLabel('draw_physical_block')}</span>
       {processID === _id && componentToRender()}
       {loading && <Loading />}
     </ProcessButton>

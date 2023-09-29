@@ -2,7 +2,7 @@ import { React, elements } from 'perun-core';
 import { core, ui } from '../../../Spatial';
 import { Guidance } from '../agriParcel/Guidance';
 import { ProcessButton } from '../ProcessButton';
-import { strcmp } from '../../Util'
+import { getLabel, strcmp } from '../../Util'
 
 const { Map, store, http } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
@@ -50,7 +50,7 @@ const _Delete = ({ processID, loadedPhysicalBlocks }) => {
 
   const enable = () => {
     if (!Object.keys(loadedPhysicalBlocks).length > 0) {
-      alertUser(true, 'info', 'Не се пронајдени вчитани физички блокови', 'Вчитајте физички блокови пред да ја користите алатката за бришење')
+      alertUser(true, 'info', getLabel('no_loaded_physical_blocks'), getLabel('load_physical_blocks_before_using_delete_tool'))
     } else {
       store.dispatch({ processID: _id });
       setState({ isGuided: true })
@@ -65,12 +65,12 @@ const _Delete = ({ processID, loadedPhysicalBlocks }) => {
     Object.values(loadedPhysicalBlocks).forEach(layer => layer.off('click'))
   }
 
-  return <ProcessButton id={_id} onClick={() => enable()} title='Избриши блок'>
+  return <ProcessButton id={_id} onClick={() => enable()} title={getLabel('delete_physical_block')}>
     <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Избриши блок</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('delete_physical_block')}</span>
     {processID === _id
       && (isGuided
-        ? <Guidance id={_id} disable={disable} msg={['Одберете физички блок на мапата кој ќе се избрише од базата на податоци.', '']} title='Избриши блок' />
+        ? <Guidance id={_id} disable={disable} msg={['Одберете физички блок на мапата кој ќе се избрише од базата на податоци.', '']} title={getLabel('delete_physical_block')} />
         : <Modal id='measure-dialog'
           className='delete-control-dialog'
           show
@@ -78,14 +78,14 @@ const _Delete = ({ processID, loadedPhysicalBlocks }) => {
           enforceFocus={false}
           container={document.getElementsByClassName('control-map')[0]} >
           <Modal.Title>
-            <Button disabled className='as-label ap-modal-title' >Избриши блок</Button>
+            <Button disabled className='as-label ap-modal-title' >{getLabel('delete_physical_block')}</Button>
             <DrawActions cancel={disable} />
           </Modal.Title>
           <Modal.Body className='ap-modal-body' >
             <div id={_id} >{'Го избравте физичкиот блок со СИЗП број '
               + layer.feature.properties.OLD_ID + ' и површина ' + Math.round(layer.getMeasurement()) + ' m². '
               + 'Дали сте сигурни дека сакате да го избришете?'}</div>
-            <Button onClick={() => { deleteLayer() }} size='' className='cancel' > Избриши</Button>
+            <Button onClick={() => { deleteLayer() }} size='' className='cancel' > {getLabel('delete')}</Button>
           </Modal.Body>
         </Modal>)}
   </ProcessButton>;
