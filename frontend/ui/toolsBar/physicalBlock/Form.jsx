@@ -1,17 +1,18 @@
 import { React, PropTypes } from 'perun-core';
 import { ui } from '../../../Spatial';
 import { metadata } from './Config';
+import { getLabel } from '../../Util';
 
 const { Button, Modal } = ui;
 
-export function Form ({ onSubmit, onChange, data = {}, children }) {
+export function Form({ onSubmit, onChange, data = {}, children }) {
     return <Modal show
         id='measure-dialog'
         backdrop={false}
         enforceFocus={false}
         container={document.getElementsByClassName('control-map')[0]} >
         <Modal.Title>
-            <Button disabled className='as-label pb-modal-title' >Физички Блок</Button>
+            <Button disabled className='as-label pb-modal-title' >{getLabel('physical_block')}</Button>
             {children}
         </Modal.Title>
         <Modal.Body className='pb-modal-body' >
@@ -22,7 +23,7 @@ export function Form ({ onSubmit, onChange, data = {}, children }) {
                 onSubmit={onSubmit}
                 onChange={onChange}>
                 <Button type='submit' size='' className='save-pb' >
-                    Зачувај
+                    {getLabel('save')}
                 </Button>
             </ui.Form>
         </Modal.Body>

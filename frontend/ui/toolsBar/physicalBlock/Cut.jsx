@@ -126,7 +126,7 @@ const _Cut = ({ processID, loadedPhysicalBlocks }) => {
       }).catch(error => {
         const { response } = error
         const errorMsg = decodeResponse(response, 'physical_block')
-        alertUser(true, 'error', 'Грешка при отсекување физички блок', errorMsg);
+        alertUser(true, 'error', `${getLabel('cut_physical_block_error')}`, errorMsg);
         e.layer.removeFrom(Map)
         disable()
       })
@@ -143,11 +143,11 @@ const _Cut = ({ processID, loadedPhysicalBlocks }) => {
     })
     http.call('save_pb', { method: 'post', url, data }).then(() => {
       disable(true);
-      alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
+      alertUser(true, 'success', `${getLabel('successfully_saved')}`, `${getLabel('successfully_saved_physical_block')}`)
     }).catch(() => {
       layer.removeFrom(Map);
       disable();
-      alertUser(true, 'error', 'Грешка при зачувување', 'Физичкиот блок не е запишан во базата на податоци.')
+      alertUser(true, 'error', `${getLabel('save_failed')}`)
     })
   }
 
@@ -156,9 +156,9 @@ const _Cut = ({ processID, loadedPhysicalBlocks }) => {
   }
 
   const renderGuideForm = () => {
-    let msg = ['Изберете физички блок кој ќе биде предмет на отсекување', '']
+    let msg = [`${getLabel('choose_physical_block_to_cut')}`, '']
     if (Object.keys(selectedLayer).length > 0) {
-      msg = ['Алатката за отсекување физички блок е активна', '']
+      msg = [`${getLabel('cut_physical_block_msg')}`, '']
     }
     return (
       <Guidance id={_id}

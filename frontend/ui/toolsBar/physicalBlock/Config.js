@@ -1,4 +1,5 @@
 import { core } from '../../../Spatial';
+import { getLabel } from '../../Util';
 const { Map } = core;
 
 /** @constant */
@@ -9,16 +10,16 @@ export const metadata = {
         properties: {
             LAND_COVER_CODE: {
                 enum: ['200', '210', '300', '310', '320', '400', '410', '420', '422', '423'],
-                enumNames: ['Нива (обработливо земјиште)', 'Стакленик/Пластеник', 'Постојан тревник', 'Ливада', 'Пасиште',
-                    'Долгогодишни култури (траен насад)', 'Лозов насад', 'Овоштарник', 'Овошен насад', 'Јаткасто овошје'],
+                enumNames: [`${getLabel('farmland')}`, `${getLabel('greenhouse')}`, `${getLabel('lawn')}`, `${getLabel('meadow')}`, `${getLabel('pasture')}`,
+                `${getLabel('permanent_cropland')}`, `${getLabel('vineyard')}`, `${getLabel('orchard')}`, `${getLabel('fruit_garden')}`, `${getLabel('nuts')}`],
                 maxLength: 50,
-                title: 'Употреба на земјиште',
+                title: `${getLabel('land_use')}`,
                 type: 'string',
                 default: '200'
             },
             NOTE: {
                 maxLength: 2000,
-                title: 'Забелешка',
+                title: `${getLabel('note')}`,
                 type: 'string',
                 default: ''
             }
@@ -86,11 +87,11 @@ export const config = {
 };
 
 export const physicalBlockInfoMsg = [
-    'Одберете физички блок на мапата за кој сакате да добиете повеќе информации.'
+    `${getLabel('choose_physical_block_to_get_info')}`
 ]
 
 export const loadPhysicalBlockMsg = [
-    'Одберете физички блок на мапата кој сакате да биде вчитан.'
+    `${getLabel('choose_physical_block_to_load')}`
 ]
 
 export const setLoadedPhysicalBlockLabel = loadedPhysicalBlock => {

@@ -44,7 +44,7 @@ export const bufferToString = buffer => {
 export const decodeResponse = (response, objectName) => {
     let errorMsg = 'Земјоделската парцела не е запишана во базата на податоци.'
     if (strcmp(objectName, 'physical_block')) {
-        errorMsg = 'Физичкиот блок не е запишан во базата на податоци.'
+        errorMsg = `${getLabel('physical_block_not_saved')}`
     } else if (strcmp(objectName, 'landscape_features')) {
         errorMsg = 'Пејсажните обележја не се запишани во базата на податоци.'
     }
@@ -82,10 +82,10 @@ export const translateBooleanValue = (value) => {
     let translatedValue = '';
     switch (true) {
         case value:
-            translatedValue = 'Да';
+            translatedValue = `${getLabel('yes')}`;
             break;
         default:
-            translatedValue = 'Не';
+            translatedValue = `${getLabel('no')}`;
             break;
     }
 

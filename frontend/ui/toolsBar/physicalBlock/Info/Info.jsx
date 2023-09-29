@@ -4,6 +4,7 @@ import { physicalBlockInfoMsg } from '../Config';
 import { ProcessButton } from '../../ProcessButton';
 import { Guidance } from '../../agriParcel/Guidance';
 import { InfoList } from './InfoList';
+import { getLabel } from '../../../Util';
 
 const { Map, store, http } = core;
 const { Icon, Modal, Button, DrawActions } = ui;
@@ -28,12 +29,12 @@ const _Info = ({ processID }) => {
         if (response.data && Object.keys(response.data).length > 0) {
           setState({ isGuided: false, loading: false, pbInfo: response.data, showModal: true })
         } else {
-          alertUser(true, 'info', 'Нема податоци за избраниот физички блок или не е избран физички блок од мапата');
+          alertUser(true, 'info', getLabel('no_data_for_chosen_physical_block'));
           disable()
         }
       }).catch((err) => {
         console.log(err);
-        alertUser(true, 'info', 'Нема податоци за избраниот физички блок или не е избран физички блок од мапата');
+        alertUser(true, 'info', getLabel('no_data_for_chosen_physical_block'));
         disable();
       });
 
@@ -49,7 +50,7 @@ const _Info = ({ processID }) => {
   };
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} msg={physicalBlockInfoMsg} title='Информации за физички блок' />
+    return <Guidance id={_id} disable={disable} msg={physicalBlockInfoMsg} title={getLabel('physical_block_info')} />
   }
 
   const renderModal = () => {
@@ -64,7 +65,7 @@ const _Info = ({ processID }) => {
 
     return <Modal {...modalProps}>
       <Modal.Title>
-        <Button disabled className='as-label ap-modal-title' >Информации за физички блок</Button>
+        <Button disabled className='as-label ap-modal-title' >{getLabel('physical_block_info')}</Button>
         <DrawActions cancel={disable} />
       </Modal.Title>
       <Modal.Body className='parcel-info-modal-body'>
@@ -86,9 +87,9 @@ const _Info = ({ processID }) => {
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable} title='Информации за физички блок'>
+    <ProcessButton id={_id} onClick={enable} title={getLabel('physical_block_info')}>
       <Icon name={_id} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Информации</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('info')}</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>

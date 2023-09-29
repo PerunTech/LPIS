@@ -42,9 +42,9 @@ const _Merge = ({ processID, loadedPhysicalBlocks }) => {
     } else {
       Map.on('new_shape', e => {
         if (e && e.layer) {
-          const title = 'Спојување на физички блокови'
-          const msg = 'Дали сакате да ги споите избраните физички блокови во еден?'
-          alertUser(true, 'warning', title, msg, () => mergePB(e.layer), () => cleanup(e.layer), true, 'Да', 'Не')
+          const title = `${getLabel('merging_physical_blocks')}`
+          const msg = `${getLabel('merging_physical_blocks_confirmation')}`
+          alertUser(true, 'warning', title, msg, () => mergePB(e.layer), () => cleanup(e.layer), true, `${getLabel('yes')}`, `${getLabel('no')}`)
         } else {
           cleanup();
         }
@@ -69,15 +69,15 @@ const _Merge = ({ processID, loadedPhysicalBlocks }) => {
       geojson.getLayers().forEach(layer => {
         point = Map.transform(layer.getBounds().getCenter());
       })
-      const msg = numOfNewPhysicalBlocks === 1 ? 'Добиен е еден нов физички блок.' : `Добиени се ${numOfNewPhysicalBlocks} нови физички блокови.`
-      alertUser(true, 'success', 'Успешно споени физички блок', msg)
+      const msg = numOfNewPhysicalBlocks === 1 ? `${getLabel('merge_physical_block_msg_one')}` : `${getLabel('merge_physical_block_msg_two')} ${numOfNewPhysicalBlocks} ${getLabel('merge_physical_block_msg_three')}.`
+      alertUser(true, 'success', `${getLabel('merge_physical_block_success')}`, msg)
       cleanup(lineLayer, true, point);
     }).catch(error => {
       console.error(error)
       setState({ loading: false })
       const { response } = error
       const errorMsg = decodeResponse(response, 'physical_block')
-      alertUser(true, 'error', 'Грешка при спојување на физички блок', errorMsg);
+      alertUser(true, 'error', `${getLabel('merge_physical_block_error')}`, errorMsg);
       cleanup(lineLayer);
     })
   }
@@ -116,7 +116,7 @@ const _Merge = ({ processID, loadedPhysicalBlocks }) => {
           finish={() => line._finishShape()}
           undo={() => line._removeLastVertex()}
           disable={disable}
-          msg={['Алатката за спојување физички блокови е активна', '']}
+          msg={[`${getLabel('merge_physical_block_msg')}`, '']}
           title={getLabel('merge_physical_block')} />}
     </ProcessButton>
   );

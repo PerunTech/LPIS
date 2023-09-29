@@ -19,7 +19,7 @@ const _PhysicalBlock = ({ actionType }) =>
                 <CreateBlock />
                 <EditBlock />
                 <Divider />
-                <AdvanceDigitization name='физички блок' />
+                <AdvanceDigitization name='physical block' />
                 <Divider />
                 <Load />
                 <Divider />

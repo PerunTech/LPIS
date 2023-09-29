@@ -34,7 +34,7 @@ const _Delete = ({ processID, loadedPhysicalBlocks }) => {
       })
     }).then(() => {
       layer.removeFrom(Map);
-      alertUser(true, 'success', 'Успешно бришење', 'Блокот е избришан од базата на податоци.');
+      alertUser(true, 'success', getLabel('delete_physical_block_success'));
       const newLoadedPhysicalBlocks = Object.values(loadedPhysicalBlocks).filter(loadedLayer => !strcmp(layer.feature.id, loadedLayer.feature.id))
       if (Array.isArray(newLoadedPhysicalBlocks) && newLoadedPhysicalBlocks.length > 0) {
         store.dispatch({ loadedPhysicalBlocks: newLoadedPhysicalBlocks })
@@ -43,7 +43,7 @@ const _Delete = ({ processID, loadedPhysicalBlocks }) => {
       }
       disable()
     }).catch(() => {
-      alertUser(true, 'error', 'Грешка при бришење', 'Блокот не е избришан од базата на податоци.');
+      alertUser(true, 'error', getLabel('delete_physical_block_error'));
       disable()
     })
   }
@@ -70,7 +70,7 @@ const _Delete = ({ processID, loadedPhysicalBlocks }) => {
     <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('delete_physical_block')}</span>
     {processID === _id
       && (isGuided
-        ? <Guidance id={_id} disable={disable} msg={['Одберете физички блок на мапата кој ќе се избрише од базата на податоци.', '']} title={getLabel('delete_physical_block')} />
+        ? <Guidance id={_id} disable={disable} msg={[`${getLabel('delete_physical_block_msg')}`, '']} title={getLabel('delete_physical_block')} />
         : <Modal id='measure-dialog'
           className='delete-control-dialog'
           show
@@ -82,9 +82,9 @@ const _Delete = ({ processID, loadedPhysicalBlocks }) => {
             <DrawActions cancel={disable} />
           </Modal.Title>
           <Modal.Body className='ap-modal-body' >
-            <div id={_id} >{'Го избравте физичкиот блок со СИЗП број '
-              + layer.feature.properties.OLD_ID + ' и површина ' + Math.round(layer.getMeasurement()) + ' m². '
-              + 'Дали сте сигурни дека сакате да го избришете?'}</div>
+            <div id={_id} >{`${getLabel('delete_physical_block_msg_one')}`
+              + layer.feature.properties.OLD_ID + ` ${getLabel('delete_physical_block_msg_two')} ` + Math.round(layer.getMeasurement()) + ' m². '
+              + `${getLabel('delete_physical_block_confirmation')}`}</div>
             <Button onClick={() => { deleteLayer() }} size='' className='cancel' > {getLabel('delete')}</Button>
           </Modal.Body>
         </Modal>)}

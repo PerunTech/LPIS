@@ -90,20 +90,20 @@ const _EditBlock = ({ processID, loadedPhysicalBlocks }) => {
     })
     http.call('save_pb', { data, url, method: 'post', responseType: 'arraybuffer' }).then(() => {
       disable();
-      alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
+      alertUser(true, 'success', `${getLabel('successfully_saved')}`, `${getLabel('successfully_saved_physical_block')}`)
     }).catch((error) => {
       const { response } = error
       const errorMsg = decodeResponse(response, 'physical_block')
       disable();
-      alertUser(true, 'error', 'Грешка при зачувување', errorMsg);
+      alertUser(true, 'error', `${getLabel('save_failed')}`, errorMsg);
     })
   }
 
   const renderGuideForm = () => {
-    const msg = ['Одберете физички блок на мапата кој сакате да го уредите.', '']
+    const msg = [`${getLabel('choose_physical_block_to_edit')}`, '']
 
     return (
-      <Guidance id={_id} disable={() => disable(false)} msg={msg} title='Уреди физички блок' />
+      <Guidance id={_id} disable={() => disable(false)} msg={msg} title={getLabel('edit_physical_block')} />
     )
   }
 

@@ -71,8 +71,8 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
   const _enableLine = (point, selectedLayer) => {
     Map.on('new_shape', e => {
       if (e && e.layer) {
-        const title = 'Дали сакате да го поделите физичкиот блок?'
-        alertUser(true, 'warning', title, '', () => splitPB(e.layer, point, selectedLayer), () => cleanup(e.layer), true, 'Да', 'Не')
+        const title = `${getLabel('spltting_physical_blocks_confirmation')}`
+        alertUser(true, 'warning', title, '', () => splitPB(e.layer, point, selectedLayer), () => cleanup(e.layer), true, `${getLabel('yes')}`, `${getLabel('no')}`)
       } else {
         cleanup(e.layer);
       }
@@ -131,14 +131,14 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
         })
       })
       const numOfPhysicalBlocks = geojson.getLayers().length
-      const msg = numOfPhysicalBlocks === 1 ? 'Добиен е еден нов физички блок.' : `Добиени се ${numOfPhysicalBlocks} нови физички блокови.`
-      alertUser(true, 'success', 'Успешно поделен физички блок', msg)
+      const msg = numOfPhysicalBlocks === 1 ? `${getLabel('split_physical_block_msg_one')}` : `${getLabel('split_physical_block_msg_two')} ${numOfPhysicalBlocks} ${getLabel('split_physical_block_msg_three')}.`
+      alertUser(true, 'success', `${getLabel('split_physical_block_success')}`, msg)
       cleanup(lineLayer);
     }).catch(error => {
       setState({ loading: false })
       const { response } = error
       const errorMsg = decodeResponse(response, 'physical_block')
-      alertUser(true, 'error', 'Грешка при поделба на физички блок', errorMsg)
+      alertUser(true, 'error', `${getLabel('split_physical_block_error')}`, errorMsg)
       cleanup(lineLayer);
     })
   }
@@ -157,9 +157,9 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
   }
 
   const renderGuideForm = () => {
-    let msg = ['Изберете физички блок кој ќе биде предмет на поделба', '']
+    let msg = [`${getLabel('choose_physical_block_to_split')}`, '']
     if (Object.keys(selectedLayer).length > 0) {
-      msg = ['Алатката за поделба на физички блок е активна', '']
+      msg = [`${getLabel('split_physical_block_msg')}`, '']
     }
     return (
       <Guidance id={_id} msg={msg} title={getLabel('split_physical_block')}

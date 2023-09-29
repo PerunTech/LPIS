@@ -64,14 +64,14 @@ const _CreateBlock = ({ processID }) => {
     })
     http.call('save_pb', { data, url, method: 'post', responseType: 'arraybuffer' }).then(() => {
       disable();
-      alertUser(true, 'success', 'Успешно зачувување', 'Физичкиот блок е запишан во базата на податоци.')
+      alertUser(true, 'success', `${getLabel('successfully_saved')}`, `${getLabel('successfully_saved_physical_block')}`)
       getPhysicalBlockInfo(point)
     }).catch((error) => {
       const { response } = error
       const errorMsg = decodeResponse(response, 'physical_block')
       layer.removeFrom(Map);
       disable();
-      alertUser(true, 'error', 'Грешка при зачувување', errorMsg)
+      alertUser(true, 'error', `${getLabel('save_failed')}`, errorMsg)
     })
   }
 
@@ -79,8 +79,8 @@ const _CreateBlock = ({ processID }) => {
     return (
       <Guidance
         id={_id}
-        title='Нацртај блок'
-        msg={['Алатката за цртање физички блок е активна', '']}
+        title={getLabel('draw_physical_block')}
+        msg={[getLabel('draw_physical_block_msg'), '']}
         finish={() => polygon._finishShape()}
         undo={() => polygon._removeLastVertex()}
         disable={disable}

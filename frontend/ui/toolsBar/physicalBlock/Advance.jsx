@@ -5,7 +5,7 @@ import { Fill } from './Fill';
 import { Split } from './Split';
 import { Merge } from './Merge';
 
-const { ButtonGroup, Button, Icon } = ui;
+const { ButtonGroup } = ui;
 
 export const AdvanceDigitization = () =>
   <ButtonGroup id='advance-digitization' >
