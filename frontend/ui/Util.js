@@ -14,6 +14,10 @@ const { store: perunStore } = redux;
 const { factory, store, http, Map } = core;
 const { geobuf, protobuf } = data;
 
+export function getLabel(labelCode) {
+    return perunStore.getState().intl.messages[`perun.lpis.${labelCode}`] || `perun.lpis.${labelCode}`
+}
+
 /**
  * Check if two values are strings & have the same value (i.e. compare them)
  * 
@@ -23,7 +27,7 @@ const { geobuf, protobuf } = data;
  * @param {any} firstValue The first value to be checked & compared
  * @param {any} secondValue The second value lpisto be checked & compared
  */
-export function strcmp (firstValue, secondValue) {
+export function strcmp(firstValue, secondValue) {
     // First, check if both of the values are strings
     if ((typeof firstValue === 'string' && typeof secondValue === 'string') || (firstValue instanceof String && secondValue instanceof String)) {
         // If both of the values are strings, compare them & return the result as a boolean value
@@ -59,7 +63,7 @@ export const decodeResponse = (response, objectName) => {
     return errorMsg
 }
 
-export function isJSON (value) {
+export function isJSON(value) {
     value = !strcmp(typeof value, 'string') ? JSON.stringify(value) : value
     try {
         value = JSON.parse(value);
@@ -104,7 +108,7 @@ export const translateLandCoverCode = (code) => {
     return translatedValue
 };
 
-export function readCookie (name) {
+export function readCookie(name) {
     var nameEQ = name + "=";
     // String("farmerObj=20348156; token=92b39ce8-e7e2-4b12-bf6b-bbd31dd04b91; _ga=GA1.1.536760576.1612264197; _gid=GA1.1.1645977351.1615282019; _gat=1"
     var ca = window.parent.document.cookie.split(';');
@@ -123,7 +127,7 @@ export function readCookie (name) {
  * @param  {String} fallbackFileName A fallback name for the file, in case it doesn't exist in the response headers
  * @param  {Function} callback An optional callback function
  */
-export function downloadFile (response, fallbackFileName, callback) {
+export function downloadFile(response, fallbackFileName, callback) {
     let finalFileName = fallbackFileName || 'file'
     const resHeaders = response.headers
     // Check if the Content-Disposition header exists
@@ -157,11 +161,11 @@ export function downloadFile (response, fallbackFileName, callback) {
     }
 }
 
-function handleAgriParcelClick (layer) {
+function handleAgriParcelClick(layer) {
     store.dispatch({ selectedParcelId: layer.feature.id, selectedCropParcelId: '' })
 }
 
-function handleCropParcelClick (layer) {
+function handleCropParcelClick(layer) {
     store.dispatch({ selectedCropParcelId: layer.feature.id, selectedParcelId: String(layer.feature?.properties?.AGRI_PARCEL_ID) })
 }
 

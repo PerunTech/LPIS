@@ -2,6 +2,7 @@ import { React, PropTypes, redux, createHashHistory } from 'perun-core';
 import { ui, core } from '../../Spatial';
 import { PhysicalBlock, LandscapeFeatures, AgriParcel, CropParcel, Measurement, IO } from '..';
 import { Digitization } from './agriParcel/digitization/Digitization';
+import { getLabel } from '../Util';
 
 const { Tab, Tabs, Button, Icon, Selection } = ui;
 const { store } = core;
@@ -97,21 +98,21 @@ const _ToolsBar = ({ actionType, activeTab }) => {
             </Button>
         </div>
         <Tabs defaultActiveKey={getDefaultActiveKey} activeKey={activeTab} onSelect={(key) => handleTabSelection(key)}>
-            <Tab eventKey='physical-block' title='Физички блокови' disabled={disableTab('physical-block')} >
+            <Tab eventKey='physical-block' title={getLabel('physical_blocks')} disabled={disableTab('physical-block')} >
                 <PhysicalBlock />
             </Tab>
-            <Tab eventKey='landscape-features' title='Пејсажни обележја' disabled={disableTab('landscape-features')} >
+            <Tab eventKey='landscape-features' title={getLabel('landscape_features')} disabled={disableTab('landscape-features')} >
                 <LandscapeFeatures />
             </Tab>
-            <Tab eventKey='agri-parcel' title='Земјоделски Парцели' disabled={disableTab('agri-parcel')} >
+            <Tab eventKey='agri-parcel' title={getLabel('agri_parcels')} disabled={disableTab('agri-parcel')} >
                 {actionType === 'sizp' ? <Digitization /> : <AgriParcel />}
             </Tab>
-            <Tab eventKey='crop-parcel' title='Производни парцели' disabled={disableTab('crop-parcel')} >
+            <Tab eventKey='crop-parcel' title={getLabel('crop_parcels')} disabled={disableTab('crop-parcel')} >
                 <CropParcel />
             </Tab>
-            <Tab eventKey='selection' title='Селекција' ><Selection /></Tab>
-            <Tab eventKey='measurement' title='Мерења' ><Measurement /></Tab>
-            <Tab eventKey='io' title='Увезување / Извезување' ><IO /></Tab>
+            <Tab eventKey='selection' title={getLabel('selection')} ><Selection /></Tab>
+            <Tab eventKey='measurement' title={getLabel('measurement')} ><Measurement /></Tab>
+            <Tab eventKey='io' title={getLabel('import_export')} ><IO /></Tab>
         </Tabs>
         <Button disabled className='right-corner-filler' />
         <Button
