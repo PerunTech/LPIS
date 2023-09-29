@@ -1,5 +1,6 @@
 import { React } from 'perun-core';
 import { data, ui, core } from '../../Spatial';
+import { getLabel } from '../Util';
 
 const { useState, useEffect } = React;
 const { ButtonGroup, Button, Icon, Divider } = ui;
@@ -16,7 +17,7 @@ export const LayerPanel = () => {
             ? <></>
             : <ButtonGroup style={{ height: isOpen ? '50px' : '60px' }}>
                 {isOpen && <>
-                    <Button disabled className='as-label layer-panel-title' >Листа на слоеви</Button>
+                    <Button disabled className='as-label layer-panel-title' >{getLabel('layer_list')}</Button>
                     <Divider style={{ margin: '10px 10px 10px 10px' }} />
                 </>}
                 <Button id='layer-panel-toggle' disabled style={!isOpen ? { width: '60px', height: '60px' } : {}} >
