@@ -1,13 +1,13 @@
 import { React, PropTypes } from 'perun-core';
 import { ui } from '../../../Spatial';
 import { metadataMain, metadataAux, metadataAdmin } from './Config';
-import { strcmp } from '../../Util'
+import { getLabel, strcmp } from '../../Util'
 
 const { useState } = React;
 const { Form, Button } = ui;
 
 /* Main Metadata */
-export function Main ({ formData, onChange, next, digitizationIsActive }) {
+export function Main({ formData, onChange, next, digitizationIsActive }) {
     // This state key is for re-rendering the form
     const [state, toggleState] = useState(false)
     const data = formData
@@ -30,7 +30,7 @@ export function Main ({ formData, onChange, next, digitizationIsActive }) {
         className='rjsf ap-form-main'
         disabled={!digitizationIsActive} >
         <div id='formActions' >
-            <Button type='submit' size='' className='next' > Следно </Button>
+            <Button type='submit' size='' className='next' > {getLabel('next')} </Button>
         </div>
     </Form>;
 }
@@ -43,7 +43,7 @@ Main.propTypes = {
 };
 
 /* Aux Metadata */
-export function Aux ({ formData, onChange, prev, next, digitizationIsActive }) {
+export function Aux({ formData, onChange, prev, next, digitizationIsActive }) {
     const data = formData
     const uiSchema = metadataAux.uiSchema
     if (data && data.LAND_COVER_CODE && !strcmp(data.LAND_COVER_CODE, '320')) {
@@ -61,8 +61,8 @@ export function Aux ({ formData, onChange, prev, next, digitizationIsActive }) {
         className='rjsf ap-form-aux'
         disabled={!digitizationIsActive} >
         <div id='formActions' >
-            <Button type='button' size='' className='prev' onClick={prev} > Назад </Button>
-            <Button type='submit' size='' className='next' > Следно </Button>
+            <Button type='button' size='' className='prev' onClick={prev} > {getLabel('previous')} </Button>
+            <Button type='submit' size='' className='next' > {getLabel('next')} </Button>
         </div>
     </Form>;
 }
@@ -76,7 +76,7 @@ Aux.propTypes = {
 };
 
 /* Admin Metadata */
-export function Admin ({ formData, onChange, prev, onSubmit, digitizationIsActive }) {
+export function Admin({ formData, onChange, prev, onSubmit, digitizationIsActive }) {
     return <Form schema={metadataAdmin.schema}
         uiSchema={metadataAdmin.uiSchema}
         formData={formData}
@@ -85,8 +85,8 @@ export function Admin ({ formData, onChange, prev, onSubmit, digitizationIsActiv
         className='rjsf ap-form-admin'
         disabled={!digitizationIsActive} >
         <div id='formActions' >
-            <Button type='button' size='' className='prev' onClick={prev} > Назад </Button>
-            {digitizationIsActive && <Button type='submit' size='' className='next' > Зачувај </Button>}
+            <Button type='button' size='' className='prev' onClick={prev} > {getLabel('previous')} </Button>
+            {digitizationIsActive && <Button type='submit' size='' className='next' > {getLabel('save')} </Button>}
         </div>
     </Form>;
 }
