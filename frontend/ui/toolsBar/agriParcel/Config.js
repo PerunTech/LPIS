@@ -1,3 +1,5 @@
+import { getLabel } from '../../Util';
+
 /** @constant */
 export const restAP = {
     check_ap: {
@@ -61,50 +63,54 @@ export const saveAPFormSchema = (pbCheck, apCheck, neighbourCheck, intersectedNe
             properties: {
                 ...pbCheck ? {
                     physical_block_check: {
-                        title: 'Земјоделската парцела не е комплетно опфатена од еден и единствен физички блок',
+                        title: `${getLabel('physical_block_check_true')}`,
                         type: 'string',
                         enum: ['0', '1'],
                         enumNames: [
-                            'Отсечи ја земјоделската парцела според границите на физичкиот блок',
-                            'Задржи ја просторната определба (системот ќе покрене барање за контрола на терен)'
+                            `${getLabel('physical_block_check_selection_one')}`,
+                            `${getLabel('physical_block_check_selection_two')}`
                         ],
                         default: '0'
                     }
                 } : {
                     physical_block_check: {
-                        title: 'Земјоделската парцела е комплетно опфатена од еден физички блок',
+                        title: `${getLabel('physical_block_check_false')}`,
                         type: 'string'
                     }
                 },
                 ...apCheck ? {
                     agri_parcel_check: {
-                        title: 'Земјоделската парцела се пресекува со соседните земјоделски парцели',
+                        title: `${getLabel('agri_parcel_check_true')}`,
                         type: 'string',
                         enum: ['0', '1'],
                         enumNames: [
-                            'Отсечи ја работната земјоделската парцела според границите на соседните земјоделски парцели',
-                            'Задржи ја просторната определба (системот ќе покрене барање за контрола на терен)'
+                            `${getLabel('agri_parcel_check_selection_one')}`,
+                            `${getLabel('agri_parcel_check_selection_two')}`
                         ],
                         default: '0'
                     }
                 } : {
                     agri_parcel_check: {
-                        title: 'Земјоделската парцела не се пресекува со соседните земјоделски парцели',
+                        title: `${getLabel('agri_parcel_check_false')}`,
                         type: 'string',
                     }
                 },
                 ...neighbourCheck ? {
                     agri_parcel_neighbour: {
-                        title: 'Соседните парцели не се прилепени или оддалечени повеќе од 1 метар',
-                        description: `Соседни парцели кои не се прецизно прилепени: ${apCheckDescriptionLabel}`,
+                        title: `${getLabel('agri_parcel_neighbour_true')}`,
+                        description: `${getLabel('agri_parcel_neighbour_check_label')}: ${apCheckDescriptionLabel}`,
                         type: 'string',
                         enum: ['0', '1', '2'],
-                        enumNames: ['Прилепи до соседна парцела', 'Остави простор помеѓу парцелите', 'Задржи ја постоечката определба'],
+                        enumNames: [
+                            `${getLabel('agri_parcel_neighbour_selection_one')}`,
+                            `${getLabel('agri_parcel_neighbour_selection_two')}`,
+                            `${getLabel('agri_parcel_neighbour_selection_three')}`
+                        ],
                         default: '0'
                     }
                 } : {
                     agri_parcel_neighbour: {
-                        title: 'Соседните парцели се прилепени или оддалечени повеќе од 1 метар',
+                        title: `${getLabel('agri_parcel_neighbour_false')}`,
                         type: 'string',
                     }
                 }

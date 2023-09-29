@@ -1,11 +1,12 @@
 import { React, PropTypes } from 'perun-core';
 import { ui, core } from '../../../Spatial';
 import { Main, Aux, Admin } from './Steps';
+import { getLabel } from '../../Util';
 
 const { Button, Modal, Wizard } = ui;
 const { store } = core;
 
-export function Form ({
+export function Form({
     formData, onSubmit, onChange, children, isSimple, className, disableSubmitBtn, showDeleteBtn, onDeleteFn, deleteBtnLabel, deleteBtnClassName,
     formTitle, buttonLabel, schema, uiSchema
 }) {
@@ -17,7 +18,7 @@ export function Form ({
             enforceFocus={false}
             container={document.getElementsByClassName('control-map')[0]} >
             <Modal.Title>
-                <Button disabled className='as-label ap-modal-title' >Земјоделска Парцела</Button>
+                <Button disabled className='as-label ap-modal-title' >{getLabel('agri_parcel')}</Button>
                 {children}
             </Modal.Title>
             <Modal.Body className='ap-modal-body' >
@@ -29,11 +30,11 @@ export function Form ({
             </Modal.Body>
         </Modal>;
     } else {
-        const title = formTitle || 'Пополнете ја формата'
-        const btnLabel = buttonLabel || 'Зачувај'
+        const title = formTitle || getLabel('fill_in_the_form')
+        const btnLabel = buttonLabel || getLabel('save')
         let deleteBtn = null
         if (showDeleteBtn && onDeleteFn) {
-            const deleteLabel = deleteBtnLabel || 'Избриши'
+            const deleteLabel = deleteBtnLabel || getLabel('delete')
             const deleteClassName = deleteBtnClassName || 'cancel'
             deleteBtn = <Button onClick={() => { onDeleteFn() }} size='' className={deleteClassName} >{deleteLabel}</Button>
         }
