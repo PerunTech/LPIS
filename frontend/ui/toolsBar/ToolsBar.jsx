@@ -118,7 +118,7 @@ const _ToolsBar = ({ actionType, activeTab }) => {
         <Button
             onClick={() => console.log('tbd')}
             className='toolbar-settings'
-            title='Поставки'>
+            title={getLabel('settings')}>
             <Icon name='settings' size='18px' />
         </Button>
         <Button

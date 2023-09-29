@@ -10,7 +10,7 @@ import { LpisSearch } from './LpisSearch';
 import { ParcelInfo } from './ParcelInfo';
 import { ControlResults } from './ControlResults';
 import { ControlResultsDataGridHeader } from './ControlResultsDataGridHeader';
-import { strcmp } from '../Util';
+import { getLabel, strcmp } from '../Util';
 
 const { Button, Icon } = ui;
 const { store, connect } = core;
@@ -19,7 +19,7 @@ const { useState, useEffect } = React;
 /* Root nodes in the data panel tree. */
 const dataCategories = (function () {
   return Object.entries({
-    physical_block: 'Физички блокови',
+    physical_block: `${getLabel('physical_blocks')}`,
   }).map(entry => ({ id: entry[0], label: entry[1], isOpen: true, }))
 })();
 

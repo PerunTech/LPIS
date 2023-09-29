@@ -3,7 +3,7 @@ import { core, ui } from '../../../../../Spatial';
 import { parcelInfoMsg } from '../../Config';
 import { ProcessButton } from '../../../ProcessButton';
 import { Guidance } from '../../Guidance';
-import { strcmp } from '../../../../Util';
+import { getLabel, strcmp } from '../../../../Util';
 
 const { Map, store, http } = core;
 const { Icon } = ui;
@@ -56,12 +56,12 @@ const _Info = ({ processID, activateInfoProcess }) => {
           store.dispatch({ farmInfo, parcelInfo, showParcelInfoContainer: true, showControlResultsContainer: false })
         } else {
           setState({ loading: false })
-          alertUser(true, 'info', 'Нема податоци за избраната парцела или не е избрана парцела од мапата');
+          alertUser(true, 'info', `${getLabel('no_data_for_chosen_parcel')}`);
         }
       }).catch((err) => {
         console.log(err);
         setState({ loading: false })
-        alertUser(true, 'info', 'Нема податоци за избраната парцела или не е избрана парцела од мапата');
+        alertUser(true, 'info', `${getLabel('no_data_for_chosen_parcel')}`);
       });
     });
   };
@@ -74,7 +74,7 @@ const _Info = ({ processID, activateInfoProcess }) => {
   };
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} msg={parcelInfoMsg} title='Информации за парцела' />
+    return <Guidance id={_id} disable={disable} msg={parcelInfoMsg} title={getLabel('parcel_info')} />
   }
 
   const renderComponent = () => {
@@ -90,9 +90,9 @@ const _Info = ({ processID, activateInfoProcess }) => {
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable} title='Информации за парцела'>
+    <ProcessButton id={_id} onClick={enable} title={getLabel('parcel_info')}>
       <Icon name={_id} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Инфо</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('info')}</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>

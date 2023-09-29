@@ -1,5 +1,6 @@
 import { React } from 'perun-core'
 import { core, ui } from '../../Spatial'
+import { getLabel } from '../Util'
 
 const { store, connect } = core
 const { Button, Icon } = ui
@@ -29,7 +30,7 @@ const _ParcelInfo = ({ farmInfo, parcelInfo, showParcelInfoContainer }) => {
         onClick={toggleParcelInfoContainer}
       >
         <Icon name={getIconName()} size='20px' />
-        <span style={{ margin: '3px 3px 0 3px' }}>{!showParcelInfoContainer ? 'Информации за парцела' : 'Листа на парцели'}</span>
+        <span style={{ margin: '3px 3px 0 3px' }}>{!showParcelInfoContainer ? `${getLabel('parcel_info')}` : `${getLabel('parcel_list')}`}</span>
       </Button>
     </React.Fragment>
   )

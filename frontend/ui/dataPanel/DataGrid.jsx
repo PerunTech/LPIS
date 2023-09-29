@@ -1,7 +1,7 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { getCropLabel } from '..'
-import { strcmp, translateBooleanValue } from '../Util';
+import { getLabel, strcmp, translateBooleanValue } from '../Util';
 
 const { factory, Map, store } = core;
 const { ButtonGroup, Button, Icon } = ui;
@@ -110,19 +110,19 @@ export const DataGrid = core.connect(state => ({
 /*      GRID HEADER      */
 /* --------------------- */
 const columnEnum = {
-    physical_block: ['СИЗП Број', 'Класа', 'Површина', '', '', ''],
-    agri_parcel: ['СИЗП Број', 'Површина', 'Употр. на земјиште', 'Локалитет', , 'Заеднич. употр.', 'Право на корист.'],
-    land_use_plan: ['СИЗП Број', 'Земјодел. култура', 'Површина', 'Број на садници'],
-    cad_parcel: ['Ид. Број', 'Број на КО', 'Површина'],
+    physical_block: [`${getLabel('lpis_number')}`, `${getLabel('class')}`, `${getLabel('area')}`, '', '', ''],
+    agri_parcel: [`${getLabel('lpis_number')}`, `${getLabel('area')}`, `${getLabel('land_use_code')}`, `${getLabel('locality')}`, , `${getLabel('common_use')}`, `${getLabel('right_of_use')}`],
+    land_use_plan: [`${getLabel('lpis_number')}`, `${getLabel('cultivation')}`, `${getLabel('area')}`, `${getLabel('num_of_crops')}`],
+    cad_parcel: ['Ид. Број', 'Број на КО', `${getLabel('area')}`],
     measurements: ['Ид. Број', 'Тип', 'Мерење'],
-    imports: ['Ид. Број', 'Тип', 'Површина'],
-    pastures: ['Ид. Број', 'Локалитет', 'Површина'],
-    landscape_features: ['Ид. Број', 'Број на ЗП', 'Површина'],
-    npa: ['Ид. Број', 'Назив', 'Површина'],
-    soil_types: ['Ид. Број', 'Тип', 'Површина'],
+    imports: ['Ид. Број', 'Тип', `${getLabel('area')}`],
+    pastures: ['Ид. Број', `${getLabel('locality')}`, `${getLabel('area')}`],
+    landscape_features: ['Ид. Број', 'Број на ЗП', `${getLabel('area')}`],
+    npa: ['Ид. Број', 'Назив', `${getLabel('area')}`],
+    soil_types: ['Ид. Број', 'Тип', `${getLabel('area')}`],
     transport_network: ['Ид. Број', 'Назив', 'Должина'],
     water_bodies: ['Ид. Број', 'Назив', 'Должина'],
-    resto: ['Ид. Број', 'Тип', 'Површина']
+    resto: ['Ид. Број', 'Тип', `${getLabel('area')}`]
 };
 
 /* Column names above each set of data types in the list. */
@@ -298,7 +298,7 @@ const _NoData = () =>
             <Button disabled style={{ opacity: 1 }}>
                 <Icon name='empty-grid' size='18px' />
             </Button>
-            <Button disabled >Не се пронајдени податоци</Button>
+            <Button disabled >{getLabel('no_data_found')}</Button>
         </ButtonGroup>
     </div>
 

@@ -1,6 +1,6 @@
 import { React, elements } from 'perun-core'
 import { core, ui } from '../../Spatial'
-import { getFarmDigitizationState, strcmp } from '../Util'
+import { getFarmDigitizationState, getLabel, strcmp } from '../Util'
 
 const { connect, http } = core
 const { Button, Icon } = ui
@@ -13,7 +13,7 @@ const _StartEndDigitization = ({ farmObjId, digitizationIsActive }) => {
       const resType = res.data?.type?.toLowerCase() || 'info'
       let title = ''
       if (strcmp(resType, 'success')) {
-        title = digitizationIsActive ? 'Успешно завршена дигитизација' : 'Успешно започната дигитизација'
+        title = digitizationIsActive ? `${getLabel('end_digitization_success')}` : `${getLabel('start_digitization_success')}`
       }
       alertUser(true, resType, title)
       getFarmDigitizationState(farmObjId)
@@ -23,11 +23,11 @@ const _StartEndDigitization = ({ farmObjId, digitizationIsActive }) => {
   }
 
   const onClick = () => {
-    let alertTitle = 'Дали сте сигурни дека сакате да завршите со дигитазација?'
+    let alertTitle = `${getLabel('end_digitization_confirmation')}`
     if (!digitizationIsActive) {
-      alertTitle = 'Дали сте сигурни дека сакате да започнете со дигитазација?'
+      alertTitle = `${getLabel('start_digitization_confirmation')}`
     }
-    alertUser(true, 'warning', alertTitle, '', () => setDigitizationState(), () => { }, true, 'Да', 'Не')
+    alertUser(true, 'warning', alertTitle, '', () => setDigitizationState(), () => { }, true, `${getLabel('yes')}`, `${getLabel('no')}`)
   }
 
   return (
@@ -41,10 +41,10 @@ const _StartEndDigitization = ({ farmObjId, digitizationIsActive }) => {
         backgroundColor: digitizationIsActive ? '#850000' : '#174c20',
         borderColor: digitizationIsActive ? '#850000' : '#174c20'
       }}
-      title={digitizationIsActive ? 'Дигитизацијата е отворена' : 'Дигитизацијата е затворена'}
+      title={digitizationIsActive ? `${getLabel('digitization_started')}` : `${getLabel('digitization_ended')}`}
     >
       <Icon name={digitizationIsActive ? 'stop' : 'start'} size={digitizationIsActive ? '16px' : '19px'} />
-      <span className='ml-2'>{digitizationIsActive ? 'Заврши дигитизација' : 'Започни дигитизација'}</span>
+      <span className='ml-2'>{digitizationIsActive ? `${getLabel('end_digitization')}` : `${getLabel('start_digitization')}`}</span>
     </Button>
   )
 }
