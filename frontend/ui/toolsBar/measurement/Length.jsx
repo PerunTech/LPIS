@@ -2,6 +2,7 @@ import { React, PropTypes } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { MEASURE_LENGTH } from './Config';
+import { getLabel } from '../../Util';
 
 const { factory, Map, connect, store } = core;
 const { draw } = tools;
@@ -44,7 +45,7 @@ export const length = {
       '.0123456789'.split('').includes(s)).join('')) * (str.includes('km') ? 1000 : 1)
 };
 
-function _Length ({ processID, currentMeasure, ..._props }) {
+function _Length({ processID, currentMeasure, ..._props }) {
   const { id, sum, enable, disable } = length;
 
   return (
@@ -53,7 +54,7 @@ function _Length ({ processID, currentMeasure, ..._props }) {
       className={processID === id ? 'active' : ''}
       onClick={enable.bind(length)} >
       <Icon name={id} size='28px' />
-      <span style={{ display: 'block' }}>Измери должина</span>
+      <span style={{ display: 'block' }}>{getLabel('measure_length')}</span>
       {processID === id
         && <Modal show
           id='measure-dialog'
@@ -61,7 +62,7 @@ function _Length ({ processID, currentMeasure, ..._props }) {
           enforceFocus={false}
           container={document.getElementsByClassName('control-map')[0]} >
           <Modal.Title>
-            <Button disabled className='as-label' >Измерена должина</Button>
+            <Button disabled className='as-label' >{getLabel('measured_length')}</Button>
             <DrawActions
               finish={() => draw.line._finishShape()}
               undo={() => draw.line._removeLastVertex()}

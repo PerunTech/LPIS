@@ -353,11 +353,11 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
 
                 // register in app state
                 store.dispatch({ 'agriParcels': layers, layers })
-                showAlert && alertUser(true, 'success', 'Податоците се успешно освежени.')
+                showAlert && alertUser(true, 'success', `${getLabel('the_data_was_refreshed')}`)
                 fitBounds && Map.fitBounds(geojson.getBounds(), { padding: [100, 100] });
             }).catch(err => {
                 console.log(err)
-                showAlert && alertUser(true, 'error', 'Настана грешка', 'Податоците не се успешно освежени.')
+                showAlert && alertUser(true, 'error', `${getLabel('something_went_wrong')}`, `${getLabel('the_data_was_not_refreshed')}`)
             });
         } else {
             // If any (or all) of the query params are not present, re-route the user to the root route
@@ -396,10 +396,10 @@ export const getFarmPPlanAssets = (showAlert = false) => {
         Object.values(prevCropParcels).forEach(v => v.removeFrom && v.removeFrom(Map));
         // register in app state
         store.dispatch({ 'farmPPlanData': layers })
-        showAlert && alertUser(true, 'success', 'Податоците се успешно освежени.')
+        showAlert && alertUser(true, 'success', `${getLabel('the_data_was_refreshed')}`)
     }).catch(err => {
         console.log(err)
-        showAlert && alertUser(true, 'error', 'Настана грешка', 'Податоците не се успешно освежени.')
+        showAlert && alertUser(true, 'error', `${getLabel('something_went_wrong')}`, `${getLabel('the_data_was_not_refreshed')}`)
     })
 }
 

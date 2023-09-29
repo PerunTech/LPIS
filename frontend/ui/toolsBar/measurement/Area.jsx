@@ -2,6 +2,7 @@ import { React, PropTypes } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { MEASURE_AREA } from './Config';
+import { getLabel } from '../../Util';
 
 const { factory, Map, connect, store } = core;
 const { draw } = tools;
@@ -42,7 +43,7 @@ export const area = {
       '.0123456789'.split('').includes(s)).join('')) * (str.includes('km') ? 1000000 : 1)
 }
 
-function _Area ({ processID, currentMeasure, ..._props }) {
+function _Area({ processID, currentMeasure, ..._props }) {
   const { id, sum, enable, disable } = area;
 
   return (
@@ -51,7 +52,7 @@ function _Area ({ processID, currentMeasure, ..._props }) {
       className={processID === id ? 'active' : ''}
       onClick={enable.bind(area)} >
       <Icon name={id} size='28px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Измери површина</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('measure_area')}</span>
       {processID === id
         && <Modal show
           id='measure-dialog'
@@ -59,7 +60,7 @@ function _Area ({ processID, currentMeasure, ..._props }) {
           enforceFocus={false}
           container={document.getElementsByClassName('control-map')[0]} >
           <Modal.Title>
-            <Button disabled className='as-label' >Измерена површина</Button>
+            <Button disabled className='as-label' >{getLabel('measured_area')}</Button>
             <DrawActions
               finish={() => draw.polygon._finishShape()}
               undo={() => draw.polygon._removeLastVertex()}

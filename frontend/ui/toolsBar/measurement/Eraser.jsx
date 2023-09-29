@@ -3,6 +3,7 @@ import { core, ui } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { length } from './Length';
 import { area } from './Area';
+import { getLabel } from '../../Util';
 
 const { Map } = core;
 const { Icon } = ui;
@@ -39,5 +40,5 @@ export const Eraser = (props) =>
     id={_id}
     onClick={() => eraser.clearMeasurements()} >
     <Icon name={_id} size='28px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Избриши мерења</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('remove_measurements')}</span>
   </ProcessButton>;

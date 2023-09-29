@@ -1,6 +1,7 @@
 import { React, PropTypes } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
 import { MEASURE_CONFIG } from './Config';
+import { getLabel } from '../../Util';
 
 const { factory, Map, connect } = core;
 const { draw } = tools;
@@ -12,7 +13,7 @@ const _id = 'angle';
 /* Layer group of all Angle measurements, register is accessible from outside. */
 export const angleMeasurements = factory.layerGroup().addTo(Map);
 
-function _Angle ({ options, ...props }) {
+function _Angle({ options, ...props }) {
   const { processID, dispatch, ..._props } = props;
 
   /* Disables measurement handler. Called automatically on map event,
@@ -39,7 +40,7 @@ function _Angle ({ options, ...props }) {
       className={processID === _id ? 'active' : ''}
       onClick={() => enable()} >
       <Icon name={_id} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Измери агол</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('measure_angle')}</span>
     </Button>
   )
 }
