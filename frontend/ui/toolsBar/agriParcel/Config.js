@@ -158,55 +158,66 @@ export const metadataMain = {
     schema: {
         properties: {
             OLD_ID: {
-                title: 'СИЗП број',
+                title: `${getLabel('lpis_number')}`,
                 type: 'integer',
                 default: 0
             },
             LAND_COVER_CODE: {
                 enum: ['200', '210', '310', '320', '410', '421', '422', '423', '430', '490', '600', '900'],
-                enumNames: ['Нива (обработливо земјиште)', 'Стакленик/Пластеник', 'Ливада', 'Пасиште', 'Лозов насад',
-                    'Маслинов насад', 'Овошен насад', 'Јаткасто овошје', 'Растенија со брзорастечка растителна маса',
-                    'Мешани трајни насади', 'Матични насади', 'Привремено необработливо земјиште'],
+                enumNames: [
+                    `${getLabel('farmland')}`,
+                    `${getLabel('greenhouse')}`,
+                    `${getLabel('lawn')}`,
+                    `${getLabel('pasture')}`,
+                    `${getLabel('vineyard')}`,
+                    `${getLabel('olive_grove')}`,
+                    `${getLabel('orchard')}`,
+                    `${getLabel('nuts')}`,
+                    `${getLabel('fast_growing_plants')}`,
+                    `${getLabel('mixed_permanent_crops')}`,
+                    `${getLabel('stem_plants')}`,
+                    `${getLabel('temporarily_uncultivated_land')}`
+                ],
                 maxLength: 50,
-                title: 'Употреба на земјиште',
+                title: `${getLabel('land_use')}`,
                 type: 'string',
                 default: '200'
             },
             LAND_COVER_CODE_2: {
                 enum: ['0', '410', '421', '422', '423'],
-                enumNames: [' ', 'Лозов насад', 'Маслинов насад', 'Овошен насад', 'Јаткасто овошје'],
+                enumNames: [' ', `${getLabel('vineyard')}`, `${getLabel('olive_grove')}`, `${getLabel('orchard')}`, `${getLabel('nuts')}`],
                 maxLength: 50,
-                title: 'Доминантна употреба на земјиште',
+                title: `${getLabel('dominant_land_use')}`,
                 type: 'string',
                 default: '0'
             },
             HOME_NAME: {
                 maxLength: 2000,
-                title: 'Локалитет',
+                title: `${getLabel('locality')}`,
                 type: 'string',
                 default: ''
             },
             NOTE_INSERT: {
                 maxLength: 2000,
-                title: 'Забелешка од оператор',
+                title: `${getLabel('note')}`,
                 type: 'string',
                 default: ''
             },
             NOTE_FARMER: {
                 maxLength: 2000,
-                title: 'Забелешка од земјоделец',
+                title: `${getLabel('farmer_note')}`,
                 type: 'string',
                 default: ''
             },
             NOTE_ORGANISATION: {
                 maxLength: 2000,
-                title: 'Забелешка од организација',
+                title: `${getLabel('organization_note')}`,
                 type: 'string',
                 default: ''
             },
         },
         required: ['LAND_COVER_CODE'],
-        'type': 'object',
+        type: 'object',
     },
     uiSchema: {
         OLD_ID: { 'ui:disabled': true },
@@ -225,32 +236,32 @@ export const metadataAux = {
     schema: {
         properties: {
             CHANGED_BORDER: {
-                title: 'Променета граница',
+                title: `${getLabel('changed_border')}`,
                 type: 'boolean',
                 default: false
             },
             LANDSCAPE_FEATURES: {
-                title: 'Пејсажни обележја',
+                title: `${getLabel('landscape_features')}`,
                 type: 'boolean',
                 default: false
             },
             TERRACE: {
-                title: 'Тераси',
+                title: `${getLabel('terrace')}`,
                 type: 'boolean',
                 default: false
             },
             INVISIBLE_BORDER: {
-                title: 'Невидлива граница',
+                title: `${getLabel('invisible_border')}`,
                 type: 'boolean',
                 default: false
             },
             IRRIGATION: {
-                title: 'Наводнување',
+                title: `${getLabel('irrigation')}`,
                 type: 'boolean',
                 default: false
             },
             ELIGIBILITY_COEF: {
-                title: 'Корисна површина',
+                title: `${getLabel('eligibility_coef')}`,
                 type: 'integer',
                 enum: [25, 50, 75, 100],
                 enumNames: ['25%', '50%', '75%', '100%'],
@@ -272,44 +283,44 @@ export const metadataAdmin = {
     schema: {
         properties: {
             EXPOSITION_AVG: {
-                title: 'Експозиција',
+                title: `${getLabel('exposition_avg')}`,
                 type: 'integer',
                 minimum: 0,
                 maximum: 999,
                 default: 0
             },
             SLOPE_AVG: {
-                title: 'Наклон',
+                title: `${getLabel('slope_avg')}`,
                 type: 'number',
                 default: 0
             },
             Z_AVG: {
-                title: 'Надморска височина',
+                title: `${getLabel('z_avg')}`,
                 type: 'string',
                 default: '0'
             },
             ORGANIC: {
-                title: 'Органско производство',
+                title: `${getLabel('organic')}`,
                 type: 'boolean',
                 default: false
             },
             COMMON_USE: {
-                title: 'Заедничка употреба',
+                title: `${getLabel('common_use')}`,
                 type: 'boolean',
                 default: false
             },
             CERTIFICATE_OF_USE: {
-                title: 'Право на користење',
+                title: `${getLabel('certificate_of_use')}`,
                 type: 'boolean',
                 default: false
             },
             SOIL_TYPE: {
-                title: 'Тип на почва',
+                title: `${getLabel('soil_type')}`,
                 type: 'string',
                 default: ''
             },
         },
-        'type': 'object',
+        type: 'object',
     },
     uiSchema: {
         EXPOSITION_AVG: { 'ui:widget': 'range', 'ui:disabled': true },
@@ -325,14 +336,14 @@ export const commonUseSchema = {
         properties: {
             commonUseType: {
                 type: 'string',
-                title: 'Одбери тип на дел:',
+                title: `${getLabel('common_use_type')}`,
                 enum: ['CLAIMED_AREA', 'CLAIMED_RATIO'],
-                enumNames: ['Површина', 'Идеален дел'],
+                enumNames: [`${getLabel('claimed_area')}`, `${getLabel('claimed_ratio')}`],
                 default: 'CLAIMED_AREA'
             },
             value: {
                 type: 'string',
-                title: 'Вредност'
+                title: `${getLabel('value')}`
             }
         },
         type: 'object',
@@ -353,35 +364,43 @@ export const permanentCropSchema = {
             PERM_CROP_TYPE_ID: {
                 enum: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10',],
                 enumNames: [
-                    'Лозје - Шардоне', 'Лозје - Жилавка', 'Лозје - Жупљанка', 'Лозје - Жупски бојадисер', 'Лозје - Афус али',
-                    'Лозје - Агадај', 'Лозје - Аликант буше', 'Лозје - Беглерка бела', 'Лозје - Беглерка црна', 'Лозје - Белан',
+                    `${getLabel('vineyard.chardonnay')}`,
+                    `${getLabel('vineyard.zilavka')}`,
+                    `${getLabel('vineyard.zuplyanka')}`,
+                    `${getLabel('vineyard.zupski_bojadiser')}`,
+                    `${getLabel('vineyard.afus_ali')}`,
+                    `${getLabel('vineyard.agadaj')}`,
+                    `${getLabel('vineyard.alicante_bouschet')}`,
+                    `${getLabel('vineyard.white_beglerka')}`,
+                    `${getLabel('vineyard.black_beglerka')}`,
+                    `${getLabel('vineyard.belan')}`,
                 ],
-                title: 'Вид на земјоделска култура',
+                title: `${getLabel('cultivar_type')}`,
                 type: 'string',
                 default: ''
             },
             PLANT_AREA: {
-                title: 'Површина со засадена култура',
+                title: `${getLabel('area')}`,
                 type: 'string',
                 default: ''
             },
             NUMBER_OF_TREES: {
-                title: 'Број на садници',
+                title: `${getLabel('number_of_trees')}`,
                 type: 'string',
                 default: ''
             },
             YEAR_OF_PLANTING_TREES: {
-                title: 'Година на садење',
+                title: `${getLabel('year_of_planting')}`,
                 type: 'string',
                 default: ''
             },
             TREES_DISTANCE: {
-                title: 'Растојание помеѓу садници (cm.)',
+                title: `${getLabel('trees_distance')}`,
                 type: 'string',
                 default: ''
             },
             TREES_ROW_DISTANCE: {
-                title: 'Растојание помеѓу редови (cm.)',
+                title: `${getLabel('trees_row_distance')}`,
                 type: 'string',
                 default: ''
             }

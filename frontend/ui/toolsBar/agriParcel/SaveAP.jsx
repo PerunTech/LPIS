@@ -2,7 +2,7 @@ import { React, ReactDOM, PropTypes, elements } from 'perun-core';
 import { core, data, ui } from '../../../Spatial';
 import { Form } from './Form'
 import { config, saveAPFormSchema } from './Config';
-import { bufferToString, isJSON, strcmp } from '../../Util'
+import { bufferToString, getLabel, isJSON, strcmp } from '../../Util'
 
 const { http, store, factory, Map } = core;
 const { protobuf, geobuf } = data;
@@ -18,8 +18,8 @@ export const saveAP = (layer, callback, skipChecks) => {
         store.dispatch({ saveIsPending: false })
         elements.alertUser(true,
             'error',
-            msg || 'Грешка при зачувување',
-            desc || 'Земјоделската парцела не е запишана во базата на податоци.');
+            msg || `${getLabel('save_failed')}`,
+            desc || `${getLabel('agricultural_parcel_not_saved')}`);
     };
 
     // Resolution operations on successful workflow.
@@ -29,8 +29,8 @@ export const saveAP = (layer, callback, skipChecks) => {
         store.dispatch({ saveIsPending: false })
         elements.alertUser(true,
             'success',
-            'Успешно зачувување',
-            'Земјоделската парцела е запишана во базата на податоци.', () => callback(layer, geojson.getLayers()))
+            `${getLabel('successfully_saved')}`,
+            `${getLabel('successfully_saved_agricultural_parcel')}`, () => callback(layer, geojson.getLayers()))
     };
 
     const _initChecks = () => {
@@ -216,7 +216,7 @@ export const saveAP = (layer, callback, skipChecks) => {
         return (
             <Form
                 isSimple
-                formTitle='Проверки'
+                formTitle={`${getLabel('ap_checks')}`}
                 className='ap-checks-modal'
                 schema={schema}
                 uiSchema={uiSchema}
