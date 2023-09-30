@@ -86,15 +86,22 @@ public class DbInit implements IDbInit {
 		dbf5.setDbFieldSize(100);
 		dbf5.setLabel_code("geo_layer_type.module_name");
 		dbf5.setSort_order(1001);
-		
 
-		DbDataField[] dbTableFields = new DbDataField[6];
+		DbDataField dbf6 = new DbDataField();
+		dbf6.setDbFieldName("URL");
+		dbf6.setDbFieldType(DbFieldType.NVARCHAR);
+		dbf6.setDbFieldSize(200);
+		dbf6.setLabel_code("geo_layer_type.url");
+		dbf6.setSort_order(1100);
+
+		DbDataField[] dbTableFields = new DbDataField[7];
 		dbTableFields[0] = dbf1;
 		dbTableFields[1] = dbf2;
 		dbTableFields[2] = dbf3;
 		dbTableFields[3] = dbf3a;
 		dbTableFields[4] = dbf4;
 		dbTableFields[5] = dbf5;
+		dbTableFields[6] = dbf6;
 		dbe.setDbTableFields(dbTableFields);
 		return dbe;
 	}
