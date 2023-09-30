@@ -15,7 +15,7 @@ const { factory, store, http, Map } = core;
 const { geobuf, protobuf } = data;
 
 export function getLabel(labelCode) {
-    return perunStore.getState().intl.messages[`perun.lpis.${labelCode}`] || `perun.lpis.${labelCode}`
+    return perunStore?.getState().intl.messages[`perun.lpis.${labelCode}`] || `perun.lpis.${labelCode}`
 }
 
 /**
