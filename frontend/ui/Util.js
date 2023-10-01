@@ -42,11 +42,11 @@ export const bufferToString = buffer => {
 }
 
 export const decodeResponse = (response, objectName) => {
-    let errorMsg = 'Земјоделската парцела не е запишана во базата на податоци.'
+    let errorMsg = `${getLabel('agricultural_parcel_not_saved')}`
     if (strcmp(objectName, 'physical_block')) {
         errorMsg = `${getLabel('physical_block_not_saved')}`
     } else if (strcmp(objectName, 'landscape_features')) {
-        errorMsg = 'Пејсажните обележја не се запишани во базата на податоци.'
+        errorMsg = `${getLabel('landscape_features_not_saved')}`
     }
     const decoder = new TextDecoder()
     const decoded = decoder.decode(response.data)

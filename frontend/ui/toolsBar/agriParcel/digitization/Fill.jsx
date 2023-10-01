@@ -5,7 +5,7 @@ import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
-import { decodeResponse, getFarmMapAssets } from '../../../Util'
+import { decodeResponse, getFarmMapAssets, getLabel } from '../../../Util'
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
@@ -74,7 +74,7 @@ const _Fill = ({ processID, farmObjId, saveIsPending }) => {
       }).catch(error => {
         const { response } = error
         const errorMsg = decodeResponse(response)
-        alertUser(true, 'error', 'Грешка при пополнување парцела', errorMsg)
+        alertUser(true, 'error', `${getLabel('fill_agricultural_parcel_error')}`, errorMsg)
         e.layer.removeFrom(Map)
       })
     }
@@ -100,7 +100,7 @@ const _Fill = ({ processID, farmObjId, saveIsPending }) => {
       undo={() => polygon._removeLastVertex()}
       disable={() => disable()}
       msg={fillAPMsg}
-      title='Пополни земјоделска парцела'
+      title={getLabel('fill_parcel')}
     />
   }
 
@@ -122,9 +122,9 @@ const _Fill = ({ processID, farmObjId, saveIsPending }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} title='Пополни парцела' >
+  return <ProcessButton id={_id} onClick={enable} title={getLabel('fill_parcel')} >
     <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Пополни</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('fill')}</span>
     {processID === _id && renderComponent()}
     {saveIsPending && <Loading />}
   </ProcessButton>

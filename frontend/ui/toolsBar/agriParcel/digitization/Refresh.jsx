@@ -1,7 +1,7 @@
 import { React } from 'perun-core';
 import { core, ui } from '../../../../Spatial';
 import { ProcessButton } from '../../ProcessButton';
-import { getFarmMapAssets } from '../../../Util';
+import { getFarmMapAssets, getLabel } from '../../../Util';
 import { removeCadParcels, removeSearchedParcels } from '../../../dataPanel/Util';
 
 const { store } = core;
@@ -16,8 +16,8 @@ export const Refresh = () => {
     store.dispatch({ theSearchedParcelWasRemoved: true })
   }
 
-  return <ProcessButton onClick={onClick} title='Освежи податоци'>
+  return <ProcessButton onClick={onClick} title={getLabel('refresh_data')}>
     <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Освежи</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('refresh')}</span>
   </ProcessButton>
 }

@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, tools, config as cfg } from '../../../../Spatial';
 import { config, permanentCropSchema } from '../Config';
-import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
+import { bufferToString, getFarmMapAssets, getLabel, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -96,7 +96,7 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
     const url = `/lpis/save/permanentCrop/{init.token}/0/${farmObjId}`
     http.call(_id, { url, method: 'post', data, responseType: 'arraybuffer' }).then(res => {
       const parsedResponse = bufferToString(res.data)
-      let title = 'Успешно додадени информации за повеќегодишна култура'
+      let title = `${getLabel('success_save_permanent_crop')}`
       if (isJSON(parsedResponse)) {
         const jsonResponse = JSON.parse(parsedResponse)
         title = jsonResponse.label_code || title
@@ -110,7 +110,7 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
       const { response } = err
       const parsedResponse = bufferToString(response)
       console.error(parsedResponse)
-      alertUser(true, 'error', 'Настана грешка')
+      alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
       disable()
     })
   }
@@ -123,7 +123,7 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
     const isEmpty = Object.values(data).every(v => v === null || v === undefined || v === '')
     // If the object is empty, alert the user
     if (isEmpty) {
-      alertUser(true, 'info', 'Внесете вредности и обидете се повторно')
+      alertUser(true, 'info', `${getLabel('enter_some_values')}`)
     } else {
       // Parse every value as an integer and remove the empty ones
       Object.keys(data).forEach(k => {
@@ -142,7 +142,7 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
 
   const renderGuideForm = () => {
     return (
-      <Guidance id={_id} title='Нацртај парцела'
+      <Guidance id={_id} title={getLabel('draw_parcel')}
         finish={() => polygon._finishShape()}
         undo={() => polygon._removeLastVertex()}
         disable={disable}
@@ -162,7 +162,7 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
   const renderPermanentCropForm = () => {
     const { schema } = permanentCropSchema
     return (
-      <Form isSimple formTitle='Повеќегодишна култура'
+      <Form isSimple formTitle={getLabel('parmanent_crop')}
         onSubmit={onPermanentCropSubmit}
         formData={permanentCropData}
         onChange={onPermanentCropChange}
@@ -187,9 +187,9 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable} title='Нацртај парцела' className='mr-2'>
+    <ProcessButton id={_id} onClick={enable} title={getLabel('draw_parcel')} className='mr-2'>
       <Icon name={_id} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Нацртај</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('draw')}</span>
       {processID === _id && renderComponent()}
       {saveIsPending && <Loading />}
     </ProcessButton>

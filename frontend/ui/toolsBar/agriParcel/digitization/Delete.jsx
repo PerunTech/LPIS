@@ -1,7 +1,7 @@
 import { React, elements } from 'perun-core';
 import { core, ui } from '../../../../Spatial';
 import { deleteAPMsg } from '../Config';
-import { getFarmMapAssets } from '../../../Util';
+import { getFarmMapAssets, getLabel } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
 
@@ -26,10 +26,10 @@ const _Delete = ({ processID }) => {
       })
     }).then(() => {
       layer.removeFrom(Map);
-      alertUser(true, 'success', 'Успешно бришење', 'Парцелата е избришана од базата на податоци.');
+      alertUser(true, 'success', `${getLabel('delete_success')}`, `${getLabel('parcel_delete_success')}`);
       disable()
     }).catch(() => {
-      alertUser(true, 'error', 'Грешка при бришење', 'Парцелата не е избришана од базата на податоци.');
+      alertUser(true, 'error', `${getLabel('delete_error')}`, `${getLabel('parcel_delete_error')}`);
       disable()
     })
   }
@@ -49,8 +49,8 @@ const _Delete = ({ processID }) => {
     } else {
       elements.alertUser(true,
         'warning',
-        'Не се пронајдени парцели.',
-        'Додадете парцели пред да ја користите алатката за бришење.');
+        `${getLabel('no_parcels_found')}`,
+        `${getLabel('add_parcels_before_using_delete_tool')}`);
     }
   }
 
@@ -61,12 +61,12 @@ const _Delete = ({ processID }) => {
     getFarmMapAssets();
   }
 
-  return <ProcessButton id={_id} onClick={() => enable()} title='Избриши парцела'>
+  return <ProcessButton id={_id} onClick={() => enable()} title={getLabel('delete_agricultural_parcel')}>
     <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Избриши</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('delete')}</span>
     {processID === _id
       && (isGuided
-        ? <Guidance id={_id} disable={disable} msg={deleteAPMsg} title='Избриши парцела' />
+        ? <Guidance id={_id} disable={disable} msg={deleteAPMsg} title={getLabel('delete_agricultural_parcel')} />
         : <Modal id='measure-dialog'
           className='delete-control-dialog'
           show
@@ -74,14 +74,14 @@ const _Delete = ({ processID }) => {
           enforceFocus={false}
           container={document.getElementsByClassName('control-map')[0]} >
           <Modal.Title>
-            <Button disabled className='as-label ap-modal-title' >Избриши парцела</Button>
+            <Button disabled className='as-label ap-modal-title' >{getLabel('delete_agricultural_parcel')}</Button>
             <DrawActions cancel={disable} />
           </Modal.Title>
           <Modal.Body className='ap-modal-body' >
-            <div id={_id} >{'Ја избравте парцелата со СИЗП број '
-              + layer.feature.properties.OLD_ID + ' и површина ' + Math.round(layer.getMeasurement()) + ' m². '
-              + 'Дали сте сигурни дека сакате да ја избришете?'}</div>
-            <Button onClick={() => { deleteLayer() }} size='' className='cancel' > Избриши</Button>
+            <div id={_id} >{`${getLabel('delete_agricultural_parcel_msg_one')} `
+              + layer.feature.properties.OLD_ID + ` ${getLabel('delete_agricultural_parcel_msg_two')} ` + Math.round(layer.getMeasurement()) + ' m². '
+              + ` ${getLabel('delete_agricultural_parcel_confirmation')} `}</div>
+            <Button onClick={() => { deleteLayer() }} size='' className='cancel' > {getLabel('delete')}</Button>
           </Modal.Body>
         </Modal>)}
   </ProcessButton>;

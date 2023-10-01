@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools, config as cfg } from '../../../../Spatial';
 import { config, copyAPMsg } from '../Config';
-import { getFarmMapAssets, strcmp } from '../../../Util';
+import { getFarmMapAssets, getLabel, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -90,7 +90,7 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
       }).catch(err => {
         console.log(err)
         disable()
-        alertUser(true, 'error', 'Настана грешка')
+        alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
       });
 
       Map.off('click');
@@ -115,9 +115,9 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
 
   const onSubmit = ({ formData }) => {
     if (!strcmp(formData.LAND_COVER_CODE, initialLandCoverCode)) {
-      const title = 'Избравте различна вредност за Употреба на земјиште'
-      const msg = 'Дали сте сигурни дека сакате да продолжите?'
-      alertUser(true, 'warning', title, msg, () => executeSaveAP(formData), () => { }, true, 'Продолжи', 'Откажи')
+      const title = `${getLabel('different_land_cover_code_chosen')}`
+      const msg = `${getLabel('continue_confirmation')}`
+      alertUser(true, 'warning', title, msg, () => executeSaveAP(formData), () => { }, true, `${getLabel('continue')}`, `${getLabel('cancel')}`)
     } else {
       executeSaveAP(formData)
     }
@@ -133,10 +133,10 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
       msg = ['', '']
     }
     return (
-      <Guidance id={_id} disable={disable} msg={msg} title='Копирај земјоделска парцела'>
+      <Guidance id={_id} disable={disable} msg={msg} title={getLabel('copy_parcel')}>
         {showGuidanceButton && <div className='mt-2'>
           <Button className='next' size='' onClick={handleShowForm}>
-            Прикажи форма
+            {getLabel('show_form')}
           </Button>
         </div>}
       </Guidance>
@@ -162,9 +162,9 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable} title='Копирај парцела' className='mr-2' >
+    <ProcessButton id={_id} onClick={enable} title={getLabel('copy_parcel')} className='mr-2' >
       <Icon name={_id} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Копирај</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('copy')}</span>
       {processID === _id && componentToRender()}
       {(loading || saveIsPending) && <Loading />}
     </ProcessButton>

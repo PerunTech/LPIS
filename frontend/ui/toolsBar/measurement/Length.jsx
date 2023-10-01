@@ -71,9 +71,6 @@ function _Length({ processID, currentMeasure, ..._props }) {
           <Modal.Body >
             <Button disabled size='lg' className='as-label' >{(sum + currentMeasure) + ' m'}</Button>
           </Modal.Body>
-          {/* <Modal.Footer >
-            <Button size='' className='end-measurement' onClick={() => (draw.line.disable('force'), draw.line.enable(MEASURE_LENGTH))}>Поништи</Button>
-          </Modal.Footer> */}
         </Modal>}
     </ProcessButton>
   )

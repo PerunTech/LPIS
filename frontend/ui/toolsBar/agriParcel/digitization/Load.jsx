@@ -4,7 +4,7 @@ import { config as apConfig, loadParcelMsg } from '../Config';
 import { ProcessButton } from '../../ProcessButton';
 import { Guidance } from '../Guidance';
 import { setLoadedParcelLabel } from '../../cropParcel/Util';
-import { strcmp } from '../../../Util';
+import { getLabel, strcmp } from '../../../Util';
 
 const { Map, store, http, factory } = core;
 const { geobuf, protobuf } = data;
@@ -19,7 +19,7 @@ const _iconId = 'copy';
 const _secondaryIconId = 'erase';
 const _layerGroup = factory.layerGroup();
 
-export function getParcelInfo (p, callback, setState) {
+export function getParcelInfo(p, callback, setState) {
   const url = `/lpis/geometry/get/point/{init.token}/AGRI_PARCEL/${p.x}/${p.y}`
   http.call('get-parcel-info', { url, responseType: 'arraybuffer' }).then(response => {
     if (setState) {
@@ -46,14 +46,14 @@ export function getParcelInfo (p, callback, setState) {
         setState({ parcelsHaveBeenLoaded: true })
       }
     } else {
-      alertUser(true, 'info', 'Не е избрана парцела од мапата')
+      alertUser(true, 'info', `${getLabel('no_parcel_chosen')}`)
       if (callback) {
         callback()
       }
     }
   }).catch(err => {
     console.error(err)
-    alertUser(true, 'error', 'Настана грешка')
+    alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
     if (callback) {
       callback()
     }
@@ -77,7 +77,7 @@ const _Load = ({ processID, parcelsHaveBeenLoaded: parcelsHaveBeenLoadedStore })
 
   const removeLoadedLayers = () => {
     if (!parcelsHaveBeenLoaded && !parcelsHaveBeenLoadedStore) {
-      alertUser(true, 'info', 'Не се пронајдени вчитани парцели')
+      alertUser(true, 'info', `${getLabel('no_loaded_parcels_found')}`)
     } else {
       Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
@@ -117,7 +117,7 @@ const _Load = ({ processID, parcelsHaveBeenLoaded: parcelsHaveBeenLoadedStore })
   };
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} msg={loadParcelMsg} title='Вчитај парцела' />
+    return <Guidance id={_id} disable={disable} msg={loadParcelMsg} title={getLabel('load_parcel')} />
   }
 
   const renderComponent = () => {
@@ -134,13 +134,13 @@ const _Load = ({ processID, parcelsHaveBeenLoaded: parcelsHaveBeenLoadedStore })
     <React.Fragment>
       <ProcessButton id={_id} onClick={enable}>
         <Icon name={_iconId} size='30px' />
-        <span style={{ display: "block", marginTop: '5px' }}>Вчитај</span>
+        <span style={{ display: "block", marginTop: '5px' }}>{getLabel('load')}</span>
         {processID === _id && renderComponent()}
         {loading && <Loading />}
       </ProcessButton>
       <ProcessButton id={_secondaryId} onClick={removeLoadedLayers}>
         <Icon name={_secondaryIconId} size='30px' />
-        <span style={{ display: "block", marginTop: '5px' }}>Отстрани</span>
+        <span style={{ display: "block", marginTop: '5px' }}>{getLabel('remove')}</span>
       </ProcessButton>
     </React.Fragment>
   );

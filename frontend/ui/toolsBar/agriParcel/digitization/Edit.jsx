@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, tools, config as cfg } from '../../../../Spatial';
 import { config, permanentCropSchema } from '../Config';
-import { bufferToString, getFarmMapAssets, isJSON, strcmp } from '../../../Util';
+import { bufferToString, getFarmMapAssets, getLabel, isJSON, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -105,8 +105,8 @@ const _Edit = ({
         alertUser(
           true,
           'warning',
-          'Не се пронајдени земјоделски парцели.',
-          'Додадете земјоделски парцели пред да ја користите алатката за менување.',
+          `${getLabel('no_parcels_found')}`,
+          `${getLabel('add_parcels_before_using_edit_tool')}`
         );
         disable()
       }
@@ -238,7 +238,7 @@ const _Edit = ({
     const url = `/lpis/save/permanentCrop/{init.token}/${permanentCropObjId}/${farmObjId}`
     http.call(_id, { url, method: 'post', data, responseType: 'arraybuffer' }).then(res => {
       const parsedResponse = bufferToString(res.data)
-      let title = 'Успешно додадени информации за повеќегодишна култура'
+      let title = getLabel('success_save_permanent_crop')
       if (isJSON(parsedResponse)) {
         const jsonResponse = JSON.parse(parsedResponse)
         title = jsonResponse.label_code || title
@@ -252,7 +252,7 @@ const _Edit = ({
       const { response } = err
       const parsedResponse = bufferToString(response)
       console.error(parsedResponse)
-      alertUser(true, 'error', 'Настана грешка')
+      alertUser(true, 'error', getLabel('something_went_wrong'))
       disable()
     })
   }
@@ -265,7 +265,7 @@ const _Edit = ({
     const isEmpty = Object.values(data).every(v => v === null || v === undefined || v === '')
     // If the object is empty, alert the user
     if (isEmpty) {
-      alertUser(true, 'info', 'Внесете вредности и обидете се повторно')
+      alertUser(true, 'info', getLabel('enter_some_values'))
     } else {
       // Parse every value as an integer and remove the empty ones
       Object.keys(data).forEach(k => {
@@ -284,19 +284,19 @@ const _Edit = ({
   }
 
   const renderGuideForm = () => {
-    let msg = ['Одберете земјоделска парцела на мапата која сакате да ја уредите.', '']
+    let msg = [getLabel('choose_parcel_to_edit'), '']
     if (showGuidanceButton) {
       msg = ['', '']
     }
 
     return (
-      <Guidance id={_id} disable={() => disable()} msg={msg} title='Уреди земјоделска парцела'>
+      <Guidance id={_id} disable={() => disable()} msg={msg} title={getLabel('edit_parcel')}>
         {showGuidanceButton && <div className='mt-2'>
           {digitizationIsActive && <Button className='next' size='' onClick={onSubmit}>
-            Зачувај
+            {getLabel('save')}
           </Button>}
           <Button className='next' size='' onClick={handleShowForm}>
-            Прикажи форма
+            {getLabel('show_form')}
           </Button>
         </div>}
       </Guidance>
@@ -338,7 +338,7 @@ const _Edit = ({
 
       additionalCropsContainer = <Modal {...modalProps}>
         <Modal.Title>
-          <Button disabled className='as-label ap-modal-title' >Листа на записи за Повеќегодишни култури</Button>
+          <Button disabled className='as-label ap-modal-title' >{getLabel('permanent_crop_data_list')}</Button>
         </Modal.Title>
         <Modal.Body className='show-grid'>
           <div className='p-2'>
@@ -363,7 +363,7 @@ const _Edit = ({
         key={currentPermanentCropId}
         isSimple
         className={permanentCropsModalClassName}
-        formTitle='Повеќегодишна култура'
+        formTitle={getLabel('permanent_crop')}
         onSubmit={onPermanentCropSubmit}
         formData={permanentCropData}
         onChange={onPermanentCropChange}
@@ -388,9 +388,9 @@ const _Edit = ({
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable} title='Уреди парцела' className='mr-2'>
+    <ProcessButton id={_id} onClick={enable} title={getLabel('edit_parcel')} className='mr-2'>
       <Icon name={_id} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Уреди</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('edit')}</span>
       {processID === _id && renderComponent()}
       {(loading || saveIsPending) && <Loading />}
     </ProcessButton>

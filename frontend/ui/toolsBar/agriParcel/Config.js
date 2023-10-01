@@ -715,24 +715,24 @@ export const copyAPMsg = [
 ]
 
 export const calculateCadIntersectionsMsg = [
-    'Во тек е процесот за пресметатување на пресеци.'
+    `${getLabel('calculate_cad_intersections_msg')}`,
 ]
 
 export const loadParcelMsg = [
-    'Одберете земјоделска парцела на мапата која сакате да биде вчитана.'
+    `${getLabel('load_agricultural_parcel_msg')}`,
 ]
 
 export const cutAPMsg = [
-    'Алатката за отсекување на земјоделска парцела е активна.',
+    `${getLabel('cut_agricultural_parcel_msg')}`,
     ''
 ]
 
 export const fillAPMsg = [
-    'Алатката за пополнување на земјоделска парцела е активна.',
+    `${getLabel('fill_agricultural_parcel_msg')}`,
     ''
 ]
 
 export const mergeAPMsg = [
-    'Алатката за спојување на земјоделска парцела е активна.',
+    `${getLabel('merge_agricultural_parcel_msg')}`,
     ''
 ]
