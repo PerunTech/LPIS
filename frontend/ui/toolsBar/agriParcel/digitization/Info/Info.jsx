@@ -74,7 +74,7 @@ const _Info = ({ processID, activateInfoProcess }) => {
   };
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} msg={parcelInfoMsg} title={getLabel('parcel_info')} />
+    return <Guidance id={_id} disable={disable} msg={[`${getLabel('choose_parcel_to_get_info')}`, '']} title={getLabel('parcel_info')} />
   }
 
   const renderComponent = () => {
