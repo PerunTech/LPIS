@@ -52,8 +52,8 @@ export const config = {
     templineStyle: {
         weight: 2.0,
         stroke: true,
-        color: '#f8f8ff',
-        fillColor: '#f8f8ff',
+        color: '#0b322f',
+        fillColor: '#0b322f',
         opacity: 0.9,
         fillOpacity: 0.25,
         dashArray: [10, 10],
@@ -63,8 +63,8 @@ export const config = {
     hintlineStyle: {
         weight: 2.0,
         stroke: true,
-        color: '#f8f8ff',
-        fillColor: '#f8f8ff',
+        color: '#0b322f',
+        fillColor: '#0b322f',
         opacity: 0.9,
         fillOpacity: 0.25,
         dashArray: [10, 10],
@@ -78,8 +78,8 @@ export const config = {
     pathOptions: {
         weight: 2.0,
         stroke: true,
-        color: '#f8f8ff',
-        fillColor: '#f8f8ff',
+        color: '#0b322f',
+        fillColor: '#0b322f',
         opacity: 0.9,
         fillOpacity: 0.25,
         metadata
