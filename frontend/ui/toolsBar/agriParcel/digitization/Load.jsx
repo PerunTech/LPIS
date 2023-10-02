@@ -46,7 +46,7 @@ export function getParcelInfo(p, callback, setState) {
         setState({ parcelsHaveBeenLoaded: true })
       }
     } else {
-      alertUser(true, 'info', `${getLabel('no_parcel_chosen')}`)
+      alertUser(true, 'info', `${getLabel('no_parcel_selected')}`)
       if (callback) {
         callback()
       }
