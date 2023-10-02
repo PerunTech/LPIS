@@ -1,5 +1,6 @@
 import { React } from 'perun-core';
 import { core, ui } from '../../../Spatial';
+import { getLabel } from '../../Util';
 
 const { connect } = core;
 const { Button, Icon } = ui
@@ -8,7 +9,7 @@ const _EditPolygon = () => {
   return (
     <Button disabled >
       <Icon name='selection-frame' size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Уреди полигон</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('edit_polygon')}</span>
     </Button>
   )
 }

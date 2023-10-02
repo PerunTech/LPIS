@@ -5,7 +5,7 @@ import { Guidance } from '../agriParcel/Guidance'
 import { ProcessButton } from '../ProcessButton';
 import { config, landscapeFeaturesSchema } from './Config'
 const { schema, uiSchema } = landscapeFeaturesSchema
-import { decodeResponse } from '../../Util';
+import { decodeResponse, getLabel } from '../../Util';
 
 const { Map, factory, store, connect, http } = core
 const { draw: { polygon } } = tools
@@ -48,7 +48,7 @@ const _Polygon = ({ processID }) => {
         finish={() => polygon._finishShape()}
         undo={() => polygon._removeLastVertex()}
         disable={disable}
-        title='Пејсажни обележја - Полигон'
+        title={getLabel('landscape_features_polygon')}
         msg={['', '']}
       />
     )
@@ -108,7 +108,7 @@ const _Polygon = ({ processID }) => {
   return (
     <ProcessButton id={_id} onClick={enable}>
       <Icon name='selection-polygon' size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Полигон</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('polygon')}</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>
