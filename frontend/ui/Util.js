@@ -324,7 +324,6 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
                     getFarmDigitizationState(farmObjId)
                 }
                 getFarmData(farmObjId, actionType)
-                layerList[1]['СИЗП']['СИЗП'].addTo(Map)
             }
             store.dispatch({ farmObjId, farmObjTypeId, actionType })
             const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`
