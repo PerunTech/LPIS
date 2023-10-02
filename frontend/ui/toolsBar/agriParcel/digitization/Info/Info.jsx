@@ -1,6 +1,5 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui } from '../../../../../Spatial';
-import { parcelInfoMsg } from '../../Config';
 import { ProcessButton } from '../../../ProcessButton';
 import { Guidance } from '../../Guidance';
 import { getLabel, strcmp } from '../../../../Util';

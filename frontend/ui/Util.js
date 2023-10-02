@@ -251,7 +251,7 @@ const getFarmData = (objectId, actionType) => {
     const token = perunStore.getState().security.svSession
     const url = `${window.server}/ReactElements/getRowDataByObjectId/${token}/${objectId}/FARMER`
     http.call('getFarmData', { url }).then(res => {
-        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+        if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
             const farmData = res.data[0]
             const fic = farmData['FARMER.FIC'] || ''
             const fullName = farmData['FARMER.FULL_NAME'] || ''

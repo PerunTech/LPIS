@@ -2,6 +2,7 @@ import { React, elements } from 'perun-core'
 import { core, ui } from '../../../../../Spatial';
 import { permanentCropSchema } from '../../Config';
 import { InfoListGroup } from './InfoListGroup';
+import { getLabel } from '../../../../Util';
 
 const { http, connect } = core;
 const { Button } = ui;
@@ -164,7 +165,7 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
               {permanentCropsContainer()}
             </div>}
             <InfoListGroup farmInfo={farmInfo} parcelInfo={parcelInfo} />
-          </div> : <div className='mt-2 text-center'>Нема информации</div>}
+          </div> : <div className='mt-2 text-center'>{getLabel('no_data_found')}</div>}
       </React.Fragment>
     )
   }
