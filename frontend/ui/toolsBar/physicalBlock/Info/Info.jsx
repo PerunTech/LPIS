@@ -1,6 +1,5 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui } from '../../../../Spatial';
-import { physicalBlockInfoMsg } from '../Config';
 import { ProcessButton } from '../../ProcessButton';
 import { Guidance } from '../../agriParcel/Guidance';
 import { InfoList } from './InfoList';
@@ -50,7 +49,7 @@ const _Info = ({ processID }) => {
   };
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} msg={physicalBlockInfoMsg} title={getLabel('physical_block_info')} />
+    return <Guidance id={_id} disable={disable} msg={[`${getLabel('choose_physical_block_to_get_info')}`, '']} title={getLabel('physical_block_info')} />
   }
 
   const renderModal = () => {

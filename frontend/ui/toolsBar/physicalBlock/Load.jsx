@@ -2,7 +2,7 @@ import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { Guidance } from '../agriParcel/Guidance';
-import { config, loadPhysicalBlockMsg, setLoadedPhysicalBlockLabel } from './Config';
+import { config, setLoadedPhysicalBlockLabel } from './Config';
 import { getLabel, strcmp } from '../../Util';
 
 const { Map, store, connect, http, factory } = core;
@@ -122,7 +122,7 @@ const _Load = ({ processID, physicalBlocksHaveBeenLoaded: physicalBlocksHaveBeen
   };
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} msg={loadPhysicalBlockMsg} title={getLabel('load_physical_block')} />
+    return <Guidance id={_id} disable={disable} msg={[`${getLabel('choose_physical_block_to_load')}`, '']} title={getLabel('load_physical_block')} />
   }
 
   const renderComponent = () => {

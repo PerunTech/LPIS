@@ -79,8 +79,7 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
       alertUser(
         true,
         'warning',
-        'Не се пронајдени земјоделски парцели.',
-        'Додадете земјоделски парцели пред да ја користите алатката за менување.'
+        `${getLabel('no_parcels_found')}`
       );
       disable()
     }
@@ -118,16 +117,16 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
         let message = ''
         if (title.includes('plantAreaCannotBeBiggerThanArea')) {
           message = 'Површината со засадена култура не може да биде поголема од површината на парцелата'
-          alertUser(true, 'error', 'Настана грешка', message)
+          alertUser(true, 'error', `${getLabel('something_went_wrong')}`, message)
         } else if (title.includes('sumOfPermanentCropsAreaCannotBeBiggerThanParcelArea')) {
           message = 'Збирот на површините со засадена култура не може да биде поголем од површината на парцелата'
-          alertUser(true, 'error', 'Настана грешка', message)
+          alertUser(true, 'error', `${getLabel('something_went_wrong')}`, message)
         } else {
           if (parsedResponse && Object.keys(parsedResponse).length > 0) {
             message = parsedResponse.title || parsedResponse.message || ''
-            alertUser(true, 'error', 'Настана грешка', message)
+            alertUser(true, 'error', `${getLabel('something_went_wrong')}`, message)
           } else {
-            alertUser(true, 'error', 'Настана грешка')
+            alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
           }
         }
       }

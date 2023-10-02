@@ -154,7 +154,7 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
   }
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} msg={assignAPMsg} title={`${getLabel('assign_agricultural_holding')}`} />
+    return <Guidance id={_id} disable={disable} msg={['', '']} title={`${getLabel('assign_agricultural_holding')}`} />
   }
 
   const renderForm = () => {
@@ -175,12 +175,14 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} title={`${getLabel('assign_agricultural_holding')}`}>
-    <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>{`${getLabel('assign')}`}</span>
-    {processID === _id && renderComponent()}
-    {(loading || saveIsPending) && <Loading />}
-  </ProcessButton>;
+  return (
+    <ProcessButton id={_id} onClick={enable} title={`${getLabel('assign_agricultural_holding')}`}>
+      <Icon name={_id} size='30px' />
+      <span style={{ display: 'block', marginTop: '5px' }}>{`${getLabel('assign')}`}</span>
+      {processID === _id && renderComponent()}
+      {(loading || saveIsPending) && <Loading />}
+    </ProcessButton>)
+    ;
 };
 
 export const Assign = core.connect(state => ({

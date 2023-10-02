@@ -46,7 +46,7 @@ export const getCadIntersections = () => {
       Object.values(prevCadIntersections).forEach(v => v.removeFrom && v.removeFrom(Map));
       store.dispatch({ 'cadIntersections': layers, showCadParcels: true })
     } else {
-      alertUser(true, 'info', 'Не се пронајдени пресеци')
+      alertUser(true, 'info', `${getLabel('no_intersections_found')}`)
     }
   }).catch(error => {
     console.error(error)

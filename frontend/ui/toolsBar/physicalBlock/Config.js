@@ -86,14 +86,6 @@ export const config = {
     }
 };
 
-export const physicalBlockInfoMsg = [
-    `${getLabel('choose_physical_block_to_get_info')}`
-]
-
-export const loadPhysicalBlockMsg = [
-    `${getLabel('choose_physical_block_to_load')}`
-]
-
 export const setLoadedPhysicalBlockLabel = loadedPhysicalBlock => {
     const oldId = loadedPhysicalBlock.feature.properties.OLD_ID || '';
     const cnt = String(loadedPhysicalBlock.feature.properties.CENTROID);

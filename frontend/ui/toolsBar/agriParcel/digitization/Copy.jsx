@@ -1,6 +1,6 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools, config as cfg } from '../../../../Spatial';
-import { config, copyAPMsg } from '../Config';
+import { config } from '../Config';
 import { getFarmMapAssets, getLabel, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
@@ -128,7 +128,7 @@ const _Copy = ({ processID, farmObjId, saveIsPending }) => {
   }
 
   const renderGuideForm = () => {
-    let msg = copyAPMsg
+    let msg = [`${getLabel('select_a_parcel_you_want_to_copy')}`, '']
     if (showGuidanceButton) {
       msg = ['', '']
     }

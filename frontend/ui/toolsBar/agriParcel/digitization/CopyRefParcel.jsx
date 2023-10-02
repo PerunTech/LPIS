@@ -121,7 +121,7 @@ const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
         true,
         'warning',
         `${getLabel('no_parcels_found')}`,
-        `${getLabel('add_parcels_before_using_edit_tool')}`
+        `${getLabel('add_parcels_before_using_copy_ref_parcel_tool')}`
       );
       disable()
     }

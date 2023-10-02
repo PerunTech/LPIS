@@ -174,7 +174,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
   }
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} title='Заедничка употреба' msg={commonUseMsg} />
+    return <Guidance id={_id} disable={disable} title={getLabel('common_use')} msg={['', '']} />
   }
 
   const renderForm = () => {
