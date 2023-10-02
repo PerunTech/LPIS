@@ -249,12 +249,12 @@ const getControls = (fic) => {
 
 const getFarmData = (objectId, actionType) => {
     const token = perunStore.getState().security.svSession
-    const url = `${window.server}/ReactElements/getRowDataByObjectId/${token}/${objectId}/FARMER`
+    const url = `${window.server}/ReactElements/getRowDataByObjectId/${token}/${objectId}/FARM`
     http.call('getFarmData', { url }).then(res => {
         if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
             const farmData = res.data[0]
-            const fic = farmData['FARMER.FIC'] || ''
-            const fullName = farmData['FARMER.FULL_NAME'] || ''
+            const fic = farmData['FARM.FIC'] || ''
+            const fullName = farmData['FARM.FULL_NAME'] || ''
             store.dispatch({ fic, fullName })
             // Get the controls only for the appropriate action type
             if (fic && strcmp(actionType, 'sizp')) {
@@ -323,7 +323,7 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
                 if (strcmp(actionType, 'sizp')) {
                     getFarmDigitizationState(farmObjId)
                 }
-                getFarmData(farmObjId, actionType)
+                // getFarmData(farmObjId, actionType)
             }
             store.dispatch({ farmObjId, farmObjTypeId, actionType })
             const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`
