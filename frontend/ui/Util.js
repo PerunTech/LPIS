@@ -249,8 +249,9 @@ const getControls = (fic) => {
 
 const getFarmData = (objectId, actionType) => {
     const token = perunStore.getState().security.svSession
-    const url = `${window.server}/ReactElements/getRowDataByObjectId/${token}/${objectId}/FARM`
-    http.call('getFarmData', { url }).then(res => {
+    const url = `${window.server}/ReactElements/searchTable/${token}/FARM/1`
+    const data = { OBJECT_ID: objectId }
+    http.call('getFarmData', { url, method: 'post', data: JSON.stringify(data) }).then(res => {
         if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
             const farmData = res.data[0]
             const fic = farmData['FARM.FIC'] || ''
@@ -323,7 +324,7 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
                 if (strcmp(actionType, 'sizp')) {
                     getFarmDigitizationState(farmObjId)
                 }
-                // getFarmData(farmObjId, actionType)
+                getFarmData(farmObjId, actionType)
             }
             store.dispatch({ farmObjId, farmObjTypeId, actionType })
             const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`
