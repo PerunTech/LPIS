@@ -4,7 +4,7 @@ import { calculateCadIntersectionsMsg } from '../Config';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
 import { getCadIntersections } from './CadIntersections';
-import { getFarmMapAssets, bufferToString, isJSON } from '../../../Util';
+import { getFarmMapAssets, bufferToString, isJSON, getLabel } from '../../../Util';
 
 const { store, http } = core;
 const { Icon } = ui;
@@ -72,13 +72,13 @@ const _CalculateCadIntersections = ({ processID, agriParcels, farmObjId }) => {
       setState({ isGuided: true })
       initCalculation()
     } else {
-      alertUser(true, 'warning', 'Не се пронајдени земјоделски парцели.', 'Додадете земјоделски парцели пред да ја користите алатката за пресметување пресеци.');
+      alertUser(true, 'warning', `${getLabel('no_parcels_found')}`, `${getLabel('add_parcels_before_using_calc_intersections_tool')}`);
       disable()
     }
   }
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} msg={calculateCadIntersectionsMsg} title='Пресметување пресеци' />
+    return <Guidance id={_id} disable={disable} msg={calculateCadIntersectionsMsg} title={getLabel('calculate_intersections')} />
   }
 
   const renderComponent = () => {
@@ -91,9 +91,9 @@ const _CalculateCadIntersections = ({ processID, agriParcels, farmObjId }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} title='Пресметај пресеци'>
+  return <ProcessButton id={_id} onClick={enable} title={getLabel('calculate_intersections')}>
     <Icon name={_iconId} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Пресм. пресеци</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('calc_intersections')}</span>
     {processID === _id && renderComponent()}
     {loading && <Loading />}
   </ProcessButton>;

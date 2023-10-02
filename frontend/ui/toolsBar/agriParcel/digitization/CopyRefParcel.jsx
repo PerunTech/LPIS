@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools, config } from '../../../../Spatial';
 import { config as apConfig } from '../Config';
-import { bufferToString, getFarmMapAssets, strcmp } from '../../../Util';
+import { bufferToString, getFarmMapAssets, getLabel, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -79,13 +79,13 @@ const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
       const stringfiedResponse = bufferToString(err.response.data)
       if (strcmp(typeof stringfiedResponse, 'string')) {
         if (stringfiedResponse.includes('err.no_reference_parcel.selected')) {
-          const translatedError = 'Не е избрана референтна парцела'
+          const translatedError = `${getLabel('no_referent_parcel_selected')}`
           alertUser(true, 'info', translatedError)
         } else {
-          alertUser(true, 'error', 'Настана грешка')
+          alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
         }
       } else {
-        alertUser(true, 'error', 'Настана грешка')
+        alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
       }
       disable()
     })
@@ -120,8 +120,8 @@ const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
       alertUser(
         true,
         'warning',
-        'Не се пронајдени земјоделски парцели.',
-        'Додадете земјоделски парцели пред да ја користите алатката за менување.'
+        `${getLabel('no_parcels_found')}`,
+        `${getLabel('add_parcels_before_using_edit_tool')}`
       );
       disable()
     }
@@ -148,7 +148,7 @@ const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
 
   const renderGuideForm = () => {
     return (
-      <Guidance id={_id} disable={disable} msg={['', '']} title='Копирај референтна парцела'>
+      <Guidance id={_id} disable={disable} msg={['', '']} title={getLabel('copy_referent_parcel')}>
         {showGuidanceButton && <div className='mt-2'>
           <Button className='next' size='' onClick={handleShowForm}>
             Прикажи форма
@@ -179,9 +179,9 @@ const _CopyRefParcel = ({ processID, farmObjId, agriParcels }) => {
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable} title='Копирај референтна парцела'>
+    <ProcessButton id={_id} onClick={enable} title={getLabel('copy_referent_parcel')}>
       <Icon name={_iconId} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Коп. реф. парц.</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('copy_ref_parcel')}</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>

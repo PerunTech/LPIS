@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, config } from '../../../../Spatial';
 import { permanentCropsMsg, permanentCropSchema } from '../Config';
-import { bufferToString, getFarmMapAssets, isJSON, strcmp } from '../../../Util';
+import { bufferToString, getFarmMapAssets, getLabel, isJSON, strcmp } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
@@ -250,9 +250,9 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
     const selectedParcel = layer.feature.properties
     const selectedParcelArea = Math.round(Number(selectedParcel?.ALLOWED_AREA || selectedParcel?.AREA)) || '/'
     const parcelData = <div className='p-2 mt-1'>
-      <p style={{ fontSize: 'small', fontWeight: '700' }}>Информации за избраната парцела</p>
+      <p style={{ fontSize: 'small', fontWeight: '700' }}>{getLabel('chosen_parcel_info')}</p>
       <div className='d-flex flex-row justify-content-center align-items-center mt-n2' style={{ fontSize: 'small' }}>
-        <p className='mr-1 mb-n1'>Површина: {selectedParcelArea} m²</p>
+        <p className='mr-1 mb-n1'>{getLabel('area')}: {selectedParcelArea} m²</p>
       </div>
     </div>
 
@@ -262,7 +262,7 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
         key={currentPermanentCropId}
         isSimple
         className={permanentCropsModalClassName}
-        formTitle='Повеќегодишна култура'
+        formTitle={getLabel('permanent_crop')}
         onSubmit={onSubmit}
         formData={data}
         onChange={onChange}
@@ -287,9 +287,9 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable} title='Долгогодишни култури'>
+    <ProcessButton id={_id} onClick={enable} title={getLabel('permanent_crops')}>
       <Icon name={_iconId} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Долгогод. култ.</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('perm_crops')}</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>

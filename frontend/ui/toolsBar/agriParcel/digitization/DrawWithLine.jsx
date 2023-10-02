@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, tools, config as cfg } from '../../../../Spatial';
 import { config, drawAPWithLineMsg, permanentCropSchema } from '../Config';
-import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
+import { bufferToString, getFarmMapAssets, getLabel, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -193,7 +193,7 @@ const _DrawWithLine = ({ processID, farmObjId, saveIsPending }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} title='Нацртај парцела (со линија)' className='mr-2'>
+  return <ProcessButton id={_id} onClick={enable} title={getLabel('draw_with_line')} className='mr-2'>
     <Icon name={_iconId} size='30px' />
     {processID === _id && renderComponent()}
     {saveIsPending && <Loading />}

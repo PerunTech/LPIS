@@ -1,6 +1,6 @@
 import { React, Loading, redux } from 'perun-core'
 import { core, ui } from '../../../../Spatial'
-import { downloadFile } from '../../../Util'
+import { downloadFile, getLabel } from '../../../Util'
 import { ProcessButton } from '../../ProcessButton'
 
 const { store, connect, http } = core
@@ -50,7 +50,7 @@ const _Print = ({ processID, farmObjId }) => {
 
       componentToRender = <Modal {...modalProps}>
         <Modal.Title>
-          <Button disabled className='as-label ap-modal-title' >Извештаи</Button>
+          <Button disabled className='as-label ap-modal-title' >{getLabel('reports')}</Button>
           <DrawActions cancel={disable} />
         </Modal.Title>
         <Modal.Body className='ap-modal-body' >
@@ -72,7 +72,7 @@ const _Print = ({ processID, farmObjId }) => {
   return (
     <ProcessButton id={_id} onClick={enable} >
       <Icon name={_iconId} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Извештаи</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('reports')}</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>

@@ -1,5 +1,6 @@
 import { React, elements } from 'perun-core'
 import { core, ui } from '../../Spatial'
+import { getLabel } from '../Util'
 
 const { store, connect } = core
 const { Button, Icon } = ui
@@ -10,7 +11,7 @@ const _ControlResults = ({ controlResults, showControlResultsContainer }) => {
     if (controlResults.length > 0) {
       store.dispatch({ showControlResultsContainer: !showControlResultsContainer, showParcelInfoContainer: false })
     } else {
-      alertUser(true, 'info', 'Не се пронајдени резултати од контрола')
+      alertUser(true, 'info', `${getLabel('no_control_results_found')}`)
     }
   }
 
@@ -34,7 +35,7 @@ const _ControlResults = ({ controlResults, showControlResultsContainer }) => {
         onClick={toggleControlResultsContainer}
       >
         <Icon name={getIconName()} size='20px' />
-        <span style={{ margin: '3px 3px 0 3px' }}>{!showControlResultsContainer ? 'Резултати од контрола' : 'Листа на парцели'}</span>
+        <span style={{ margin: '3px 3px 0 3px' }}>{!showControlResultsContainer ? `${getLabel('control_results')}` : `${getLabel('parcel_list')}`}</span>
       </Button>
     </React.Fragment>
   )

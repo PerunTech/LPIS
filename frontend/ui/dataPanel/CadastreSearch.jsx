@@ -4,6 +4,7 @@ import { Form } from '../toolsBar/agriParcel/Form'
 import { removeCadParcels } from './Util'
 import { cadastreSearchFormSchema, cadParcelConfig } from './CadastreConfig'
 import { setCadParcelLabel } from '../toolsBar/cropParcel/Util'
+import { getLabel } from '../Util'
 
 const { schema: initialSchema, uiSchema: initialUiSchema } = cadastreSearchFormSchema()
 const { http, factory, Map, connect } = core
@@ -65,11 +66,11 @@ const _CadastreSearch = () => {
         const { schema: formSchema, uiSchema: formUiSchema } = cadastreSearchFormSchema(cadMunicipalities)
         setState({ schema: formSchema, uiSchema: formUiSchema, disableSearchBtn: false })
       } else {
-        alertUser(true, 'info', 'Не се пронајдени податоци')
+        alertUser(true, 'info', `${getLabel('no_data_found')}`)
       }
     }).catch(err => {
       console.error(err)
-      alertUser(true, 'error', 'Настана грешка')
+      alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
     })
   }
 
@@ -99,12 +100,12 @@ const _CadastreSearch = () => {
         // Add an event listener when the dragend event is fired
         Map.on('dragend', handleDragEnd)
       } else {
-        alertUser(true, 'info', 'Не се пронајдени катастарски парцели')
+        alertUser(true, 'info', `${getLabel('no_data_found')}`)
       }
     }).catch(err => {
       console.error(err)
       setState({ loading: false })
-      alertUser(true, 'error', 'Настана грешка')
+      alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
     })
   }
 
@@ -121,8 +122,8 @@ const _CadastreSearch = () => {
     const componentToRender = (
       <Form
         isSimple
-        formTitle='Пребарување катастар'
-        buttonLabel='Пребарај'
+        formTitle={getLabel('search_cadastre')}
+        buttonLabel={getLabel('search')}
         className='cadastre-search-form'
         schema={formSchema}
         uiSchema={formUiSchema}
@@ -141,7 +142,7 @@ const _CadastreSearch = () => {
     <React.Fragment>
       <Button variant='dark' className='d-flex flex-row justify-content-center align-items-center mt-1 rounded' onClick={toggleSearchForm}>
         <Icon name='search' size='20px' />
-        <span style={{ margin: '3px 3px 0 3px' }}>Пребарај катастар</span>
+        <span style={{ margin: '3px 3px 0 3px' }}>{getLabel('search_cadastre')}</span>
       </Button>
       {showForm && renderComponent()}
       {loading && <Loading />}
