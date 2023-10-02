@@ -1,1 +1,1 @@
-window.server = 'http://208.97.140.215:8091/services';
+window.server = 'http://192.168.100.110:9096/services';
