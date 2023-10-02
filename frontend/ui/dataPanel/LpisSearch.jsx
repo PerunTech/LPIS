@@ -2,12 +2,10 @@ import { React, Loading, elements } from 'perun-core'
 import { core, ui, data } from '../../Spatial'
 import { Form } from '../toolsBar/agriParcel/Form'
 import { removeSearchedParcels } from './Util'
-import { lpisSearchFormSchema } from './LpisSearchConfig'
 import { config as apConfig } from '../toolsBar/agriParcel/Config'
 import { setSearchedParcelLabel } from '../toolsBar/cropParcel/Util'
 import { bufferToString, getLabel, strcmp } from '../Util'
 
-const { schema, uiSchema } = lpisSearchFormSchema()
 const { http, factory, Map, store, connect } = core
 const { geobuf, protobuf } = data
 const { Button, Icon, DrawActions } = ui
@@ -85,7 +83,28 @@ const _LpisSearch = ({ theSearchedParcelWasRemoved }) => {
     removeSearchedParcels()
   }
 
+  const getLpisSearchSchema = () => {
+    return {
+      schema: {
+        properties: {
+          ID: {
+            title: `${getLabel('lpis_number')}`,
+            type: 'string',
+            default: ''
+          }
+        },
+        type: 'object',
+        required: ['ID']
+      },
+      uiSchema: {
+
+      }
+    }
+  }
+
   const renderComponent = () => {
+    const { schema, uiSchema } = getLpisSearchSchema()
+
     const componentToRender = (
       <Form
         isSimple
