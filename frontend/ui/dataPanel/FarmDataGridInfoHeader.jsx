@@ -1,6 +1,6 @@
 import { React } from 'perun-core'
 import { core } from '../../Spatial';
-import { strcmp } from '../Util';
+import { getLabel, strcmp } from '../Util';
 import { truncate } from './Util';
 
 const _FarmDataGridInfoHeader = ({ actionType, fic, fullName }) => {
@@ -15,11 +15,11 @@ const _FarmDataGridInfoHeader = ({ actionType, fic, fullName }) => {
 
   return <div className='fr-info-header'>
     {fic && <div className='header-info-wrapper'>
-      <h3 className='info-header-title'>ИДБР:</h3>
+      <h3 className='info-header-title'>{getLabel('id_number')}:</h3>
       <span className='info-header-span' title={fic}>{fic}</span>
     </div>}
     {fullName && <div className='header-info-wrapper'>
-      <h3 className='info-header-title'>Целосно име:</h3>
+      <h3 className='info-header-title'>{getLabel('full_name')}:</h3>
       <span className='info-header-span' title={fullName}>{finalFullName}</span>
     </div>}
   </div>

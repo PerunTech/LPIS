@@ -182,8 +182,8 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
     const parcelData = <div className='p-2'>
       <p style={{ fontSize: 'small', fontWeight: '700' }}>{getLabel('chosen_parcel_info')}</p>
       <div className='d-flex flex-row justify-content-center align-items-center mt-1 mb-n1' style={{ fontSize: 'small' }}>
-        <p className='mr-1'>Површина: {area} m²</p>
-        <p>Класа: {landUseCode}</p>
+        <p className='mr-1'>{getLabel('area')}: {area} m²</p>
+        <p>{getLabel('class')}: {landUseCode}</p>
       </div>
     </div>
 

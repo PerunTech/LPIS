@@ -2,7 +2,7 @@ import { React, PropTypes, elements } from 'perun-core';
 import { core, data, ui } from '../../Spatial';
 import { ParcelHistory } from './ParcelHistory';
 import { getCropLabel } from '../toolsBar/cropParcel/Util';
-import { strcmp, translateBooleanValue } from '../Util';
+import { getLabel, strcmp, translateBooleanValue } from '../Util';
 import { parcelHistoryConfig } from '../toolsBar/agriParcel/Config';
 import { removeParcelHistoryLayers } from './Util';
 
@@ -166,7 +166,7 @@ const _NoData = () => (
   <div className='fr-data-grid-empty-rows'>
     <ButtonGroup>
       <Button disabled style={{ opacity: 1 }}><Icon name='empty-grid' size='18px' /></Button>
-      <Button disabled>Не се пронајдени податоци</Button>
+      <Button disabled>{getLabel('no_data_found')}</Button>
     </ButtonGroup>
   </div>
 );

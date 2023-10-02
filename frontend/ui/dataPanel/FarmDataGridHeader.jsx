@@ -1,11 +1,21 @@
 import { React } from 'perun-core'
 import { ui } from '../../Spatial';
+import { getLabel } from '../Util';
 
 const { ButtonGroup, Button } = ui;
 
 export const FarmDataGridHeader = ({ gridType }) => {
   const colEnum = {
-    agri_parcel: ['', 'СИЗП Број', 'Класа', 'Површина', 'Место викано', 'Заедничка употр.', 'Право на корист.', '']
+    agri_parcel: [
+      '',
+      `${getLabel('lpis_number')}`,
+      `${getLabel('class')}`,
+      `${getLabel('area')}`,
+      `${getLabel('locality')}`,
+      `${getLabel('locality')}`,
+      `${getLabel('right_of_use')}`,
+      ''
+    ]
   };
 
   const generateHeader = () => {

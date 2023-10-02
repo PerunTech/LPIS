@@ -166,7 +166,7 @@ const _Cut = ({ processID, loadedPhysicalBlocks }) => {
         undo={() => polygon._removeLastVertex()}
         disable={() => disable()}
         msg={msg}
-        title='Отсечи блок'
+        title={getLabel('cut_physical_block')}
       />
     )
   }

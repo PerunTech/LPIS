@@ -1,9 +1,11 @@
+import { getLabel } from "../Util"
+
 export const lpisSearchFormSchema = () => {
   return {
     schema: {
       properties: {
         ID: {
-          title: 'СИЗП број',
+          title: `${getLabel('lpis_number')}`,
           type: 'string',
           default: ''
         }
