@@ -316,44 +316,44 @@ const _ExpandedRow = ({ id, rowData, unit, actionType, pplanRows, cadIntersectio
             <span className='font-weight-bold'>Парцелата има тополошки грешки</span>
           </ListGroupItem>}
           <ListGroupItem className='p-1'>
-            Вкупна површина: <span className='font-weight-bold'>{Math.round(Number(rowData.AREA)) + ` ${unit}`}</span>
+            {getLabel('area')}: <span className='font-weight-bold'>{Math.round(Number(rowData.AREA)) + ` ${unit}`}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Преклоп: <span className='font-weight-bold'>{translateBooleanValue(rowData.HAS_OVERLAP)}</span>
+            {getLabel('has_overlap')}: <span className='font-weight-bold'>{translateBooleanValue(rowData.HAS_OVERLAP)}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Тераси: <span className='font-weight-bold'>{translateBooleanValue(rowData.TERRACE)}</span>
+            {getLabel('terrace')}: <span className='font-weight-bold'>{translateBooleanValue(rowData.TERRACE)}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Наводнување: <span className='font-weight-bold'>{translateBooleanValue(rowData.IRRIGATION)}</span>
+            {getLabel('irrigation')}: <span className='font-weight-bold'>{translateBooleanValue(rowData.IRRIGATION)}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Пејсажни обележја: <span className='font-weight-bold'>{translateBooleanValue(rowData.LANDSCAPE_FEATURES)}</span>
+            {getLabel('landscape_features')}: <span className='font-weight-bold'>{translateBooleanValue(rowData.LANDSCAPE_FEATURES)}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Невидлива граница: <span className='font-weight-bold'>{translateBooleanValue(rowData.INVISIBLE_BORDER)}</span>
+            {getLabel('invisible_border')}: <span className='font-weight-bold'>{translateBooleanValue(rowData.INVISIBLE_BORDER)}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Променета граница: <span className='font-weight-bold'>{translateBooleanValue(rowData.CHANGED_BORDER)}</span>
+            {getLabel('changed_border')}: <span className='font-weight-bold'>{translateBooleanValue(rowData.CHANGED_BORDER)}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Експозиција: <span className='font-weight-bold'>{rowData.EXPOSITION_AVG}</span>
+            {getLabel('exposition_avg')}: <span className='font-weight-bold'>{rowData.EXPOSITION_AVG}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Наклон: <span className='font-weight-bold'>{rowData.SLOPE_AVG}</span>
+            {getLabel('slope_avg')}: <span className='font-weight-bold'>{rowData.SLOPE_AVG}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Надморска височина: <span className='font-weight-bold'>{Math.round(rowData.Z_AVG)} m</span>
+            {getLabel('z_avg')}: <span className='font-weight-bold'>{Math.round(rowData.Z_AVG)} m</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Коефициент на искористена површина:
+            {getLabel('eligibility_coef')}:
             <ProgressBar now={rowData.ELIGIBILITY_COEF} label={`${rowData.ELIGIBILITY_COEF}%`} />
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Органско производство: <span className='font-weight-bold'>{translateBooleanValue(rowData.ORGANIC)}</span>
+            {getLabel('organic')}: <span className='font-weight-bold'>{translateBooleanValue(rowData.ORGANIC)}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            Тип на почва: <span className='font-weight-bold'>{rowData.SOIL_TYPE || 'Не е наведено'}</span>
+            {getLabel('soil_type')}: <span className='font-weight-bold'>{rowData.SOIL_TYPE || 'N/A'}</span>
           </ListGroupItem>
         </ListGroup>
       </div>
