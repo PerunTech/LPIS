@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
 import { config, cutAPMsg } from '../Config';
-import { decodeResponse, getFarmMapAssets } from '../../../Util';
+import { decodeResponse, getFarmMapAssets, getLabel } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -74,7 +74,7 @@ const _Cut = ({ processID, farmObjId, saveIsPending }) => {
       }).catch(error => {
         const { response } = error
         const errorMsg = decodeResponse(response)
-        alertUser(true, 'error', 'Грешка при отсекување земјоделска парцела', errorMsg);
+        alertUser(true, 'error', `${getLabel('cut_parcel_error')}`, errorMsg);
         e.layer.removeFrom(Map);
         disable()
       })
@@ -101,7 +101,7 @@ const _Cut = ({ processID, farmObjId, saveIsPending }) => {
       undo={() => polygon._removeLastVertex()}
       disable={() => disable()}
       msg={cutAPMsg}
-      title='Отсечи земјоделска парцела'
+      title={getLabel('cut_parcel')}
     />
   }
 
@@ -123,9 +123,9 @@ const _Cut = ({ processID, farmObjId, saveIsPending }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} title='Отсечи парцела' className='mr-2' >
+  return <ProcessButton id={_id} onClick={enable} title={getLabel('cut_parcel')} className='mr-2' >
     <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Отсечи</span>
+    <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('cut')}</span>
     {processID === _id && renderComponent()}
     {saveIsPending && <Loading />}
   </ProcessButton>

@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, tools, config as cfg } from '../../../../Spatial';
-import { config, drawAPWithLineMsg, permanentCropSchema } from '../Config';
-import { bufferToString, getFarmMapAssets, isJSON } from '../../../Util';
+import { config, permanentCropSchema } from '../Config';
+import { bufferToString, getFarmMapAssets, getLabel, isJSON } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -154,12 +154,14 @@ const _DrawWithLine = ({ processID, farmObjId, saveIsPending }) => {
   }
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} title='Нацртај парцела (со линија)'
-      finish={() => line._finishShape()}
-      undo={() => line._removeLastVertex()}
-      disable={disable}
-      msg={drawAPWithLineMsg}
-    />
+    return (
+      <Guidance id={_id} title={getLabel('draw_parcel_with_line')}
+        finish={() => line._finishShape()}
+        undo={() => line._removeLastVertex()}
+        disable={disable}
+        msg={['', '']}
+      />
+    )
   }
 
   const renderForm = () => {
@@ -193,7 +195,7 @@ const _DrawWithLine = ({ processID, farmObjId, saveIsPending }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} title='Нацртај парцела (со линија)' className='mr-2'>
+  return <ProcessButton id={_id} onClick={enable} title={getLabel('draw_with_line')} className='mr-2'>
     <Icon name={_iconId} size='30px' />
     {processID === _id && renderComponent()}
     {saveIsPending && <Loading />}

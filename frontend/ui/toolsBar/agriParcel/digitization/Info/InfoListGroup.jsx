@@ -1,5 +1,5 @@
 import { React, elements } from 'perun-core'
-import { translateBooleanValue, translateLandCoverCode } from '../../../../Util';
+import { getLabel, translateBooleanValue, translateLandCoverCode } from '../../../../Util';
 import { truncate } from '../../../../dataPanel/Util';
 
 const { ReactBootstrap } = elements;
@@ -20,89 +20,89 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
   return (
     <ListGroup className='text-center mb-2'>
       <ListGroupItem className='p-2'>
-        Целосно име: <span className='font-weight-bold'>{farmInfo?.FULL_NAME || '/'}</span>
+        {getLabel('full_name')}: <span className='font-weight-bold'>{farmInfo?.FULL_NAME || '/'}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        ИДБР: <span className='font-weight-bold'>{farmInfo?.FIC || '/'}</span>
+        {getLabel('id_number')}: <span className='font-weight-bold'>{farmInfo?.FIC || '/'}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Подрачна единица: <span className='font-weight-bold'>{farmInfo?.ORG_UNIT_NAME || '/'}</span>
+        {getLabel('org_unit_name')}: <span className='font-weight-bold'>{farmInfo?.ORG_UNIT_NAME || '/'}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        СИЗП број: <span className='font-weight-bold'>{parcelInfo.OLD_ID}</span>
+        {getLabel('lpis_number')}: <span className='font-weight-bold'>{parcelInfo.OLD_ID}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Употреба на земјиште: <span className='font-weight-bold'>{translatedLandCoverCode}</span>
+        {getLabel('land_use_translated')}: <span className='font-weight-bold'>{translatedLandCoverCode}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Место викано: <span className='font-weight-bold'>{parcelInfo.HOME_NAME || 'Не е наведено'}</span>
+        {getLabel('locality')}: <span className='font-weight-bold'>{parcelInfo.HOME_NAME || 'Не е наведено'}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Површина: <span className='font-weight-bold'>{`${Math.round(Number(parcelInfo.ALLOWED_AREA || parcelInfo.AREA))} m²`}</span>
+        {getLabel('area')}: <span className='font-weight-bold'>{`${Math.round(Number(parcelInfo.ALLOWED_AREA || parcelInfo.AREA))} m²`}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Вкупна површина: <span className='font-weight-bold'>{Math.round(parcelInfo.AREA)} m²</span>
+        {getLabel('total_area')}: <span className='font-weight-bold'>{Math.round(parcelInfo.AREA)} m²</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Заедничка употреба: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.COMMON_USE)}</span>
+        {getLabel('common_use')}: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.COMMON_USE)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Право на користење: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.CERTIFICATE_OF_USE)}</span>
+        {getLabel('certificiate_of_use')}: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.CERTIFICATE_OF_USE)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Забелешка од оператор:
+        {getLabel('note')}:
         <br />
         <span className='font-weight-bold'>{parcelInfo.NOTE_INSERT || '/'}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Забелешка од земјоделец:
+        {getLabel('farmer_note')}:
         <br />
         <span className='font-weight-bold'>{parcelInfo.NOTE_FARMER || '/'}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Забелешка од организација:
+        {getLabel('organization_note')}:
         <br />
         <span className='font-weight-bold'>{parcelInfo.NOTE_ORGANISATION || '/'}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Преклоп: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.HAS_OVERLAP)}</span>
+        {getLabel('overlap')}: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.HAS_OVERLAP)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Тераси: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.TERRACE)}</span>
+        {getLabel('terrace')}: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.TERRACE)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Наводнување: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.IRRIGATION)}</span>
+        {getLabel('irrigation')}: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.IRRIGATION)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Пејсажни обележја: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.LANDSCAPE_FEATURES)}</span>
+        {getLabel('landscape_features')}: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.LANDSCAPE_FEATURES)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Невидлива граница: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.INVISIBLE_BORDER)}</span>
+        {getLabel('invisible_border')}: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.INVISIBLE_BORDER)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Променета граница: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.CHANGED_BORDER)}</span>
+        {getLabel('changed_border')}: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.CHANGED_BORDER)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Експозиција: <span className='font-weight-bold'>{parcelInfo.EXPOSITION_AVG}</span>
+        {getLabel('exposition_avg')}: <span className='font-weight-bold'>{parcelInfo.EXPOSITION_AVG}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Наклон: <span className='font-weight-bold'>{parcelInfo.SLOPE_AVG}</span>
+        {getLabel('slope_avg')}: <span className='font-weight-bold'>{parcelInfo.SLOPE_AVG}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Надморска височина: <span className='font-weight-bold'>{Math.round(parcelInfo.Z_AVG)} m</span>
+        {getLabel('z_avg')}: <span className='font-weight-bold'>{Math.round(parcelInfo.Z_AVG)} m</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Коефициент на искористена површина:
+        {getLabel('eligibility_coef')}:
         <ProgressBar now={parcelInfo.ELIGIBILITY_COEF} label={`${parcelInfo.ELIGIBILITY_COEF}%`} />
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Органско производство: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.ORGANIC)}</span>
+        {getLabel('organic')}: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.ORGANIC)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Тип на почва: <span className='font-weight-bold'>{parcelInfo.SOIL_TYPE || 'Не е наведено'}</span>
+        {getLabel('soil_type')}: <span className='font-weight-bold'>{parcelInfo.SOIL_TYPE || 'N/A'}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        Корисничко име: <span className='font-weight-bold'>{finalUserName}</span>
+        {getLabel('user_name')}: <span className='font-weight-bold'>{finalUserName}</span>
       </ListGroupItem>
     </ListGroup>
   )

@@ -1,6 +1,7 @@
 import { React, Loading, elements } from 'perun-core'
 import { core, ui } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
+import { getLabel } from '../../Util';
 
 const { connect } = core;
 const { Icon } = ui;
@@ -23,7 +24,7 @@ const _Load = () => {
 
   const removeLandscapeFeatures = () => {
     if (!landscapeFeaturesHaveBeenLoaded) {
-      alertUser(true, 'info', 'Не се пронајдени вчитани пејсажни обележја')
+      alertUser(true, 'info', `${getLabel('no_loaded_landscape_features_found')}`)
     } else {
       setState({ landscapeFeaturesHaveBeenLoaded: false })
     }
@@ -33,12 +34,12 @@ const _Load = () => {
     <React.Fragment>
       <ProcessButton disabled id={_id} onClick={loadLandscapeFeatures}>
         <Icon name={_iconId} size='30px' />
-        <span style={{ display: "block", marginTop: '5px' }}>Вчитај</span>
+        <span style={{ display: "block", marginTop: '5px' }}>{getLabel('load')}</span>
         {loading && <Loading />}
       </ProcessButton>
       <ProcessButton disabled id={_secondaryId} onClick={removeLandscapeFeatures}>
         <Icon name={_secondaryIconId} size='30px' />
-        <span style={{ display: "block", marginTop: '5px' }}>Отстрани</span>
+        <span style={{ display: "block", marginTop: '5px' }}>{getLabel('remove')}</span>
       </ProcessButton>
       {loading && <Loading />}
     </React.Fragment>

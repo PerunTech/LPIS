@@ -2,6 +2,7 @@
   margin-right: 20px;
   margin-left: 10px;
 }
+
 .ap-modal-body {
   margin-top: 10px;
 }
@@ -11,17 +12,21 @@
   border: 1px solid #3399ff;
   float: right;
 }
+
 #measure-dialog .next:hover:not(.disabled) {
   background-color: #e2e6ea;
 }
+
 #measure-dialog .prev {
   color: #3399ff;
   float: left;
   border: 1px solid transparent;
 }
+
 #measure-dialog .prev:hover:not(.disabled) {
   background-color: #e2e6ea;
 }
+
 #measure-dialog .rjsf {
   margin: unset;
   border: unset;
@@ -43,6 +48,12 @@
   width: 100% !important;
 }
 
+.ap-form-main .form-group .field-string textarea,
+.ap-form-aux .form-group .field-string textarea,
+.ap-form-admin .form-group .field-string textarea {
+  min-width: 250px !important;
+}
+
 #pb-contains-ap-dialog .modal-title {
   font-size: 20px;
   text-align: center;
@@ -51,9 +62,11 @@
   border-bottom: 1px solid #00000025;
   cursor: unset;
 }
+
 #pb-contains-ap-dialog .modal-body {
   padding: 1.5rem;
 }
+
 #pb-contains-ap-dialog .modal-body button {
   font-size: 16px;
   padding: 1rem;
@@ -67,9 +80,11 @@
   border-bottom: 1px solid #00000025;
   cursor: unset;
 }
+
 #ap-ap-intersect-dialog .modal-body {
   padding: 1.5rem;
 }
+
 #ap-ap-intersect-dialog .modal-body button {
   font-size: 16px;
   padding: 1rem;
@@ -78,6 +93,7 @@
 .control-center .control-map.modal-open .modal-backdrop {
   z-index: 4000;
 }
+
 .control-center .control-map.modal-open .modal {
   z-index: 4100;
   display: flex !important;
@@ -85,6 +101,7 @@
   justify-content: center;
   padding-top: unset;
 }
+
 /* topleft corner used for prompts, highest z index of all */
 .control-center .control-map .control-topleft.modal-open {
   z-index: 9000;
@@ -102,15 +119,19 @@
   text-align: left;
   padding: 0.5rem;
 }
+
 #measure-dialog .modal-body #createAP div {
   margin: 3px;
 }
+
 #measure-dialog .modal-body #createAP div:not(:nth-child(1)) {
   margin-left: 10px;
 }
+
 #measure-dialog .modal-body #createAP div:nth-child(2) {
   margin-top: 10px;
 }
+
 #measure-dialog .modal-body #createAP div:nth-last-child() {
   margin-bottom: 10px;
 }
@@ -119,15 +140,19 @@
   text-align: left;
   padding: 0.5rem;
 }
+
 #measure-dialog .modal-body #drawAP div {
   margin: 3px;
 }
+
 #measure-dialog .modal-body #drawAP div:not(:nth-child(1)) {
   margin-left: 10px;
 }
+
 #measure-dialog .modal-body #drawAP div:nth-child(2) {
   margin-top: 10px;
 }
+
 #measure-dialog .modal-body #drawAP div:nth-last-child() {
   margin-bottom: 10px;
 }
@@ -138,13 +163,16 @@
   border: 1px solid #dc3545;
   float: right;
 }
+
 #measure-dialog .modal-body .cancel:hover:not(.disabled) {
   background-color: #e2e6ea;
 }
+
 .common-use-form .modal-body .cancel {
   margin-top: 0 !important;
   float: none !important;
 }
+
 .common-use-form .modal-content {
   right: 300px !important;
 }
@@ -153,6 +181,7 @@
   text-align: left;
   padding: 0.5rem;
 }
+
 #measure-dialog .modal-body #deleteAP div {
   margin: 3px;
 }
@@ -204,9 +233,9 @@
   content: '\00a0\00a0\2713';
 }
 
-.ap-checks-modal .physical-block-check > label,
-.ap-checks-modal .agri-parcel-check > label,
-.ap-checks-modal .agri-parcel-neighbour-check > label {
+.ap-checks-modal .physical-block-check>label,
+.ap-checks-modal .agri-parcel-check>label,
+.ap-checks-modal .agri-parcel-neighbour-check>label {
   background-color: #006d77;
   color: #ffffff;
   max-width: fit-content;

@@ -3,7 +3,7 @@ import { core, data, ui } from '../../../../Spatial';
 import { ProcessButton } from '../../ProcessButton';
 import { cadIntersectionsConfig as config } from '../Config';
 import { setCILabel } from '../../cropParcel/Util';
-import { strcmp } from '../../../Util';
+import { getLabel, strcmp } from '../../../Util';
 
 const { factory, store, connect, http, Map } = core;
 const { geobuf, protobuf } = data;
@@ -46,7 +46,7 @@ export const getCadIntersections = () => {
       Object.values(prevCadIntersections).forEach(v => v.removeFrom && v.removeFrom(Map));
       store.dispatch({ 'cadIntersections': layers, showCadParcels: true })
     } else {
-      alertUser(true, 'info', 'Не се пронајдени пресеци')
+      alertUser(true, 'info', `${getLabel('no_intersections_found')}`)
     }
   }).catch(error => {
     console.error(error)
@@ -61,8 +61,8 @@ export const _CadIntersections = ({ showCadParcels }) => {
     }
   }, [])
 
-  const label = showCadParcels ? 'Скриј пресеци' : 'Прикажи пресеци'
-  const shortLabel = showCadParcels ? 'Скриј пресеци' : 'Прик. пресеци'
+  const label = showCadParcels ? `${getLabel('hide_intersections')}` : `${getLabel('show_intersections')}`
+  const shortLabel = showCadParcels ? `${getLabel('hide_intersections_short')}` : `${getLabel('show_intersections_short')}`
   const onClick = () => showCadParcels ? removeCadIntersections(true) : getCadIntersections()
   return <ProcessButton onClick={onClick} title={label}>
     <Icon name={_iconId} size='30px' />

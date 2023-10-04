@@ -5,7 +5,7 @@ import { Guidance } from '../agriParcel/Guidance'
 import { ProcessButton } from '../ProcessButton'
 import { landscapeFeaturesSchema } from './Config'
 const { schema, uiSchema } = landscapeFeaturesSchema
-import { decodeResponse } from '../../Util'
+import { decodeResponse, getLabel } from '../../Util'
 
 const { Map, factory, connect, store, http } = core
 const { DrawActions, Icon } = ui
@@ -51,7 +51,7 @@ const _Point = ({ processID }) => {
       <Guidance
         id={_id}
         disable={disable}
-        title='Пејсажни обележја - Точка'
+        title={getLabel('landscape_features_point')}
         msg={['', '']}
       />
     )
@@ -111,7 +111,7 @@ const _Point = ({ processID }) => {
   return (
     <ProcessButton id={_id} onClick={enable}>
       <Icon name='selection' size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Точка</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('point')}</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>

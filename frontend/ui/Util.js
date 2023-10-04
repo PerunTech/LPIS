@@ -42,11 +42,11 @@ export const bufferToString = buffer => {
 }
 
 export const decodeResponse = (response, objectName) => {
-    let errorMsg = 'Земјоделската парцела не е запишана во базата на податоци.'
+    let errorMsg = `${getLabel('agricultural_parcel_not_saved')}`
     if (strcmp(objectName, 'physical_block')) {
         errorMsg = `${getLabel('physical_block_not_saved')}`
     } else if (strcmp(objectName, 'landscape_features')) {
-        errorMsg = 'Пејсажните обележја не се запишани во базата на податоци.'
+        errorMsg = `${getLabel('landscape_features_not_saved')}`
     }
     const decoder = new TextDecoder()
     const decoded = decoder.decode(response.data)
@@ -249,12 +249,13 @@ const getControls = (fic) => {
 
 const getFarmData = (objectId, actionType) => {
     const token = perunStore.getState().security.svSession
-    const url = `${window.server}/ReactElements/getRowDataByObjectId/${token}/${objectId}/FARMER`
-    http.call('getFarmData', { url }).then(res => {
-        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+    const url = `${window.server}/ReactElements/searchTable/${token}/FARM/1`
+    const data = { OBJECT_ID: objectId }
+    http.call('getFarmData', { url, method: 'post', data: JSON.stringify(data) }).then(res => {
+        if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
             const farmData = res.data[0]
-            const fic = farmData['FARMER.FIC'] || ''
-            const fullName = farmData['FARMER.FULL_NAME'] || ''
+            const fic = farmData['FARM.FIC'] || ''
+            const fullName = farmData['FARM.FULL_NAME'] || ''
             store.dispatch({ fic, fullName })
             // Get the controls only for the appropriate action type
             if (fic && strcmp(actionType, 'sizp')) {
@@ -324,7 +325,6 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
                     getFarmDigitizationState(farmObjId)
                 }
                 getFarmData(farmObjId, actionType)
-                layerList[1]['СИЗП']['СИЗП'].addTo(Map)
             }
             store.dispatch({ farmObjId, farmObjTypeId, actionType })
             const url = `${window.server}/lpis/get/farmerAssets/${token}/${farmObjId}/AGRI_PARCEL`

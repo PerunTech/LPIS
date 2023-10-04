@@ -4,7 +4,7 @@ import { commonUseMsg, commonUseSchema } from '../Config';
 import { ProcessButton } from '../../ProcessButton';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
-import { getFarmMapAssets, strcmp } from '../../../Util';
+import { getFarmMapAssets, getLabel, strcmp } from '../../../Util';
 
 const { Map, connect, store, http } = core;
 const { geobuf, protobuf } = data;
@@ -44,7 +44,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
       }
     }).catch(err => {
       console.error(err)
-      alertUser(true, 'error', 'Настана грешка', '')
+      alertUser(true, 'error', `${getLabel('something_went_wrong')}`, '')
       disable()
     })
   }
@@ -103,7 +103,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
         }
       }).catch(err => {
         console.error(err)
-        alertUser(true, 'error', 'Настана грешка')
+        alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
         disable()
         setState({ loading: false, isGuided: false, showForm: false, showDeleteBtn: false })
       })
@@ -142,7 +142,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
           message = response.data.title || response.data.message || ''
         }
       }
-      alertUser(true, 'error', 'Грешка при зачувување', message);
+      alertUser(true, 'error', `${getLabel('save_failed')}`, message);
     })
   }
 
@@ -160,30 +160,30 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
       method: 'post',
       data: JSON.stringify({ OBJECT_ID: objectId, OBJECT_TYPE: objectTypeId })
     }).then(() => {
-      alertUser(true, 'success', 'Успешно бришење');
+      alertUser(true, 'success', `${getLabel('success_delete')}`);
       disable()
     }).catch(() => {
-      alertUser(true, 'error', 'Грешка при бришење');
+      alertUser(true, 'error', `${getLabel('error_delete')}`);
       disable()
     })
   }
 
   const deleteCommonUsePrompt = () => {
-    const title = 'Дали сте сигурни дека сакате да ги избришете податоците за заедничка употреба?'
-    alertUser(true, 'warning', title, '', () => deleteCommonUse(), () => { }, true, 'Да', 'Не')
+    const title = `${getLabel('delete_common_use_confirmation')}`
+    alertUser(true, 'warning', title, '', () => deleteCommonUse(), () => { }, true, `${getLabel('yes')}`, `${getLabel('no')}`)
   }
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} title='Заедничка употреба' msg={commonUseMsg} />
+    return <Guidance id={_id} disable={disable} title={getLabel('common_use')} msg={['', '']} />
   }
 
   const renderForm = () => {
     const { area, landUseCode } = selectedParcel
     const parcelData = <div className='p-2'>
-      <p style={{ fontSize: 'small', fontWeight: '700' }}>Информации за избраната парцела</p>
+      <p style={{ fontSize: 'small', fontWeight: '700' }}>{getLabel('chosen_parcel_info')}</p>
       <div className='d-flex flex-row justify-content-center align-items-center mt-1 mb-n1' style={{ fontSize: 'small' }}>
-        <p className='mr-1'>Површина: {area} m²</p>
-        <p>Класа: {landUseCode}</p>
+        <p className='mr-1'>{getLabel('area')}: {area} m²</p>
+        <p>{getLabel('class')}: {landUseCode}</p>
       </div>
     </div>
 
@@ -192,7 +192,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
     const formProps = {
       isSimple: true,
       className: 'common-use-form',
-      formTitle: 'Заедничка употреба',
+      formTitle: `${getLabel('common_use')}`,
       onSubmit,
       formData: data,
       onChange,
@@ -223,9 +223,9 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
   }
 
   return (
-    <ProcessButton id={_id} onClick={enable} title='Заедничка употреба'>
+    <ProcessButton id={_id} onClick={enable} title={getLabel('common_use')}>
       <Icon name={_iconId} size='30px' />
-      <span style={{ display: "block", marginTop: '5px' }}>Заеднич. употр.</span>
+      <span style={{ display: "block", marginTop: '5px' }}>{getLabel('common_use')}</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>

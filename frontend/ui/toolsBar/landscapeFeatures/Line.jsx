@@ -5,7 +5,7 @@ import { Guidance } from '../agriParcel/Guidance'
 import { ProcessButton } from '../ProcessButton';
 import { config, landscapeFeaturesSchema } from './Config'
 const { schema, uiSchema } = landscapeFeaturesSchema
-import { decodeResponse } from '../../Util';
+import { decodeResponse, getLabel } from '../../Util';
 
 const { Map, factory, store, connect, http } = core
 const { draw: { line } } = tools
@@ -48,7 +48,7 @@ const _Line = ({ processID }) => {
         finish={() => line._finishShape()}
         undo={() => line._removeLastVertex()}
         disable={disable}
-        title='Пејсажни обележја - Линија'
+        title={getLabel('landscape_features_line')}
         msg={['', '']}
       />
     )
@@ -108,7 +108,7 @@ const _Line = ({ processID }) => {
   return (
     <ProcessButton id={_id} onClick={enable}>
       <Icon name='length' size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Линија</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('line')}</span>
       {processID === _id && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>

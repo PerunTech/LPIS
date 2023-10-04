@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui } from '../../../../Spatial';
 import { deleteAPFromFarmMsg } from '../Config';
-import { getFarmMapAssets } from '../../../Util';
+import { getFarmMapAssets, getLabel } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
 
@@ -45,7 +45,7 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId }) => {
           });
         });
       } else {
-        alertUser(true, 'warning', 'Не се пронајдени парцели', 'Додадете парцели пред да ја користите алатката за отстранување парцела од фарма');
+        alertUser(true, 'warning', `${getLabel('no_parcels_found')}`, `${getLabel('add_parcels_before_using_delete_parcel_from_farm_tool')}`);
       }
     }
   };
@@ -58,14 +58,14 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId }) => {
   };
 
   const renderGuideForm = () => {
-    return <Guidance id={_processID} disable={disable} msg={deleteAPFromFarmMsg} title='Отстрани парцела од фарма' />
+    return <Guidance id={_processID} disable={disable} msg={deleteAPFromFarmMsg} title={getLabel('remove_parcel_from_farm')} />
   }
 
   const renderModal = () => {
     const container = document.getElementsByClassName('control-map')[0]
     return <Modal show backdrop={false} enforceFocus={false} id='measure-dialog' className='delete-control-dialog' container={container}>
       <Modal.Title>
-        <Button disabled className='as-label ap-modal-title'>Отстрани парцела од фарма</Button>
+        <Button disabled className='as-label ap-modal-title'>{getLabel('remove_parcel_from_farm')}</Button>
         <DrawActions cancel={disable} />
       </Modal.Title>
       <Modal.Body className='ap-modal-body'>
@@ -76,7 +76,7 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId }) => {
             Math.round(layer.getMeasurement()) +
             ' m². Дали сте сигурни дека сакате да ја отстраните од фармата?'}
         </div>
-        <Button onClick={deleteParcelFromFarm} size='' className='cancel'>Отстрани</Button>
+        <Button onClick={deleteParcelFromFarm} size='' className='cancel'>{getLabel('remove')}</Button>
       </Modal.Body>
     </Modal>
   }
@@ -96,7 +96,7 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId }) => {
   return (
     <ProcessButton id={_processID} onClick={() => enable()}>
       <Icon name={_id} size='30px' />
-      <span style={{ display: 'block', marginTop: '5px' }}>Отстрани парцела</span>
+      <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('remove_parcel')}</span>
       {processID === _processID && renderComponent()}
       {loading && <Loading />}
     </ProcessButton>

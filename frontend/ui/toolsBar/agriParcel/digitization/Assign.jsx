@@ -1,7 +1,7 @@
 import { React, Loading, redux, elements, createHashHistory } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
 import { assignAPMsg, config } from '../Config';
-import { bufferToString, getFarmMapAssets, isJSON, strcmp } from '../../../Util';
+import { bufferToString, getFarmMapAssets, getLabel, isJSON, strcmp } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
@@ -49,7 +49,7 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
         // data: JSON.stringify(factory.GeoJSON.fromLayer(e.layer)),
       }).then(response => {
         setState({ loading: false, isGuided: false, showForm: false })
-        alertUser(true, 'success', 'Успешно назначено стопанство', '', () => disable(true))
+        alertUser(true, 'success', `${getLabel('assign_success')}`, '', () => disable(true))
         const proto = protobuf(response);
         const buff = geobuf.decode(proto);
         const geojson = factory.geoJSON(buff, config.pathOptions);
@@ -69,10 +69,10 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
         if (isJSON(stringfiedResponse) && Object.keys(JSON.parse(stringfiedResponse)).length > 1) {
           const parsedResponse = JSON.parse(stringfiedResponse)
           if (parsedResponse.parent_id && parsedResponse.parent_id !== farmObjId) {
-            translatedError = 'Избраната парцела веќе има назначено стопанство'
+            translatedError = `${getLabel('parcel_already_assigned')}`
             handleOverlap(translatedError, p.x, p.y)
           } else {
-            translatedError = 'Избраната парцела веќе има назначено стопанство'
+            translatedError = `${getLabel('parcel_already_assigned')}`
             if (parsedResponse.Label_Code) {
               translatedError = parsedResponse.Label_Code
               if (strcmp(parsedResponse.Label_Code, 'error.invalid_session')) {
@@ -83,7 +83,7 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
                   history.push('/');
                 }
                 store.dispatch({ processID: '' })
-                alertUser(true, 'error', 'Невалидна сесија', '', () => logout())
+                alertUser(true, 'error', `${getLabel('invalid_session')}`, '', () => logout())
               } else {
                 alertUser(true, 'error', translatedError, '')
                 disable()
@@ -96,14 +96,14 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
         } else {
           if (strcmp(typeof stringfiedResponse, 'string')) {
             if (stringfiedResponse.includes('err.no_parcel.selected')) {
-              translatedError = 'Не е избрана парцела од мапата'
+              translatedError = `${getLabel('no_parcel_selected')}`
               alertUser(true, 'error', translatedError, '', () => disable())
             } else if (stringfiedResponse.includes('err.parcel_common_use')) {
-              translatedError = 'Парцелата веќе се користи за заедничка употреба'
+              translatedError = `${getLabel('parcel_used_for_common_use')}`
               alertUser(true, 'error', translatedError, '')
               disable()
             } else {
-              alertUser(true, 'error', 'Настана грешка', '')
+              alertUser(true, 'error', `${getLabel('something_went_wrong')}`, '')
               disable()
             }
           }
@@ -129,8 +129,8 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
   }
 
   const handleOverlap = (translatedError, x, y) => {
-    const msg = 'Доколку продолжите ќе биде регистриран целосен преклоп на двете стопанства и парцелата ќе биде оневозможена за понатамошна употреба.'
-    elements.alertUser(true, 'warning', translatedError, msg, () => confirmOverlap(x, y), () => disable(), true, 'Продолжи', 'Откажи')
+    const msg = `${getLabel('overlap_confirmation_msg')}`
+    elements.alertUser(true, 'warning', translatedError, msg, () => confirmOverlap(x, y), () => disable(), true, `${getLabel('continue')}`, `${getLabel('cancel')}`)
   }
 
   const confirmOverlap = (x, y) => {
@@ -148,13 +148,13 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
     }).catch(err => {
       const { response } = err
       console.error(response)
-      alertUser(true, 'error', 'Настана грешка', '')
+      alertUser(true, 'error', `${getLabel('something_went_wrong')}`, '')
       disable()
     })
   }
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} disable={disable} msg={assignAPMsg} title='Додели (назначи) стопанство' />
+    return <Guidance id={_id} disable={disable} msg={['', '']} title={`${getLabel('assign_agricultural_holding')}`} />
   }
 
   const renderForm = () => {
@@ -175,12 +175,14 @@ const _Assign = ({ processID, farmObjId, saveIsPending }) => {
     return componentToRender
   }
 
-  return <ProcessButton id={_id} onClick={enable} title='Додели (назначи) стопанство'>
-    <Icon name={_id} size='30px' />
-    <span style={{ display: 'block', marginTop: '5px' }}>Додели</span>
-    {processID === _id && renderComponent()}
-    {(loading || saveIsPending) && <Loading />}
-  </ProcessButton>;
+  return (
+    <ProcessButton id={_id} onClick={enable} title={`${getLabel('assign_agricultural_holding')}`}>
+      <Icon name={_id} size='30px' />
+      <span style={{ display: 'block', marginTop: '5px' }}>{`${getLabel('assign')}`}</span>
+      {processID === _id && renderComponent()}
+      {(loading || saveIsPending) && <Loading />}
+    </ProcessButton>)
+    ;
 };
 
 export const Assign = core.connect(state => ({

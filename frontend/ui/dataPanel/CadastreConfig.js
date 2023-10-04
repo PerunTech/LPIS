@@ -1,3 +1,5 @@
+import { getLabel } from "../Util"
+
 const cadSectors = {
   'Берово': 1,
   'Битола': 2,
@@ -42,7 +44,7 @@ export const cadastreSearchFormSchema = cadMunicipalities => {
         CADASTRAL_SECTOR: {
           enum: Object.values(cadSectors),
           enumNames: Object.keys(cadSectors),
-          title: 'Катастарско одделение',
+          title: `${getLabel('cadastral_sector')}`,
           type: 'number',
           default: ''
         },
@@ -50,12 +52,12 @@ export const cadastreSearchFormSchema = cadMunicipalities => {
           CADASTRAL_MUNICIPALITY: {
             enum: Object.keys(cadMunicipalities),
             enumNames: Object.values(cadMunicipalities),
-            title: 'Катастарска општина',
+            title: `${getLabel('cadastral_municipality')}`,
             type: 'string',
             default: ''
           },
           PARCEL_ID: {
-            title: 'Број на парцела',
+            title: `${getLabel('parcel_id')}`,
             type: 'string'
           }
         }

@@ -82,7 +82,7 @@ const _Delete = ({ processID, loadedPhysicalBlocks }) => {
             <DrawActions cancel={disable} />
           </Modal.Title>
           <Modal.Body className='ap-modal-body' >
-            <div id={_id} >{`${getLabel('delete_physical_block_msg_one')}`
+            <div id={_id} >{`${getLabel('delete_physical_block_msg_one')} `
               + layer.feature.properties.OLD_ID + ` ${getLabel('delete_physical_block_msg_two')} ` + Math.round(layer.getMeasurement()) + ' m². '
               + `${getLabel('delete_physical_block_confirmation')}`}</div>
             <Button onClick={() => { deleteLayer() }} size='' className='cancel' > {getLabel('delete')}</Button>

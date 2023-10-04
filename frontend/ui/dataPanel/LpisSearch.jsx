@@ -2,12 +2,10 @@ import { React, Loading, elements } from 'perun-core'
 import { core, ui, data } from '../../Spatial'
 import { Form } from '../toolsBar/agriParcel/Form'
 import { removeSearchedParcels } from './Util'
-import { lpisSearchFormSchema } from './LpisSearchConfig'
 import { config as apConfig } from '../toolsBar/agriParcel/Config'
 import { setSearchedParcelLabel } from '../toolsBar/cropParcel/Util'
-import { bufferToString, strcmp } from '../Util'
+import { bufferToString, getLabel, strcmp } from '../Util'
 
-const { schema, uiSchema } = lpisSearchFormSchema()
 const { http, factory, Map, store, connect } = core
 const { geobuf, protobuf } = data
 const { Button, Icon, DrawActions } = ui
@@ -56,7 +54,7 @@ const _LpisSearch = ({ theSearchedParcelWasRemoved }) => {
           Map.fitBounds(layer.getBounds())
         })
       } else {
-        alertUser(true, 'info', 'Не се пронајдени СИЗП парцели')
+        alertUser(true, 'info', `${getLabel('no_parcels_found')}`)
         setState({ showDeleteBtn: false })
       }
     }).catch(err => {
@@ -65,13 +63,13 @@ const _LpisSearch = ({ theSearchedParcelWasRemoved }) => {
       const stringfiedResponse = bufferToString(err.response.data)
       if (strcmp(typeof stringfiedResponse, 'string')) {
         if (stringfiedResponse.includes('err.no_parcel.found')) {
-          const translatedError = 'Не се пронајдени парцели'
+          const translatedError = `${getLabel('no_parcels_found')}`
           alertUser(true, 'info', translatedError)
         } else {
-          alertUser(true, 'error', 'Настана грешка')
+          alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
         }
       } else {
-        alertUser(true, 'error', 'Настана грешка')
+        alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
       }
     })
   }
@@ -85,12 +83,33 @@ const _LpisSearch = ({ theSearchedParcelWasRemoved }) => {
     removeSearchedParcels()
   }
 
+  const getLpisSearchSchema = () => {
+    return {
+      schema: {
+        properties: {
+          ID: {
+            title: `${getLabel('lpis_number')}`,
+            type: 'string',
+            default: ''
+          }
+        },
+        type: 'object',
+        required: ['ID']
+      },
+      uiSchema: {
+
+      }
+    }
+  }
+
   const renderComponent = () => {
+    const { schema, uiSchema } = getLpisSearchSchema()
+
     const componentToRender = (
       <Form
         isSimple
-        formTitle='Пребарување СИЗП'
-        buttonLabel='Пребарај'
+        formTitle={getLabel('search_lpis')}
+        buttonLabel={getLabel('search')}
         className='cadastre-search-form'
         schema={schema}
         uiSchema={uiSchema}
@@ -112,7 +131,7 @@ const _LpisSearch = ({ theSearchedParcelWasRemoved }) => {
     <React.Fragment>
       <Button variant='dark' className='d-flex flex-row justify-content-center align-items-center mt-1 rounded' onClick={toggleSearchForm}>
         <Icon name='search' size='20px' />
-        <span style={{ margin: '3px 3px 0 3px' }}>Пребарај СИЗП</span>
+        <span style={{ margin: '3px 3px 0 3px' }}>{getLabel('search_lpis')}</span>
       </Button>
       {showForm && renderComponent()}
       {loading && <Loading />}
