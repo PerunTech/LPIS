@@ -329,7 +329,6 @@ public class ApplicationServices {
 		return Response.ok(pbfStream, "application/pbf").build();
 	}
 
-
 	DbDataArray getSampleParcels(Long sampleId, SvReader svr) throws SvException {
 
 		DbSearchCriterion search = new DbSearchCriterion("PARENT_ID", DbCompareOperand.EQUAL, sampleId);
@@ -804,40 +803,29 @@ public class ApplicationServices {
 	Collection<Geometry> getPhysicalBlock(SvCore svc, Envelope env, String tableName, String geomColName)
 			throws SvException, SQLException, ParseException {
 		List<Geometry> result = new ArrayList<>();
-		String select = "SELECT " + SvCore.getDbHandler().getGeomReadSQL(geomColName) + " as GG, tt.* FROM " + tableName
-				+ " tt WHERE " + SvCore.getDbHandler().getBBoxSQL(geomColName);
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		WKBReader wkb = new WKBReader(SvUtil.sdiFactory);
-		try {
-			Connection con = svc.dbGetConn();
-			ps = con.prepareStatement(select);
-			ps.setDouble(1, env.getMinX());
-			ps.setDouble(2, env.getMinY());
-			ps.setDouble(3, env.getMaxX());
-			ps.setDouble(4, env.getMaxY());
-			rs = ps.executeQuery();
-			while (rs.next()) {
-				DbDataObject dbo = new DbDataObject();
-				byte[] geom = SvConf.getDbHandler().getGeometry(rs, 1);
-				if (geom != null) {
-					Geometry g = wkb.read(geom);
+		try (SvGeometry svg = new SvGeometry(svc)) {
+			Long typeId = SvCore.getTypeIdByName("PHYSICAL_BLOCK");
+			return svg.getRelatedGeometries(SpatialUtil.sdiFactory.toGeometry(env), typeId,
+					SDIRelation.INTERSECTS, null, null, true, true, true);
 
-					for (int i = 2; i <= rs.getMetaData().getColumnCount(); i++) {
-						String colName = rs.getMetaData().getColumnName(i);
-						dbo.setVal(colName, rs.getObject(i));
-					}
-					g.setUserData(dbo);
-					result.add(g);
-				}
-			}
-		} finally {
-			if (ps != null)
-				ps.close();
-			if (rs != null)
-				rs.close();
 		}
-		return result;
+		/*
+		 * String select = "SELECT " + SvCore.getDbHandler().getGeomReadSQL(geomColName)
+		 * + " as GG, tt.* FROM " + tableName + " tt WHERE " +
+		 * SvCore.getDbHandler().getBBoxSQL(geomColName); PreparedStatement ps = null;
+		 * ResultSet rs = null; WKBReader wkb = new WKBReader(SvUtil.sdiFactory); try {
+		 * Connection con = svc.dbGetConn(); ps = con.prepareStatement(select);
+		 * ps.setDouble(1, env.getMinX()); ps.setDouble(2, env.getMinY());
+		 * ps.setDouble(3, env.getMaxX()); ps.setDouble(4, env.getMaxY()); rs =
+		 * ps.executeQuery(); while (rs.next()) { DbDataObject dbo = new DbDataObject();
+		 * byte[] geom = SvConf.getDbHandler().getGeometry(rs, 1); if (geom != null) {
+		 * Geometry g = wkb.read(geom);
+		 * 
+		 * for (int i = 2; i <= rs.getMetaData().getColumnCount(); i++) { String colName
+		 * = rs.getMetaData().getColumnName(i); dbo.setVal(colName, rs.getObject(i)); }
+		 * g.setUserData(dbo); result.add(g); } } } finally { if (ps != null)
+		 * ps.close(); if (rs != null) rs.close(); } return result;
+		 */
 	}
 
 	Collection<Geometry> getReferenceParcel(SvCore svc, Long id, String tableName, String geomColName)
