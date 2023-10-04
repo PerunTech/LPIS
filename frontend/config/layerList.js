@@ -47,7 +47,7 @@ export const layerList = [
                 tilesOrigin: '67617.8034,36597.0212'
             }),
             'Registrul Bunurilor Imobile (straturi grupate)': factory.tileLayer.wms(
-                'https://map.cadastru.md' + '/geoserver/w_rsuat/wms', {
+                'https://map.cadastru.md' + '/geoserver/w_cbi/wms', {
                 layers: 'w_cbi:cbi_layers_all_in_one',
                 format: 'image/png',
                 transparent: true,
