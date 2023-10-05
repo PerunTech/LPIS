@@ -36,7 +36,8 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
-                tilesOrigin: '67617.8034,36597.0212'
+                tilesOrigin: '67617.8034,36597.0212',
+                isOverlay: true,
             }).addTo(Map),
             'UAT 1 (w_rsuat:mv_uat3)': factory.tileLayer.wms(
                 'https://map.cadastru.md' + '/geoserver/w_rsuat/wms', {
@@ -44,7 +45,8 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
-                tilesOrigin: '67617.8034,36597.0212'
+                tilesOrigin: '67617.8034,36597.0212',
+                isOverlay: true,
             }),
             'Registrul Bunurilor Imobile (straturi grupate)': factory.tileLayer.wms(
                 'https://map.cadastru.md' + '/geoserver/w_cbi/wms', {
@@ -52,7 +54,8 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
-                tilesOrigin: '67617.8034,36597.0212'
+                tilesOrigin: '67617.8034,36597.0212',
+                isOverlay: true,
             }),
             'Localitate': factory.tileLayer.wms(
                 'https://map.cadastru.md' + '/geoserver/w_rsuat/wms', {
@@ -60,7 +63,8 @@ export const layerList = [
                 format: 'image/png',
                 transparent: true,
                 tiled: true,
-                tilesOrigin: '67617.8034,36597.0212'
+                tilesOrigin: '67617.8034,36597.0212',
+                isOverlay: true,
             })
         }
     }
