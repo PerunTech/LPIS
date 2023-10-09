@@ -473,5 +473,13 @@ export const getGeoTypeLayers = () => {
     }).finally(() => {
         layers.push(basemap, overlays)
         store.addState('listOfLayers', layers)
+        // Check if there are any basemap layers
+        if (Object.values(basemap).length > 0) {
+            // Check if the basemap layers object is not empty
+            if (Object.values(Object.values(basemap)[0]).length > 0) {
+                // Add the first basemap layer to the map
+                Object.values(Object.values(basemap)[0])[0]?.addTo(Map)
+            }
+        }
     })
 }
