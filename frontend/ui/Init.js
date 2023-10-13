@@ -59,18 +59,7 @@ export const lpis = () => {
         }
     });
 
-    // let overlaysList = layerList[1]
-    // const overlays = store.getState().listOfLayers
-    // if (overlays && Object.keys(overlays).length > 0) {
-    //     overlaysList = overlays
-    //     const neededGroup = 'Иницијални податоци'
-    //     const layerToAddToMap = 'mkd:VPHYSICAL_BLOCK_WMS2'
-    //     if (overlaysList?.[neededGroup]?.[layerToAddToMap]) {
-    //         overlaysList[neededGroup][layerToAddToMap].addTo(Map)
-    //     }
-    // } else {
-    //     overlaysList['Иницијални податоци']['Иницијален СИЗП (ажуриран)'].addTo(Map)
-    // }
+    const layers = store.getState().listOfLayers
 
     Map.setView(SYS_CENTER, 0);
 
@@ -80,7 +69,7 @@ export const lpis = () => {
         .addControl(LayerPanel, {}, { position: 'right' })
         .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
         .withNavigationControl()
-        .addRasterLayers(layerList[0], layerList[1], { collapsed: false, position: 'right' })
+        .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
         .withWindRose()
         .render('lpis-map');
 }
@@ -98,13 +87,15 @@ export const farmRegLpis = () => {
     const _token = redux.store.getState().security.svSession;
     getFarmMapAssets(true)
 
+    const layers = store.getState().listOfLayers
+
     return ui.init(_token)
         .addControl(ToolsBar, {}, { position: 'top' })
         .addControl(DataPanel, {}, { position: 'left' })
         .addControl(LayerPanel, {}, { position: 'right' })
         .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
         .withNavigationControl()
-        .addRasterLayers(layerList[0], layerList[1], { collapsed: false, position: 'right' })
+        .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
         .withWindRose()
         .render('farm-registry-map');
 }
