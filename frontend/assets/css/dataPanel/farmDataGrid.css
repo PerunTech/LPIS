@@ -3,6 +3,10 @@
   margin-bottom: 5px;
 }
 
+.data-grid .container {
+  border: none;
+}
+
 .data-grid-heading {
   text-align: center;
   color: #474747;

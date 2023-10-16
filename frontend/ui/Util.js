@@ -2,7 +2,6 @@ import { redux, createHashHistory, elements } from 'perun-core';
 import { core, data } from '../Spatial';
 import { point } from '@turf/helpers'
 import isPointInPolygon from '@turf/boolean-point-in-polygon'
-import { layerList } from '../config/layerList';
 import { setAPLabel, setCPLabel } from '.';
 import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
 import { config as cpConfig } from './toolsBar/cropParcel/Config';
@@ -428,39 +427,59 @@ export const getGeoTypeLayers = () => {
     const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
     const tableName = 'GEO_LAYER_TYPE'
     const server = window.server.substr(0, window.server.lastIndexOf('/'))
+    const layers = []
+    const basemap = {}
+    const overlays = {}
     http.call('get-layers', {
         url: `${window.server}/ReactElements/getTableData/${token}/${tableName}/100`
     }).then(res => {
         if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
-            const layers = {}
             res.data.forEach(geoTypeLayer => {
-                const moduleName = geoTypeLayer?.[`${tableName}.MODULE_NAME`]
                 const layerType = geoTypeLayer?.[`${tableName}.LAYER_TYPE`]
-                const layerGroup = geoTypeLayer?.[`${tableName}.LAYER_GROUP`] || 'Останати слоеви'
+                const layerUrl = geoTypeLayer?.[`${tableName}.URL`]
+                const layerGroup = geoTypeLayer?.[`${tableName}.LAYER_GROUP`] || 'Other'
                 const title = geoTypeLayer?.[`${tableName}.TITLE`]
                 const labelCode = geoTypeLayer?.[`${tableName}.LABEL_CODE`] || title
-                if (strcmp(moduleName, 'lpis') && !strcmp(layerType, '1')) {
-                    const tileLayerOptions = {
-                        layers: title,
-                        format: 'image/png',
-                        transparent: true,
-                        tiled: true,
-                        isOverlay: true,
+                const tileLayerOptions = {
+                    layers: title,
+                    format: 'image/png',
+                    transparent: true,
+                    // If the layer is an overlay, set the tiled property for it
+                    ...strcmp(layerType, '2') && { tiled: true },
+                    // If the layer is an overlay, mark it as so
+                    ...strcmp(layerType, '2') && { isOverlay: true },
+                    // If the layer is a base one, set the WMS version as 1.1.1
+                    ...strcmp(layerType, '1') && { version: '1.1.1' }
+                }
+                const geoService = layerUrl || server
+                const tileLayer = factory.tileLayer.wms(geoService, tileLayerOptions)
+                // Set the basemap layers
+                if (strcmp(layerType, '1')) {
+                    if (!basemap[layerGroup]) {
+                        basemap[layerGroup] = {}
                     }
-                    if (!layers[layerGroup]) {
-                        layers[layerGroup] = {}
+                    Reflect.set(basemap[layerGroup], labelCode, tileLayer)
+                    // Set the overlays
+                } else if (strcmp(layerType, '2')) {
+                    if (!overlays[layerGroup]) {
+                        overlays[layerGroup] = {}
                     }
-                    let geoService = `${server}/geoserver/mk/wms`
-                    if (strcmp(title, 'mkd:VAGRI_PARCEL_WMS') || strcmp(title, 'mkd:VPHYSICAL_BLOCK_WMS2')) {
-                        geoService = 'http://192.168.9.73:8070/geoserver/mkd/wms'
-                    }
-                    const tileLayer = factory.tileLayer.wms(geoService, tileLayerOptions)
-                    Reflect.set(layers[layerGroup], labelCode, tileLayer)
+                    Reflect.set(overlays[layerGroup], labelCode, tileLayer)
                 }
             })
-            store.addState('listOfLayers', layers)
         }
     }).catch(err => {
         console.error(err)
+    }).finally(() => {
+        layers.push(basemap, overlays)
+        store.addState('listOfLayers', layers)
+        // Check if there are any basemap layers
+        if (Object.values(basemap).length > 0) {
+            // Check if the basemap layers object is not empty
+            if (Object.values(Object.values(basemap)[0]).length > 0) {
+                // Add the first basemap layer to the map
+                Object.values(Object.values(basemap)[0])[0]?.addTo(Map)
+            }
+        }
     })
 }
