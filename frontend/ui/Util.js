@@ -436,23 +436,33 @@ export const getGeoTypeLayers = () => {
         if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
             res.data.forEach(geoTypeLayer => {
                 const layerType = geoTypeLayer?.[`${tableName}.LAYER_TYPE`]
+                const layerProtocol = geoTypeLayer?.[`${tableName}.PROTOCOL`]
                 const layerUrl = geoTypeLayer?.[`${tableName}.URL`]
                 const layerGroup = geoTypeLayer?.[`${tableName}.LAYER_GROUP`] || 'Other'
                 const title = geoTypeLayer?.[`${tableName}.TITLE`]
                 const labelCode = geoTypeLayer?.[`${tableName}.LABEL_CODE`] || title
-                const tileLayerOptions = {
-                    layers: title,
-                    format: 'image/png',
-                    transparent: true,
-                    // If the layer is an overlay, set the tiled property for it
-                    ...strcmp(layerType, '2') && { tiled: true },
-                    // If the layer is an overlay, mark it as so
-                    ...strcmp(layerType, '2') && { isOverlay: true },
-                    // If the layer is a base one, set the WMS version as 1.1.1
-                    ...strcmp(layerType, '1') && { version: '1.1.1' }
+                let tileLayer
+                if (strcmp(layerProtocol, 'wms')) {
+                    const tileLayerOptions = {
+                        layers: title,
+                        format: 'image/png',
+                        transparent: true,
+                        // If the layer is an overlay, set the tiled property for it
+                        ...strcmp(layerType, '2') && { tiled: true },
+                        // If the layer is an overlay, mark it as so
+                        ...strcmp(layerType, '2') && { isOverlay: true },
+                        // If the layer is a base one, set the WMS version as 1.1.1
+                        ...strcmp(layerType, '1') && { version: '1.1.1' }
+                    }
+                    const geoService = layerUrl || server
+                    tileLayer = factory.tileLayer.wms(geoService, tileLayerOptions)
+                } else if (strcmp(layerProtocol, 'tile')) {
+                    const geoService = layerUrl || server
+                    tileLayer = factory.tileLayer(geoService, {
+                        maxZoom: 20,
+                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                    })
                 }
-                const geoService = layerUrl || server
-                const tileLayer = factory.tileLayer.wms(geoService, tileLayerOptions)
                 // Set the basemap layers
                 if (strcmp(layerType, '1')) {
                     if (!basemap[layerGroup]) {
