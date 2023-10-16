@@ -2,7 +2,7 @@ import { write } from 'shp-write';
 
 const prj = 'PROJCS["GK7",GEOGCS["Bessel 1841",DATUM["unknown",SPHEROID["bessel",6377397.155,299.1528128],TOWGS84[521.748,229.489,590.921,-4.029,-4.488,15.521,-9.78]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",21],PARAMETER["scale_factor",0.9999],PARAMETER["false_easting",7500000],PARAMETER["false_northing",0],UNIT["Meter",1],AUTHORITY["epsg","6316"]]';
 
-function justCoords (t) {
+function justCoords(t) {
   if (t.geometry.coordinates[0] !== undefined &&
     t.geometry.coordinates[0][0] !== undefined &&
     t.geometry.coordinates[0][0][0] !== undefined) {
@@ -12,11 +12,11 @@ function justCoords (t) {
   }
 }
 
-function justProps (t) {
+function justProps(t) {
   return t.properties;
 }
 
-function isType (t) {
+function isType(t) {
   return function (f) { return f.geometry.type === t; };
 }
 
@@ -50,3 +50,12 @@ export const exportFile = (gj, options, layers) => {
       }
     });
 };
+
+export const shpConfig = {
+  weight: 2.0,
+  stroke: true,
+  color: '#000',
+  fillColor: '#000',
+  opacity: 0.9,
+  fillOpacity: 0.25,
+}
