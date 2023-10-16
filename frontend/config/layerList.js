@@ -1,6 +1,6 @@
 import { core } from "../Spatial";
 
-const { factory, Map } = core
+const { factory } = core
 
 export const layerList = [
     {
@@ -11,7 +11,7 @@ export const layerList = [
                 layers: 'orthophoto:Ortofoto_2016_RM',
                 format: 'image/png',
                 transparent: true,
-            }).addTo(Map),
+            }),
             'Ortofoto 2020': factory.tileLayer.wms(
                 'https://geodata.gov.md' + '/geoserver/orthophoto/wms', {
                 version: '1.1.1',
@@ -38,7 +38,7 @@ export const layerList = [
                 tiled: true,
                 tilesOrigin: '67617.8034,36597.0212',
                 isOverlay: true,
-            }).addTo(Map),
+            }),
             'UAT 1 (w_rsuat:mv_uat3)': factory.tileLayer.wms(
                 'https://map.cadastru.md' + '/geoserver/w_rsuat/wms', {
                 layers: 'w_rsuat:mv_uat3',
