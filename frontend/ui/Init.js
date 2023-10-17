@@ -61,7 +61,7 @@ export const lpis = () => {
 
     const layers = store.getState().listOfLayers
 
-    Map.setView(SYS_CENTER, 0);
+    Map.setView(SYS_CENTER, 3);
 
     return ui.init(_token)
         .addControl(ToolsBar, {}, { position: 'top' })
