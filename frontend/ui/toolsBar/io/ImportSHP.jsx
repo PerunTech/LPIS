@@ -18,13 +18,16 @@ const _ImportSHP = () => {
 
   const importShp = () => {
     const file = inputFile.current.files[0]
-    const fileName = file.name
-    const extension = fileName.match(/\.[0-9a-z]+$/i)[0]
+    // Get the extension using the file name
+    const extension = file.name.match(/\.[0-9a-z]+$/i)[0]
+    // Read the file as an array buffer (binary data)
     const fr = new FileReader();
     fr.onload = readBinary;
     fr.readAsArrayBuffer(file);
+    // Now read/decode the binary data
     function readBinary() {
       const result = fr.result
+      // Check for zip archives
       if (strcmp(extension, '.zip')) {
         shp.parseZip(result).then(content => {
           if (Array.isArray(content) && content.length > 0) {
@@ -45,6 +48,7 @@ const _ImportSHP = () => {
         }).catch(err => {
           console.error(err)
         })
+        // Check for .dbf files
       } else if (strcmp(extension, '.dbf')) {
         const dbfResult = shp.parseDbf(result)
         if (Array.isArray(dbfResult) && dbfResult.length > 0) {
@@ -52,6 +56,7 @@ const _ImportSHP = () => {
             console.log(element)
           })
         }
+        // Check for pure .shp files (shapefiles)
       } else if (strcmp(extension, '.shp')) {
         const shpResult = shp.parseShp(result)
         if (Array.isArray(shpResult) && shpResult.length > 0) {
@@ -63,6 +68,7 @@ const _ImportSHP = () => {
         }
       }
 
+      // Clean-up everything
       store.dispatch({ processID: '' });
       if (inputFile.current) {
         inputFile.current.value = ''
