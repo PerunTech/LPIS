@@ -17,7 +17,7 @@ import { strcmp } from '../Util';
  * 
  * @returns JSX;
  */
-function _ProcessButton ({ id, ...props }) {
+function _ProcessButton({ id, ...props }) {
     let classNames = [props.className ? `${props.className}` : '']
     if (props.processID === id) {
         classNames.push('active')
@@ -33,6 +33,10 @@ function _ProcessButton ({ id, ...props }) {
                 if (!props.digitizationIsActive || String(props.processID).length > 0) {
                     isDisabled = true
                 }
+            }
+        } else {
+            if (String(props.processID).length > 0) {
+                isDisabled = true
             }
         }
     }
