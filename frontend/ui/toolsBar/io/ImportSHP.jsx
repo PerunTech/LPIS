@@ -110,7 +110,7 @@ const _ImportSHP = ({ processID }) => {
           <div className='d-flex flex-column justify-content-center align-items-center mt-3'>
             {layers.map(layer => {
               return (
-                <div className='border p-2 mb-2'>
+                layer?.properties ? <div className='border p-2 mb-2'>
                   {Object.entries(layer.properties).map(([key, value]) => {
                     return (
                       <div className='d-flex flex-column justify-content-center align-items-center'>
@@ -118,7 +118,7 @@ const _ImportSHP = ({ processID }) => {
                       </div>
                     )
                   })}
-                </div>
+                </div> : <p>{getLabel('layer_has_no_properties')}</p>
               )
             })}
           </div>
