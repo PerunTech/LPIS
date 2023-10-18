@@ -23,8 +23,8 @@
         "file-saver": "^2.0.5",
         "jszip": "^3.10.1",
         "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core#dev",
-        "shapefile": "^0.6.6",
         "shp-write": "^0.3.2",
+        "shpjs": "^4.0.4",
         "spatial": "git+https://git@gitlab.prtech.mk/perunv3/spatial#dev"
     },
     "devDependencies": {
