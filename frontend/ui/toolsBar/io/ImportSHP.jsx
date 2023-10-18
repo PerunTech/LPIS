@@ -1,23 +1,35 @@
-import { React } from 'perun-core';
+import { React, Loading, elements } from 'perun-core';
 import shp from 'shpjs'
 import { ProcessButton } from '../ProcessButton';
 import { core, ui } from '../../../Spatial';
 import { getLabel, strcmp } from '../../Util';
 import { shpConfig } from './Util';
 
-const { Icon } = ui;
+const { Button, Icon, DrawActions, Modal } = ui;
 const { factory, store, Map } = core;
+const { alertUser } = elements;
+const { useRef, useReducer } = React;
 const _id = 'shapefile';
 
-const _ImportSHP = () => {
-  const inputFile = React.useRef(null);
+const _ImportSHP = ({ processID }) => {
+  const [{ showForm, loading, layers }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { showForm: false, loading: false, layers: [] });
+
+  const inputFile = useRef(null);
+
   const handleClick = () => {
     store.dispatch({ processID: _id })
     inputFile.current.click()
   };
 
+  const disable = () => {
+    store.dispatch({ processID: '' });
+    setState({ showForm: false, loading: false, layers: [] })
+  }
+
   const importShp = () => {
     const file = inputFile.current.files[0]
+    // Check if a file was selected
     // Get the extension using the file name
     const extension = file.name.match(/\.[0-9a-z]+$/i)[0]
     // Read the file as an array buffer (binary data)
@@ -38,6 +50,7 @@ const _ImportSHP = () => {
             })
           } else if (strcmp(typeof content, 'object')) {
             if (strcmp(content.type, 'FeatureCollection') && Array.isArray(content.features) && content.features.length > 0) {
+              setState({ layers: content.features, showForm: true })
               content.features.forEach(feature => {
                 const geojson = factory.geoJSON(feature, shpConfig);
                 geojson.getLayers().forEach(l => l.addTo(Map));
@@ -60,24 +73,47 @@ const _ImportSHP = () => {
       } else if (strcmp(extension, '.shp')) {
         const shpResult = shp.parseShp(result)
         if (Array.isArray(shpResult) && shpResult.length > 0) {
+          setState({ layers: shpResult, showForm: true })
           shpResult.forEach(element => {
             const geojson = factory.geoJSON(element, shpConfig);
             geojson.getLayers().forEach(l => l.addTo(Map));
             Map.fitBounds(geojson.getBounds(), { padding: [100, 100] })
           })
         }
+      } else {
+        alertUser(true, 'info', `${getLabel('unsupported_extension')}`, '', disable)
       }
 
-      // Clean-up everything
-      store.dispatch({ processID: '' });
+      // Clean-up the input value
       if (inputFile.current) {
         inputFile.current.value = ''
       }
     }
   }
 
+  const renderComponent = () => {
+    const numberOfLayers = layers.length || 0
+
+    return (
+      <Modal id='measure-dialog'
+        show
+        backdrop={false}
+        enforceFocus={false}
+        container={document.getElementsByClassName('control-map')[0]} >
+        <Modal.Title>
+          <Button disabled className='as-label ap-modal-title' >{getLabel('import_shapefile')}</Button>
+          <DrawActions cancel={disable} />
+        </Modal.Title>
+        <Modal.Body className='ap-modal-body' >
+          {getLabel('number_of_layers_in_shapefile')}: {numberOfLayers}
+        </Modal.Body>
+      </Modal>
+    )
+  }
+
   return (
     <div id={_id} >
+      {loading && <Loading />}
       <ProcessButton
         id={_id}
         onClick={handleClick}
@@ -87,6 +123,7 @@ const _ImportSHP = () => {
         <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('import_shapefile')}</span>
       </ProcessButton>
       <input type='file' id='shapefile-input' ref={inputFile} onInput={importShp} multiple style={{ display: 'none' }} />
+      {processID === _id && showForm && renderComponent()}
     </div>
   );
 }
