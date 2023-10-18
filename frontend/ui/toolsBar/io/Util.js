@@ -54,8 +54,8 @@ export const exportFile = (gj, options, layers) => {
 export const shpConfig = {
   weight: 2.0,
   stroke: true,
-  color: '#000',
-  fillColor: '#000',
+  color: '#00E334',
+  fillColor: '#00E334',
   opacity: 0.9,
   fillOpacity: 0.25,
 }
