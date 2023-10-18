@@ -104,8 +104,24 @@ const _ImportSHP = ({ processID }) => {
           <Button disabled className='as-label ap-modal-title' >{getLabel('import_shapefile')}</Button>
           <DrawActions cancel={disable} />
         </Modal.Title>
-        <Modal.Body className='ap-modal-body' >
-          {getLabel('number_of_layers_in_shapefile')}: {numberOfLayers}
+        <Modal.Body className='ap-modal-body import-shp-modal-body' >
+          <h5>{getLabel('number_of_layers_in_shapefile')}: {numberOfLayers}</h5>
+          <p className='mb-n2'>{getLabel('list_of_layers_in_shapefile')}</p>
+          <div className='d-flex flex-column justify-content-center align-items-center mt-3'>
+            {layers.map(layer => {
+              return (
+                <div className='border p-2 mb-2'>
+                  {Object.entries(layer.properties).map(([key, value]) => {
+                    return (
+                      <div className='d-flex flex-column justify-content-center align-items-center'>
+                        <span className='mb-1'>{key}: {value}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            })}
+          </div>
         </Modal.Body>
       </Modal>
     )
