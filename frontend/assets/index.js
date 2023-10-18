@@ -18,6 +18,7 @@ import './css/control/layerPanel.css';
 import './css/digitization/physicalBlock.css'
 import './css/digitization/agriParcel.css'
 import './css/digitization/cropParcel.css'
+import './css/digitization/io.css'
 
 /* css.edbar, adapt rules to edbar style  */
 import './css/edbar/gsaa.css'
