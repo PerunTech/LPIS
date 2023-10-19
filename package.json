@@ -22,6 +22,7 @@
         "date-fns": "^2.29.1",
         "file-saver": "^2.0.5",
         "jszip": "^3.10.1",
+        "nanoid": "^5.0.2",
         "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core#dev",
         "shp-write": "^0.3.2",
         "shpjs": "^4.0.4",

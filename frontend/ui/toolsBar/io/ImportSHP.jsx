@@ -1,5 +1,6 @@
 import { React, Loading, elements } from 'perun-core';
 import shp from 'shpjs'
+import { nanoid } from 'nanoid'
 import { ProcessButton } from '../ProcessButton';
 import { core, ui } from '../../../Spatial';
 import { getLabel, strcmp } from '../../Util';
@@ -121,10 +122,10 @@ const _ImportSHP = ({ processID }) => {
           <div className='d-flex flex-column justify-content-center align-items-center mt-3'>
             {layers.map(layer => {
               return (
-                layer?.properties ? <div className='border p-2 mb-2'>
+                layer?.properties ? <div key={nanoid(4)} className='border p-2 mb-2'>
                   {Object.entries(layer.properties).map(([key, value]) => {
                     return (
-                      <div className='d-flex flex-column justify-content-center align-items-center'>
+                      <div key={nanoid(4)} className='d-flex flex-column justify-content-center align-items-center'>
                         <span className='mb-1'>{key}: {value}</span>
                       </div>
                     )
