@@ -12,8 +12,8 @@ const { useRef, useReducer } = React;
 const _id = 'shapefile';
 
 const _ImportSHP = ({ processID }) => {
-  const [{ showForm, loading, layers }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { showForm: false, loading: false, layers: [] });
+  const [{ showForm, loading, shapefileContent, layers }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { showForm: false, loading: false, shapefileContent: undefined, layers: [] });
 
   const inputFile = useRef(null);
 
@@ -24,7 +24,7 @@ const _ImportSHP = ({ processID }) => {
 
   const disable = () => {
     store.dispatch({ processID: '' });
-    setState({ showForm: false, loading: false, layers: [] })
+    setState({ showForm: false, loading: false, shapefileContent: undefined, layers: [] })
   }
 
   const importShp = () => {
@@ -42,6 +42,7 @@ const _ImportSHP = ({ processID }) => {
       // Check for zip archives
       if (strcmp(extension, '.zip')) {
         shp.parseZip(result).then(content => {
+          setState({ shapefileContent: content })
           if (Array.isArray(content) && content.length > 0) {
             content.forEach(element => {
               const geojson = factory.geoJSON(element, shpConfig);
@@ -60,6 +61,7 @@ const _ImportSHP = ({ processID }) => {
           }
         }).catch(err => {
           console.error(err)
+          alertUser(true, 'error', err)
         })
         // Check for .dbf files
       } else if (strcmp(extension, '.dbf')) {
@@ -73,10 +75,15 @@ const _ImportSHP = ({ processID }) => {
       } else if (strcmp(extension, '.shp')) {
         const shpResult = shp.parseShp(result)
         if (Array.isArray(shpResult) && shpResult.length > 0) {
+          const shapefileContentObj = { type: 'FeatureCollection', features: [] }
           setState({ layers: shpResult, showForm: true })
           shpResult.forEach(element => {
             const geojson = factory.geoJSON(element, shpConfig);
-            geojson.getLayers().forEach(l => l.addTo(Map));
+            geojson.getLayers().forEach(l => {
+              shapefileContentObj.features.push(l.feature)
+              setState({ shapefileContent: shapefileContentObj })
+              l.addTo(Map)
+            });
             Map.fitBounds(geojson.getBounds(), { padding: [100, 100] })
           })
         }
@@ -89,6 +96,10 @@ const _ImportSHP = ({ processID }) => {
         inputFile.current.value = ''
       }
     }
+  }
+
+  const onSubmit = () => {
+    console.log(shapefileContent)
   }
 
   const renderComponent = () => {
@@ -104,7 +115,7 @@ const _ImportSHP = ({ processID }) => {
           <Button disabled className='as-label ap-modal-title' >{getLabel('import_shapefile')}</Button>
           <DrawActions cancel={disable} />
         </Modal.Title>
-        <Modal.Body className='ap-modal-body import-shp-modal-body' >
+        <Modal.Body className='ap-modal-body import-shp-modal-body'>
           <h5>{getLabel('number_of_layers_in_shapefile')}: {numberOfLayers}</h5>
           <p className='mb-n2'>{getLabel('list_of_layers_in_shapefile')}</p>
           <div className='d-flex flex-column justify-content-center align-items-center mt-3'>
@@ -121,6 +132,9 @@ const _ImportSHP = ({ processID }) => {
                 </div> : <p>{getLabel('layer_has_no_properties')}</p>
               )
             })}
+          </div>
+          <div className='m-2'>
+            <Button onClick={onSubmit} className='next' size=''>{getLabel('save')}</Button>
           </div>
         </Modal.Body>
       </Modal>
