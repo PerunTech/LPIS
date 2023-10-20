@@ -47,7 +47,10 @@ const _ImportSHP = ({ processID }) => {
           if (Array.isArray(content) && content.length > 0) {
             content.forEach(element => {
               const geojson = factory.geoJSON(element, shpConfig);
-              geojson.getLayers().forEach(l => l.addTo(Map));
+              geojson.getLayers().forEach(l => {
+                l.DESCRIPTOR = 'IO_LAYER'
+                l.addTo(Map)
+              });
               Map.fitBounds(geojson.getBounds(), { padding: [100, 100] })
             })
           } else if (strcmp(typeof content, 'object')) {
@@ -55,7 +58,10 @@ const _ImportSHP = ({ processID }) => {
               setState({ layers: content.features, showForm: true })
               content.features.forEach(feature => {
                 const geojson = factory.geoJSON(feature, shpConfig);
-                geojson.getLayers().forEach(l => l.addTo(Map));
+                geojson.getLayers().forEach(l => {
+                  l.DESCRIPTOR = 'IO_LAYER'
+                  l.addTo(Map)
+                });
                 Map.fitBounds(geojson.getBounds(), { padding: [100, 100] })
               })
             }
@@ -83,6 +89,7 @@ const _ImportSHP = ({ processID }) => {
             geojson.getLayers().forEach(l => {
               shapefileContentObj.features.push(l.feature)
               setState({ shapefileContent: shapefileContentObj })
+              l.DESCRIPTOR = 'IO_LAYER'
               l.addTo(Map)
             });
             Map.fitBounds(geojson.getBounds(), { padding: [100, 100] })
