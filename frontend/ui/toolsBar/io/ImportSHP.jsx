@@ -3,18 +3,18 @@ import shp from 'shpjs'
 import { nanoid } from 'nanoid'
 import { ProcessButton } from '../ProcessButton';
 import { core, ui } from '../../../Spatial';
-import { getLabel, strcmp } from '../../Util';
-import { shpConfig } from './Util';
+import { getFarmMapAssets, getLabel, strcmp } from '../../Util';
+import { eraseIoLayers, shpConfig } from './Util';
 
 const { Button, Icon, DrawActions, Modal } = ui;
-const { factory, store, Map } = core;
+const { factory, store, Map, http } = core;
 const { alertUser } = elements;
 const { useRef, useReducer } = React;
 const _id = 'shapefile';
 
-const _ImportSHP = ({ processID }) => {
-  const [{ showForm, loading, shapefileContent, layers }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { showForm: false, loading: false, shapefileContent: undefined, layers: [] });
+const _ImportSHP = ({ processID, farmObjId }) => {
+  const [{ showForm, loading, shapefileContent, layerName, layers }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { showForm: false, loading: false, shapefileContent: undefined, layerName: 'SOIL_SITES', layers: [] });
 
   const inputFile = useRef(null);
 
@@ -25,7 +25,7 @@ const _ImportSHP = ({ processID }) => {
 
   const disable = () => {
     store.dispatch({ processID: '' });
-    setState({ showForm: false, loading: false, shapefileContent: undefined, layers: [] })
+    setState({ showForm: false, loading: false, shapefileContent: undefined, layerName: 'SOIL_SITES', layers: [] })
   }
 
   const importShp = () => {
@@ -107,7 +107,19 @@ const _ImportSHP = ({ processID }) => {
   }
 
   const onSubmit = () => {
-    console.log(shapefileContent)
+    http.call('save_shapefile', {
+      method: 'post',
+      url: '/lpis/save/{init.token}/' + layerName + '/' + farmObjId || 0,
+      data: JSON.stringify(shapefileContent),
+    }).then(_response => {
+      alertUser(true, 'success', `${getLabel('successfully_saved')}`)
+      disable()
+      eraseIoLayers()
+      getFarmMapAssets()
+    }).catch(err => {
+      console.error(err)
+      alertUser(true, 'error', err)
+    })
   }
 
   const renderComponent = () => {
@@ -142,7 +154,15 @@ const _ImportSHP = ({ processID }) => {
             })}
           </div>
           <div className='m-2'>
-            <Button onClick={onSubmit} className='next' size=''>{getLabel('save')}</Button>
+            <div>
+              <label htmlFor='layerName'>Layer name</label>
+              <select name='layerName' id='layerName' className='form-control' value={layerName} onChange={(e) => setState({ layerName: e.target.value })}>
+                <option value='SOIL_SITES'>Soil sites</option>
+                <option value='TEST_RESULTS'>Test results</option>
+                <option value='NUTRIENT_RECS'>Nutrient records</option>
+              </select>
+            </div>
+            <Button onClick={onSubmit} className='next mt-3' size=''>{getLabel('save')}</Button>
           </div>
         </Modal.Body>
       </Modal>
@@ -167,5 +187,5 @@ const _ImportSHP = ({ processID }) => {
 }
 
 export const ImportSHP = core.connect(state => ({
-  processID: state.app.processID
+  processID: state.app.processID, farmObjId: state.farmRegistry?.farmObjId
 }))(_ImportSHP)
