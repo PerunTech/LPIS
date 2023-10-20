@@ -10,10 +10,8 @@ export const Erase = () => {
   const eraseIoLayers = () => {
     Map.eachLayer(function (layer) {
       if (!!layer.toGeoJSON) {
-        if (layer) {
-          if (strcmp(layer.DESCRIPTOR, 'IO_LAYER')) {
-            layer.removeFrom(Map)
-          }
+        if (strcmp(layer.DESCRIPTOR, 'IO_LAYER')) {
+          layer.removeFrom(Map)
         }
       }
     });
