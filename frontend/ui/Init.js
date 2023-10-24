@@ -1,7 +1,7 @@
 import { redux } from 'perun-core';
 import { ui, core, config } from '../Spatial';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets } from '.';
-import { getFarmMapAssets, getMeasurementSystem } from './Util';
+import { getFarmMapAssets } from './Util';
 
 const { SYS_CENTER } = config;
 const { Map, store } = core;
@@ -69,7 +69,7 @@ export const lpis = () => {
         .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
         .withNavigationControl()
         .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
-        .withWindRose(getMeasurementSystem())
+        .withWindRose()
         .render('lpis-map');
 }
 
