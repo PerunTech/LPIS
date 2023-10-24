@@ -36,10 +36,19 @@ export function strcmp(firstValue, secondValue) {
     }
 }
 
+/**
+ * Converts a buffer to a string
+ * @param  {Buffer} buffer The buffer to be converted
+ */
 export const bufferToString = buffer => {
     return String.fromCharCode.apply(null, new Uint8Array(buffer));
 }
 
+/**
+ * Decode a buffer response
+ * @param  {Buffer} response The buffer response to be decoded
+ * @param  {String} objectName The name of the object the response is for (Agricultural parcel, Physical block etc.)
+ */
 export const decodeResponse = (response, objectName) => {
     let errorMsg = `${getLabel('agricultural_parcel_not_saved')}`
     if (strcmp(objectName, 'physical_block')) {
@@ -62,6 +71,10 @@ export const decodeResponse = (response, objectName) => {
     return errorMsg
 }
 
+/**
+ * Check if a given value is valid JSON
+ * @param  {any} value The value to be checked
+ */
 export function isJSON(value) {
     value = !strcmp(typeof value, 'string') ? JSON.stringify(value) : value
     try {
@@ -91,6 +104,10 @@ export const translateBooleanValue = (value) => {
     return translatedValue;
 };
 
+/**
+ * Translate the numeric value of the land cover code field
+ * @param  {String} code The land cover code to be translated
+ */
 export const translateLandCoverCode = (code) => {
     let translatedValue = '/'
     // These are the available land cover codes
@@ -107,6 +124,10 @@ export const translateLandCoverCode = (code) => {
     return translatedValue
 };
 
+/**
+ * Reads a cookie defined on the current document
+ * @param  {string} name The name of the cookie we need
+ */
 export function readCookie(name) {
     var nameEQ = name + "=";
     // String("farmerObj=20348156; token=92b39ce8-e7e2-4b12-bf6b-bbd31dd04b91; _ga=GA1.1.536760576.1612264197; _gid=GA1.1.1645977351.1615282019; _gat=1"
@@ -402,6 +423,10 @@ export const getFarmPPlanAssets = (showAlert = false) => {
     })
 }
 
+/**
+ * Get a random point contained in a given polygon
+ * @param  {object} polygon The polygon in which the point needs to be contained
+ */
 export const getRandomPointInPolygon = (polygon) => {
     const bounds = polygon.getBounds();
     const x_min = bounds.getEast();
@@ -423,6 +448,9 @@ export const getRandomPointInPolygon = (polygon) => {
     }
 }
 
+/**
+ * Get a list of available layers (Basemap or Overlays) in the system
+ */
 export const getGeoTypeLayers = () => {
     const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
     const tableName = 'GEO_LAYER_TYPE'
@@ -494,6 +522,10 @@ export const getGeoTypeLayers = () => {
     })
 }
 
+/**
+ * Get the measurement unit according to the system param for it (MEASUREMENT_SYSTEM)
+ * @param  {Boolean} isSquared Indicator for whether the unit needs to be squared
+ */
 export const getMeasurementUnit = (isSquared) => {
     let measurementUnit = 'm'
     let measurementUnitSquared = 'm²'
