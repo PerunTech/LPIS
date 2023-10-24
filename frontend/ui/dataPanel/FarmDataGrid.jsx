@@ -2,7 +2,7 @@ import { React, PropTypes, elements } from 'perun-core';
 import { core, data, ui } from '../../Spatial';
 import { ParcelHistory } from './ParcelHistory';
 import { getCropLabel } from '../toolsBar/cropParcel/Util';
-import { getLabel, strcmp, translateBooleanValue } from '../Util';
+import { getLabel, getMeasurementUnit, strcmp, translateBooleanValue } from '../Util';
 import { parcelHistoryConfig } from '../toolsBar/agriParcel/Config';
 import { removeParcelHistoryLayers } from './Util';
 
@@ -188,7 +188,7 @@ const _PplanDataGrid = ({ el, rowData }) => {
     descriptor = rowData.DESCRIPTOR,
     code = getCropLabel(rowData.CROP_CODE),
     measurement = Math.round(rowData.AREA),
-    unit = 'm²',
+    unit = getMeasurementUnit(true),
     nPlants = rowData.NUMBER_PLANTS;
 
   return <ButtonGroup className='data-grid-row' key={id + measurement} >
@@ -253,7 +253,7 @@ const _CadIntersectionsGrid = ({ el, rowData }) => {
     cadParcelId = rowData.GR_PARCEL,
     municipality = rowData.MUNICIPALITY_NAME,
     measurement = Math.round(rowData.CAD_AREA),
-    unit = 'm²'
+    unit = getMeasurementUnit(true)
 
   return <ButtonGroup className='data-grid-row' key={cadParcelId + measurement} >
     <Button disabled className='data-grid-index' />
@@ -432,7 +432,7 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
       indexColumnClassNames.push(' fr-data-grid-row-column-invalid-parcel')
       indexColumnTitle = 'Парцелата има тополошки грешки'
     }
-    const unit = el instanceof factory.Polygon ? 'm²' : 'm';
+    const unit = el instanceof factory.Polygon ? getMeasurementUnit(true) : getMeasurementUnit();
     const homeName = rowData.HOME_NAME || 'Не е наведено';
     return (
       <div className='container' key={id} id={id}>

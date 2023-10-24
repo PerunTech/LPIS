@@ -4,7 +4,7 @@ import { Guidance } from './Guidance';
 import { deleteCPMsg } from './Config';
 import { loadFarmerAssets } from '../..'
 import { ProcessButton } from '../..';
-import { getFarmPPlanAssets } from '../../Util';
+import { getFarmPPlanAssets, getMeasurementUnit } from '../../Util';
 
 const { Map, store } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
@@ -113,7 +113,7 @@ const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
                     </Modal.Title>
                     <Modal.Body className='ap-modal-body' >
                         <div id={_id} >{'Ја избравте производната парцела со ид. број '
-                            + layer.feature.id + ' и површина ' + Math.round(layer.getMeasurement()) + ' m². Дали сте сигурни дека сакате да ја избришете?'}</div>
+                            + layer.feature.id + ' и површина ' + Math.round(layer.getMeasurement()) + ` ${getMeasurementUnit(true)}. Дали сте сигурни дека сакате да ја избришете?`}</div>
                         <Button onClick={() => { deleteLayer() }} size='' className='cancel' > Избриши </Button>
                     </Modal.Body>
                 </Modal>)}

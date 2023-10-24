@@ -1,7 +1,7 @@
 import { React, elements } from 'perun-core';
 import { core, ui } from '../../../../Spatial';
 import { deleteAPMsg } from '../Config';
-import { getFarmMapAssets, getLabel } from '../../../Util';
+import { getFarmMapAssets, getLabel, getMeasurementUnit } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
 
@@ -79,7 +79,7 @@ const _Delete = ({ processID }) => {
           </Modal.Title>
           <Modal.Body className='ap-modal-body' >
             <div id={_id} >{`${getLabel('delete_agricultural_parcel_msg_one')} `
-              + layer.feature.properties.OLD_ID + ` ${getLabel('delete_agricultural_parcel_msg_two')} ` + Math.round(layer.getMeasurement()) + ' m². '
+              + layer.feature.properties.OLD_ID + ` ${getLabel('delete_agricultural_parcel_msg_two')} ` + Math.round(layer.getMeasurement()) + ` ${getMeasurementUnit(true)}. `
               + ` ${getLabel('delete_agricultural_parcel_confirmation')} `}</div>
             <Button onClick={() => { deleteLayer() }} size='' className='cancel' > {getLabel('delete')}</Button>
           </Modal.Body>

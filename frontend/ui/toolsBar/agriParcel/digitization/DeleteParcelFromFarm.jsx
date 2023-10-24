@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui } from '../../../../Spatial';
 import { deleteAPFromFarmMsg } from '../Config';
-import { getFarmMapAssets, getLabel } from '../../../Util';
+import { getFarmMapAssets, getLabel, getMeasurementUnit } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
 
@@ -63,22 +63,24 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId }) => {
 
   const renderModal = () => {
     const container = document.getElementsByClassName('control-map')[0]
-    return <Modal show backdrop={false} enforceFocus={false} id='measure-dialog' className='delete-control-dialog' container={container}>
-      <Modal.Title>
-        <Button disabled className='as-label ap-modal-title'>{getLabel('remove_parcel_from_farm')}</Button>
-        <DrawActions cancel={disable} />
-      </Modal.Title>
-      <Modal.Body className='ap-modal-body'>
-        <div id={_id}>
-          {'Ја избравте парцелата со СИЗП број ' +
-            layer.feature.properties.OLD_ID +
-            ' и површина ' +
-            Math.round(layer.getMeasurement()) +
-            ' m². Дали сте сигурни дека сакате да ја отстраните од фармата?'}
-        </div>
-        <Button onClick={deleteParcelFromFarm} size='' className='cancel'>{getLabel('remove')}</Button>
-      </Modal.Body>
-    </Modal>
+    return (
+      <Modal show backdrop={false} enforceFocus={false} id='measure-dialog' className='delete-control-dialog' container={container}>
+        <Modal.Title>
+          <Button disabled className='as-label ap-modal-title'>{getLabel('remove_parcel_from_farm')}</Button>
+          <DrawActions cancel={disable} />
+        </Modal.Title>
+        <Modal.Body className='ap-modal-body'>
+          <div id={_id}>
+            {'Ја избравте парцелата со СИЗП број ' +
+              layer.feature.properties.OLD_ID +
+              ' и површина ' +
+              Math.round(layer.getMeasurement()) +
+              ` ${getMeasurementUnit(true)}. Дали сте сигурни дека сакате да ја отстраните од фармата?`}
+          </div>
+          <Button onClick={deleteParcelFromFarm} size='' className='cancel'>{getLabel('remove')}</Button>
+        </Modal.Body>
+      </Modal>
+    )
   }
 
   const renderComponent = () => {

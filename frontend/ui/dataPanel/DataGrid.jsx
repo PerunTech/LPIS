@@ -207,7 +207,7 @@ const _GridRows = ({ rows, selectedParcelId, selectedCropParcelId }) => {
                 measurement = Math.round(el.getMeasurement()),
                 landClass = props.LAND_COVER_CODE,
                 name = props.HOME_NAME || el.getName(),
-                unit = el instanceof factory.Polygon ? 'm²' : 'm',
+                unit = el instanceof factory.Polygon ? getMeasurementUnit(true) : getMeasurementUnit(),
                 commonUse = props.COMMON_USE,
                 certificateOfUse = props.CERTIFICATE_OF_USE;
 

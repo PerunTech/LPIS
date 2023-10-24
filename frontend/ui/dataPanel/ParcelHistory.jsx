@@ -2,7 +2,7 @@ import { React, elements } from 'perun-core'
 import format from 'date-fns/format'
 import mk from 'date-fns/locale/mk'
 import { core, ui, config as cfg } from '../../Spatial'
-import { translateBooleanValue, translateLandCoverCode } from '../Util'
+import { getMeasurementUnit, translateBooleanValue, translateLandCoverCode } from '../Util'
 import { removeParcelHistoryLayers, truncate } from './Util'
 
 const { MAP_CONFIG } = cfg
@@ -74,12 +74,12 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory, historyEditEnable
                 <td title={userName || '/'}>{finalUserName}</td>
                 <td>{properties.ORG_UNIT_NAME || '/'}</td>
                 <td>{properties.OLD_ID}</td>
-                <td>{`${Math.round(Number(properties.ALLOWED_AREA || properties.AREA))} m²`}</td>
+                <td>{`${Math.round(Number(properties.ALLOWED_AREA || properties.AREA))} ${getMeasurementUnit(true)}`}</td>
                 <td>{translatedLandCoverCode}</td>
                 <td>{properties.HOME_NAME || 'Не е наведено'}</td>
                 <td>{translateBooleanValue(properties.COMMON_USE)}</td>
                 <td>{translateBooleanValue(properties.CERTIFICATE_OF_USE)}</td>
-                <td>{Math.round(properties.AREA)} m²</td>
+                <td>{Math.round(properties.AREA)} {getMeasurementUnit(true)}</td>
                 <td>
                   <Button disabled={historyEditEnabled} onClick={() => showGeometry(historyEl)}>Прикажи геометрија</Button>
                 </td>

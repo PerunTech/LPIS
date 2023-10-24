@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, config } from '../../../../Spatial';
 import { permanentCropsMsg, permanentCropSchema } from '../Config';
-import { bufferToString, getFarmMapAssets, getLabel, isJSON, strcmp } from '../../../Util';
+import { bufferToString, getFarmMapAssets, getLabel, getMeasurementUnit, isJSON, strcmp } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
 import { ProcessButton } from '../../ProcessButton';
@@ -232,7 +232,7 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
                 >
                   <span className='mr-1'>{schema.properties.PERM_CROP_TYPE_ID.enumNames[Number(permanentCrop.PERM_CROP_TYPE_ID) - 1]}</span>
                   <span>({permanentCrop.NUMBER_OF_TREES} садници</span>
-                  <span className='mr-1'> на {Math.round(permanentCrop.PLANT_AREA)} m²)</span>
+                  <span className='mr-1'> на {Math.round(permanentCrop.PLANT_AREA)} {getMeasurementUnit(true)})</span>
                 </Button>
                 <span className='ml-2' style={{ cursor: 'pointer', float: 'right' }} title='Избриши запис'
                   onClick={() => deletePermanentCropPrompt(permanentCrop.object_id)}
@@ -248,12 +248,14 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
 
     const selectedParcel = layer.feature.properties
     const selectedParcelArea = Math.round(Number(selectedParcel?.ALLOWED_AREA || selectedParcel?.AREA)) || '/'
-    const parcelData = <div className='p-2 mt-1'>
-      <p style={{ fontSize: 'small', fontWeight: '700' }}>{getLabel('chosen_parcel_info')}</p>
-      <div className='d-flex flex-row justify-content-center align-items-center mt-n2' style={{ fontSize: 'small' }}>
-        <p className='mr-1 mb-n1'>{getLabel('area')}: {selectedParcelArea} m²</p>
+    const parcelData = (
+      <div className='p-2 mt-1'>
+        <p style={{ fontSize: 'small', fontWeight: '700' }}>{getLabel('chosen_parcel_info')}</p>
+        <div className='d-flex flex-row justify-content-center align-items-center mt-n2' style={{ fontSize: 'small' }}>
+          <p className='mr-1 mb-n1'>{getLabel('area')}: {selectedParcelArea} {getMeasurementUnit(true)}</p>
+        </div>
       </div>
-    </div>
+    )
 
     return <React.Fragment>
       {additionalCropsContainer}

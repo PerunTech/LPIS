@@ -1,7 +1,7 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, tools, config as cfg } from '../../../../Spatial';
 import { config, permanentCropSchema } from '../Config';
-import { bufferToString, getFarmMapAssets, getLabel, isJSON, strcmp } from '../../../Util';
+import { bufferToString, getFarmMapAssets, getLabel, getMeasurementUnit, isJSON, strcmp } from '../../../Util';
 import { saveAP } from '../SaveAP';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -336,25 +336,27 @@ const _Edit = ({
         setState({ permanentCropData: {} })
       }
 
-      additionalCropsContainer = <Modal {...modalProps}>
-        <Modal.Title>
-          <Button disabled className='as-label ap-modal-title' >{getLabel('permanent_crop_data_list')}</Button>
-        </Modal.Title>
-        <Modal.Body className='show-grid'>
-          <div className='p-2'>
-            {allPermanentCrops.map(permanentCrop => {
-              return <Button key={permanentCrop.object_id} block
-                className={currentPermanentCropId === permanentCrop.object_id ? 'active' : ''} onClick={() => onClick(permanentCrop)}
-              >
-                <span className='mr-1'>{schema.properties.PERM_CROP_TYPE_ID.enumNames[Number(permanentCrop.PERM_CROP_TYPE_ID) - 1]}</span>
-                <span>({permanentCrop.NUMBER_OF_TREES} садници</span>
-                <span className='mr-1'> на {Math.round(permanentCrop.PLANT_AREA)} m²)</span>
-              </Button>
-            })}
-            <Button block variant='dark' onClick={resetForm}>Додади нов запис</Button>
-          </div>
-        </Modal.Body>
-      </Modal>
+      additionalCropsContainer = (
+        <Modal {...modalProps}>
+          <Modal.Title>
+            <Button disabled className='as-label ap-modal-title' >{getLabel('permanent_crop_data_list')}</Button>
+          </Modal.Title>
+          <Modal.Body className='show-grid'>
+            <div className='p-2'>
+              {allPermanentCrops.map(permanentCrop => {
+                return <Button key={permanentCrop.object_id} block
+                  className={currentPermanentCropId === permanentCrop.object_id ? 'active' : ''} onClick={() => onClick(permanentCrop)}
+                >
+                  <span className='mr-1'>{schema.properties.PERM_CROP_TYPE_ID.enumNames[Number(permanentCrop.PERM_CROP_TYPE_ID) - 1]}</span>
+                  <span>({permanentCrop.NUMBER_OF_TREES} садници</span>
+                  <span className='mr-1'> на {Math.round(permanentCrop.PLANT_AREA)} {getMeasurementUnit(true)})</span>
+                </Button>
+              })}
+              <Button block variant='dark' onClick={resetForm}>Додади нов запис</Button>
+            </div>
+          </Modal.Body>
+        </Modal>
+      )
     }
 
     return <React.Fragment>

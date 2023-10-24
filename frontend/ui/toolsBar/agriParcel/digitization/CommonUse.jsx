@@ -1,10 +1,10 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
-import { commonUseMsg, commonUseSchema } from '../Config';
+import { commonUseSchema } from '../Config';
 import { ProcessButton } from '../../ProcessButton';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
-import { getFarmMapAssets, getLabel, strcmp } from '../../../Util';
+import { getFarmMapAssets, getLabel, getMeasurementUnit, strcmp } from '../../../Util';
 
 const { Map, connect, store, http } = core;
 const { geobuf, protobuf } = data;
@@ -179,13 +179,15 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
 
   const renderForm = () => {
     const { area, landUseCode } = selectedParcel
-    const parcelData = <div className='p-2'>
-      <p style={{ fontSize: 'small', fontWeight: '700' }}>{getLabel('chosen_parcel_info')}</p>
-      <div className='d-flex flex-row justify-content-center align-items-center mt-1 mb-n1' style={{ fontSize: 'small' }}>
-        <p className='mr-1'>{getLabel('area')}: {area} m²</p>
-        <p>{getLabel('class')}: {landUseCode}</p>
+    const parcelData = (
+      <div className='p-2'>
+        <p style={{ fontSize: 'small', fontWeight: '700' }}>{getLabel('chosen_parcel_info')}</p>
+        <div className='d-flex flex-row justify-content-center align-items-center mt-1 mb-n1' style={{ fontSize: 'small' }}>
+          <p className='mr-1'>{getLabel('area')}: {area} {getMeasurementUnit(true)}</p>
+          <p>{getLabel('class')}: {landUseCode}</p>
+        </div>
       </div>
-    </div>
+    )
 
     const { schema, uiSchema } = commonUseSchema
 
