@@ -13,6 +13,10 @@ const { store: perunStore } = redux;
 const { factory, store, http, Map } = core;
 const { geobuf, protobuf } = data;
 
+/**
+ * Get a full label code
+ * @param  {String} labelCode The final part of the label code
+ */
 export function getLabel(labelCode) {
     return perunStore?.getState().intl.messages[`perun.lpis.${labelCode}`] || `perun.lpis.${labelCode}`
 }
@@ -90,6 +94,10 @@ export function isJSON(value) {
     return false
 }
 
+/**
+ * Translate a boolean value to a yes/no string
+ * @param  {Boolean} value The boolean value to be translated
+ */
 export const translateBooleanValue = (value) => {
     let translatedValue = '';
     switch (true) {
@@ -181,14 +189,26 @@ export function downloadFile(response, fallbackFileName, callback) {
     }
 }
 
+/**
+ * Dispatch data from the agricultural parcel layer to the store
+ * @param  {object} layer The layer that was clicked
+ */
 function handleAgriParcelClick(layer) {
     store.dispatch({ selectedParcelId: layer.feature.id, selectedCropParcelId: '' })
 }
 
+/**
+ * Dispatch data from the crop parcel layer to the store
+ * @param  {object} layer The layer that was clicked
+ */
 function handleCropParcelClick(layer) {
     store.dispatch({ selectedCropParcelId: layer.feature.id, selectedParcelId: String(layer.feature?.properties?.AGRI_PARCEL_ID) })
 }
 
+/**
+ * Get the farm digitization state (active or inactive) according to the LPIS-DGTZ system param
+ * @param  {String} objectId The object ID of the farm
+ */
 export const getFarmDigitizationState = objectId => {
     const token = perunStore.getState().security.svSession
     const url = `${window.server}/WsConf/params/get/${token}/LPIS-DGTZ/${objectId}`
@@ -200,6 +220,10 @@ export const getFarmDigitizationState = objectId => {
     })
 }
 
+/**
+ * Get the control results for a given list of controls
+ * @param  {Array} controls A list of controls for which we need the results
+ */
 const getControlResults = (controls) => {
     const promises = controls.map(async control => {
         const { objectId, year } = control
@@ -246,6 +270,10 @@ const getControlResults = (controls) => {
     })
 }
 
+/**
+ * Get the controls for a given farm, using the FIC field of it
+ * @param  {String} fic The FIC of the farm we need to get the controls for
+ */
 const getControls = (fic) => {
     const url = `/ReactElements/getTableWithFilter/{init.token}/CONTROL/BID/${fic}/100`
     http.call('getControls', { url, method: 'get' }).then(res => {
@@ -267,6 +295,11 @@ const getControls = (fic) => {
     })
 }
 
+/**
+ * Get data for a given farm
+ * @param  {String} objectId The object ID of the farm
+ * @param  {String} actionType The current action type (sizp, pplan, preview)
+ */
 const getFarmData = (objectId, actionType) => {
     const token = perunStore.getState().security.svSession
     const url = `${window.server}/ReactElements/searchTable/${token}/FARM/1`
@@ -287,6 +320,11 @@ const getFarmData = (objectId, actionType) => {
     })
 }
 
+/**
+ * Get map-related data (ex. parcel polygons) for a given farm
+ * @param  {Boolean} fitBounds Indicator for whether to fit the resulting geo data bounds (i.e. to zoom in to the location of the bounds)
+ * @param  {Boolean} showAlert Indicator for whether to show an alert after the WS is called
+ */
 export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     store.dispatch({ hiddenAssets: [] })
     Map.eachLayer(function (layer) {
@@ -386,6 +424,10 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     }
 };
 
+/**
+ * Get map-related data (ex. crop parcel polygons) for a given farm's produce plan
+ * @param  {Boolean} showAlert Indicator for whether to show an alert after the WS is called
+ */
 export const getFarmPPlanAssets = (showAlert = false) => {
     Map.eachLayer(function (layer) {
         if (!!layer.toGeoJSON) {
