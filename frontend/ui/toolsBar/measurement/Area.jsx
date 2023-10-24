@@ -2,7 +2,7 @@ import { React, PropTypes } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { MEASURE_AREA } from './Config';
-import { getLabel } from '../../Util';
+import { getLabel, getMeasurementUnit } from '../../Util';
 
 const { factory, Map, connect, store } = core;
 const { draw } = tools;
@@ -27,7 +27,7 @@ export const area = {
   disable: function () {
     this.sum = 0;
     Map.off('new_shape');
-    store.dispatch({ processID: '', totalArea: '0 m²' });
+    store.dispatch({ processID: '', totalArea: `0 ${getMeasurementUnit(true)}` });
     draw.polygon.disable('force');
   },
 
@@ -67,7 +67,7 @@ function _Area({ processID, currentMeasure, ..._props }) {
               cancel={disable.bind(area)} />
           </Modal.Title>
           <Modal.Body >
-            <Button disabled size='lg' className='as-label' >{(sum + currentMeasure) + ' m²'}</Button>
+            <Button disabled size='lg' className='as-label' >{(sum + currentMeasure) + ` ${getMeasurementUnit(true)}`}</Button>
           </Modal.Body>
         </Modal>}
     </ProcessButton>
