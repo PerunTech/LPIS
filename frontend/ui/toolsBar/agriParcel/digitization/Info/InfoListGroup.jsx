@@ -1,5 +1,5 @@
 import { React, elements } from 'perun-core'
-import { getLabel, translateBooleanValue, translateLandCoverCode } from '../../../../Util';
+import { getLabel, getMeasurementUnit, translateBooleanValue, translateLandCoverCode } from '../../../../Util';
 import { truncate } from '../../../../dataPanel/Util';
 
 const { ReactBootstrap } = elements;
@@ -38,10 +38,10 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
         {getLabel('locality')}: <span className='font-weight-bold'>{parcelInfo.HOME_NAME || 'Не е наведено'}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        {getLabel('area')}: <span className='font-weight-bold'>{`${Math.round(Number(parcelInfo.ALLOWED_AREA || parcelInfo.AREA))} m²`}</span>
+        {getLabel('area')}: <span className='font-weight-bold'>{`${Math.round(Number(parcelInfo.ALLOWED_AREA || parcelInfo.AREA))}${getMeasurementUnit(true)}`}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        {getLabel('total_area')}: <span className='font-weight-bold'>{Math.round(parcelInfo.AREA)} m²</span>
+        {getLabel('total_area')}: <span className='font-weight-bold'>{Math.round(parcelInfo.AREA)} {getMeasurementUnit(true)}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
         {getLabel('common_use')}: <span className='font-weight-bold'>{translateBooleanValue(parcelInfo.COMMON_USE)}</span>

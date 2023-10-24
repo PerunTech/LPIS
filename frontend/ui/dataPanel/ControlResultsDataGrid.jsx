@@ -1,6 +1,6 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
-import { strcmp } from '../Util';
+import { getMeasurementUnit, strcmp } from '../Util';
 import { getCropLabel } from '../toolsBar/cropParcel/Util'
 
 const { Map, store } = core;
@@ -157,7 +157,7 @@ const _Rows = ({ rows, controlResultEditEnabled }) => {
 
     const id = el.layer.feature.id
     const status = rowData.status
-    const unit = 'm²'
+    const unit = getMeasurementUnit(true)
     let cropLabel = '/'
     if (rowData.FOUND_CROP) {
       const translatedLabel = getCropLabel(Number(rowData.FOUND_CROP))

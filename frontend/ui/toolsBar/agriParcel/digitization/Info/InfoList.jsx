@@ -2,7 +2,7 @@ import { React, elements } from 'perun-core'
 import { core, ui } from '../../../../../Spatial';
 import { permanentCropSchema } from '../../Config';
 import { InfoListGroup } from './InfoListGroup';
-import { getLabel } from '../../../../Util';
+import { getLabel, getMeasurementUnit } from '../../../../Util';
 
 const { http, connect } = core;
 const { Button } = ui;
@@ -42,14 +42,14 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
         if (Array.isArray(res.data.items) && res.data.items?.length > 0) {
           setState({ commonUses: res.data.items })
         } else {
-          alertUser(true, 'info', 'Не се пронајдени податоци за Заедничка употреба')
+          alertUser(true, 'info', `${getLabel('no_common_use_data_found')}`)
         }
       } else {
-        alertUser(true, 'info', 'Не се пронајдени податоци за Заедничка употреба')
+        alertUser(true, 'info', `${getLabel('no_common_use_data_found')}`)
       }
     }).catch(err => {
       console.error(err)
-      alertUser(true, 'error', 'Настана грешка')
+      alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
     })
   }
 
@@ -65,7 +65,7 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
             ИДБР: <span className='font-weight-bold'>{commonUse.FIC}</span>
           </ListGroupItem>
           <ListGroupItem className='p-2'>
-            Површина: <span className='font-weight-bold'>{Math.round(commonUse.ALLOWED_AREA)} m²</span>
+            Површина: <span className='font-weight-bold'>{Math.round(commonUse.ALLOWED_AREA)} {getMeasurementUnit(true)}</span>
           </ListGroupItem>
         </ListGroup>
       })}
@@ -81,14 +81,14 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
         if (Array.isArray(res.data.items) && res.data.items?.length > 0) {
           setState({ overlaps: res.data.items })
         } else {
-          alertUser(true, 'info', 'Не се пронајдени податоци за преклопи')
+          alertUser(true, 'info', `${getLabel('no_overlaps_data_found')}`)
         }
       } else {
-        alertUser(true, 'info', 'Не се пронајдени податоци за преклопи')
+        alertUser(true, 'info', `${getLabel('no_overlaps_data_found')}`)
       }
     }).catch(err => {
       console.error(err)
-      alertUser(true, 'error', 'Настана грешка')
+      alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
     })
   }
 
@@ -98,7 +98,7 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
       {overlaps.map(overlap => {
         return <ListGroupItem className='p-2'>
           Број на парцела: <span className='font-weight-bold mr-1'>{overlap.PARCEL_ID1}</span>
-          Површина: <span className='font-weight-bold'>{Math.round(overlap.AREA)} m²</span>
+          Површина: <span className='font-weight-bold'>{Math.round(overlap.AREA)} {getMeasurementUnit(true)}</span>
         </ListGroupItem>
       })}
     </ListGroup>
@@ -112,14 +112,14 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
         if (Array.isArray(res.data.items) && res.data.items?.length > 0) {
           setState({ permanentCrops: res.data.items })
         } else {
-          alertUser(true, 'info', 'Не се пронајдени податоци за долгогодишни култури')
+          alertUser(true, 'info', `${getLabel('no_permanent_crop_data_found')}`)
         }
       } else {
-        alertUser(true, 'info', 'Не се пронајдени податоци за долгогодишни култури')
+        alertUser(true, 'info', `${getLabel('no_permanent_crop_data_found')}`)
       }
     }).catch(err => {
       console.error(err)
-      alertUser(true, 'error', 'Настана грешка')
+      alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
     })
   }
 
@@ -132,7 +132,7 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
         return <ListGroupItem className='p-2'>
           <span className='mr-1'>{schema.properties.PERM_CROP_TYPE_ID.enumNames[Number(permanentCrop.PERM_CROP_TYPE_ID) - 1]}</span>
           <span>(<strong>{permanentCrop.NUMBER_OF_TREES}</strong> {numberOfTreesLabel}</span>
-          <span className='mr-1'> на <strong>{Math.round(permanentCrop.PLANT_AREA)}</strong> m²)</span>
+          <span className='mr-1'> на <strong>{Math.round(permanentCrop.PLANT_AREA)}</strong> {getMeasurementUnit(true)})</span>
         </ListGroupItem>
       })}
     </ListGroup>

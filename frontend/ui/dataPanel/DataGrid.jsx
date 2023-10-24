@@ -1,7 +1,7 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { getCropLabel } from '..'
-import { getLabel, strcmp, translateBooleanValue } from '../Util';
+import { getLabel, getMeasurementUnit, strcmp, translateBooleanValue } from '../Util';
 
 const { factory, Map, store } = core;
 const { ButtonGroup, Button, Icon } = ui;
@@ -237,7 +237,7 @@ const _GridRows = ({ rows, selectedParcelId, selectedCropParcelId }) => {
                 objectId = el.getId(),
                 code = getCropLabel(props.CROP_CODE),
                 measurement = Math.round(props.AREA),
-                unit = 'm²',
+                unit = getMeasurementUnit(true),
                 nPlants = props.NUMBER_PLANTS;
 
             let rowClassNames = ['data-grid-row']
@@ -266,7 +266,7 @@ const _GridRows = ({ rows, selectedParcelId, selectedCropParcelId }) => {
                 objectId = el.getId(),
                 landCoverCode = props.LAND_COVER_CODE,
                 area = Math.round(props.AREA),
-                unit = 'm²'
+                unit = getMeasurementUnit(true)
             return <ButtonGroup className='data-grid-row data-grid-row-pb' key={objectId} >
                 <Button disabled className='data-grid-index' />
                 <Button disabled className='data-grid-column' >{id}</Button>
@@ -364,7 +364,7 @@ const _GSAARows = ({ rows }) => {
             const id = getAgriNum(props.AGRI_PARCEL_ID),
                 code = getCropLabel(props.CROP_CODE), // crop_codes_desc[crop_codes_idx.findIndex(val => val === props.CROP_CODE)],
                 measurement = Math.round(props.AREA),
-                unit = 'm²',
+                unit = getMeasurementUnit(true),
                 nPlants = props.NUMBER_PLANTS;
 
             return <ButtonGroup className='data-grid-row' key={id + measurement} >
