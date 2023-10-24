@@ -16,9 +16,11 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.20.13",
+        "@turf/area": "^6.5.0",
         "@turf/boolean-intersects": "^6.5.0",
         "@turf/boolean-point-in-polygon": "^6.5.0",
         "@turf/helpers": "^6.5.0",
+        "@turf/length": "^6.5.0",
         "date-fns": "^2.29.1",
         "file-saver": "^2.0.5",
         "jszip": "^3.10.1",
