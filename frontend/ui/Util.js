@@ -493,3 +493,20 @@ export const getGeoTypeLayers = () => {
         }
     })
 }
+
+export const getMeasurementUnit = (isSquared) => {
+    let measurementUnit = 'm'
+    let measurementUnitSquared = 'm²'
+    const measurementSystemParam = window.measurementSystem
+    if (measurementSystemParam) {
+        if (strcmp(measurementSystemParam, 'imperial')) {
+            if (isSquared) {
+                measurementUnitSquared = 'ft²'
+            } else {
+                measurementUnit = 'ft'
+            }
+        }
+    }
+
+    return isSquared ? measurementUnitSquared : measurementUnit
+}
