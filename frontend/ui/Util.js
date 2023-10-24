@@ -533,12 +533,32 @@ export const getMeasurementUnit = (isSquared) => {
     if (measurementSystemParam) {
         if (strcmp(measurementSystemParam, 'imperial')) {
             if (isSquared) {
-                measurementUnitSquared = 'ft²'
+                measurementUnitSquared = 'ac'
             } else {
-                measurementUnit = 'ft'
+                measurementUnit = 'mi'
             }
         }
     }
 
     return isSquared ? measurementUnitSquared : measurementUnit
+}
+
+/**
+ * Get the measurement system (metric, imperial etc.) according to the system param MEASUREMENT_SYSTEM
+ */
+export const getMeasurementSystem = () => {
+    let measurementSystemObj = { metric: true, imperial: false }
+    let measurementSystem = 'metric'
+
+    if (window.measurementSystem) {
+        if (strcmp(window.measurementSystem, 'imperial')) {
+            measurementSystem = 'imperial'
+        }
+    }
+
+    if (strcmp(measurementSystem, 'imperial')) {
+        measurementSystemObj = { metric: false, imperial: true }
+    }
+
+    return measurementSystemObj
 }
