@@ -53,8 +53,9 @@ function _Area({ processID, currentMeasure, ..._props }) {
       onClick={enable.bind(area)} >
       <Icon name={id} size='28px' />
       <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('measure_area')}</span>
-      {processID === id
-        && <Modal show
+      {processID === id && (
+        <Modal
+          show
           id='measure-dialog'
           backdrop={false}
           enforceFocus={false}
@@ -64,12 +65,14 @@ function _Area({ processID, currentMeasure, ..._props }) {
             <DrawActions
               finish={() => draw.polygon._finishShape()}
               undo={() => draw.polygon._removeLastVertex()}
-              cancel={disable.bind(area)} />
+              cancel={disable.bind(area)}
+            />
           </Modal.Title>
           <Modal.Body >
             <Button disabled size='lg' className='as-label' >{(sum + currentMeasure) + ` ${getMeasurementUnit(true)}`}</Button>
           </Modal.Body>
-        </Modal>}
+        </Modal>
+      )}
     </ProcessButton>
   )
 }

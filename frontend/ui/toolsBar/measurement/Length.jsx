@@ -2,7 +2,7 @@ import { React, PropTypes } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { MEASURE_LENGTH } from './Config';
-import { getLabel } from '../../Util';
+import { getLabel, getMeasurementUnit } from '../../Util';
 
 const { factory, Map, connect, store } = core;
 const { draw } = tools;
@@ -27,7 +27,7 @@ export const length = {
   disable: function () {
     this.sum = 0
     Map.off('new_shape');
-    store.dispatch({ processID: '', totalLength: '0 m' });
+    store.dispatch({ processID: '', totalLength: `0 ${getMeasurementUnit()}` });
     draw.line.disable('force');
   },
 
@@ -55,8 +55,9 @@ function _Length({ processID, currentMeasure, ..._props }) {
       onClick={enable.bind(length)} >
       <Icon name={id} size='28px' />
       <span style={{ display: 'block' }}>{getLabel('measure_length')}</span>
-      {processID === id
-        && <Modal show
+      {processID === id && (
+        <Modal
+          show
           id='measure-dialog'
           backdrop={false}
           enforceFocus={false}
@@ -69,9 +70,10 @@ function _Length({ processID, currentMeasure, ..._props }) {
               cancel={disable.bind(length)} />
           </Modal.Title>
           <Modal.Body >
-            <Button disabled size='lg' className='as-label' >{(sum + currentMeasure) + ' m'}</Button>
+            <Button disabled size='lg' className='as-label' >{(sum + currentMeasure) + ` ${getMeasurementUnit()}`}</Button>
           </Modal.Body>
-        </Modal>}
+        </Modal>
+      )}
     </ProcessButton>
   )
 }
