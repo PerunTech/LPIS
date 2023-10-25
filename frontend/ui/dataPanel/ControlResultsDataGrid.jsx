@@ -1,6 +1,6 @@
 import { React, PropTypes } from 'perun-core';
 import { core, ui } from '../../Spatial';
-import { getMeasurementUnit, strcmp } from '../Util';
+import { getLabel, getMeasurementUnit, strcmp } from '../Util';
 import { getCropLabel } from '../toolsBar/cropParcel/Util'
 
 const { Map, store } = core;
@@ -104,7 +104,7 @@ const _NoData = () => (
   <div className='fr-data-grid-empty-rows'>
     <ButtonGroup>
       <Button disabled style={{ opacity: 1 }}><Icon name='empty-grid' size='18px' /></Button>
-      <Button disabled>Не се пронајдени податоци</Button>
+      <Button disabled>{getLabel('no_data_found')}</Button>
     </ButtonGroup>
   </div>
 );
@@ -135,13 +135,13 @@ const _Rows = ({ rows, controlResultEditEnabled }) => {
     let translatedStatus = ''
     switch (true) {
       case strcmp(status, 'RFV'):
-        translatedStatus = 'РФВ';
+        translatedStatus = `${getLabel('control_status.rfv')}`;
         break;
       case strcmp(status, 'RFV_DONE'):
-        translatedStatus = 'РФВ Завршена';
+        translatedStatus = `${getLabel('control_status.rfv_done')}`;
         break;
       case strcmp(status, 'VALID'):
-        translatedStatus = 'Валидна';
+        translatedStatus = `${getLabel('control_status.valid')}`;
         break;
       default:
         translatedStatus = '';
@@ -183,14 +183,14 @@ const _Rows = ({ rows, controlResultEditEnabled }) => {
             className='data-grid-util'
             style={{ pointerEvents: controlResultEditEnabled ? 'none' : 'unset' }}
             onClick={e => copyGeometry(e, el)}
-            title='Копирај геометрија за уредување'
+            title={getLabel('copy_geom_for_edit')}
           >
             <Icon name='copy-geometry' size='14px' />
           </Button>
-          <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el.layer)} title='Оди до резултат'>
+          <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el.layer)} title={getLabel('go_to_control_result')}>
             <Icon name='pinpoint' size='14px' />
           </Button>
-          <Button className='data-grid-util' onClick={e => toggleAssetFromMapAction(e, el.layer)} title='Прикажи/Скриј резултат'>
+          <Button className='data-grid-util' onClick={e => toggleAssetFromMapAction(e, el.layer)} title={getLabel('show_hide_control_result')}>
             <Icon name={getParcelVisibleIcon(id)} size='14px' />
           </Button>
         </ButtonGroup>
