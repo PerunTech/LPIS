@@ -1,4 +1,4 @@
-import { write } from 'shp-write';
+import { write } from '@mapbox/shp-write';
 import { core } from '../../../Spatial';
 import { strcmp } from '../../Util';
 

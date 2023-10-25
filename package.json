@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.20.13",
+        "@mapbox/shp-write": "^0.4.3",
         "@turf/boolean-intersects": "^6.5.0",
         "@turf/boolean-point-in-polygon": "^6.5.0",
         "@turf/helpers": "^6.5.0",
@@ -24,7 +25,6 @@
         "jszip": "^3.10.1",
         "nanoid": "^5.0.2",
         "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core#dev",
-        "shp-write": "^0.3.2",
         "shpjs": "^4.0.4",
         "spatial": "git+https://git@gitlab.prtech.mk/perunv3/spatial#dev"
     },
