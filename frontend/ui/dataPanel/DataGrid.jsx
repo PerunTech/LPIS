@@ -281,7 +281,7 @@ const _GridRows = ({ rows, selectedParcelId, selectedCropParcelId }) => {
                 }}>
                     <Icon name={getParcelVisibleIcon(objectId, descriptor)} size='16px' />
                 </Button>
-                <Button title='Отстрани од мапа' className='data-grid-util' onClick={() => removeLayer(objectId, descriptor)} >
+                <Button title={getLabel('remove_from_map')} className='data-grid-util' onClick={() => removeLayer(objectId, descriptor)} >
                     <Icon name='cancel' size='16px' />
                 </Button>
             </ButtonGroup>
