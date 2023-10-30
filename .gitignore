@@ -3,7 +3,6 @@ node_modules
 .project
 .settings
 target
-backend/www/*.js
 backend/www/*.js.map
 index.html
 package-lock.json
