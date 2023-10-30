@@ -361,6 +361,10 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     const queryParams = window.location.hash?.split('?')[1]
     if (queryParams) {
         searchParams = `?${queryParams}`
+    } else {
+        const farmObjId = perunStore.getState()['farm_registry.mapData']?.farmData?.objectId || '0'
+        const farmObjTypeId = perunStore.getState()['farm_registry.mapData']?.farmData?.objectTypeId || '0'
+        searchParams = `?id=${farmObjId}&type=${farmObjTypeId}&action=sizp`
     }
     // If no query params are present, re-route the user to the root route
     if (!searchParams) {
