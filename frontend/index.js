@@ -26,11 +26,6 @@ export const lpis = {
         path: '/main/farm-registry/map',
         render: ui.farmRegLpis,
         isExact: true
-    }, {
-        name: 'lpis_farm_registry_secondary',
-        path: '/main/farm-registry/registration/SIZP-MAP',
-        render: ui.farmRegLpis,
-        isExact: true
     }],
     ui
 };
