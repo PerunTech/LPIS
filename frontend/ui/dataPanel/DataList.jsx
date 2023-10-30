@@ -25,7 +25,7 @@ export const _DataList = ({
         if (!strcmp(el.id, 'physical_block')) {
             rows = Object.values(layers).filter(layer => layer.getMetadata().type === el.id)
         } else {
-            rows = Object.values(loadedPhysicalBlocks)
+            rows = Object.values(loadedPhysicalBlocks || {})
         }
         return rows
     }
