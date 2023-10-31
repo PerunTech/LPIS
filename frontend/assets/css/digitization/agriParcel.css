@@ -209,6 +209,24 @@
   font-size: larger !important;
 }
 
+.ap-checks-modal .rjsf {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ap-checks-modal .rjsf .field-group {
+  width: 100%;
+}
+
+.ap-checks-modal .rjsf .field-radio-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
 .ap-checks-modal input[type='radio'] {
   accent-color: #323232;
 }
