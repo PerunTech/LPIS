@@ -96,5 +96,5 @@ export const farmRegLpis = (props) => {
         .withNavigationControl()
         .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
         .withWindRose()
-        .render('farm-registry-map', props.showHeaderAndFooter || false);
+        .render('farm-registry-map', props?.showHeaderAndFooter || false);
 }
