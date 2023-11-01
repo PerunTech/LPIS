@@ -73,7 +73,7 @@ export const lpis = () => {
         .render('lpis-map');
 }
 
-export const farmRegLpis = () => {
+export const farmRegLpis = (props) => {
     store.addState('farmRegistry', {
         'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'farmObjId': '', 'farmObjTypeId': '', 'actionType': '',
         'fic': '', 'fullName': '', 'tableName': '', 'selectedParcelId': '', 'selectedCropParcelId': '', 'saveIsPending': false,
@@ -96,5 +96,5 @@ export const farmRegLpis = () => {
         .withNavigationControl()
         .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
         .withWindRose()
-        .render('farm-registry-map');
+        .render('farm-registry-map', props.showHeaderAndFooter || false);
 }
