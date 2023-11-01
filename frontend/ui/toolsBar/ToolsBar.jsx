@@ -9,7 +9,7 @@ const { store } = core;
 const { store: perunStore, logoutUser } = redux;
 const history = createHashHistory();
 
-const _ToolsBar = ({ actionType, activeTab }) => {
+const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
     const handleHome = () => {
         history.push('/')
     }
@@ -81,59 +81,69 @@ const _ToolsBar = ({ actionType, activeTab }) => {
         return shouldDisable
     }
 
-    return <div id='toolsbar'>
-        <Button disabled className='left-corner-filler' />
-        <div className='toolbar-left-buttons-container'>
-            <Button
-                onClick={handleHome}
-                className='toolbar-left-button toolbar-left-home-button'
-                title={getLabel('home')}>
-                <Icon name='home' size='18px' style={{ fill: '#3a3a3a' }} />
-            </Button>
-            <Button
-                onClick={handleBack}
-                className='toolbar-left-button'
-                title={getLabel('back')}>
-                <Icon name='back' size='18px' style={{ fill: '#3a3a3a' }} />
-            </Button>
+    return (
+        <div id='toolsbar'>
+            <Button disabled className='left-corner-filler' />
+            <div className='toolbar-left-buttons-container'>
+                {!weAreRenderingDirectly && (
+                    <React.Fragment>
+                        <Button
+                            onClick={handleHome}
+                            className='toolbar-left-button toolbar-left-home-button'
+                            title={getLabel('home')}>
+                            <Icon name='home' size='18px' style={{ fill: '#3a3a3a' }} />
+                        </Button>
+                        <Button
+                            onClick={handleBack}
+                            className='toolbar-left-button'
+                            title={getLabel('back')}>
+                            <Icon name='back' size='18px' style={{ fill: '#3a3a3a' }} />
+                        </Button>
+                    </React.Fragment>
+                )}
+            </div>
+            <Tabs defaultActiveKey={getDefaultActiveKey} activeKey={activeTab} onSelect={(key) => handleTabSelection(key)}>
+                <Tab eventKey='physical-block' title={getLabel('physical_blocks')} disabled={disableTab('physical-block')} >
+                    <PhysicalBlock />
+                </Tab>
+                <Tab eventKey='landscape-features' title={getLabel('landscape_features')} disabled={disableTab('landscape-features')} >
+                    <LandscapeFeatures />
+                </Tab>
+                <Tab eventKey='agri-parcel' title={getLabel('agri_parcels')} disabled={disableTab('agri-parcel')} >
+                    {actionType === 'sizp' ? <Digitization /> : <AgriParcel />}
+                </Tab>
+                <Tab eventKey='crop-parcel' title={getLabel('crop_parcels')} disabled={disableTab('crop-parcel')} >
+                    <CropParcel />
+                </Tab>
+                <Tab eventKey='selection' title={getLabel('selection')} ><Selection /></Tab>
+                <Tab eventKey='measurement' title={getLabel('measurement')} ><Measurement /></Tab>
+                <Tab eventKey='io' title={getLabel('import_export')} ><IO /></Tab>
+            </Tabs>
+            <Button disabled className='right-corner-filler' />
+            {!weAreRenderingDirectly && (
+                <React.Fragment>
+                    <Button
+                        onClick={() => console.log('tbd')}
+                        className='toolbar-settings'
+                        title={getLabel('settings')}>
+                        <Icon name='settings' size='18px' />
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            perunStore.dispatch(logoutUser(
+                                window.server
+                                + '/SvSecurity/logout/'
+                                + perunStore.getState().security.svSession));
+                            history.push('/');
+                        }}
+                        className='toolbar-logout'
+                        title={getLabel('logout')}>
+                        <Icon name='logout' size='20px' />
+                    </Button>
+                </React.Fragment>
+            )}
         </div>
-        <Tabs defaultActiveKey={getDefaultActiveKey} activeKey={activeTab} onSelect={(key) => handleTabSelection(key)}>
-            <Tab eventKey='physical-block' title={getLabel('physical_blocks')} disabled={disableTab('physical-block')} >
-                <PhysicalBlock />
-            </Tab>
-            <Tab eventKey='landscape-features' title={getLabel('landscape_features')} disabled={disableTab('landscape-features')} >
-                <LandscapeFeatures />
-            </Tab>
-            <Tab eventKey='agri-parcel' title={getLabel('agri_parcels')} disabled={disableTab('agri-parcel')} >
-                {actionType === 'sizp' ? <Digitization /> : <AgriParcel />}
-            </Tab>
-            <Tab eventKey='crop-parcel' title={getLabel('crop_parcels')} disabled={disableTab('crop-parcel')} >
-                <CropParcel />
-            </Tab>
-            <Tab eventKey='selection' title={getLabel('selection')} ><Selection /></Tab>
-            <Tab eventKey='measurement' title={getLabel('measurement')} ><Measurement /></Tab>
-            <Tab eventKey='io' title={getLabel('import_export')} ><IO /></Tab>
-        </Tabs>
-        <Button disabled className='right-corner-filler' />
-        <Button
-            onClick={() => console.log('tbd')}
-            className='toolbar-settings'
-            title={getLabel('settings')}>
-            <Icon name='settings' size='18px' />
-        </Button>
-        <Button
-            onClick={() => {
-                perunStore.dispatch(logoutUser(
-                    window.server
-                    + '/SvSecurity/logout/'
-                    + perunStore.getState().security.svSession));
-                history.push('/');
-            }}
-            className='toolbar-logout'
-            title={getLabel('logout')}>
-            <Icon name='logout' size='20px' />
-        </Button>
-    </div>;
+    );
 }
 
 _ToolsBar.propTypes = {
@@ -143,5 +153,6 @@ _ToolsBar.propTypes = {
 
 export const ToolsBar = core.connect(state => ({
     actionType: state.farmRegistry?.actionType,
-    activeTab: state.farmRegistry?.activeTab
+    activeTab: state.farmRegistry?.activeTab,
+    weAreRenderingDirectly: state.farmRegistry?.weAreRenderingDirectly,
 }))(_ToolsBar);

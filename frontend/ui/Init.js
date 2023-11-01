@@ -81,7 +81,8 @@ export const farmRegLpis = (props) => {
         'showParcelInfoContainer': false, 'farmInfo': undefined, 'parcelInfo': undefined, 'historyEditEnabled': false, 'historyParcelToEdit': {},
         'editFormWasClosed': false, 'parcelHistoryModalWasClosed': false, 'digitizationIsActive': false, 'canRenderTheDigitizationButton': false,
         'activateInfoProcess': false, 'controlResults': [], 'showControlResultsContainer': false, 'hiddenControlResultAssets': [],
-        'controlResultEditEnabled': false, 'copiedControlResultGeometry': {}, 'agriParcelsWithControlResultGeometries': [], 'activeTab': ''
+        'controlResultEditEnabled': false, 'copiedControlResultGeometry': {}, 'agriParcelsWithControlResultGeometries': [], 'activeTab': '',
+        'weAreRenderingDirectly': props?.showHeaderAndFooter ? true : false
     })
     const _token = redux.store.getState().security.svSession;
     getFarmMapAssets(true)
