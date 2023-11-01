@@ -495,6 +495,18 @@ export const getRandomPointInPolygon = (polygon) => {
 }
 
 /**
+ * Get information about a WMS feature
+ * @param  {object} feature The feature returned by the WMS GetFeatureInfo request
+ */
+export const getFeatureInfo = (feature) => {
+    const geojson = factory.geoJSON(feature, apConfig.pathOptions);
+    const layers = geojson.getLayers();
+    layers.forEach(layer => {
+        layer.addTo(Map)
+    });
+}
+
+/**
  * Get a list of available layers (Basemap or Overlays) in the system
  */
 export const getGeoTypeLayers = () => {
@@ -526,10 +538,12 @@ export const getGeoTypeLayers = () => {
                         // If the layer is an overlay, mark it as so
                         ...strcmp(layerType, '2') && { isOverlay: true },
                         // If the layer is a base one, set the WMS version as 1.1.1
-                        ...strcmp(layerType, '1') && { version: '1.1.1' }
+                        ...strcmp(layerType, '1') && { version: '1.1.1' },
+                        // If the layer is an overlay, set the function for getting info about WMS features as a callback
+                        ...strcmp(layerType, '2') && { callback: (feature) => getFeatureInfo(feature) }
                     }
                     const geoService = layerUrl || server
-                    tileLayer = factory.tileLayer.wms(geoService, tileLayerOptions)
+                    tileLayer = factory.tileLayer.extendedWMS(geoService, tileLayerOptions)
                 } else if (strcmp(layerProtocol, 'tile')) {
                     const geoService = layerUrl || server
                     tileLayer = factory.tileLayer(geoService, {
