@@ -506,7 +506,13 @@ export const getFeatureInfo = (params) => {
     http.call('get-feature-info', {
         url: `${window.server}/lpis/getFeatureInfo/${token}/${encodedLayers}/${bbox}/${height}/${width}/${encodedInfoFormat}/${x}/${y}`
     }).then(res => {
-        console.log(res.data)
+        if (res.data) {
+            const geojson = factory.geoJSON(res.data, apConfig.pathOptions);
+            const layers = geojson.getLayers();
+            layers.forEach(layer => {
+                layer.addTo(Map)
+            });
+        }
     }).catch(err => {
         console.error(err)
         alertUser(true, 'error', err)
