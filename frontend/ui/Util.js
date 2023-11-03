@@ -504,7 +504,7 @@ export const getFeatureInfo = (params) => {
     const encodedLayers = encodeURIComponent(layers)
     const encodedInfoFormat = encodeURIComponent(infoFormat)
     http.call('get-feature-info', {
-        url: `${window.server}/lpis/getFeatureInfo/${token}/${encodedLayers}/${bbox}/${height}/${width}/${encodedInfoFormat}/${x}/${y}`
+        url: `${window.server}/spatial/getFeatureInfo/${token}/${encodedLayers}/${bbox}/${height}/${width}/${encodedInfoFormat}/${x}/${y}`
     }).then(res => {
         if (res.data) {
             const geojson = factory.geoJSON(res.data, apConfig.pathOptions);
