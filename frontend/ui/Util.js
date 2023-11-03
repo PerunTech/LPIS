@@ -496,14 +496,21 @@ export const getRandomPointInPolygon = (polygon) => {
 
 /**
  * Get information about a WMS feature
- * @param  {object} feature The feature returned by the WMS GetFeatureInfo request
+ * @param  {object} params An object containing all of the parameters needed to get info about a feature
  */
-export const getFeatureInfo = (feature) => {
-    const geojson = factory.geoJSON(feature, apConfig.pathOptions);
-    const layers = geojson.getLayers();
-    layers.forEach(layer => {
-        layer.addTo(Map)
-    });
+export const getFeatureInfo = (params) => {
+    const { layers, bbox, height, width, infoFormat, x, y } = params
+    const token = perunStore.getState().security.svSession
+    const encodedLayers = encodeURIComponent(layers)
+    const encodedInfoFormat = encodeURIComponent(infoFormat)
+    http.call('get-feature-info', {
+        url: `${window.server}/lpis/getFeatureInfo/${token}/${encodedLayers}/${bbox}/${height}/${width}/${encodedInfoFormat}/${x}/${y}`
+    }).then(res => {
+        console.log(res.data)
+    }).catch(err => {
+        console.error(err)
+        alertUser(true, 'error', err)
+    })
 }
 
 /**
@@ -540,7 +547,7 @@ export const getGeoTypeLayers = () => {
                         // If the layer is a base one, set the WMS version as 1.1.1
                         ...strcmp(layerType, '1') && { version: '1.1.1' },
                         // If the layer is an overlay, set the function for getting info about WMS features as a callback
-                        ...strcmp(layerType, '2') && { callback: (feature) => getFeatureInfo(feature) }
+                        ...strcmp(layerType, '2') && { callback: (params) => getFeatureInfo(params) }
                     }
                     const geoService = layerUrl || server
                     tileLayer = factory.tileLayer.extendedWMS(geoService, tileLayerOptions)
