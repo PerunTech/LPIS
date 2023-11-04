@@ -30,7 +30,8 @@ import org.joda.time.DateTime;
 
 import com.google.gson.JsonObject;
 import com.prtech.spatial.SC;
-import com.prtech.spatial.Util;
+import com.prtech.spatial.SpatialUtil;
+import com.prtech.spatial.WFSReader;
 import com.prtech.spatial.geobuf.GeobufEncoder;
 import com.prtech.svarog.Sv;
 import com.prtech.svarog.SvConf;
@@ -638,7 +639,7 @@ public class AgriParcel {
 			boolean isUpdate = objectId.compareTo(0L) > 0 ? true : false;
 
 			if (geom == null)
-				geom = Util.jsonToGeometry(metadata.get(Sv.GEOM));
+				geom = SpatialUtil.jsonToGeometry(metadata.get(Sv.GEOM));
 //TODO move this to generation by line
 //			if (geom.getGeometryType().equals("LineString"))
 //				geom = generatePolygon(svg, (LineString) geom, typeId);
@@ -657,8 +658,8 @@ public class AgriParcel {
 			if (geometryOverride == null)
 				for (DbDataObject field : fieldSet.getItems()) {
 					String fieldName = field.getVal(Sv.FIELD_NAME).toString();
-					if (Util.excludeField(fieldName) && !"".equalsIgnoreCase(field.getVal(Sv.FIELD_TYPE).toString())) {
-						ap = Util.addValueToDataObject(ap, fieldName, field, metadata);
+					if (SpatialUtil.excludeField(fieldName) && !"".equalsIgnoreCase(field.getVal(Sv.FIELD_TYPE).toString())) {
+						ap = SpatialUtil.addValueToDataObject(ap, fieldName, field, metadata);
 					}
 				}
 
@@ -684,7 +685,7 @@ public class AgriParcel {
 						ApplicationServices.minimumAgriParcelSize));
 
 			svg.setAutoCommit(false);
-			Util.calculateGeometryDerivatives(ap);
+			SpatialUtil.calculateGeometryDerivatives(ap);
 
 			geom = autoFixPoly(svg, geom, 2);
 
@@ -734,7 +735,7 @@ public class AgriParcel {
 					geom = alignOnNeighbour((Polygon) geom, (Polygon) ol);
 				}
 			}
-			if (Util.hasDuplicates((Polygon) geom, minPointDistance))
+			if (SpatialUtil.hasDuplicates((Polygon) geom, minPointDistance))
 				ap.setStatus("INVALID");
 			else
 				ap.setStatus("VALID");
@@ -795,9 +796,9 @@ public class AgriParcel {
 					}
 				}
 			}
-			if (Util.hasDuplicates((Polygon) geom, minPointDistance)) {
+			if (SpatialUtil.hasDuplicates((Polygon) geom, minPointDistance)) {
 				if (dedupeType.equals(CC.DEFAULT_POINT_DEDUPE_TYPE)) {
-					geom = Util.deduplicatePolygon((Polygon) geom, minPointDistance);
+					geom = SpatialUtil.deduplicatePolygon((Polygon) geom, minPointDistance);
 				} else if (dedupeType.equals(CC.DEDUPE_SIMPLIFY)) {
 					geom = TopologyPreservingSimplifier.simplify(geom,
 							minPointDistance * (1.0 / numberOfRepeats * (double) i));
@@ -907,7 +908,7 @@ public class AgriParcel {
 			throw (new SvException(CC.OVERLAP_LESS_THAN_MINIMUM, svg.getInstanceUser(), relatedParcel, overlap));
 		DbDataObject overlapDbo = getOverlapDbo(existingOverlaps, agriParcel, relatedParcel);
 		SvGeometry.setGeometry(overlapDbo, overlap);
-		Util.calculateGeometryDerivatives(overlapDbo);
+		SpatialUtil.calculateGeometryDerivatives(overlapDbo);
 		relatedParcel.setVal(CC.HAS_OVERLAP, true);
 		relatedParcel.setVal(CC.ALLOWED_AREA, related.getArea() - overlap.getArea());
 		overlapParcels.addDataItem(relatedParcel);
@@ -1024,7 +1025,7 @@ public class AgriParcel {
 					Map<String, Object> usermap = (Map<String, Object>) g.getUserData();
 
 					intersection = new DbDataObject(SvCore.getTypeIdByName("LP_CAD_INTERSECTIONS"));
-					geom_intersect = com.prtech.spatial.Util.verifyGeometryType(intersection, geom_intersect);
+					geom_intersect = SpatialUtil.verifyGeometryType(intersection, geom_intersect);
 					intersection.setParentId(dbc.getParentId());
 					SvGeometry.setGeometry(intersection, geom_intersect);
 					intersection.setVal("EXTERNAL_ID", usermap.get("ID_PARC"));

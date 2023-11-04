@@ -47,6 +47,7 @@ import com.prtech.perun.PerunUtil;
 import com.prtech.perun_core.ws.Rc;
 import com.prtech.spatial.SC;
 import com.prtech.spatial.SpatialUtil;
+import com.prtech.spatial.WFSReader;
 import com.prtech.spatial.geobuf.GeobufEncoder;
 import com.prtech.svarog.I18n;
 import com.prtech.svarog.Sv;

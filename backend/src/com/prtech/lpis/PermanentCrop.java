@@ -8,7 +8,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 
 import com.google.gson.JsonObject;
-import com.prtech.spatial.Util;
+import com.prtech.spatial.SpatialUtil;
 import com.prtech.svarog.SvCore;
 import com.prtech.svarog.SvException;
 import com.prtech.svarog.SvGeometry;
@@ -85,9 +85,9 @@ public class PermanentCrop {
 			// Map form values to dbo fields
 			for (DbDataObject field : fieldSet.getItems()) {
 				String fieldName = field.getVal(CC.FIELD_NAME).toString();
-				if (Util.excludeField(fieldName)
+				if (SpatialUtil.excludeField(fieldName)
 						&& !CC.EMPTY_STRING.equalsIgnoreCase(field.getVal(CC.FIELD_TYPE).toString())) {
-					permanentCrop = Util.addValueToDataObject(permanentCrop, fieldName, field, metadata);
+					permanentCrop = SpatialUtil.addValueToDataObject(permanentCrop, fieldName, field, metadata);
 				}
 			}
 			this.checkBeforeSavePermanentCrop(permanentCrop, svr);
