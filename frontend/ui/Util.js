@@ -511,10 +511,13 @@ export const getFeatureInfo = (params) => {
         url: `${window.server}/spatial/getFeatureInfo/${token}/${encodedLayers}/${bbox}/${height}/${width}/${encodedInfoFormat}/${x}/${y}`
     }).then(res => {
         if (res.data) {
+            store.dispatch({ selectedWmsFeature: res.data })
             const geojson = factory.geoJSON(res.data, apConfig.pathOptions);
             const layers = geojson.getLayers();
             layers.forEach(layer => {
+                layer.DESCRIPTOR = 'IO_LAYER'
                 layer.addTo(Map)
+                Map.fitBounds(layer.getBounds())
             });
         }
     }).catch(err => {

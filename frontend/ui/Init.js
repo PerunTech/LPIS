@@ -43,7 +43,7 @@ export const gsaa = () => {
 
 export const lpis = () => {
     store.addState('lpis', {
-        'physicalBlocksHaveBeenLoaded': false, 'loadedPhysicalBlocks': {},
+        'physicalBlocksHaveBeenLoaded': false, 'loadedPhysicalBlocks': {}, 'selectedWmsFeature': undefined
     })
     const _token = redux.store.getState().security.svSession;
 
