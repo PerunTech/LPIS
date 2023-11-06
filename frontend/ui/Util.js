@@ -499,10 +499,14 @@ export const getRandomPointInPolygon = (polygon) => {
  * @param  {object} params An object containing all of the parameters needed to get info about a feature
  */
 export const getFeatureInfo = (params) => {
-    const { layers, bbox, height, width, infoFormat, x, y } = params
+    const { url, request, srs, styles, version, format, transparent, layers, bbox, height, width, infoFormat, x, y } = params
     const token = perunStore.getState().security.svSession
+    const encodedSrs = encodeURIComponent(srs)
+    const encodedFormat = encodeURIComponent(format)
     const encodedLayers = encodeURIComponent(layers)
     const encodedInfoFormat = encodeURIComponent(infoFormat)
+    const wmsUrl = `${url}?REQUEST=${request}&SERVICE=wms&SRS=${encodedSrs}&STYLES=${styles}&TRANSPARENT=${transparent}&VERSION=${version}&FORMAT=${encodedFormat}&BBOX=${bbox}&HEIGHT=${height}&WIDTH=${width}&LAYERS=${encodedLayers}&QUERY_LAYERS=${encodedLayers}&INFO_FORMAT=${encodedInfoFormat}&X=${x}&Y=${y}`
+    console.log(wmsUrl)
     http.call('get-feature-info', {
         url: `${window.server}/spatial/getFeatureInfo/${token}/${encodedLayers}/${bbox}/${height}/${width}/${encodedInfoFormat}/${x}/${y}`
     }).then(res => {
