@@ -507,8 +507,12 @@ export const getFeatureInfo = (params) => {
         const token = perunStore.getState().security.svSession
         const encodedLayers = encodeURIComponent(layers)
         const encodedInfoFormat = encodeURIComponent(infoFormat)
+        const roundHeight = Math.round(height)
+        const roundWidth = Math.round(width)
+        const roundX = Math.round(x)
+        const roundY = Math.round(y)
         http.call('get-feature-info', {
-            url: `${window.server}/spatial/getFeatureInfo/${token}/${encodedLayers}/${bbox}/${height}/${width}/${encodedInfoFormat}/${x}/${y}`
+            url: `${window.server}/spatial/getFeatureInfo/${token}/${encodedLayers}/${bbox}/${roundHeight}/${roundWidth}/${encodedInfoFormat}/${roundX}/${roundY}`
         }).then(res => {
             // Remove any previously loaded layers from the map
             eraseIoLayers()
