@@ -6,6 +6,7 @@ import { setAPLabel, setCPLabel } from '.';
 import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
 import { config as cpConfig } from './toolsBar/cropParcel/Config';
 import { config as crConfig } from './toolsBar/controlResults/Config';
+import { eraseIoLayers } from './toolsBar/io/Util';
 
 const history = createHashHistory();
 const { alertUser } = elements;
@@ -509,19 +510,23 @@ export const getFeatureInfo = (params) => {
         http.call('get-feature-info', {
             url: `${window.server}/spatial/getFeatureInfo/${token}/${encodedLayers}/${bbox}/${height}/${width}/${encodedInfoFormat}/${x}/${y}`
         }).then(res => {
+            // Remove any previously loaded layers from the map
+            eraseIoLayers()
             if (res.data) {
-                    store.dispatch({ selectedWmsFeature: res.data })
-                    const geojson = factory.geoJSON(res.data, apConfig.pathOptions);
-                    const layers = geojson.getLayers();
-                    layers.forEach(layer => {
-                        layer.DESCRIPTOR = 'IO_LAYER'
-                        layer.addTo(Map)
-                        Map.fitBounds(layer.getBounds())
-                    });
+                store.dispatch({ selectedWmsFeature: res.data })
+                const geojson = factory.geoJSON(res.data, apConfig.pathOptions);
+                const layers = geojson.getLayers();
+                layers.forEach(layer => {
+                    layer.DESCRIPTOR = 'IO_LAYER'
+                    layer.addTo(Map)
+                    Map.fitBounds(layer.getBounds())
+                });
             }
         }).catch(err => {
             console.error(err)
             alertUser(true, 'error', err)
+            // Remove any previously loaded layers from the map
+            eraseIoLayers()
         })
     }
 }
