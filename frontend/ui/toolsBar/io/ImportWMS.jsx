@@ -21,7 +21,7 @@ const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
       setState({ layerContent: selectedWmsFeature, isGuided: false, showForm: true })
     }
   }, [processID, selectedWmsFeature])
-  
+
   const handleClick = () => {
     store.dispatch({ processID: _id })
     setState({ isGuided: true, showForm: false })
@@ -69,13 +69,13 @@ const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
           <Modal.Body className='ap-modal-body import-shp-modal-body'>
             <h5>{getLabel('number_of_layers')}: {numberOfLayers}</h5>
             <p className='mb-n2'>{getLabel('list_of_layers')}</p>
-            <div className='d-flex flex-column justify-content-center align-items-center mt-3'>
+            <div className='d-flex flex-column justify-content-center align-items-center mt-3 import-layer-main-container'>
               {selectedWmsFeature?.features?.map(layer => {
                 return (
-                  layer?.properties ? <div key={nanoid(4)} className='border p-2 mb-2'>
+                  layer?.properties ? <div key={nanoid(4)} className='border p-2 mb-2 import-layer-container'>
                     {Object.entries(layer.properties).map(([key, value]) => {
                       return (
-                        <div key={nanoid(4)} className='d-flex flex-column justify-content-center align-items-center'>
+                        <div key={nanoid(4)} className='d-flex flex-column justify-content-center align-items-start import-layer-item'>
                           <span className='mb-1'>{key}: {value}</span>
                         </div>
                       )
