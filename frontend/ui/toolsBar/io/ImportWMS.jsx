@@ -68,14 +68,14 @@ const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
           </Modal.Title>
           <Modal.Body className='ap-modal-body import-shp-modal-body'>
             <h5>{getLabel('number_of_layers')}: {numberOfLayers}</h5>
-            <p className='mb-n2'>{getLabel('list_of_layers')}</p>
-            <div className='d-flex flex-column justify-content-center align-items-center import-layer-main-container'>
+            <p>{getLabel('list_of_layers')}</p>
+            <div className='import-layer-main-container'>
               {selectedWmsFeature?.features?.map(layer => {
                 return (
-                  layer?.properties ? <div key={nanoid(4)} className='border p-2 mb-2 import-layer-container'>
+                  layer?.properties ? <div key={nanoid(4)} className='border import-layer-container'>
                     {Object.entries(layer.properties).map(([key, value]) => {
                       return (
-                        <div key={nanoid(4)} className='d-flex flex-column justify-content-center align-items-start import-layer-item'>
+                        <div key={nanoid(4)} className='import-layer-item'>
                           <span className='mb-1'>{key}: {value}</span>
                         </div>
                       )
