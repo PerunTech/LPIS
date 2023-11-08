@@ -1,7 +1,3 @@
-.import-shp-modal-body {
-  max-height: 650px;
-}
-
 .import-layer-main-container {
   height: 400px;
   overflow: auto;
@@ -11,4 +7,11 @@
   display: grid;
   grid-template-columns: 50% 50%;
   width: 100%;
+  min-height: 150px;
+  overflow: auto;
+}
+
+.import-layer-item {
+  min-width: max-content;
+  margin: 2px;
 }
