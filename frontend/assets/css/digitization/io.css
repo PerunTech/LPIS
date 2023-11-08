@@ -1,10 +1,10 @@
-.import-shp-modal-body {
-  max-height: 650px;
+.import-layer-main-container {
+  max-height: 400px;
+  overflow: auto;
 }
 
-.import-layer-main-container {
-  height: 400px;
-  overflow: auto;
+.import-layer-list-of-layers {
+  margin-bottom: 0;
 }
 
 .import-layer-container {

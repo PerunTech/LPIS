@@ -137,7 +137,7 @@ const _ImportSHP = ({ processID, farmObjId }) => {
         </Modal.Title>
         <Modal.Body className='ap-modal-body import-shp-modal-body'>
           <h5>{getLabel('number_of_layers_in_shapefile')}: {numberOfLayers}</h5>
-          <p>{getLabel('list_of_layers_in_shapefile')}</p>
+          <p className='import-layer-list-of-layers'>{getLabel('list_of_layers_in_shapefile')}</p>
           <div className='import-layer-main-container'>
             {layers.map(layer => {
               return (
