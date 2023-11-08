@@ -1,3 +1,7 @@
+.shp-modal-body .next {
+  margin-right: 0;
+}
+
 .import-layer-main-container {
   max-height: 400px;
   overflow: auto;

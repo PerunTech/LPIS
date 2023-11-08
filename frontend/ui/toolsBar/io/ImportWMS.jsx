@@ -12,9 +12,9 @@ const { alertUser } = elements;
 const { useEffect, useReducer } = React;
 const _id = 'import-wms';
 
-const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
+const _ImportWMS = ({ processID, selectedWmsFeature, systemLayers, farmObjId }) => {
   const [{ isGuided, showForm, loading, layerContent, layerName }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { isGuided: false, showForm: false, loading: false, layerContent: undefined, layerName: 'SOIL_SITES' });
+    ({ ...currState, ...update }), { isGuided: false, showForm: false, loading: false, layerContent: undefined, layerName: '' });
 
   useEffect(() => {
     if (processID === _id && selectedWmsFeature) {
@@ -29,15 +29,15 @@ const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
 
   const disable = () => {
     store.dispatch({ processID: '', selectedWmsFeature: undefined });
-    setState({ isGuided: false, showForm: false, loading: false, layerContent: undefined, layerName: 'SOIL_SITES' })
+    setState({ isGuided: false, showForm: false, loading: false, layerContent: undefined, layerName: '' })
     eraseIoLayers()
   }
 
-  const onSubmit = () => {
-    const objectId = farmObjId || 0
+  const onSubmit = (e) => {
+    e.preventDefault()
     http.call('save_wms_layer', {
       method: 'post',
-      url: '/lpis/save/{init.token}/' + layerName + '/' + objectId,
+      url: `/lpis/save/{init.token}/${layerName}`,
       data: JSON.stringify(layerContent),
     }).then(_response => {
       alertUser(true, 'success', `${getLabel('successfully_saved')}`)
@@ -85,22 +85,20 @@ const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
               })}
             </div>
             <div className='m-2'>
-              <div>
+              <form onSubmit={onSubmit}>
                 <label htmlFor='layerName'>Layer name</label>
-                <select name='layerName' id='layerName' className='form-control' value={layerName} onChange={(e) => setState({ layerName: e.target.value })}>
-                  <option value='SOIL_SITES'>Soil sites</option>
-                  <option value='TEST_RESULTS'>Test results</option>
-                  <option value='NUTRIENT_RECS'>Nutrient records</option>
+                <select name='layerName' id='layerName' className='form-control' required value={layerName} onChange={(e) => setState({ layerName: e.target.value })}>
+                  <option value='' />
+                  {Object.keys(systemLayers).map((systemLayer, i) => (
+                    <option key={systemLayer} id={systemLayer} value={systemLayer}>{Object.values(systemLayers)[i]}</option>
+                  ))}
                 </select>
-              </div>
-              <Button onClick={onSubmit} className='next mt-3' size=''>{getLabel('save')}</Button>
+                <Button type='submit' className='next mt-3' size=''>{getLabel('save')}</Button>
+              </form>
             </div>
           </Modal.Body>
         </Modal>
       )
-    } else {
-      alertUser(true, 'info', `${getLabel('no_data_for_selected_layer')}`)
-      disable()
     }
   }
 
@@ -137,5 +135,8 @@ const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
 }
 
 export const ImportWMS = core.connect(state => ({
-  processID: state.app.processID, selectedWmsFeature: state.lpis?.selectedWmsFeature, farmObjId: state.farmRegistry?.farmObjId
+  processID: state.app.processID,
+  selectedWmsFeature: state.lpis?.selectedWmsFeature,
+  systemLayers: state.lpis?.systemLayers,
+  farmObjId: state.farmRegistry?.farmObjId,
 }))(_ImportWMS)
