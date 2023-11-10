@@ -83,25 +83,29 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
 
     return (
         <div id='toolsbar'>
-            <Button disabled className='left-corner-filler' />
-            <div className='toolbar-left-buttons-container'>
-                {!weAreRenderingDirectly && (
-                    <React.Fragment>
-                        <Button
-                            onClick={handleHome}
-                            className='toolbar-left-button toolbar-left-home-button'
-                            title={getLabel('home')}>
-                            <Icon name='home' size='18px' style={{ fill: '#3a3a3a' }} />
-                        </Button>
-                        <Button
-                            onClick={handleBack}
-                            className='toolbar-left-button'
-                            title={getLabel('back')}>
-                            <Icon name='back' size='18px' style={{ fill: '#3a3a3a' }} />
-                        </Button>
-                    </React.Fragment>
-                )}
-            </div>
+            {!window.lpisIsDirectlyAccessed && (
+                <Button disabled className='left-corner-filler' />
+            )}
+            {!window.lpisIsDirectlyAccessed && (
+                <div className='toolbar-left-buttons-container'>
+                    {!weAreRenderingDirectly && (
+                        <React.Fragment>
+                            <Button
+                                onClick={handleHome}
+                                className='toolbar-left-button toolbar-left-home-button'
+                                title={getLabel('home')}>
+                                <Icon name='home' size='18px' style={{ fill: '#3a3a3a' }} />
+                            </Button>
+                            <Button
+                                onClick={handleBack}
+                                className='toolbar-left-button'
+                                title={getLabel('back')}>
+                                <Icon name='back' size='18px' style={{ fill: '#3a3a3a' }} />
+                            </Button>
+                        </React.Fragment>
+                    )}
+                </div>
+            )}
             <Tabs defaultActiveKey={getDefaultActiveKey} activeKey={activeTab} onSelect={(key) => handleTabSelection(key)}>
                 <Tab eventKey='physical-block' title={getLabel('physical_blocks')} disabled={disableTab('physical-block')} >
                     <PhysicalBlock />
@@ -122,12 +126,14 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
             <Button disabled className='right-corner-filler' />
             {!weAreRenderingDirectly && (
                 <React.Fragment>
-                    <Button
-                        onClick={() => console.log('tbd')}
-                        className='toolbar-settings'
-                        title={getLabel('settings')}>
-                        <Icon name='settings' size='18px' />
-                    </Button>
+                    {!window.lpisIsDirectlyAccessed && (
+                        <Button
+                            onClick={() => console.log('tbd')}
+                            className='toolbar-settings'
+                            title={getLabel('settings')}>
+                            <Icon name='settings' size='18px' />
+                        </Button>
+                    )}
                     <Button
                         onClick={() => {
                             perunStore.dispatch(logoutUser(
