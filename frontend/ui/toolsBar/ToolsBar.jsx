@@ -86,6 +86,7 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
         if (window.lpisIsDirectlyAccessed) {
             toolsbarClassName += ' toolsbar-directly-accessed'
         }
+        return toolsbarClassName
     }
 
     return (
