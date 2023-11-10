@@ -53,3 +53,18 @@
 #data-panel .data-panel-btn svg g path {
   fill: #ffffff !important;
 }
+
+.farm-search-form {
+  padding: 20px;
+}
+
+.farm-search-btn-container {
+  display: flex;
+  justify-content: end;
+}
+
+.farm-search-btn {
+  margin: 5px;
+  color: #3399ff !important;
+  border: 1px solid #3399ff !important;
+}
