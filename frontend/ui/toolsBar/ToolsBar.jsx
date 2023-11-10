@@ -81,8 +81,15 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
         return shouldDisable
     }
 
+    const getToolsbarClassName = () => {
+        let toolsbarClassName = 'toolsbar'
+        if (window.lpisIsDirectlyAccessed) {
+            toolsbarClassName += ' toolsbar-directly-accessed'
+        }
+    }
+
     return (
-        <div id='toolsbar'>
+        <div id='toolsbar' className={getToolsbarClassName()}>
             {!window.lpisIsDirectlyAccessed && (
                 <Button disabled className='left-corner-filler' />
             )}

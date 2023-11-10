@@ -1,3 +1,7 @@
+.toolsbar-directly-accessed {
+  margin: 0 !important;
+}
+
 #toolsbar {
   margin-left: 60px;
   margin-right: 120px;
