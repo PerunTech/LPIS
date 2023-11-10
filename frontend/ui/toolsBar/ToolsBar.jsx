@@ -131,7 +131,9 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
                 <Tab eventKey='measurement' title={getLabel('measurement')} ><Measurement /></Tab>
                 <Tab eventKey='io' title={getLabel('import_export')} ><IO /></Tab>
             </Tabs>
-            <Button disabled className='right-corner-filler' />
+            {!window.lpisIsDirectlyAccessed && (
+                <Button disabled className='right-corner-filler' />
+            )}
             {!weAreRenderingDirectly && (
                 <React.Fragment>
                     {!window.lpisIsDirectlyAccessed && (
