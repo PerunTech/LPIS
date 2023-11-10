@@ -55,7 +55,12 @@
 }
 
 .farm-search-form {
-  padding: 20px;
+  padding: 20px 10px;
+}
+
+.farm-search-form .form-group {
+  width: 100%;
+  margin-bottom: 0;
 }
 
 .farm-search-btn-container {
@@ -64,7 +69,8 @@
 }
 
 .farm-search-btn {
-  margin: 5px;
+  margin-right: 10px;
+  margin-top: 1rem;
   color: #3399ff !important;
   border: 1px solid #3399ff !important;
 }
