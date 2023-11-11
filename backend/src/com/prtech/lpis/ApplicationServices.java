@@ -477,8 +477,9 @@ public class ApplicationServices {
 				}
 			
 			svg.saveGeometry(db);
+			
 		} catch (Exception e) {
-			log4j.error("Error saving parcel", e);
+			return PerunUtil.handleException(e, "Errror saving geometry");
 		} finally {
 			if (svg != null)
 				svg.close();
