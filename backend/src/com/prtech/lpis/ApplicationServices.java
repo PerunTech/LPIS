@@ -434,6 +434,59 @@ public class ApplicationServices {
 
 	private static final Logger log = LogManager.getLogger(ApplicationServices.class.getName());
 
+	@Path("/save/{token}/{LAYER_NAME}")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response saveParcel(@PathParam("token") String token, @PathParam("LAYER_NAME") String layerName,
+			MultivaluedMap<String, String> formVals, @Context HttpServletRequest httpRequest) {
+
+		SvReader svr = null;
+		SvGeometry svg = null;
+		DbDataArray db = new DbDataArray();
+		try {
+			svr = new SvReader(token);
+			svr.setIncludeGeometries(true);
+			svg = new SvGeometry(svr);
+			
+			Long typeId = SvCore.getTypeIdByName(layerName);
+			DbDataArray fieldSet = SvCore.getFields(typeId);
+//			JsonObject metadata = SpatialUtil.dataToJson(formVals);
+			GeometryFactory gf = SvUtil.sdiFactory;
+			GeoJsonReader gjr = new GeoJsonReader(gf);
+			gjr.setUseFeatureType(true);
+			gjr.setUsePropertiesAsUserData(true);
+			String json = null;
+
+			for (String key : formVals.keySet())
+				json = key;
+			Geometry geom = gjr.read(json);
+			if(geom.getGeometryType().equals("GeometryCollection"))
+				for(int i = 0; i<geom.getNumGeometries(); i++)
+				{
+					Geometry g = geom.getGeometryN(i);
+					DbDataObject dbo = new DbDataObject(typeId);
+					if(g.getUserData()!=null)
+						for(Map.Entry<String, Object> e: ((Map<String, Object>)g.getUserData()).entrySet())
+							dbo.setVal(e.getKey(), e.getValue());
+					
+					
+					SvGeometry.setGeometry(dbo, g);
+					SpatialUtil.calculateGeometryDerivatives(dbo);
+					db.addDataItem(dbo);
+				}
+			
+			svg.saveGeometry(db);
+		} catch (Exception e) {
+			log4j.error("Error saving parcel", e);
+		} finally {
+			if (svg != null)
+				svg.close();
+		}
+
+		return Response.status(200).entity(db.toSimpleJson().toString()).build();
+	}
+
 	@Path("/save/physicalBlock/{token}/{objectId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -806,8 +859,8 @@ public class ApplicationServices {
 		List<Geometry> result = new ArrayList<>();
 		try (SvGeometry svg = new SvGeometry(svc)) {
 			Long typeId = SvCore.getTypeIdByName("PHYSICAL_BLOCK");
-			return svg.getRelatedGeometries(SpatialUtil.sdiFactory.toGeometry(env), typeId,
-					SDIRelation.INTERSECTS, null, null, true, true, true);
+			return svg.getRelatedGeometries(SpatialUtil.sdiFactory.toGeometry(env), typeId, SDIRelation.INTERSECTS,
+					null, null, true, true, true);
 
 		}
 		/*
