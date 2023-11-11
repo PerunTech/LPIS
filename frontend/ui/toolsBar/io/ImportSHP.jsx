@@ -12,7 +12,7 @@ const { alertUser } = elements;
 const { useRef, useReducer } = React;
 const _id = 'shapefile';
 
-const _ImportSHP = ({ processID, farmObjId }) => {
+const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
   const [{ showForm, loading, shapefileContent, layerName, layers }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }), { showForm: false, loading: false, shapefileContent: undefined, layerName: 'SOIL_SITES', layers: [] });
 
@@ -26,6 +26,7 @@ const _ImportSHP = ({ processID, farmObjId }) => {
   const disable = () => {
     store.dispatch({ processID: '' });
     setState({ showForm: false, loading: false, shapefileContent: undefined, layerName: 'SOIL_SITES', layers: [] })
+    eraseIoLayers()
   }
 
   const importShp = () => {
@@ -109,13 +110,14 @@ const _ImportSHP = ({ processID, farmObjId }) => {
   const onSubmit = () => {
     http.call('save_shapefile', {
       method: 'post',
-      url: '/lpis/save/{init.token}/' + layerName + '/' + farmObjId || 0,
+      url: `/lpis/save/{init.token}/${layerName}`,
       data: JSON.stringify(shapefileContent),
     }).then(_response => {
       alertUser(true, 'success', `${getLabel('successfully_saved')}`)
       disable()
-      eraseIoLayers()
-      getFarmMapAssets()
+      if (farmObjId) {
+        getFarmMapAssets()
+      }
     }).catch(err => {
       console.error(err)
       alertUser(true, 'error', err)
@@ -137,14 +139,14 @@ const _ImportSHP = ({ processID, farmObjId }) => {
         </Modal.Title>
         <Modal.Body className='ap-modal-body import-shp-modal-body'>
           <h5>{getLabel('number_of_layers_in_shapefile')}: {numberOfLayers}</h5>
-          <p className='mb-n2'>{getLabel('list_of_layers_in_shapefile')}</p>
-          <div className='d-flex flex-column justify-content-center align-items-center mt-3'>
+          <p className='import-layer-list-of-layers'>{getLabel('list_of_layers_in_shapefile')}</p>
+          <div className='import-layer-main-container'>
             {layers.map(layer => {
               return (
-                layer?.properties ? <div key={nanoid(4)} className='border p-2 mb-2'>
+                layer?.properties ? <div key={nanoid(4)} className='border import-layer-container'>
                   {Object.entries(layer.properties).map(([key, value]) => {
                     return (
-                      <div key={nanoid(4)} className='d-flex flex-column justify-content-center align-items-center'>
+                      <div key={nanoid(4)} className='import-layer-item'>
                         <span className='mb-1'>{key}: {value}</span>
                       </div>
                     )
@@ -154,15 +156,16 @@ const _ImportSHP = ({ processID, farmObjId }) => {
             })}
           </div>
           <div className='m-2'>
-            <div>
+            <form onSubmit={onSubmit}>
               <label htmlFor='layerName'>Layer name</label>
-              <select name='layerName' id='layerName' className='form-control' value={layerName} onChange={(e) => setState({ layerName: e.target.value })}>
-                <option value='SOIL_SITES'>Soil sites</option>
-                <option value='TEST_RESULTS'>Test results</option>
-                <option value='NUTRIENT_RECS'>Nutrient records</option>
+              <select name='layerName' id='layerName' className='form-control' required value={layerName} onChange={(e) => setState({ layerName: e.target.value })}>
+                <option value='' />
+                {Object.keys(systemLayers).map((systemLayer, i) => (
+                  <option key={systemLayer} id={systemLayer} value={systemLayer}>{Object.values(systemLayers)[i]}</option>
+                ))}
               </select>
-            </div>
-            <Button onClick={onSubmit} className='next mt-3' size=''>{getLabel('save')}</Button>
+              <Button type='submit' className='next mt-3' size=''>{getLabel('save')}</Button>
+            </form>
           </div>
         </Modal.Body>
       </Modal>
@@ -187,5 +190,7 @@ const _ImportSHP = ({ processID, farmObjId }) => {
 }
 
 export const ImportSHP = core.connect(state => ({
-  processID: state.app.processID, farmObjId: state.farmRegistry?.farmObjId
+  processID: state.app.processID,
+  systemLayers: state.lpis?.systemLayers,
+  farmObjId: state.farmRegistry?.farmObjId,
 }))(_ImportSHP)

@@ -6,6 +6,7 @@ import { setAPLabel, setCPLabel } from '.';
 import { config as apConfig, metadataMain as apFormConfig } from './toolsBar/agriParcel/Config';
 import { config as cpConfig } from './toolsBar/cropParcel/Config';
 import { config as crConfig } from './toolsBar/controlResults/Config';
+import { eraseIoLayers } from './toolsBar/io/Util';
 
 const history = createHashHistory();
 const { alertUser } = elements;
@@ -495,28 +496,61 @@ export const getRandomPointInPolygon = (polygon) => {
 }
 
 /**
+ * Get all objects (tables) that contain geometry
+ */
+export const getLayers = () => {
+    const token = perunStore.getState().security.svSession
+    http.call('get-all-layers', {
+        url: `${window.server}/spatial/getLayers/${token}`
+    }).then(res => {
+        const systemLayers = {}
+        if (res.data && res.data.items && Array.isArray(res.data.items) && res.data.items.length > 0) {
+            res.data.items.forEach(systemLayer => Reflect.set(systemLayers, systemLayer.TABLE_NAME, systemLayer.LABEL_CODE))
+            store.dispatch({ systemLayers })
+        }
+    }).catch(err => {
+        console.error(err)
+    })
+}
+
+/**
  * Get information about a WMS feature
  * @param  {object} params An object containing all of the parameters needed to get info about a feature
  */
 export const getFeatureInfo = (params) => {
-    const { layers, bbox, height, width, infoFormat, x, y } = params
-    const token = perunStore.getState().security.svSession
-    const encodedLayers = encodeURIComponent(layers)
-    const encodedInfoFormat = encodeURIComponent(infoFormat)
-    http.call('get-feature-info', {
-        url: `${window.server}/spatial/getFeatureInfo/${token}/${encodedLayers}/${bbox}/${height}/${width}/${encodedInfoFormat}/${x}/${y}`
-    }).then(res => {
-        if (res.data) {
-            const geojson = factory.geoJSON(res.data, apConfig.pathOptions);
-            const layers = geojson.getLayers();
-            layers.forEach(layer => {
-                layer.addTo(Map)
-            });
-        }
-    }).catch(err => {
-        console.error(err)
-        alertUser(true, 'error', err)
-    })
+    // Only call the service if the current active process is the one for importing WMS layers/features
+    const processID = store.getState().app.processID
+    if (processID && strcmp(processID, 'import-wms')) {
+        const { layers, bbox, height, width, infoFormat, x, y } = params
+        const token = perunStore.getState().security.svSession
+        const encodedLayers = encodeURIComponent(layers)
+        const encodedInfoFormat = encodeURIComponent(infoFormat)
+        const roundHeight = Math.round(height)
+        const roundWidth = Math.round(width)
+        const roundX = Math.round(x)
+        const roundY = Math.round(y)
+        http.call('get-feature-info', {
+            url: `${window.server}/spatial/getFeatureInfo/${token}/${encodedLayers}/${bbox}/${roundHeight}/${roundWidth}/${encodedInfoFormat}/${roundX}/${roundY}`
+        }).then(res => {
+            // Remove any previously loaded layers from the map
+            eraseIoLayers()
+            if (res.data && isJSON(res.data)) {
+                store.dispatch({ selectedWmsFeature: res.data })
+                const geojson = factory.geoJSON(res.data, apConfig.pathOptions);
+                const layers = geojson.getLayers();
+                layers.forEach(layer => {
+                    layer.DESCRIPTOR = 'IO_LAYER'
+                    layer.addTo(Map)
+                    Map.fitBounds(layer.getBounds())
+                });
+            }
+        }).catch(err => {
+            console.error(err)
+            alertUser(true, 'error', err)
+            // Remove any previously loaded layers from the map
+            eraseIoLayers()
+        })
+    }
 }
 
 /**
