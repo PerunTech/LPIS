@@ -1,5 +1,8 @@
-.import-shp-modal-body {
-  max-height: 650px;
+.import-layer-container {
+  width: 100%;
+  padding: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .import-layer-main-container {
@@ -7,13 +10,8 @@
   overflow: auto;
 }
 
-.import-layer-container {
-  display: grid;
-  grid-template-columns: 50% 50%;
-  width: 100%;
-  padding: 5px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+.import-shp-modal-body {
+  max-height: 650px;
 }
 
 .import-layer-item {
@@ -21,4 +19,25 @@
   text-align: start;
   margin-top: 3px;
   margin-bottom: 3px;
+}
+
+.import-layer-border {
+  border: 1px solid #dee2e6 !important;
+}
+
+.import-layer-span {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.import-layer-key,
+.import-layer-value {
+  width: 49%;
+}
+
+.import-layer-last-element {
+  border-bottom: 0 !important;
+  margin-bottom: -5px !important;
 }

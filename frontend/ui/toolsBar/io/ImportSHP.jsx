@@ -142,10 +142,10 @@ const _ImportSHP = ({ processID, farmObjId }) => {
             {layers.map(layer => {
               return (
                 layer?.properties ? <div key={nanoid(4)} className='border import-layer-container'>
-                  {Object.entries(layer.properties).map(([key, value]) => {
+                  {Object.entries(layer.properties).map(([key, value], i, properties) => {
                     return (
                       <div key={nanoid(4)} className='import-layer-item'>
-                        <span className='mb-1'>{key}: {value}</span>
+                        <span className={`mb-1 import-layer-span ${i === properties.length - 1 && 'import-layer-last-element'}`}><div className='import-layer-key ml-1'>{key}</div> <div className='import-layer-border'></div><div className='ml-1 import-layer-value'>{value}</div></span>
                       </div>
                     )
                   })}
