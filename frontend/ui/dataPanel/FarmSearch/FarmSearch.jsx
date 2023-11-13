@@ -17,7 +17,7 @@ const FarmSearch = ({ farmSearchFormData, farmSearchData }) => {
 
   const onSubmit = () => {
     store.dispatch({ farmSearchData: undefined })
-    setState({ loading: true, farmData: undefined })
+    setState({ loading: true })
     // Convert the form data values to uppercase
     const formData = JSON.parse(JSON.stringify(farmSearchFormData))
     Object.keys(formData).map(k => formData[k] = formData[k].toUpperCase())
