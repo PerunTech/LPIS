@@ -1,7 +1,7 @@
 import { React, PropTypes, elements } from 'perun-core';
 import { core, data } from '../../../Spatial';
 import { config as apConfig } from '../../toolsBar/agriParcel/Config'
-import { getLabel } from '../../Util';
+import { getLabel, bufferToString, isJSON } from '../../Util';
 
 const { factory, Map, http } = core;
 const { geobuf, protobuf } = data;
@@ -27,10 +27,20 @@ const FarmSearchTable = ({ farmData }) => {
           layer.addTo(Map)
         });
         Map.fitBounds(geojson.getBounds(), { padding: [100, 100] })
+      } else {
+        alertUser(true, 'info', getLabel('no_parcels_found'))
       }
     }).catch(err => {
       console.error(err)
-      alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
+      let title = err
+      let message = ''
+      const stringfiedResponse = bufferToString(err.response.data)
+      if (isJSON(stringfiedResponse)) {
+        const decodedJSON = JSON.parse(stringfiedResponse)
+        title = decodedJSON.title || ''
+        message = decodedJSON.message || ''
+      }
+      alertUser(true, 'error', err, message)
     })
   }
 

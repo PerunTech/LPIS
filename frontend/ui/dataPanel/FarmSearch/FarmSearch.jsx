@@ -34,7 +34,8 @@ const FarmSearch = ({ farmSearchFormData, farmSearchData }) => {
       console.error(err)
       setState({ loading: false })
       const title = err.response?.data?.title || err
-      alertUser(true, 'error', title)
+      const message = err.response?.data?.message || ''
+      alertUser(true, 'error', title, message)
     })
   }
 
