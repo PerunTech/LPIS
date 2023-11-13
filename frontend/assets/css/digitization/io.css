@@ -10,7 +10,7 @@
 }
 
 .import-layer-main-container {
-  height: 400px;
+  max-height: 400px;
   overflow: auto;
 }
 
