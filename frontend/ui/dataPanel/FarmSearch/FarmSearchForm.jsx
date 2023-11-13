@@ -1,10 +1,10 @@
-import { React } from 'perun-core'
+import { React, PropTypes } from 'perun-core'
 import { ui } from '../../../Spatial';
 import { getLabel } from '../../Util';
 
 const { Form, Button } = ui;
 
-const FarmSearchForm = ({ onChange, onSubmit, formData }) => {
+const FarmSearchForm = ({ onChange, onSubmit, formData, loading }) => {
   const getFarmSearchSchema = () => {
     return {
       schema: {
@@ -19,7 +19,7 @@ const FarmSearchForm = ({ onChange, onSubmit, formData }) => {
         required: ['FULL_NAME']
       },
       uiSchema: {
-
+        ...loading && { FULL_NAME: { 'ui:readonly': true } }
       }
     }
   }
@@ -34,10 +34,17 @@ const FarmSearchForm = ({ onChange, onSubmit, formData }) => {
       onChange={onChange}
     >
       <div className='farm-search-btn-container'>
-        <Button type='submit' className='farm-search-btn' size=''>{getLabel('search')}</Button>
+        <Button type='submit' className='farm-search-btn' size='' disabled={loading}>{getLabel('search')}</Button>
       </div>
     </Form>
   )
+}
+
+FarmSearchForm.propTypes = {
+  onChange: PropTypes.func,
+  onSubmit: PropTypes.func,
+  formData: PropTypes.object,
+  loading: PropTypes.bool,
 }
 
 export default FarmSearchForm
