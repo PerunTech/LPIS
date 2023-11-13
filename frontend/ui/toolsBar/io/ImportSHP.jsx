@@ -110,7 +110,7 @@ const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
   const onSubmit = () => {
     http.call('save_shapefile', {
       method: 'post',
-      url: `/lpis/save/{init.token}/${layerName}`,
+      url: `/spatial/save/{init.token}/${layerName}`,
       data: JSON.stringify(shapefileContent),
     }).then(_response => {
       alertUser(true, 'success', `${getLabel('successfully_saved')}`)
