@@ -10,6 +10,7 @@ import { LpisSearch } from './LpisSearch';
 import { ParcelInfo } from './ParcelInfo';
 import { ControlResults } from './ControlResults';
 import { ControlResultsDataGridHeader } from './ControlResultsDataGridHeader';
+import { FarmSearch } from './FarmSearch';
 import { getLabel, strcmp } from '../Util';
 
 const { Button, Icon } = ui;
@@ -78,7 +79,7 @@ const _DataPanel = ({
   }
 
   return (
-    <div id='data-panel' style={{ width: getDataPanelWidth() }}>
+    <div id='data-panel' className='data-panel' style={{ width: getDataPanelWidth() }}>
       <div className='d-flex flex-row justify-content-end align-items-center'>
         <Button id='data-panel-toggle' onClick={() => setOpen(!isOpen)} style={{ float: 'right' }}>
           <Icon name={isOpen ? 'chevron-left' : 'chevron-right'} size='16px'></Icon>
@@ -127,7 +128,12 @@ const _DataPanel = ({
           )}
         </React.Fragment>
       }
-      {isOpen && <DataList data={data} setData={setData} controlResults={controlResultsArr} />}
+      {!window.lpisIsDirectlyAccessed && isOpen && <DataList data={data} setData={setData} controlResults={controlResultsArr} />}
+      {window.lpisIsDirectlyAccessed && isOpen && (
+        <React.Fragment>
+          <FarmSearch />
+        </React.Fragment>
+      )}
     </div>
   );
 }

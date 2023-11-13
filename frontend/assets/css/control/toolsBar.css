@@ -1,3 +1,7 @@
+.toolsbar-directly-accessed {
+  margin: 0 !important;
+}
+
 #toolsbar {
   margin-left: 60px;
   margin-right: 120px;
@@ -13,6 +17,10 @@
 
 #toolsbar .nav-tabs {
   margin-left: 0.55rem;
+}
+
+.toolsbar-directly-accessed .nav-tabs {
+  margin-left: 0 !important;
 }
 
 #toolsbar .nav-tabs .nav-link {
@@ -103,4 +111,8 @@
 
 #toolsbar .tab-content .tab-pane.active .btn-group {
   margin-left: 1rem;
+}
+
+.toolsbar-directly-accessed .tab-content .tab-pane.active .btn-group {
+  margin-left: 0.5rem !important;
 }

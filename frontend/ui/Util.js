@@ -496,6 +496,24 @@ export const getRandomPointInPolygon = (polygon) => {
 }
 
 /**
+ * Get all objects (tables) that contain geometry
+ */
+export const getLayers = () => {
+    const token = perunStore.getState().security.svSession
+    http.call('get-all-layers', {
+        url: `${window.server}/spatial/getLayers/${token}`
+    }).then(res => {
+        const systemLayers = {}
+        if (res.data && res.data.items && Array.isArray(res.data.items) && res.data.items.length > 0) {
+            res.data.items.forEach(systemLayer => Reflect.set(systemLayers, systemLayer.TABLE_NAME, systemLayer.LABEL_CODE))
+            store.dispatch({ systemLayers })
+        }
+    }).catch(err => {
+        console.error(err)
+    })
+}
+
+/**
  * Get information about a WMS feature
  * @param  {object} params An object containing all of the parameters needed to get info about a feature
  */
@@ -516,7 +534,7 @@ export const getFeatureInfo = (params) => {
         }).then(res => {
             // Remove any previously loaded layers from the map
             eraseIoLayers()
-            if (res.data) {
+            if (res.data && isJSON(res.data)) {
                 store.dispatch({ selectedWmsFeature: res.data })
                 const geojson = factory.geoJSON(res.data, apConfig.pathOptions);
                 const layers = geojson.getLayers();

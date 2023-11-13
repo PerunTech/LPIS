@@ -1,7 +1,7 @@
 import { redux } from 'perun-core';
 import { ui, core, config } from '../Spatial';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets } from '.';
-import { getFarmMapAssets } from './Util';
+import { getFarmMapAssets, getLayers } from './Util';
 
 const { SYS_CENTER } = config;
 const { Map, store } = core;
@@ -43,7 +43,8 @@ export const gsaa = () => {
 
 export const lpis = () => {
     store.addState('lpis', {
-        'physicalBlocksHaveBeenLoaded': false, 'loadedPhysicalBlocks': {}, 'selectedWmsFeature': undefined
+        'physicalBlocksHaveBeenLoaded': false, 'loadedPhysicalBlocks': {}, 'selectedWmsFeature': undefined, 'systemLayers': {},
+        'farmSearchFormData': {}, 'farmSearchData': undefined
     })
     const _token = redux.store.getState().security.svSession;
 
@@ -59,6 +60,8 @@ export const lpis = () => {
     });
 
     const layers = store.getState().listOfLayers
+
+    getLayers()
 
     Map.setView(SYS_CENTER, 3);
 
