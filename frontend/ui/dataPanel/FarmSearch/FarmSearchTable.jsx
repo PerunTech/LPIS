@@ -58,8 +58,8 @@ const FarmSearchTable = ({ farmData }) => {
   return (
     <div className='farm-search-table-container'>
       {farmData && Array.isArray(farmData) && farmData.length > 0 ? (
-        <Table striped bordered hover>
-          <thead>
+        <Table striped bordered hover className='farm-searcy-table'>
+          <thead className='farm-search-table-header sticky-top'>
             <tr>
               {generateTableColumns()}
             </tr>

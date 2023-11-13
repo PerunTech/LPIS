@@ -82,7 +82,20 @@
 }
 
 .farm-search-table-container {
+  position: relative;
+  overflow: auto;
+  height: auto;
+  max-height: 635px;
   margin-top: 10px;
+}
+
+.farm-searcy-table {
+  margin-bottom: 0;
+}
+
+.farm-search-table-header {
+  background-color: #494949;
+  color: #ffffff;
 }
 
 .farm-search-table-row {
