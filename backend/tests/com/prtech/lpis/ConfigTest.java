@@ -62,8 +62,12 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -226,8 +230,13 @@ public class ConfigTest {
 				url != null && url.substring(urlLen - 3, urlLen).equals(".js"));
 	}
 
+
+
+	
+	
 	// @Test
 	public void getInfo() throws SvException, SQLException, ParseException {
+String json="{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"id\":\"cad_hcsectoare.76744\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[211034.8798,226548.1732],[211170.8308,226504.142],[211279.5358,226455.7112],[212088.329,226132.2756],[212156.774,226422.2188],[212258.8506,226403.3576],[212275.8898,226452.9502],[212481.024,226403.4034],[212585.9598,226373.0302],[212628.7778,226357.1222],[212540.7684,226426.6108],[212394.6162,226511.7904],[212197.6896,226615.8794],[212023.6806,226694.7312],[211926.96,226756.5348],[211796.0542,226856.5816],[211694.393,226925.2142],[211630.0638,226975.2182],[211437.51,227150.5112],[211313.4458,227256.1032],[211172.2636,227045.565],[211171.054,227013.9628],[211113.7784,226787.0056],[211034.8798,226548.1732]]]},\"geometry_name\":\"geom\",\"properties\":{\"codcadastral\":\"8028103\",\"mi_prinx\":76744,\"tco\":\"8001\"}}],\"totalFeatures\":\"unknown\",\"numberReturned\":1,\"timeStamp\":\"2023-11-10T16:48:57.963Z\",\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:EPSG::4026\"}}}";
 		ApplicationServices as = new ApplicationServices();
 
 		String token = getUserSessionIdForTestPurpose();
