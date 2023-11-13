@@ -110,7 +110,7 @@ const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
   const onSubmit = () => {
     http.call('save_shapefile', {
       method: 'post',
-      url: `/lpis/save/{init.token}/${layerName}`,
+      url: `/spatial/save/{init.token}/${layerName}`,
       data: JSON.stringify(shapefileContent),
     }).then(_response => {
       alertUser(true, 'success', `${getLabel('successfully_saved')}`)
@@ -120,7 +120,9 @@ const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
       }
     }).catch(err => {
       console.error(err)
-      alertUser(true, 'error', err)
+      const title = err.response?.data?.title || err
+      const msg = err.response?.data?.message || ''
+      alertUser(true, "error", title, msg);
     })
   }
 
@@ -144,10 +146,10 @@ const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
             {layers.map(layer => {
               return (
                 layer?.properties ? <div key={nanoid(4)} className='border import-layer-container'>
-                  {Object.entries(layer.properties).map(([key, value]) => {
+                  {Object.entries(layer.properties).map(([key, value], i, properties) => {
                     return (
                       <div key={nanoid(4)} className='import-layer-item'>
-                        <span className='mb-1'>{key}: {value}</span>
+                        <span className={`mb-1 import-layer-span ${i === properties.length - 1 && 'import-layer-last-element'}`}><div className='import-layer-key ml-1'>{key}</div> <div className='import-layer-border'></div><div className='ml-1 import-layer-value'>{value}</div></span>
                       </div>
                     )
                   })}

@@ -60,6 +60,8 @@ export const decodeResponse = (response, objectName) => {
         errorMsg = `${getLabel('physical_block_not_saved')}`
     } else if (strcmp(objectName, 'landscape_features')) {
         errorMsg = `${getLabel('landscape_features_not_saved')}`
+    } else if (strcmp(objectName, 'get_farm_assets')) {
+        errorMsg = ''
     }
     const decoder = new TextDecoder()
     const decoded = decoder.decode(response.data)
