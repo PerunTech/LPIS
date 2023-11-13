@@ -47,7 +47,9 @@ const _ImportWMS = ({ processID, selectedWmsFeature, systemLayers, farmObjId }) 
       }
     }).catch(err => {
       console.error(err)
-      alertUser(true, 'error', err)
+      const title = err.response?.data?.title || err
+      const msg = err.response?.data?.message || ''
+      alertUser(true, "error", title, msg);
       disable()
     })
   }
