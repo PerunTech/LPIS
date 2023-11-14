@@ -3,12 +3,14 @@ import { ui } from '../../../Spatial';
 import { getLabel } from '../../Util';
 import { ImportSHP } from './ImportSHP';
 import { ImportWMS } from './ImportWMS';
+import { ScanWMS } from './ScanWMS';
 
 const { ButtonGroup, Button, Icon } = ui;
 
 export const Import = () =>
   <ButtonGroup id='io' >
     <ImportWMS />
+    <ScanWMS />
     <ImportSHP />
     <Button disabled >
       <Icon name='geojson' size='30px' />

@@ -508,7 +508,7 @@ export const getLayers = () => {
         const systemLayers = {}
         if (res.data && res.data.items && Array.isArray(res.data.items) && res.data.items.length > 0) {
             res.data.items.forEach(systemLayer => Reflect.set(systemLayers, systemLayer.TABLE_NAME, systemLayer.LABEL_CODE))
-            store.dispatch({ systemLayers })
+            store.dispatch({ systemLayers, systemLayersFull: res.data.items })
         }
     }).catch(err => {
         console.error(err)
@@ -565,6 +565,7 @@ export const getGeoTypeLayers = () => {
     const layers = []
     const basemap = {}
     const overlays = {}
+    const externalLayers = []
     http.call('get-layers', {
         url: `${window.server}/ReactElements/getTableData/${token}/${tableName}/100`
     }).then(res => {
@@ -608,6 +609,7 @@ export const getGeoTypeLayers = () => {
                     Reflect.set(basemap[layerGroup], labelCode, tileLayer)
                     // Set the overlays
                 } else if (strcmp(layerType, '2')) {
+                    externalLayers.push(geoTypeLayer)
                     if (!overlays[layerGroup]) {
                         overlays[layerGroup] = {}
                     }
@@ -620,6 +622,7 @@ export const getGeoTypeLayers = () => {
     }).finally(() => {
         layers.push(basemap, overlays)
         store.addState('listOfLayers', layers)
+        store.addState('externalLayers', externalLayers)
         // Check if there are any basemap layers
         if (Object.values(basemap).length > 0) {
             // Check if the basemap layers object is not empty
