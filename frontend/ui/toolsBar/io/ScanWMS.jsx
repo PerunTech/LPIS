@@ -80,8 +80,7 @@ const _ScanWMS = ({ processID, systemLayers, farmObjId }) => {
     http.call('save_wms_layer', {
       method: 'get',
       url: `/spatial/scanWMSFeatureInfo/{init.token}/${sourceName}/${layerObjectId}/3/${externalLayerCode}/${targetLayer}`,
-    }).then(response => {
-      console.log(response)
+    }).then(_response => {
       alertUser(true, 'success', `${getLabel('successfully_saved')}`)
       disable()
       if (farmObjId) {
