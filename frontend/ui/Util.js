@@ -600,6 +600,13 @@ export const getGeoTypeLayers = () => {
                         maxZoom: 20,
                         subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
                     })
+                } else if (strcmp(layerProtocol, 'grid')) {
+                    const url = layerUrl
+                    // Check if the URL contains the word google
+                    // If it does, we can get the layer type as a second part of (ex. google_terrain, means `terrain` is the layer type)
+                    if (url?.includes('google')) {
+                        tileLayer = factory.gridLayer.googleMutant({ maxZoom: 24, type: url.split('_')[1] })
+                    }
                 }
                 // Set the basemap layers
                 if (strcmp(layerType, '1')) {
