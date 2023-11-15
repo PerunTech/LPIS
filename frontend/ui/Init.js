@@ -93,6 +93,8 @@ export const farmRegLpis = (props) => {
 
     const layers = store.getState().listOfLayers
 
+    const mapId = props?.showHeaderAndFooter ? 'farm-registry-map-inline' : 'farm-registry-map'
+
     return ui.init(_token)
         .addControl(ToolsBar, {}, { position: 'top' })
         .addControl(DataPanel, {}, { position: 'left' })
@@ -101,5 +103,5 @@ export const farmRegLpis = (props) => {
         .withNavigationControl()
         .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
         .withWindRose()
-        .render('farm-registry-map', props?.showHeaderAndFooter || false);
+        .render(mapId, props?.showHeaderAndFooter || false);
 }
