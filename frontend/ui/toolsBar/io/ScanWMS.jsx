@@ -65,7 +65,7 @@ const _ScanWMS = ({ processID, systemLayers, farmObjId }) => {
   const disable = () => {
     store.dispatch({ processID: '' });
     setState({
-      showForm: false, loading: false, externalLayers: [], sourceName: '',
+      showForm: false, loading: false, sourceName: '',
       sourceLayer: undefined, layerObjectId: undefined, externalLayerCode: '', targetLayer: ''
     })
     Map.off('click')
