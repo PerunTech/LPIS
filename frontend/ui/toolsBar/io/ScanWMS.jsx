@@ -167,7 +167,7 @@ const _ScanWMS = ({ processID, systemLayers, farmObjId }) => {
                       ))}
                     </select>
                   </div>
-                  <Button type='submit' className='next mt-3' size=''>{getLabel('save')}</Button>
+                  <Button type='submit' className='next' size=''>{getLabel('save')}</Button>
                 </React.Fragment>
               )}
             </form>
