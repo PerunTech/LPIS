@@ -48,5 +48,8 @@
 }
 
 .scan-wms-modal-body {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
   max-height: 800px;
+  overflow: hidden;
 }
