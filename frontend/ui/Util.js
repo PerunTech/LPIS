@@ -509,6 +509,7 @@ export const getLayers = () => {
         if (res.data && res.data.items && Array.isArray(res.data.items) && res.data.items.length > 0) {
             res.data.items.forEach(systemLayer => Reflect.set(systemLayers, systemLayer.TABLE_NAME, systemLayer.LABEL_CODE))
             store.dispatch({ systemLayers, systemLayersFull: res.data.items })
+            store.addState('systemLayers', systemLayers)
         }
     }).catch(err => {
         console.error(err)

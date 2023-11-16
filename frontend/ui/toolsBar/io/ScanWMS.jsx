@@ -10,19 +10,23 @@ const { Spinner } = ReactBootstrap
 const { useEffect, useReducer } = React;
 const _id = 'scan-wms';
 
-const _ScanWMS = ({ processID, systemLayers, farmObjId }) => {
+const _ScanWMS = ({ processID, farmObjId }) => {
   const [{
-    showForm, loading, showInfoMsg, externalLayers, sourceName, sourceLayer, layerObjectId, externalLayerCode, targetLayer
+    showForm, loading, showInfoMsg, externalLayers, systemLayers, sourceName, sourceLayer, layerObjectId, externalLayerCode, targetLayer
   }, setState] = useReducer((currState, update) => ({ ...currState, ...update }),
     {
-      showForm: false, loading: false, showInfoMsg: true, externalLayers: [], sourceName: '',
+      showForm: false, loading: false, showInfoMsg: true, externalLayers: [], systemLayers: {}, sourceName: '',
       sourceLayer: undefined, layerObjectId: undefined, externalLayerCode: '', targetLayer: ''
     });
 
   useEffect(() => {
     const externalLayers = store.getState().externalLayers
+    const systemLayers = store.getState().systemLayers
     if (externalLayers && Array.isArray(externalLayers) && externalLayers.length > 0) {
       setState({ externalLayers })
+    }
+    if (systemLayers && Object.keys(systemLayers).length > 0) {
+      setState({ systemLayers })
     }
   }, [])
 
@@ -205,6 +209,5 @@ const _ScanWMS = ({ processID, systemLayers, farmObjId }) => {
 
 export const ScanWMS = core.connect(state => ({
   processID: state.app.processID,
-  systemLayers: state.lpis?.systemLayers,
   farmObjId: state.farmRegistry?.farmObjId,
 }))(_ScanWMS)

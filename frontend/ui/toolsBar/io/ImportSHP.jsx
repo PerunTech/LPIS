@@ -9,14 +9,21 @@ import { eraseIoLayers, shpConfig } from './Util';
 const { Button, Icon, DrawActions, Modal } = ui;
 const { factory, store, Map, http } = core;
 const { alertUser } = elements;
-const { useRef, useReducer } = React;
+const { useEffect, useRef, useReducer } = React;
 const _id = 'shapefile';
 
-const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
-  const [{ showForm, loading, shapefileContent, layerName, layers }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { showForm: false, loading: false, shapefileContent: undefined, layerName: 'SOIL_SITES', layers: [] });
+const _ImportSHP = ({ processID, farmObjId }) => {
+  const [{ showForm, loading, shapefileContent, layerName, layers, systemLayers }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { showForm: false, loading: false, shapefileContent: undefined, layerName: '', layers: [], systemLayers: {} });
 
   const inputFile = useRef(null);
+
+  useEffect(() => {
+    const systemLayers = store.getState().systemLayers
+    if (systemLayers && Object.keys(systemLayers).length > 0) {
+      setState({ systemLayers })
+    }
+  }, [])
 
   const handleClick = () => {
     store.dispatch({ processID: _id })
@@ -25,7 +32,7 @@ const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
 
   const disable = () => {
     store.dispatch({ processID: '' });
-    setState({ showForm: false, loading: false, shapefileContent: undefined, layerName: 'SOIL_SITES', layers: [] })
+    setState({ showForm: false, loading: false, shapefileContent: undefined, layerName: '', layers: [] })
     eraseIoLayers()
   }
 
@@ -193,6 +200,5 @@ const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
 
 export const ImportSHP = core.connect(state => ({
   processID: state.app.processID,
-  systemLayers: state.lpis?.systemLayers,
   farmObjId: state.farmRegistry?.farmObjId,
 }))(_ImportSHP)
