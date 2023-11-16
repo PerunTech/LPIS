@@ -4,8 +4,9 @@ import './assets';
 // Import all publishable modules.
 import * as ui from './ui';
 // Get all available layers
-import { getGeoTypeLayers } from './ui/Util';
+import { getGeoTypeLayers, getLayers } from './ui/Util';
 getGeoTypeLayers();
+getLayers();
 
 export const lpis = {
     name,

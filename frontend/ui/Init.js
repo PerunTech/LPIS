@@ -1,7 +1,7 @@
 import { redux } from 'perun-core';
 import { ui, core, config } from '../Spatial';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets } from '.';
-import { getFarmMapAssets, getLayers } from './Util';
+import { getFarmMapAssets } from './Util';
 
 const { SYS_CENTER } = config;
 const { Map, store } = core;
@@ -62,8 +62,6 @@ export const lpis = () => {
 
     const layers = store.getState().listOfLayers
 
-    getLayers()
-
     Map.setView(SYS_CENTER, 3);
 
     return ui.init(_token)
@@ -92,8 +90,6 @@ export const farmRegLpis = (props) => {
     getFarmMapAssets(true)
 
     const layers = store.getState().listOfLayers
-
-    getLayers()
 
     const mapId = props?.showHeaderAndFooter ? 'farm-registry-map-inline' : 'farm-registry-map'
 

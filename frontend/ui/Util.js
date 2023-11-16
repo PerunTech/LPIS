@@ -501,18 +501,19 @@ export const getRandomPointInPolygon = (polygon) => {
  * Get all objects (tables) that contain geometry
  */
 export const getLayers = () => {
-    const token = perunStore.getState().security.svSession
+    const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
     http.call('get-all-layers', {
         url: `${window.server}/spatial/getLayers/${token}`
     }).then(res => {
         const systemLayers = {}
         if (res.data && res.data.items && Array.isArray(res.data.items) && res.data.items.length > 0) {
             res.data.items.forEach(systemLayer => Reflect.set(systemLayers, systemLayer.TABLE_NAME, systemLayer.LABEL_CODE))
-            store.dispatch({ systemLayers, systemLayersFull: res.data.items })
-            store.addState('systemLayers', systemLayers)
+            store.addState('systemLayersFull', res.data.items)
         }
+        store.addState('systemLayers', systemLayers)
     }).catch(err => {
         console.error(err)
+        store.addState('systemLayers', {})
     })
 }
 
