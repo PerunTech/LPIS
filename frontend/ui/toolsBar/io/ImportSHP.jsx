@@ -114,11 +114,21 @@ const _ImportSHP = ({ processID, farmObjId }) => {
     }
   }
 
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault()
+    const shapefileContentObj = { type: 'FeatureCollection', features: [] }
+    Map.eachLayer(function (layer) {
+      if (!!layer.toGeoJSON) {
+        if (layer.DESCRIPTOR && strcmp(layer.DESCRIPTOR, 'IO_LAYER')) {
+          const dbCRS = store.getState().dbCRS
+          shapefileContentObj.features.push(factory.GeoJSON.fromLayer(layer, dbCRS))
+        }
+      }
+    });
     http.call('save_shapefile', {
       method: 'post',
       url: `/spatial/save/{init.token}/${layerName}`,
-      data: JSON.stringify(shapefileContent),
+      data: JSON.stringify(shapefileContentObj),
     }).then(_response => {
       alertUser(true, 'success', `${getLabel('successfully_saved')}`)
       disable()

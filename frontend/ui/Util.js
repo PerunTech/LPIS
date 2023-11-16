@@ -498,6 +498,30 @@ export const getRandomPointInPolygon = (polygon) => {
 }
 
 /**
+ * Get the CRS code defined as a parameter in the svarog.properties file
+ */
+export const getDbCRS = () => {
+    const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
+    const url = `${window.server}/WsConf/params/get/conf/${token}/sys.gis.default_srid`
+    http.call('getDbCRS', { url }).then(res => {
+        if (res?.data?.VALUE) {
+            const dbCRS = res?.data?.VALUE
+            if (dbCRS === '3857') {
+                store.addState('dbCRS', factory.CRS.EPSG3857)
+            } else if (dbCRS === '3395') {
+                store.addState('dbCRS', factory.CRS.EPSG3395)
+            } else if (dbCRS === '4326') {
+                store.addState('dbCRS', factory.CRS.EPSG4326)
+            }
+        } else {
+            store.addState('dbCRS', factory.CRS.EPSG4326)
+        }
+    }).catch(err => {
+        console.error(err)
+    })
+}
+
+/**
  * Get all objects (tables) that contain geometry
  */
 export const getLayers = () => {
