@@ -93,6 +93,8 @@ export const farmRegLpis = (props) => {
 
     const layers = store.getState().listOfLayers
 
+    getLayers()
+
     const mapId = props?.showHeaderAndFooter ? 'farm-registry-map-inline' : 'farm-registry-map'
 
     return ui.init(_token)
