@@ -519,6 +519,7 @@ export const getDbCRS = () => {
         }
     }).catch(err => {
         console.error(err)
+        store.addState('dbCRS', factory.CRS.EPSG4326)
     })
 }
 
