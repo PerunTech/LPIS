@@ -35,9 +35,10 @@ const _ImportWMS = ({ processID, selectedWmsFeature, systemLayers, farmObjId }) 
 
   const onSubmit = (e) => {
     e.preventDefault()
+    const parentId = farmObjId || 0
     http.call('save_wms_layer', {
       method: 'post',
-      url: `/spatial/save/{init.token}/${layerName}`,
+      url: `/spatial/save/{init.token}/${layerName}/${parentId}`,
       data: JSON.stringify(layerContent),
     }).then(_response => {
       alertUser(true, 'success', `${getLabel('successfully_saved')}`)

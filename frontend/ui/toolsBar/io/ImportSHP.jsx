@@ -33,7 +33,7 @@ const _ImportSHP = ({ processID, farmObjId }) => {
   const disable = () => {
     store.dispatch({ processID: '' });
     setState({ showForm: false, loading: false, shapefileContent: undefined, layerName: '', layers: [] })
-    eraseIoLayers()
+    // eraseIoLayers()
   }
 
   const importShp = () => {
@@ -116,6 +116,7 @@ const _ImportSHP = ({ processID, farmObjId }) => {
 
   const onSubmit = (e) => {
     e.preventDefault()
+    const parentId = farmObjId || 0
     const shapefileContentObj = { type: 'FeatureCollection', features: [] }
     Map.eachLayer(function (layer) {
       if (!!layer.toGeoJSON) {
@@ -127,7 +128,7 @@ const _ImportSHP = ({ processID, farmObjId }) => {
     });
     http.call('save_shapefile', {
       method: 'post',
-      url: `/spatial/save/{init.token}/${layerName}`,
+      url: `/spatial/save/{init.token}/${layerName}/${parentId}`,
       data: JSON.stringify(shapefileContentObj),
     }).then(_response => {
       alertUser(true, 'success', `${getLabel('successfully_saved')}`)
