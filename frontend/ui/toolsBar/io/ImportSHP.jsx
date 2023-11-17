@@ -33,7 +33,7 @@ const _ImportSHP = ({ processID, farmObjId }) => {
   const disable = () => {
     store.dispatch({ processID: '' });
     setState({ showForm: false, loading: false, shapefileContent: undefined, layerName: '', layers: [] })
-    // eraseIoLayers()
+    eraseIoLayers()
   }
 
   const importShp = () => {
