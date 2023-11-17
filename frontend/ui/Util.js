@@ -506,6 +506,7 @@ export const getDbCRS = () => {
     http.call('getDbCRS', { url }).then(res => {
         if (res?.data?.VALUE) {
             const dbCRS = res?.data?.VALUE
+            store.addState('dbCRSCode', dbCRS)
             if (dbCRS === '3857') {
                 store.addState('dbCRS', factory.CRS.EPSG3857)
             } else if (dbCRS === '3395') {
