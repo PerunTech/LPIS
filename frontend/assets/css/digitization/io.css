@@ -10,7 +10,8 @@
 }
 
 .import-layer-main-container {
-  height: 400px;
+  max-height: 400px;
+  height: auto;
   overflow: auto;
 }
 
@@ -44,4 +45,11 @@
 .import-layer-last-element {
   border-bottom: 0 !important;
   margin-bottom: -5px !important;
+}
+
+.scan-wms-modal-body {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  max-height: 800px;
+  overflow: hidden;
 }

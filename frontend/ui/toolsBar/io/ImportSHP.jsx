@@ -9,14 +9,21 @@ import { eraseIoLayers, shpConfig } from './Util';
 const { Button, Icon, DrawActions, Modal } = ui;
 const { factory, store, Map, http } = core;
 const { alertUser } = elements;
-const { useRef, useReducer } = React;
+const { useEffect, useRef, useReducer } = React;
 const _id = 'shapefile';
 
-const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
-  const [{ showForm, loading, shapefileContent, layerName, layers }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { showForm: false, loading: false, shapefileContent: undefined, layerName: 'SOIL_SITES', layers: [] });
+const _ImportSHP = ({ processID, farmObjId }) => {
+  const [{ showForm, loading, shapefileContent, layerName, layers, systemLayers }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { showForm: false, loading: false, shapefileContent: undefined, layerName: '', layers: [], systemLayers: {} });
 
   const inputFile = useRef(null);
+
+  useEffect(() => {
+    const systemLayers = store.getState().systemLayers
+    if (systemLayers && Object.keys(systemLayers).length > 0) {
+      setState({ systemLayers })
+    }
+  }, [])
 
   const handleClick = () => {
     store.dispatch({ processID: _id })
@@ -25,7 +32,7 @@ const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
 
   const disable = () => {
     store.dispatch({ processID: '' });
-    setState({ showForm: false, loading: false, shapefileContent: undefined, layerName: 'SOIL_SITES', layers: [] })
+    setState({ showForm: false, loading: false, shapefileContent: undefined, layerName: '', layers: [] })
     eraseIoLayers()
   }
 
@@ -58,12 +65,24 @@ const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
             if (strcmp(content.type, 'FeatureCollection') && Array.isArray(content.features) && content.features.length > 0) {
               setState({ layers: content.features, showForm: true })
               content.features.forEach(feature => {
-                const geojson = factory.geoJSON(feature, shpConfig);
-                geojson.getLayers().forEach(l => {
-                  l.DESCRIPTOR = 'IO_LAYER'
-                  l.addTo(Map)
-                });
-                Map.fitBounds(geojson.getBounds(), { padding: [100, 100] })
+                // Check if the feature is a Point
+                if (strcmp(feature.geometry.type, 'Point')) {
+                  const geojson = factory.geoJSON(feature, shpConfig);
+                  geojson.getLayers().forEach(l => {
+                    // Create a marker & add it to the map
+                    const markerConfig = { icon: factory.divIcon({ className: 'marker-icon' }), DESCRIPTOR: 'IO_LAYER' }
+                    const marker = factory.marker(l._latlng, markerConfig)
+                    marker.addTo(Map)
+                  });
+                  Map.fitBounds(geojson.getBounds(), { padding: [100, 100] })
+                } else {
+                  const geojson = factory.geoJSON(feature, shpConfig);
+                  geojson.getLayers().forEach(l => {
+                    l.DESCRIPTOR = 'IO_LAYER'
+                    l.addTo(Map)
+                  });
+                  Map.fitBounds(geojson.getBounds(), { padding: [100, 100] })
+                }
               })
             }
           }
@@ -107,11 +126,22 @@ const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
     }
   }
 
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault()
+    const parentId = farmObjId || 0
+    const shapefileContentObj = { type: 'FeatureCollection', features: [] }
+    Map.eachLayer(function (layer) {
+      if (!!layer.toGeoJSON) {
+        if (layer.DESCRIPTOR && strcmp(layer.DESCRIPTOR, 'IO_LAYER')) {
+          const dbCRS = store.getState().dbCRS
+          shapefileContentObj.features.push(factory.GeoJSON.fromLayer(layer, dbCRS))
+        }
+      }
+    });
     http.call('save_shapefile', {
       method: 'post',
-      url: `/spatial/save/{init.token}/${layerName}`,
-      data: JSON.stringify(shapefileContent),
+      url: `/spatial/save/{init.token}/${layerName}/${parentId}`,
+      data: JSON.stringify(shapefileContentObj),
     }).then(_response => {
       alertUser(true, 'success', `${getLabel('successfully_saved')}`)
       disable()
@@ -193,6 +223,5 @@ const _ImportSHP = ({ processID, systemLayers, farmObjId }) => {
 
 export const ImportSHP = core.connect(state => ({
   processID: state.app.processID,
-  systemLayers: state.lpis?.systemLayers,
   farmObjId: state.farmRegistry?.farmObjId,
 }))(_ImportSHP)

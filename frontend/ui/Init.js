@@ -1,7 +1,7 @@
 import { redux } from 'perun-core';
 import { ui, core, config } from '../Spatial';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets } from '.';
-import { getFarmMapAssets, getLayers } from './Util';
+import { getFarmMapAssets } from './Util';
 
 const { SYS_CENTER } = config;
 const { Map, store } = core;
@@ -43,7 +43,8 @@ export const gsaa = () => {
 
 export const lpis = () => {
     store.addState('lpis', {
-        'physicalBlocksHaveBeenLoaded': false, 'loadedPhysicalBlocks': {}, 'selectedWmsFeature': undefined, 'systemLayers': {},
+        'physicalBlocksHaveBeenLoaded': false, 'loadedPhysicalBlocks': {}, 'selectedWmsFeature': undefined,
+        'systemLayers': {}, 'systemLayersFull': {},
         'farmSearchFormData': {}, 'farmSearchData': undefined
     })
     const _token = redux.store.getState().security.svSession;
@@ -60,8 +61,6 @@ export const lpis = () => {
     });
 
     const layers = store.getState().listOfLayers
-
-    getLayers()
 
     Map.setView(SYS_CENTER, 3);
 
@@ -92,6 +91,8 @@ export const farmRegLpis = (props) => {
 
     const layers = store.getState().listOfLayers
 
+    const mapId = props?.showHeaderAndFooter ? 'farm-registry-map-inline' : 'farm-registry-map'
+
     return ui.init(_token)
         .addControl(ToolsBar, {}, { position: 'top' })
         .addControl(DataPanel, {}, { position: 'left' })
@@ -100,5 +101,5 @@ export const farmRegLpis = (props) => {
         .withNavigationControl()
         .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
         .withWindRose()
-        .render('farm-registry-map', props?.showHeaderAndFooter || false);
+        .render(mapId, props?.showHeaderAndFooter || false);
 }

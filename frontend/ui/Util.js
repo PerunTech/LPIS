@@ -498,20 +498,48 @@ export const getRandomPointInPolygon = (polygon) => {
 }
 
 /**
+ * Get the CRS code defined as a parameter in the svarog.properties file
+ */
+export const getDbCRS = () => {
+    const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
+    const url = `${window.server}/WsConf/params/get/conf/${token}/sys.gis.default_srid`
+    http.call('getDbCRS', { url }).then(res => {
+        if (res?.data?.VALUE) {
+            const dbCRS = res?.data?.VALUE
+            store.addState('dbCRSCode', { dbCRS })
+            if (dbCRS === '3857') {
+                store.addState('dbCRS', factory.CRS.EPSG3857)
+            } else if (dbCRS === '3395') {
+                store.addState('dbCRS', factory.CRS.EPSG3395)
+            } else if (dbCRS === '4326') {
+                store.addState('dbCRS', factory.CRS.EPSG4326)
+            }
+        } else {
+            store.addState('dbCRS', factory.CRS.EPSG4326)
+        }
+    }).catch(err => {
+        console.error(err)
+        store.addState('dbCRS', factory.CRS.EPSG4326)
+    })
+}
+
+/**
  * Get all objects (tables) that contain geometry
  */
 export const getLayers = () => {
-    const token = perunStore.getState().security.svSession
+    const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
     http.call('get-all-layers', {
         url: `${window.server}/spatial/getLayers/${token}`
     }).then(res => {
         const systemLayers = {}
         if (res.data && res.data.items && Array.isArray(res.data.items) && res.data.items.length > 0) {
             res.data.items.forEach(systemLayer => Reflect.set(systemLayers, systemLayer.TABLE_NAME, systemLayer.LABEL_CODE))
-            store.dispatch({ systemLayers })
+            store.addState('systemLayersFull', res.data.items)
         }
+        store.addState('systemLayers', systemLayers)
     }).catch(err => {
         console.error(err)
+        store.addState('systemLayers', {})
     })
 }
 
@@ -565,6 +593,7 @@ export const getGeoTypeLayers = () => {
     const layers = []
     const basemap = {}
     const overlays = {}
+    const externalLayers = []
     http.call('get-layers', {
         url: `${window.server}/ReactElements/getTableData/${token}/${tableName}/100`
     }).then(res => {
@@ -599,6 +628,13 @@ export const getGeoTypeLayers = () => {
                         maxZoom: 20,
                         subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
                     })
+                } else if (strcmp(layerProtocol, 'grid')) {
+                    const url = layerUrl
+                    // Check if the URL contains the word google
+                    // If it does, we can get the layer type as a second part of (ex. google_terrain, means `terrain` is the layer type)
+                    if (url?.includes('google')) {
+                        tileLayer = factory.gridLayer.googleMutant({ maxZoom: 24, type: url.split('_')[1] })
+                    }
                 }
                 // Set the basemap layers
                 if (strcmp(layerType, '1')) {
@@ -608,6 +644,7 @@ export const getGeoTypeLayers = () => {
                     Reflect.set(basemap[layerGroup], labelCode, tileLayer)
                     // Set the overlays
                 } else if (strcmp(layerType, '2')) {
+                    externalLayers.push(geoTypeLayer)
                     if (!overlays[layerGroup]) {
                         overlays[layerGroup] = {}
                     }
@@ -620,6 +657,7 @@ export const getGeoTypeLayers = () => {
     }).finally(() => {
         layers.push(basemap, overlays)
         store.addState('listOfLayers', layers)
+        store.addState('externalLayers', externalLayers)
         // Check if there are any basemap layers
         if (Object.values(basemap).length > 0) {
             // Check if the basemap layers object is not empty

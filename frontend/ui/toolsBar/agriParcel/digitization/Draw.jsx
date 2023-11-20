@@ -83,12 +83,13 @@ const _Draw = ({ processID, farmObjId, saveIsPending }) => {
   }
 
   const onSubmit = ({ formData }) => {
+    const dbCRS = store.getState().dbCRS
     saveAP(JSON.stringify({
       ...data,
       ...formData,
       OBJECT_ID: 0,
       parent_id: farmObjId,
-      GEOM: factory.GeoJSON.fromLayer(layer)
+      GEOM: factory.GeoJSON.fromLayer(layer, dbCRS)
     }), disable);
   }
 
