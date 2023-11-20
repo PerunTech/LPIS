@@ -80,6 +80,7 @@ public class AgriParcel {
 	Double minSliverRatio = SvParameter.getSysParam(CC.SDI_AREA2PERIMETER_MINRATIO, CC.DEFAULT_AREA2PERIMETER_MINRATIO);
 	Double minPointDistance = SvParameter.getSysParam(Sv.SDI_MIN_POINT_DISTANCE, Sv.DEFAULT_MIN_POINT_DISTANCE);
 	Double minSliverArea = SvParameter.getSysParam(CC.SDI_MIN_SLIVER_AREA, CC.DEFAULT_MIN_SLIVER_AREA);
+	Double negativeBufferTest = SvParameter.getSysParam(CC.SDI_NEGATIVE_BUFFER_TEST_SIZE, CC.DEFAULT_NEGATIVE_BUFFER_TEST_SIZE);
 
 	Integer dedupeType = SvParameter.getSysParam(CC.SDI_POINT_DEDUPE_TYPE, CC.DEFAULT_POINT_DEDUPE_TYPE);
 	Double mergeTolerance = SvParameter.getSysParam(CC.SDI_MERGE_TOLERANCE, CC.DEFAULT_MERGE_TOLERANCE);
@@ -690,7 +691,7 @@ public class AgriParcel {
 			geom = autoFixPoly(svg, geom, 2);
 
 			if (geom.isSimple() && geom.isValid() && !geom.isEmpty()) {
-				Geometry negativeTest = geom.buffer(-1.0);
+				Geometry negativeTest = geom.buffer(-negativeBufferTest);
 				if (!negativeTest.isSimple() || !negativeTest.isValid() || negativeTest.isEmpty())
 					throw (new SvException(CC.GEOM_INVALID, svr.getInstanceUser()));
 

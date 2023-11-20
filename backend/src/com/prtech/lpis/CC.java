@@ -94,4 +94,6 @@ public class CC {
 	public static final String LPIS_QA_TASKS = "LPIS_QA_TASKS";
 	public static final String CREATION_DATE = "CREATION_DATE";
 	public static final String PARCEL_OBJ_ID = "PARCEL_OBJ_ID";
+	public static final String SDI_NEGATIVE_BUFFER_TEST_SIZE = "SDI_NEGATIVE_BUFFER_TEST_SIZE";
+	public static final Double DEFAULT_NEGATIVE_BUFFER_TEST_SIZE = 1.0;
 }
