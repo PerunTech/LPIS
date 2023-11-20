@@ -65,12 +65,24 @@ const _ImportSHP = ({ processID, farmObjId }) => {
             if (strcmp(content.type, 'FeatureCollection') && Array.isArray(content.features) && content.features.length > 0) {
               setState({ layers: content.features, showForm: true })
               content.features.forEach(feature => {
-                const geojson = factory.geoJSON(feature, shpConfig);
-                geojson.getLayers().forEach(l => {
-                  l.DESCRIPTOR = 'IO_LAYER'
-                  l.addTo(Map)
-                });
-                Map.fitBounds(geojson.getBounds(), { padding: [100, 100] })
+                // Check if the feature is a Point
+                if (strcmp(feature.geometry.type, 'Point')) {
+                  const geojson = factory.geoJSON(feature, shpConfig);
+                  geojson.getLayers().forEach(l => {
+                    // Create a marker & add it to the map
+                    const markerConfig = { icon: factory.divIcon({ className: 'marker-icon' }), DESCRIPTOR: 'IO_LAYER' }
+                    const marker = factory.marker(l._latlng, markerConfig)
+                    marker.addTo(Map)
+                  });
+                  Map.fitBounds(geojson.getBounds(), { padding: [100, 100] })
+                } else {
+                  const geojson = factory.geoJSON(feature, shpConfig);
+                  geojson.getLayers().forEach(l => {
+                    l.DESCRIPTOR = 'IO_LAYER'
+                    l.addTo(Map)
+                  });
+                  Map.fitBounds(geojson.getBounds(), { padding: [100, 100] })
+                }
               })
             }
           }

@@ -69,6 +69,9 @@ export const eraseIoLayers = () => {
     if (!!layer.toGeoJSON) {
       if (strcmp(layer.DESCRIPTOR, 'IO_LAYER')) {
         layer.removeFrom(Map)
+        // Additional check for points (markers)
+      } else if (layer?.options?.DESCRIPTOR && strcmp(layer?.options?.DESCRIPTOR, 'IO_LAYER')) {
+        layer.removeFrom(Map)
       }
     }
   });
