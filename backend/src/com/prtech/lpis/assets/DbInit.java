@@ -668,22 +668,15 @@ public class DbInit implements IDbInit {
 		dbf26.setGui_metadata("{\"react\":{\"visible\":false,\"editable\":false}}");
 		
 		DbDataField dbf27 = new DbDataField();
-		dbf27.setDbFieldName("OLD_ID");
+		dbf27.setDbFieldName("EXTERNAL_ID");
 		dbf27.setDbFieldType(DbFieldType.NUMERIC);
 		dbf27.setDbFieldSize(18);
 		dbf27.setDbFieldScale(0);
-		dbf27.setIndexName("IDX_LPIS_ID");
-		dbf27.setIsNull(false);
+		dbf27.setIndexName("IDX_EXTERNAL_ID");
+		dbf27.setIsNull(true);
 		dbf27.setIsUnique(true);
-		dbf27.setLabel_code("agri_parcel.old_id");
+		dbf27.setLabel_code("agri_parcel.external_id");
 		dbf27.setSort_order(110);
-		
-		DbDataField dbf28 = new DbDataField();
-		dbf28.setDbFieldName("PARCEL_INTERSECT");
-		dbf28.setDbFieldType(DbFieldType.NVARCHAR);
-		dbf28.setDbFieldSize(2000);
-		dbf28.setIsNull(true);
-		dbf28.setLabel_code("agri_parcel.parcel_intersect");
 		
 		DbDataField dbf30 = new DbDataField();
 		dbf30.setDbFieldName(CC.HAS_OVERLAP);
@@ -711,7 +704,7 @@ public class DbInit implements IDbInit {
 		dbf32.setLabel_code("agri_parcel.has_overlap_pb");
 		dbf32.setSort_order(120);
 		
-		DbDataField[] fieldList = new DbDataField[32];
+		DbDataField[] fieldList = new DbDataField[31];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
@@ -744,11 +737,10 @@ public class DbInit implements IDbInit {
 		
 		fieldList[25] = dbf26;
 		fieldList[26] = dbf27;
-		fieldList[27] = dbf28;
-		fieldList[28] = dbf29;
-		fieldList[29] = dbf30;
-		fieldList[30] = dbf31;
-		fieldList[31] = dbf32;
+		fieldList[27] = dbf29;
+		fieldList[28] = dbf30;
+		fieldList[29] = dbf31;
+		fieldList[30] = dbf32;
 
 		dbt.setDbTableFields(fieldList);
 		
