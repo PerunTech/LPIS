@@ -674,7 +674,7 @@ public class DbInit implements IDbInit {
 		dbf27.setDbFieldScale(0);
 		dbf27.setIndexName("IDX_EXTERNAL_ID");
 		dbf27.setIsNull(true);
-		dbf27.setIsUnique(true);
+		dbf27.setIsUnique(false);
 		dbf27.setLabel_code("agri_parcel.external_id");
 		dbf27.setSort_order(110);
 		
