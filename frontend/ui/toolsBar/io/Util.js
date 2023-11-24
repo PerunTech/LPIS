@@ -37,9 +37,15 @@ export const exportFile = (gj, options, layers) => {
   [justType(gj, 'Point', 'POINT'), justType(gj, 'LineString', 'POLYLINE'), justType(gj, 'Polygon', 'POLYGON')]
     .forEach(function (l) {
       if (l.geometries.length && l.geometries[0].length) {
+        const layerProperties = {}
+        Object.keys(l.properties[0]).forEach((k, i) => Reflect.set(
+          layerProperties,
+          k,
+          unescape(encodeURIComponent(Object.values(l.properties[0])[i]))
+        ))
         write(
           // field definitions
-          l.properties,
+          [layerProperties],
           // geometry type
           l.type,
           // geometries
