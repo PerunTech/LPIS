@@ -1,29 +1,23 @@
 import { elements } from 'perun-core';
 import { core } from '../../../Spatial';
 import { config } from './Config'
-import { setCPLabel } from '../..';
+import { getLabel } from '../../Util';
 
 const { http, factory, Map, store } = core;
 
 export const saveCP = (data, callback) => {
-    const mapId = store.getState().map.id;
-    let id = store.getState().gsaa.farmerId;
-    if (mapId === 'farm-registry-map') {
-        id = store.getState().farmRegistry?.farmObjId
-    }
-
+    const id = store.getState().farmRegistry?.farmObjId
     http.call('save_cp', {
         url: '/table/createTableRecord/{init.token}/LAND_USE_PLAN/' + id + '/null/0/null/null',
         method: 'post',
         data: data
     }).then(response => {
         const data = response.data && response.data.data
-
         if (response.data.type === 'ERROR' || response.data.type === 'EXCEPTION') {
             elements.alertUser(true,
                 'error',
-                response.data.title || 'Грешка при зачувување',
-                response.data.message || 'Производната парцела не е запишана во базата на податоци.');
+                response.data.title || getLabel('something_went_wrong'),
+                response.data.message || '');
         } else {
             const geojsonTemplate = {
                 type: 'Feature',
@@ -40,17 +34,9 @@ export const saveCP = (data, callback) => {
                 const stateData = core.store.getState().data.layers;
                 const id = layer.feature.id
                 stateData[id] && stateData[id].removeFrom(Map);
-
-                if (mapId !== 'farm-registry-map') {
-                    layer && layer.addTo(Map);
-                    setCPLabel(layer)
-                }
             }
 
-            elements.alertUser(true,
-                'success',
-                'Успешно зачувување',
-                'Производната парцела е запишана во базата на податоци.')
+            elements.alertUser(true, 'success', getLabel('successfully_saved'))
         }
         callback();
     }).catch(err => (callback(), console.log(err)))

@@ -4,8 +4,8 @@ import { config, editCPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
-import { loadFarmerAssets, ProcessButton } from '../..';
-import { getFarmPPlanAssets } from '../../Util';
+import { ProcessButton } from '../..';
+import { getFarmPPlanAssets, getLabel } from '../../Util';
 
 const { Map, store, factory } = core;
 const { edit } = tools;
@@ -13,18 +13,14 @@ const { Icon, DrawActions } = ui;
 const { useReducer } = React;
 const _id = 'editCP';
 
-const _Edit = ({ processID, mapId, farmerId, farmObjId }) => {
+export const Edit = ({ processID }) => {
     const [{ layer, data, enumIdx, enumNames, isGuided, showForm }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
         { layer: {}, data: {}, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
 
     const enable = () => {
         // Parcels are already loaded, activate handlers on each. Do not call REST.
-        const layers = store.getState().data.layers
-        let cropParcels = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
-        if (mapId === 'farm-registry-map') {
-            cropParcels = store.getState().farmRegistry?.farmPPlanData;
-        }
+        const cropParcels = store.getState().farmRegistry?.farmPPlanData;
 
         if (cropParcels.length > 0) {
             cropParcels.forEach(cp => _setBlockEvents(cp, cropParcels))// _layerGroup.addLayer(cp),
@@ -33,10 +29,7 @@ const _Edit = ({ processID, mapId, farmerId, farmObjId }) => {
             // Map.fitBounds(cropParcels[0].getBounds());
         } else {
             disable();
-            elements.alertUser(true,
-                'warning',
-                'Не се пронајдени производни парцели.',
-                'Додадете производни парцели со просторна определба пред да ја користите алатката за менување.');
+            elements.alertUser(true, 'warning', getLabel('no_crop_parcels_found'), getLabel('add_crop_parcels_before_using_edit_tool'));
         }
     };
 
@@ -44,11 +37,7 @@ const _Edit = ({ processID, mapId, farmerId, farmObjId }) => {
         setState({ layer: {}, data: {}, enumIdx: [], enumNames: [], isGuided: false, showForm: false })
         // _layerGroup.clearLayers().removeFrom(Map);
         // store.dispatch({processID: '', minZoom: MAP_CONFIG.minZoom});
-        if (mapId === 'farm-registry-map') {
-            getFarmPPlanAssets()
-        } else {
-            loadFarmerAssets(store.getState().gsaa.token, farmerId);
-        }
+        getFarmPPlanAssets()
         store.dispatch({ processID: '' });
         edit.polygon.disable();
     }
@@ -65,17 +54,12 @@ const _Edit = ({ processID, mapId, farmerId, farmObjId }) => {
     const initEdit = layer => {
         // Move map view on top of selected polygon.
         Map.fitBounds(layer.getBounds());
-
         // Activate edit handler on selected polygon
         edit.polygon.enable(layer, config);
         setState({ layer: layer, data: layer.feature.properties });
-
-        let url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
-        if (mapId === 'farm-registry-map') {
-            const agriParcelId = layer.feature.properties?.AGRI_PARCEL_ID || 0
-            const currentYear = new Date().getFullYear()
-            url = `/lpis/get/cropList/{init.token}/land_parcel/${agriParcelId}/year/${currentYear}/basic/false/otsc/false`
-        }
+        const agriParcelId = layer.feature.properties?.AGRI_PARCEL_ID || 0
+        const currentYear = new Date().getFullYear()
+        const url = `/lpis/get/cropList/{init.token}/land_parcel/${agriParcelId}/year/${currentYear}/basic/false/otsc/false`
         core.http.call('get_code_list', {
             method: 'post', url,
             data: JSON.stringify({
@@ -91,6 +75,9 @@ const _Edit = ({ processID, mapId, farmerId, farmObjId }) => {
             }
         }).catch(err => {
             console.log(err);
+            const title = err?.response?.data?.title || err
+            const message = err?.response?.data?.message || ''
+            elements.alertUser(true, 'error', title, message);
             disable();
         })
 
@@ -109,13 +96,15 @@ const _Edit = ({ processID, mapId, farmerId, farmObjId }) => {
     }
 
     const renderGuideForm = () => {
-        return <Guidance id={_id} disable={disable} msg={editCPMsg} title='Промени производна парцела' />
+        return <Guidance id={_id} disable={disable} msg={editCPMsg} title={getLabel('edit_crop_parcel')} />
     }
 
     const renderForm = () => {
-        return <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
-            <DrawActions cancel={disable} />
-        </Form>
+        return (
+            <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
+                <DrawActions cancel={disable} />
+            </Form>
+        )
     }
 
     const onChange = ({ formData }) =>
@@ -135,21 +124,11 @@ const _Edit = ({ processID, mapId, farmerId, farmObjId }) => {
 
     return <ProcessButton id={_id} onClick={enable}>
         <Icon name={_id} size='32px' />
-        <span style={{ display: 'block', marginTop: '2px' }}>Промени производна парцела</span>
+        <span style={{ display: 'block', marginTop: '2px' }}>{getLabel('edit_crop_parcel')}</span>
         {processID === _id && renderComponent()}
     </ProcessButton>;
 };
 
-_Edit.propTypes = {
+Edit.propTypes = {
     processID: PropTypes.string,
-    mapId: PropTypes.string,
-    farmerId: PropTypes.number,
-    farmObjId: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number
-    ])
 }
-
-export const Edit = core.connect(state => ({
-    mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
-}))(_Edit)

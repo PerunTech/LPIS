@@ -1,15 +1,51 @@
 import { React, PropTypes } from 'perun-core';
 import { ui } from '../../../Spatial';
-import { metadata } from './Config';
+import { getLabel } from '../../Util';
+import { crop_codes_idx, crop_codes_desc } from './Crop_Codes';
 
 const { Button, Modal } = ui;
 
-export function Form ({ formData, onSubmit, onChange, children, enumIdx, enumNames }) {
+const metadata = {
+    type: 'land_use_plan',
+    namePath: 'feature.properties.parent_id',
+    schema: {
+        properties: {
+            CROP_CODE: {
+                enum: crop_codes_idx,
+                enumNames: crop_codes_desc,
+                title: `${getLabel('crop')}`,
+                type: 'number',
+                default: -1
+            },
+            AREA: {
+                title: `${getLabel('area')}`,
+                type: 'number',
+                default: 0
+            },
+            NUMBER_PLANTS: {
+                title: `${getLabel('number_of_plants')}`,
+                type: 'number',
+            },
+            IS_ORGANIC: {
+                title: `${getLabel('organic')}`,
+                type: 'boolean',
+                default: false
+            },
+        },
+        /*required: ['CROP_CODE'],*/
+        'type': 'object',
+    },
+    uiSchema: {
+        AREA: { 'ui:disabled': true },
+    }
+}
+
+export function Form({ formData, onSubmit, onChange, children, enumIdx, enumNames }) {
     const getSchema = () => {
         const cfg = metadata.schema
         const cropCode = { ...cfg.properties.CROP_CODE }
         cropCode.enum = [-1, ...enumIdx];
-        cropCode.enumNames = ['Одбери...', ...enumNames];
+        cropCode.enumNames = [getLabel('choose'), ...enumNames];
         cropCode.default = -1// enumIdx[0] || 0
         cfg.properties.CROP_CODE = cropCode
 
@@ -22,7 +58,7 @@ export function Form ({ formData, onSubmit, onChange, children, enumIdx, enumNam
         enforceFocus={false}
         container={document.getElementsByClassName('control-map')[0]} >
         <Modal.Title>
-            <Button disabled className='as-label ap-modal-title' >Производна Парцела</Button>
+            <Button disabled className='as-label ap-modal-title' >{getLabel('crop_parcel')}</Button>
             {children}
         </Modal.Title>
         <Modal.Body className='ap-modal-body cp-modal-body' >
@@ -33,7 +69,7 @@ export function Form ({ formData, onSubmit, onChange, children, enumIdx, enumNam
                 onSubmit={onSubmit}
                 onChange={onChange} >
                 <Button type='submit' size='' className='save-pb' >
-                    Зачувај
+                    {getLabel('save')}
                 </Button>
             </ui.Form>
         </Modal.Body>
