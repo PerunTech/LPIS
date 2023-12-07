@@ -22,6 +22,6 @@ export const Refresh = ({ processID }) => {
     );
 };
 
-_Refresh.propTypes = {
+Refresh.propTypes = {
     processID: PropTypes.string,
 }
