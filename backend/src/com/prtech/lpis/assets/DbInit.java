@@ -850,7 +850,7 @@ public class DbInit implements IDbInit {
 
 	public static DbDataTable createCadIntersection() {
 		DbDataTable dbt = new DbDataTable();
-		dbt.setDbTableName("LP_CAD_INTERSECTIONS");
+		dbt.setDbTableName("АP_CAD_INTERSECTIONS");
 		dbt.setDbRepoName(CONST_MASTER_REPO);
 		dbt.setDbSchema(CONST_DEFAULT_SCHEMA);
 		dbt.setIsSystemTable(false);
@@ -889,32 +889,6 @@ public class DbInit implements IDbInit {
 		dbf3.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 
-		DbDataField dbf4 = new DbDataField();
-		dbf4.setDbFieldName("GR_COD_CC");
-		dbf4.setDbFieldType(DbFieldType.NUMERIC);
-		dbf4.setDbFieldSize(18);
-		dbf4.setLabel_code("cad_intersections.GR_COD_CC");
-		dbf4.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":false,"
-				+ "\"resizable\":true,\"editable\":false}}");
-
-		DbDataField dbf5 = new DbDataField();
-		dbf5.setDbFieldName("GR_COD_DP");
-		dbf5.setDbFieldType(DbFieldType.NUMERIC);
-		dbf5.setDbFieldSize(18);
-		dbf5.setIsNull(false);
-		dbf5.setLabel_code("cad_intersections.GR_COD_DP");
-		dbf5.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":false,"
-				+ "\"resizable\":true,\"editable\":false}}");
-
-		DbDataField dbf6 = new DbDataField();
-		dbf6.setDbFieldName(CC.FR_AREA);
-		dbf6.setDbFieldType(DbFieldType.NUMERIC);
-		dbf6.setDbFieldSize(18);
-		dbf6.setIsNull(false);
-		dbf6.setLabel_code("cad_intersections.FR_AREA");
-		dbf6.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
-				+ "\"resizable\":true,\"editable\":false}}");
-
 		DbDataField dbf7 = new DbDataField();
 		dbf7.setDbFieldName(Sv.AREA);
 		dbf7.setDbFieldType(DbFieldType.NUMERIC);
@@ -924,25 +898,6 @@ public class DbInit implements IDbInit {
 		dbf7.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
 				+ "\"resizable\":true,\"editable\":false}}");
 
-
-		DbDataField dbf8 = new DbDataField();
-		dbf8.setDbFieldName(CC.CAD_AREA);
-		dbf8.setDbFieldType(DbFieldType.NUMERIC);
-		dbf8.setDbFieldSize(18);
-		dbf8.setIsNull(false);
-		dbf8.setLabel_code("cad_intersections.CAD_AREA");
-		dbf8.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
-				+ "\"resizable\":true,\"editable\":false}}");
-		
-		DbDataField dbf24 = new DbDataField();
-		dbf24.setDbFieldName(CC.GR_PARCEL);
-		dbf24.setDbFieldType(DbFieldType.NVARCHAR);
-		dbf24.setDbFieldSize(50);
-		dbf24.setIsNull(true);
-		dbf24.setLabel_code("agri_parcel.GR_PARCEL");
-		dbf24.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
-				+ "\"resizable\":true,\"editable\":false}}");
-		
 		DbDataField dbf22 = new DbDataField();
 		dbf22.setDbFieldName("GEOM");
 		dbf22.setDbFieldType(DbFieldType.GEOMETRY);
@@ -964,28 +919,14 @@ public class DbInit implements IDbInit {
 		dbf18.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":false,"
 				+ "\"resizable\":true,\"editable\":false}}");
 		
-		DbDataField dbf25 = new DbDataField();
-		dbf25.setDbFieldName("MUNICIPALITY_NAME");
-		dbf25.setDbFieldType(DbFieldType.NVARCHAR);
-		dbf25.setDbFieldSize(200);
-		dbf25.setIsNull(true);
-		dbf25.setLabel_code("cad_intersections.MUNICIPALITY_NAME");
-		dbf25.setGui_metadata("{\"react\":{\"filterable\":true,\"sortable\":true,\"visible\":true,"
-				+ "\"resizable\":true,\"editable\":false}}");
 		
-		DbDataField[] fieldList = new DbDataField[12];
+		DbDataField[] fieldList = new DbDataField[6];
 		fieldList[0] = dbf1;
 		fieldList[1] = dbf2;
 		fieldList[2] = dbf3;
-		fieldList[3] = dbf4;
-		fieldList[4] = dbf5;
-		fieldList[5] = dbf6;
-		fieldList[6] = dbf24;
-		fieldList[7] = dbf7;
-		fieldList[8] = dbf8;
-		fieldList[9] = dbf22;
-		fieldList[10] = dbf18;
-		fieldList[11] = dbf25;
+		fieldList[3] = dbf7;
+		fieldList[4] = dbf22;
+		fieldList[5] = dbf18;
 		
 		dbt.setDbTableFields(fieldList);
 		return dbt;
