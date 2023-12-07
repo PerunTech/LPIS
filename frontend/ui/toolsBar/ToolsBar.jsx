@@ -15,9 +15,7 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
     }
 
     const handleBack = () => {
-        if (actionType === 'pplan') {
-            history.push('/main/iacs-claims/p_plan')
-        } else if (actionType === 'preview') {
+        if (actionType === 'preview') {
             const ostcPathName = perunStore.getState()?.['otscm_iacs.ipardFarmerInfo']?.controlPath
             if (ostcPathName) {
                 history.push(ostcPathName)
