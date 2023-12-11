@@ -15,6 +15,7 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
     }
 
     const handleBack = () => {
+        perunStore.dispatch({ type: 'BACK_FROM_LPIS', payload: true })
         if (actionType === 'preview') {
             const ostcPathName = perunStore.getState()?.['otscm_iacs.ipardFarmerInfo']?.controlPath
             if (ostcPathName) {
