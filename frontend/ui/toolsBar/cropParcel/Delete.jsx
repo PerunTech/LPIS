@@ -32,7 +32,13 @@ const _Delete = ({ processID }) => {
                 } else {
                     disable();
                 }
-            }).catch(err => console.log(err))
+            }).catch(err => {
+                console.error(err)
+                const title = err?.response?.data?.title || err
+                const message = err?.response?.data?.message || ''
+                elements.alertUser(true, 'error', title, message);
+                disable()
+            })
         }
     }
 
@@ -46,6 +52,7 @@ const _Delete = ({ processID }) => {
             elements.alertUser(true, 'success', getLabel('delete_success'));
             disable()
         }).catch((err) => {
+            console.error(err)
             const title = err?.response?.data?.title || err
             const message = err?.response?.data?.message || ''
             elements.alertUser(true, 'error', title, message);
@@ -91,9 +98,10 @@ const _Delete = ({ processID }) => {
                             <DrawActions cancel={disable} />
                         </Modal.Title>
                         <Modal.Body className='ap-modal-body' >
-                            <div id={_id} >{'Ја избравте производната парцела со ид. број '
-                                + layer.feature.id + ' и површина ' + Math.round(layer.getMeasurement()) + ` ${getMeasurementUnit(true)}. Дали сте сигурни дека сакате да ја избришете?`}</div>
-                            <Button onClick={() => { deleteLayer() }} size='' className='cancel' > Избриши </Button>
+                            <div id={_id} >{`${getLabel('delete_crop_parcel_msg_one')} `
+                                + layer.feature.id + ` ${getLabel('delete_crop_parcel_msg_two')} ` + Math.round(layer.getMeasurement()) + ` ${getMeasurementUnit(true)}. `
+                                + ` ${getLabel('delete_crop_parcel_confirmation')} `}</div>
+                            <Button onClick={() => { deleteLayer() }} size='' className='cancel' > {getLabel('delete')} </Button>
                         </Modal.Body>
                     </Modal>)}
         </ProcessButton>
@@ -109,5 +117,5 @@ _Delete.propTypes = {
 }
 
 export const Delete = core.connect(state => ({
-    mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
+    farmObjId: state.farmRegistry?.farmObjId
 }))(_Delete)
