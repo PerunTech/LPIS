@@ -76,7 +76,7 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory, historyEditEnable
                 <td>{properties.OLD_ID}</td>
                 <td>{`${Math.round(Number(properties.ALLOWED_AREA || properties.AREA))} ${getMeasurementUnit(true)}`}</td>
                 <td>{translatedLandCoverCode}</td>
-                <td>{properties.HOME_NAME || 'Не е наведено'}</td>
+                <td>{properties.HOME_NAME || 'N/A'}</td>
                 <td>{translateBooleanValue(properties.COMMON_USE)}</td>
                 <td>{translateBooleanValue(properties.CERTIFICATE_OF_USE)}</td>
                 <td>{Math.round(properties.AREA)} {getMeasurementUnit(true)}</td>

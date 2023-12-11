@@ -433,7 +433,7 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
       indexColumnTitle = 'Парцелата има тополошки грешки'
     }
     const unit = el instanceof factory.Polygon ? getMeasurementUnit(true) : getMeasurementUnit();
-    const homeName = rowData.HOME_NAME || 'Не е наведено';
+    const homeName = rowData.HOME_NAME || 'N/A';
     return (
       <div className='container' key={id} id={id}>
         <ButtonGroup className={rowClassNames.join('')} style={{ marginLeft: '0.15rem' }} key={`${id}_${i + 1}`} onClick={() => onRowClick(id)}>
