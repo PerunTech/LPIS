@@ -31,11 +31,11 @@ const getParcelHistory = (e, parcelId, callback) => {
       store.dispatch({ parcelHistory })
       callback(true)
     } else {
-      alertUser(true, 'info', 'Не се пронајдени податоци за историјата на парцелата')
+      alertUser(true, 'info', getLabel('no_parcel_history_data_found'))
     }
   }).catch(err => {
     console.error(err)
-    alertUser(true, 'info', 'Не се пронајдени податоци за историјата на парцелата')
+    alertUser(true, 'info', getLabel('no_parcel_history_data_found'))
   })
 }
 
@@ -197,7 +197,7 @@ const _PplanDataGrid = ({ el, rowData }) => {
     <Button disabled className='data-grid-column' >{code}</Button>
     <Button disabled className='data-grid-column' >{measurement + ' ' + unit}</Button>
     <Button disabled className='data-grid-column' >{nPlants}</Button>
-    <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} title='Оди до производна парцела'>
+    <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} title={getLabel('zoom_crop_parcel')}>
       <Icon name='pinpoint-secondary' size='16px' />
     </Button>
     <Button className='data-grid-util' onClick={() => {
@@ -223,14 +223,14 @@ const _PplanData = ({ parcelId, rows }) => {
   if (markup.length > 0) {
     return <React.Fragment>
       <div className='data-grid-pplan mb-2'>
-        <h6 className='data-grid-heading mt-2 mb-2'>Производни парцели</h6>
+        <h6 className='data-grid-heading mt-2 mb-2'>{getLabel('crop_parcels')}</h6>
         <_PplanDataGridGHeader />
         {markup}
       </div>
     </React.Fragment>
   } else {
     return <React.Fragment>
-      <h6 className='data-grid-heading mt-2'>Производни парцели</h6>
+      <h6 className='data-grid-heading mt-2'>{getLabel('crop_parcels')}</h6>
       <_NoData />
     </React.Fragment>
   }
