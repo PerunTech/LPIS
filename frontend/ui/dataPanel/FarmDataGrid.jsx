@@ -445,14 +445,14 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
           <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.COMMON_USE)}</Button>
           <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.CERTIFICATE_OF_USE)}</Button>
           {strcmp(actionType, 'sizp') && (
-            <Button className='data-grid-util' onClick={e => getParcelHistory(e, id, setShowParcelHistory)} title='Историја на парцела'>
+            <Button className='data-grid-util' onClick={e => getParcelHistory(e, id, setShowParcelHistory)} title={getLabel('parcel_history')}>
               <Icon name='history' size='14px' />
             </Button>
           )}
-          <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el)} title='Оди до парцела'>
+          <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el)} title={getLabel('zoom_parcel')}>
             <Icon name={getPinpointIconName()} size={getIconSize()} />
           </Button>
-          <Button className='data-grid-util' onClick={e => toggleAssetFromMapAction(e, el)} title='Прикажи/Скриј парцела'>
+          <Button className='data-grid-util' onClick={e => toggleAssetFromMapAction(e, el)} title={getLabel('toggle_parcel_from_map')}>
             <Icon name={getParcelVisibleIcon(id)} size={getIconSize()} />
           </Button>
         </ButtonGroup>

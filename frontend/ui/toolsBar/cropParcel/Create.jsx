@@ -40,6 +40,9 @@ const _Create = ({ processID, farmObjId }) => {
             }
         }).catch(err => {
             console.log(err);
+            const title = err.response?.data?.title || err
+            const msg = err.response?.data?.message || ''
+            alertUser(true, 'error', title, msg)
             disable();
         })
     }
@@ -83,7 +86,7 @@ const _Create = ({ processID, farmObjId }) => {
                     const parsedResponse = JSON.parse(stringifiedResponse)
                     msg = parsedResponse?.Label_Code || ''
                 }
-                alertUser(true, 'error', 'Настана грешка', msg)
+                alertUser(true, 'error', getLabel('something_went_wrong'), msg)
                 disable()
             });
 
