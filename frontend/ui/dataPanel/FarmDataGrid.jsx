@@ -310,10 +310,10 @@ const _ExpandedRow = ({ id, rowData, unit, actionType, pplanRows, cadIntersectio
       {strcmp(actionType, 'pplan') && <_PplanData parcelId={id} rows={pplanRows} />}
       {strcmp(actionType, 'sizp') && showCadParcels && <_CadIntersectionsData parcelOldId={rowData.OLD_ID} rows={cadIntersectionRows} />}
       <div key={rowId} id={rowId} className='data-grid-expanded-row border border-dark rounded' style={{ fontSize: '1.5vh' }}>
-        {strcmp(actionType, 'pplan') && <h6 className='data-grid-heading mt-2' style={{ border: 'none' }}>Дополнителни информации за парцелата</h6>}
+        {strcmp(actionType, 'pplan') && <h6 className='data-grid-heading mt-2' style={{ border: 'none' }}>{getLabel('additional_parcel_data')}</h6>}
         <ListGroup className='text-center'>
           {!strcmp(status, 'VALID') && <ListGroupItem className='p-1'>
-            <span className='font-weight-bold'>Парцелата има тополошки грешки</span>
+            <span className='font-weight-bold'>{getLabel('parcel_has_topological_errors')}</span>
           </ListGroupItem>}
           <ListGroupItem className='p-1'>
             {getLabel('area')}: <span className='font-weight-bold'>{Math.round(Number(rowData.AREA)) + ` ${unit}`}</span>
