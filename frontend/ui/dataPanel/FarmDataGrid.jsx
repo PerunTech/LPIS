@@ -172,7 +172,7 @@ const _NoData = () => (
 );
 
 const _PplanDataGridGHeader = () => {
-  const columns = ['СИЗП Број', 'Земјодел. култура', 'Површина', 'Број на садници']
+  const columns = [getLabel('lpis_number'), getLabel('crop_type'), getLabel('area'), getLabel('number_of_crops')]
   const columnElements = columns.map(el => <Button key={el} disabled className='data-grid-column' >{el}</Button>)
   return <ButtonGroup className='data-grid-header' id="grid-header">
     <Button disabled className='data-grid-index' />
@@ -286,14 +286,14 @@ const _CadIntersectionsData = ({ parcelOldId, rows }) => {
   if (markup.length > 0) {
     return <React.Fragment>
       <div className='data-grid-pplan mb-2'>
-        <h6 className='data-grid-heading mt-2 mb-2'>Пресеци</h6>
+        <h6 className='data-grid-heading mt-2 mb-2'>{getLabel('intersections')}</h6>
         <_CadIntersectionsGridHeader />
         {markup}
       </div>
     </React.Fragment>
   } else {
     return <React.Fragment>
-      <h6 className='data-grid-heading mt-2'>Пресеци</h6>
+      <h6 className='data-grid-heading mt-2'>{getLabel('intersections')}</h6>
       <_NoData />
     </React.Fragment>
   }
