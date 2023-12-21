@@ -12,9 +12,16 @@ const { alertUser } = elements;
 const { useEffect, useReducer } = React;
 const _id = 'import-wms';
 
-const _ImportWMS = ({ processID, selectedWmsFeature, systemLayers, farmObjId }) => {
-  const [{ isGuided, showForm, loading, layerContent, layerName }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { isGuided: false, showForm: false, loading: false, layerContent: undefined, layerName: '' });
+const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
+  const [{ isGuided, showForm, loading, layerContent, layerName, systemLayers }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { isGuided: false, showForm: false, loading: false, layerContent: undefined, layerName: '', systemLayers: {} });
+
+  useEffect(() => {
+    const systemLayers = store.getState().systemLayers
+    if (systemLayers && Object.keys(systemLayers).length > 0) {
+      setState({ systemLayers })
+    }
+  }, [])
 
   useEffect(() => {
     if (processID === _id && selectedWmsFeature) {
@@ -139,7 +146,6 @@ const _ImportWMS = ({ processID, selectedWmsFeature, systemLayers, farmObjId }) 
 
 export const ImportWMS = core.connect(state => ({
   processID: state.app.processID,
-  selectedWmsFeature: state.lpis?.selectedWmsFeature,
-  systemLayers: state.lpis?.systemLayers,
+  selectedWmsFeature: state?.selectedWmsFeature,
   farmObjId: state.farmRegistry?.farmObjId,
 }))(_ImportWMS)

@@ -565,7 +565,7 @@ export const getFeatureInfo = (params) => {
             // Remove any previously loaded layers from the map
             eraseIoLayers()
             if (res.data && isJSON(res.data)) {
-                store.dispatch({ selectedWmsFeature: res.data })
+                store.addState('selectedWmsFeature', res.data)
                 const geojson = factory.geoJSON(res.data, apConfig.pathOptions);
                 const layers = geojson.getLayers();
                 layers.forEach(layer => {
