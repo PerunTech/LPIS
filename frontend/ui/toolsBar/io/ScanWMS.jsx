@@ -36,7 +36,7 @@ const _ScanWMS = ({ processID, farmObjId }) => {
     }
 
     return () => {
-      Map.off('click')
+      Map.off('click', handleSourceSelection)
     }
   }, [sourceName])
 
@@ -72,7 +72,7 @@ const _ScanWMS = ({ processID, farmObjId }) => {
       showForm: false, loading: false, sourceName: '',
       sourceLayer: undefined, layerObjectId: undefined, externalLayerCode: '', targetLayer: ''
     })
-    Map.off('click')
+    Map.off('click', handleSourceSelection)
   }
 
   const onChange = (e) => {
