@@ -43,7 +43,7 @@ export const gsaa = () => {
 
 export const lpis = () => {
     store.addState('lpis', {
-        'physicalBlocksHaveBeenLoaded': false, 'loadedPhysicalBlocks': {}, 'selectedWmsFeature': undefined,
+        'physicalBlocksHaveBeenLoaded': false, 'loadedPhysicalBlocks': {},
         'systemLayers': {}, 'systemLayersFull': {},
         'farmSearchFormData': {}, 'farmSearchData': undefined
     })

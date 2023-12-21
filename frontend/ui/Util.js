@@ -565,14 +565,19 @@ export const getFeatureInfo = (params) => {
             // Remove any previously loaded layers from the map
             eraseIoLayers()
             if (res.data && isJSON(res.data)) {
-                store.addState('selectedWmsFeature', res.data)
                 const geojson = factory.geoJSON(res.data, apConfig.pathOptions);
                 const layers = geojson.getLayers();
-                layers.forEach(layer => {
-                    layer.DESCRIPTOR = 'IO_LAYER'
-                    layer.addTo(Map)
-                    Map.fitBounds(layer.getBounds())
-                });
+                if (layers.length > 0) {
+                    store.dispatch({ selectedWmsFeature: res.data })
+                    layers.forEach(layer => {
+                        layer.DESCRIPTOR = 'IO_LAYER'
+                        layer.addTo(Map)
+                        Map.fitBounds(layer.getBounds())
+                    });
+                } else {
+                    alertUser(true, 'info', getLabel('no_wms_feature_info_found'))
+                    store.dispatch({ processID: '', selectedWmsFeature: undefined })
+                }
             }
         }).catch(err => {
             console.error(err)

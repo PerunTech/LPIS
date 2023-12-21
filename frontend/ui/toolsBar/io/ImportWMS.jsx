@@ -24,7 +24,7 @@ const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
   }, [])
 
   useEffect(() => {
-    if (processID === _id && selectedWmsFeature) {
+    if (processID === _id && selectedWmsFeature && Object.keys(selectedWmsFeature).length > 0) {
       setState({ layerContent: selectedWmsFeature, isGuided: false, showForm: true })
     }
   }, [processID, selectedWmsFeature])
@@ -146,6 +146,6 @@ const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
 
 export const ImportWMS = core.connect(state => ({
   processID: state.app.processID,
-  selectedWmsFeature: state?.selectedWmsFeature,
+  selectedWmsFeature: state.app?.selectedWmsFeature,
   farmObjId: state.farmRegistry?.farmObjId,
 }))(_ImportWMS)
