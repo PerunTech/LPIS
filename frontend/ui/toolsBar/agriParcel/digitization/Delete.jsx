@@ -66,7 +66,7 @@ const _Delete = ({ processID }) => {
     <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('delete')}</span>
     {processID === _id
       && (isGuided
-        ? <Guidance id={_id} disable={disable} msg={deleteAPMsg} title={getLabel('delete_agricultural_parcel')} />
+        ? <Guidance id={_id} disable={disable} msg={['', '']} title={getLabel('delete_agricultural_parcel')} />
         : <Modal id='measure-dialog'
           className='delete-control-dialog'
           show
