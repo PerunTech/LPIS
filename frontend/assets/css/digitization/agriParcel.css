@@ -10,7 +10,7 @@
 #measure-dialog .next {
   color: #3399ff;
   border: 1px solid #3399ff;
-  float: right;
+  margin-left: auto;
 }
 
 #measure-dialog .next:hover:not(.disabled) {

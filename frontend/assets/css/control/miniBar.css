@@ -5,22 +5,23 @@
 
 #minibar {
     width: 100%;
-    /*height: 60px;*/
     background-color: #F9F9F9;
     pointer-events: all;
-    /*margin-left: 60px;
-    margin-right: 120px; */
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 }
+
 #minibar .nav {
     background-color: #F9F9F9;
 }
+
 #minibar .nav-link.active {
     color: #3399FF;
 }
+
 #minibar .nav-tabs .nav-link {
     font-style: italic;
 }
+
 #minibar .btn-sm {
     padding: 0.25rem 0.5rem;
 }
@@ -34,6 +35,7 @@
     top: 0;
     left: 0;
 }
+
 #minibar .right-corner-filler {
     background-color: #F9F9F9;
     border-color: #F9F9F9;
@@ -45,11 +47,7 @@
 
 }
 
-
 #minibar .toolbar-home {
-    /* position: absolute;
-    left: 0px;
-    top: 36px;*/
     height: 60px;
     width: 61px;
     background-color: #F9F9F9;
@@ -57,6 +55,7 @@
     border-right: 1px solid #dee2e6;
     z-index: 2000;
 }
+
 #minibar .toolbar-settings {
     position: absolute;
     right: 60px;
@@ -68,6 +67,7 @@
     border-left: 1px solid #dee2e6;
     z-index: 2000;
 }
+
 #minibar .toolbar-logout {
     position: absolute;
     right: 0px;
@@ -78,6 +78,7 @@
     border-color: #F9F9F9;
     z-index: 2000;
 }
+
 #minibar #editGrid {
     background-color: #F9F9F9;
     border-color: #F9F9F9;
@@ -87,8 +88,7 @@
 #minibar .toolbar-home:hover:not(.disabled),
 #minibar .toolbar-settings:hover:not(.disabled),
 #minibar .toolbar-logout:hover:not(.disabled),
-#minibar #editGrid:hover:not(.disabled)
-{
+#minibar #editGrid:hover:not(.disabled) {
     background-color: #e2e6ea;
     border-color: #dae0e5;
 }
@@ -98,15 +98,19 @@
     padding: 0.5rem;
     margin-bottom: 20px;
 }
+
 #measure-dialog .modal-body #editGrid div {
     margin: 3px;
 }
+
 #measure-dialog .modal-body #editGrid div:not(:nth-child(1)) {
     margin-left: 10px;
 }
+
 #measure-dialog .modal-body #editGrid div:nth-child(2) {
     margin-top: 10px;
 }
+
 #measure-dialog .modal-body #editGrid div:nth-last-child() {
     margin-bottom: 10px;
 }
@@ -114,9 +118,10 @@
 #measure-dialog .next {
     color: #3399ff;
     border: 1px solid #3399ff;
-    float: right;
+    margin-left: auto;
     margin-right: 10px;
 }
+
 #measure-dialog .next:hover:not(.disabled) {
     background-color: #e2e6ea;
 }
