@@ -31,11 +31,11 @@ const getParcelHistory = (e, parcelId, callback) => {
       store.dispatch({ parcelHistory })
       callback(true)
     } else {
-      alertUser(true, 'info', 'Не се пронајдени податоци за историјата на парцелата')
+      alertUser(true, 'info', getLabel('no_parcel_history_data_found'))
     }
   }).catch(err => {
     console.error(err)
-    alertUser(true, 'info', 'Не се пронајдени податоци за историјата на парцелата')
+    alertUser(true, 'info', getLabel('no_parcel_history_data_found'))
   })
 }
 
@@ -172,7 +172,7 @@ const _NoData = () => (
 );
 
 const _PplanDataGridGHeader = () => {
-  const columns = ['СИЗП Број', 'Земјодел. култура', 'Површина', 'Број на садници']
+  const columns = [getLabel('lpis_number'), getLabel('crop_type'), getLabel('area'), getLabel('number_of_crops')]
   const columnElements = columns.map(el => <Button key={el} disabled className='data-grid-column' >{el}</Button>)
   return <ButtonGroup className='data-grid-header' id="grid-header">
     <Button disabled className='data-grid-index' />
@@ -197,7 +197,7 @@ const _PplanDataGrid = ({ el, rowData }) => {
     <Button disabled className='data-grid-column' >{code}</Button>
     <Button disabled className='data-grid-column' >{measurement + ' ' + unit}</Button>
     <Button disabled className='data-grid-column' >{nPlants}</Button>
-    <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} title='Оди до производна парцела'>
+    <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} title={getLabel('zoom_crop_parcel')}>
       <Icon name='pinpoint-secondary' size='16px' />
     </Button>
     <Button className='data-grid-util' onClick={() => {
@@ -223,14 +223,14 @@ const _PplanData = ({ parcelId, rows }) => {
   if (markup.length > 0) {
     return <React.Fragment>
       <div className='data-grid-pplan mb-2'>
-        <h6 className='data-grid-heading mt-2 mb-2'>Производни парцели</h6>
+        <h6 className='data-grid-heading mt-2 mb-2'>{getLabel('crop_parcels')}</h6>
         <_PplanDataGridGHeader />
         {markup}
       </div>
     </React.Fragment>
   } else {
     return <React.Fragment>
-      <h6 className='data-grid-heading mt-2'>Производни парцели</h6>
+      <h6 className='data-grid-heading mt-2'>{getLabel('crop_parcels')}</h6>
       <_NoData />
     </React.Fragment>
   }
@@ -286,14 +286,14 @@ const _CadIntersectionsData = ({ parcelOldId, rows }) => {
   if (markup.length > 0) {
     return <React.Fragment>
       <div className='data-grid-pplan mb-2'>
-        <h6 className='data-grid-heading mt-2 mb-2'>Пресеци</h6>
+        <h6 className='data-grid-heading mt-2 mb-2'>{getLabel('intersections')}</h6>
         <_CadIntersectionsGridHeader />
         {markup}
       </div>
     </React.Fragment>
   } else {
     return <React.Fragment>
-      <h6 className='data-grid-heading mt-2'>Пресеци</h6>
+      <h6 className='data-grid-heading mt-2'>{getLabel('intersections')}</h6>
       <_NoData />
     </React.Fragment>
   }
@@ -310,10 +310,10 @@ const _ExpandedRow = ({ id, rowData, unit, actionType, pplanRows, cadIntersectio
       {strcmp(actionType, 'pplan') && <_PplanData parcelId={id} rows={pplanRows} />}
       {strcmp(actionType, 'sizp') && showCadParcels && <_CadIntersectionsData parcelOldId={rowData.OLD_ID} rows={cadIntersectionRows} />}
       <div key={rowId} id={rowId} className='data-grid-expanded-row border border-dark rounded' style={{ fontSize: '1.5vh' }}>
-        {strcmp(actionType, 'pplan') && <h6 className='data-grid-heading mt-2' style={{ border: 'none' }}>Дополнителни информации за парцелата</h6>}
+        {strcmp(actionType, 'pplan') && <h6 className='data-grid-heading mt-2' style={{ border: 'none' }}>{getLabel('additional_parcel_data')}</h6>}
         <ListGroup className='text-center'>
           {!strcmp(status, 'VALID') && <ListGroupItem className='p-1'>
-            <span className='font-weight-bold'>Парцелата има тополошки грешки</span>
+            <span className='font-weight-bold'>{getLabel('parcel_has_topological_errors')}</span>
           </ListGroupItem>}
           <ListGroupItem className='p-1'>
             {getLabel('area')}: <span className='font-weight-bold'>{Math.round(Number(rowData.AREA)) + ` ${unit}`}</span>
@@ -433,7 +433,7 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
       indexColumnTitle = 'Парцелата има тополошки грешки'
     }
     const unit = el instanceof factory.Polygon ? getMeasurementUnit(true) : getMeasurementUnit();
-    const homeName = rowData.HOME_NAME || 'Не е наведено';
+    const homeName = rowData.HOME_NAME || 'N/A';
     return (
       <div className='container' key={id} id={id}>
         <ButtonGroup className={rowClassNames.join('')} style={{ marginLeft: '0.15rem' }} key={`${id}_${i + 1}`} onClick={() => onRowClick(id)}>
@@ -445,14 +445,14 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
           <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.COMMON_USE)}</Button>
           <Button className='fr-data-grid-column'>{translateBooleanValue(rowData.CERTIFICATE_OF_USE)}</Button>
           {strcmp(actionType, 'sizp') && (
-            <Button className='data-grid-util' onClick={e => getParcelHistory(e, id, setShowParcelHistory)} title='Историја на парцела'>
+            <Button className='data-grid-util' onClick={e => getParcelHistory(e, id, setShowParcelHistory)} title={getLabel('parcel_history')}>
               <Icon name='history' size='14px' />
             </Button>
           )}
-          <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el)} title='Оди до парцела'>
+          <Button className='data-grid-util' onClick={e => zoomParcelAction(e, el)} title={getLabel('zoom_parcel')}>
             <Icon name={getPinpointIconName()} size={getIconSize()} />
           </Button>
-          <Button className='data-grid-util' onClick={e => toggleAssetFromMapAction(e, el)} title='Прикажи/Скриј парцела'>
+          <Button className='data-grid-util' onClick={e => toggleAssetFromMapAction(e, el)} title={getLabel('toggle_parcel_from_map')}>
             <Icon name={getParcelVisibleIcon(id)} size={getIconSize()} />
           </Button>
         </ButtonGroup>

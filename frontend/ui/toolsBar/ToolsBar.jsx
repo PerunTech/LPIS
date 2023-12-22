@@ -2,7 +2,7 @@ import { React, PropTypes, redux, createHashHistory } from 'perun-core';
 import { ui, core } from '../../Spatial';
 import { PhysicalBlock, LandscapeFeatures, AgriParcel, CropParcel, Measurement, IO } from '..';
 import { Digitization } from './agriParcel/digitization/Digitization';
-import { getLabel } from '../Util';
+import { getLabel, strcmp } from '../Util';
 
 const { Tab, Tabs, Button, Icon, Selection } = ui;
 const { store } = core;
@@ -15,9 +15,9 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
     }
 
     const handleBack = () => {
-        if (actionType === 'pplan') {
-            history.push('/main/iacs-claims/p_plan')
-        } else if (actionType === 'preview') {
+        const tableName = strcmp(actionType, 'sizp') ? 'AGRI_PARCEL' : 'PPLAN'
+        perunStore.dispatch({ type: 'BACK_FROM_LPIS', payload: { backFromLpis: true, tableName } })
+        if (actionType === 'preview') {
             const ostcPathName = perunStore.getState()?.['otscm_iacs.ipardFarmerInfo']?.controlPath
             if (ostcPathName) {
                 history.push(ostcPathName)

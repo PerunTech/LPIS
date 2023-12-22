@@ -1,11 +1,11 @@
 import { React, PropTypes, elements } from 'perun-core';
 import { core, data, tools, ui } from '../../../Spatial';
-import { config, drawCPMsg } from './Config';
+import { config } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
-import { ProcessButton, loadFarmerAssets } from '../..';
-import { getFarmPPlanAssets, strcmp } from '../../Util';
+import { ProcessButton } from '../..';
+import { getFarmPPlanAssets, getLabel, strcmp } from '../../Util';
 
 const { Map, store, factory, http } = core;
 const { geobuf, protobuf } = data;
@@ -17,7 +17,7 @@ const _id = 'drawCP';
 /**
  * Draw crop parcel.
  */
-const _Draw = ({ processID, mapId, farmerId }) => {
+const _Draw = ({ processID, farmObjId }) => {
     const [{ layer, data, enumIdx, enumNames, isGuided, showForm }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }), { layer: {}, data: {}, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
 
@@ -44,14 +44,20 @@ const _Draw = ({ processID, mapId, farmerId }) => {
                         setState({ isGuided: false, showForm: true, enumIdx: response.data.enum || [], enumNames: response.data.enumNames || [] })
                     }
                 }).catch(err => {
-                    console.log(err);
+                    console.error(err);
+                    const title = err?.response?.data?.title || err
+                    const message = err?.response?.data?.message || ''
+                    elements.alertUser(true, 'error', title, message);
                     disable();
                 })
             } else {
-                elements.alertUser(true, 'error', 'Настана грешка', '', disable)
+                elements.alertUser(true, 'error', getLabel('something_went_wrong'), '', disable)
             }
         }).catch(err => {
-            console.log(err);
+            console.error(err);
+            const title = err?.response?.data?.title || err
+            const message = err?.response?.data?.message || ''
+            elements.alertUser(true, 'error', title, message);
             disable();
         })
     }
@@ -61,31 +67,10 @@ const _Draw = ({ processID, mapId, farmerId }) => {
             if (e && e.layer) {
                 setState({ layer: e.layer })
                 e.layer.addTo(Map)
-                const url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
-                if (mapId === 'farm-registry-map') {
-                    const area = Math.round(e.layer.getMeasurement())
-                    const formData = { AREA: area }
-                    setState({ data: { ...data, ...formData } })
-                    getParcelData(factory.GeoJSON.fromLayer(e.layer))
-                } else {
-                    http.call('get_code_list', {
-                        method: 'post', url,
-                        data: JSON.stringify({
-                            ...data,
-                            GEOM: factory.GeoJSON.fromLayer(e.layer)
-                        }),
-                    }).then(response => {
-                        if (response.data.type && strcmp(response.data.type, 'error')) {
-                            elements.alertUser(true, 'error', response.data.title, response.data.message || '')
-                            disable()
-                        } else {
-                            setState({ isGuided: false, showForm: true, enumIdx: response.data.enum || [], enumNames: response.data.enumNames || [] })
-                        }
-                    }).catch(err => {
-                        console.log(err);
-                        disable();
-                    })
-                }
+                const area = Math.round(e.layer.getMeasurement())
+                const formData = { AREA: area }
+                setState({ data: { ...data, ...formData } })
+                getParcelData(factory.GeoJSON.fromLayer(e.layer))
             }
             Map.off('new_shape');
         });
@@ -99,17 +84,12 @@ const _Draw = ({ processID, mapId, farmerId }) => {
         // Reset state, internal and application-wide.
         setState({ layer: {}, data: {}, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
         store.dispatch({ processID: '' });
-
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
         // Disable draw handler.
         polygon.disable('force');
         // add refresh assets
-        if (mapId === 'farm-registry-map') {
-            getFarmPPlanAssets();
-        } else {
-            loadFarmerAssets();
-        }
+        getFarmPPlanAssets();
     }
 
     const onChange = ({ formData }) =>
@@ -119,7 +99,7 @@ const _Draw = ({ processID, mapId, farmerId }) => {
         saveCP(JSON.stringify({
             ...data,
             ...formData,
-            parent_id: farmerId,
+            parent_id: farmObjId,
             GEOM: factory.GeoJSON.fromLayer(layer)
         }), disable);
     }
@@ -129,15 +109,15 @@ const _Draw = ({ processID, mapId, farmerId }) => {
             finish={() => polygon._finishShape()}
             undo={() => polygon._removeLastVertex()}
             disable={disable}
-            msg={drawCPMsg}
-            title='Нацртај производна парцела' />
+            title={getLabel('draw_crop_parcel')} />
     }
 
     const renderForm = () => {
-        return <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
-            <DrawActions
-                cancel={disable} />
-        </Form>
+        return (
+            <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
+                <DrawActions cancel={disable} />
+            </Form>
+        )
     }
 
     const renderComponent = () => {
@@ -152,17 +132,17 @@ const _Draw = ({ processID, mapId, farmerId }) => {
         return componentToRender
     }
 
-    return <ProcessButton id={_id} onClick={enable} >
-        <Icon name={_id} size='32px' />
-        <span style={{ display: 'block', marginTop: '2px' }}>Нацртај производна парцела</span>
-        {processID === _id && renderComponent()}
-    </ProcessButton>;
+    return (
+        <ProcessButton id={_id} onClick={enable} >
+            <Icon name={_id} size='32px' />
+            <span style={{ display: 'block', marginTop: '2px' }}>{getLabel('draw_crop_parcel')}</span>
+            {processID === _id && renderComponent()}
+        </ProcessButton>
+    );
 };
 
 _Draw.propTypes = {
     processID: PropTypes.string,
-    mapId: PropTypes.string,
-    farmerId: PropTypes.number,
     farmObjId: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number
@@ -170,5 +150,5 @@ _Draw.propTypes = {
 }
 
 export const Draw = core.connect(state => ({
-    mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
+    farmObjId: state.farmRegistry?.farmObjId
 }))(_Draw)

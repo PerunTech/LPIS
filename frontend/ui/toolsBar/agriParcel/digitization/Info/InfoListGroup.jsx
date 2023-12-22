@@ -35,7 +35,7 @@ export const InfoListGroup = ({ farmInfo, parcelInfo }) => {
         {getLabel('land_use_translated')}: <span className='font-weight-bold'>{translatedLandCoverCode}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
-        {getLabel('locality')}: <span className='font-weight-bold'>{parcelInfo.HOME_NAME || 'Не е наведено'}</span>
+        {getLabel('locality')}: <span className='font-weight-bold'>{parcelInfo.HOME_NAME || 'N/A'}</span>
       </ListGroupItem>
       <ListGroupItem className='p-2'>
         {getLabel('area')}: <span className='font-weight-bold'>{`${Math.round(Number(parcelInfo.ALLOWED_AREA || parcelInfo.AREA))}${getMeasurementUnit(true)}`}</span>

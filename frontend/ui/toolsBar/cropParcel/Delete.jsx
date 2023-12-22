@@ -2,15 +2,14 @@ import { React, PropTypes, elements } from 'perun-core';
 import { ui, core } from '../../../Spatial';
 import { Guidance } from './Guidance';
 import { deleteCPMsg } from './Config';
-import { loadFarmerAssets } from '../..'
 import { ProcessButton } from '../..';
-import { getFarmPPlanAssets, getMeasurementUnit } from '../../Util';
+import { getFarmPPlanAssets, getLabel, getMeasurementUnit } from '../../Util';
 
 const { Map, store } = core;
 const { Button, Icon, DrawActions, Modal } = ui;
 const _id = 'deleteCP';
 
-const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
+const _Delete = ({ processID }) => {
     const [{ isGuided, layer }, setState] = React.useReducer((currState, update) =>
         ({ ...currState, ...update }), { isGuided: false, layer: {} });
 
@@ -33,7 +32,13 @@ const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
                 } else {
                     disable();
                 }
-            }).catch(err => console.log(err))
+            }).catch(err => {
+                console.error(err)
+                const title = err?.response?.data?.title || err
+                const message = err?.response?.data?.message || ''
+                elements.alertUser(true, 'error', title, message);
+                disable()
+            })
         }
     }
 
@@ -43,51 +48,31 @@ const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
             method: 'post',
             data: JSON.stringify(layer.feature.properties)
         }).then(() => {
-            if (mapId !== 'farm-registry-map') {
-                loadFarmerAssets(core.store.getState().init.token, farmerId);
-            }
             layer.removeFrom(Map);
-            elements.alertUser(true,
-                'success',
-                'Успешно бришење',
-                'Производната парцела е избришана од базата на податоци.');
+            elements.alertUser(true, 'success', getLabel('delete_success'));
             disable()
-        }).catch(() => {
-            elements.alertUser(true,
-                'error',
-                'Грешка при бришење',
-                'Производната парцела не е избришана од базата на податоци.');
+        }).catch((err) => {
+            console.error(err)
+            const title = err?.response?.data?.title || err
+            const message = err?.response?.data?.message || ''
+            elements.alertUser(true, 'error', title, message);
             disable()
         })
     }
 
     const enable = () => {
-        const layers = store.getState().data.layers;
-        let cps = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
-        if (mapId === 'farm-registry-map') {
-            cps = store.getState().farmRegistry?.farmPPlanData;
-        }
-
+        const cps = store.getState().farmRegistry?.farmPPlanData;
         if (cps.length > 0) {
             store.dispatch({ processID: _id });
             setState({ isGuided: true })
-
             cps.forEach(cp => (cp.bringToFront(), cp.on('click', getLayer)))
         } else {
-            elements.alertUser(true,
-                'warning',
-                'Не се пронајдени производни парцели.',
-                'Додадете производни парцели со просторна определба пред да ја користите алатката за бришење.');
+            elements.alertUser(true, 'warning', getLabel('no_crop_parcels_found'), getLabel('add_crop_parcels_before_using_delete_tool'));
         }
     }
 
     const disable = () => {
-        const layers = store.getState().data.layers;
-        let cps = Object.values(layers).filter(layer => layer.getMetadata().type === 'land_use_plan');
-        if (mapId === 'farm-registry-map') {
-            cps = store.getState().farmRegistry?.farmPPlanData;
-        }
-
+        const cps = store.getState().farmRegistry?.farmPPlanData;
         cps.forEach(cp => cp.off('click'))
 
         // Reset state, internal and application-wide.
@@ -96,34 +81,35 @@ const _Delete = ({ processID, mapId, farmerId, farmObjId }) => {
         getFarmPPlanAssets()
     }
 
-    return <ProcessButton id={_id} onClick={() => enable()} >
-        <Icon name={_id} size='30px' />
-        <span style={{ display: 'block', marginTop: '2px' }}>Избриши производна парцела</span>
-        {processID === _id
-            && (isGuided
-                ? <Guidance id={_id} disable={disable} msg={deleteCPMsg} title='Избриши производна парцела' />
-                : <Modal id='measure-dialog'
-                    show
-                    backdrop={false}
-                    enforceFocus={false}
-                    container={document.getElementsByClassName('control-map')[0]} >
-                    <Modal.Title>
-                        <Button disabled className='as-label ap-modal-title' >Избриши производна парцела</Button>
-                        <DrawActions cancel={disable} />
-                    </Modal.Title>
-                    <Modal.Body className='ap-modal-body' >
-                        <div id={_id} >{'Ја избравте производната парцела со ид. број '
-                            + layer.feature.id + ' и површина ' + Math.round(layer.getMeasurement()) + ` ${getMeasurementUnit(true)}. Дали сте сигурни дека сакате да ја избришете?`}</div>
-                        <Button onClick={() => { deleteLayer() }} size='' className='cancel' > Избриши </Button>
-                    </Modal.Body>
-                </Modal>)}
-    </ProcessButton>;
+    return (
+        <ProcessButton id={_id} onClick={() => enable()} >
+            <Icon name={_id} size='30px' />
+            <span style={{ display: 'block', marginTop: '2px' }}>{getLabel('delete_crop_parcel')}</span>
+            {processID === _id
+                && (isGuided
+                    ? <Guidance id={_id} disable={disable} msg={deleteCPMsg} title={getLabel('delete_crop_parcel')} />
+                    : <Modal id='measure-dialog'
+                        show
+                        backdrop={false}
+                        enforceFocus={false}
+                        container={document.getElementsByClassName('control-map')[0]} >
+                        <Modal.Title>
+                            <Button disabled className='as-label ap-modal-title' >{getLabel('delete_crop_parcel')}</Button>
+                            <DrawActions cancel={disable} />
+                        </Modal.Title>
+                        <Modal.Body className='ap-modal-body' >
+                            <div id={_id} >{`${getLabel('delete_crop_parcel_msg_one')} `
+                                + layer.feature.id + ` ${getLabel('delete_crop_parcel_msg_two')} ` + Math.round(layer.getMeasurement()) + ` ${getMeasurementUnit(true)}. `
+                                + ` ${getLabel('delete_crop_parcel_confirmation')} `}</div>
+                            <Button onClick={() => { deleteLayer() }} size='' className='cancel' > {getLabel('delete')} </Button>
+                        </Modal.Body>
+                    </Modal>)}
+        </ProcessButton>
+    );
 };
 
 _Delete.propTypes = {
     processID: PropTypes.string,
-    mapId: PropTypes.string,
-    farmerId: PropTypes.number,
     farmObjId: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number
@@ -131,5 +117,5 @@ _Delete.propTypes = {
 }
 
 export const Delete = core.connect(state => ({
-    mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
+    farmObjId: state.farmRegistry?.farmObjId
 }))(_Delete)

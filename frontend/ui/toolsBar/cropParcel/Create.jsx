@@ -4,8 +4,8 @@ import { config, createCPMsg } from './Config';
 import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
-import { ProcessButton, loadFarmerAssets } from '../..';
-import { bufferToString, getFarmPPlanAssets, isJSON, strcmp } from '../../Util';
+import { ProcessButton } from '../..';
+import { bufferToString, getFarmPPlanAssets, getLabel, isJSON, strcmp } from '../../Util';
 
 const { alertUser } = elements;
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
@@ -18,7 +18,7 @@ const _id = 'createCP';
 /**
  * Create a crop parcel by selecting a single point.
  */
-const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
+const _Create = ({ processID, farmObjId }) => {
     const [{ layer, data, X, Y, enumIdx, enumNames, isGuided, showForm }, setState] = useReducer((currState, update) =>
         ({ ...currState, ...update }),
         { layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
@@ -32,7 +32,7 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
             }),
         }).then(response => {
             if (strcmp(response.data?.type, 'error')) {
-                const title = response.data.title || 'Настана грешка'
+                const title = response.data.title || getLabel('something_went_wrong')
                 const msg = response.data.message || ''
                 alertUser(true, 'error', title, msg, disable)
             } else {
@@ -40,6 +40,9 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
             }
         }).catch(err => {
             console.log(err);
+            const title = err.response?.data?.title || err
+            const msg = err.response?.data?.message || ''
+            alertUser(true, 'error', title, msg)
             disable();
         })
     }
@@ -52,10 +55,7 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
         Map.on('click', e => {
             const p = Map.transform(e.latlng);
             setState({ X: p.x, Y: p.y });
-            let url = `/spatial/geometry/layer/cutoff/{gsaa.token}/AGRI_PARCEL/LAND_USE_PLAN/${p.x}/${p.y}/{gsaa.farmerId}`
-            if (mapId === 'farm-registry-map') {
-                url = `/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/${p.x}/${p.y}/${farmObjId}`
-            }
+            const url = `/spatial/geometry/layer/cutoff/{init.token}/AGRI_PARCEL/LAND_USE_PLAN/${p.x}/${p.y}/${farmObjId}`
             http.call('create_ap', { url, responseType: 'arraybuffer' }).then(response => {
                 const data = geobuf.decode(protobuf(response));
                 const geojson = factory.geoJSON(data, config.pathOptions);
@@ -65,44 +65,17 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
                         // Flatten the geometry array, so utilities can read the thing. god knows why this happens.
                         layer.setLatLngs([...util.flattenDeep(layer.getLatLngs())])
                         layer.addTo(Map);
-                        if (mapId === 'farm-registry-map') {
-                            const landCoverCode = layer.feature.properties.LAND_COVER_CODE
-                            const formData = layer.feature.properties
-                            formData.AREA = Math.round(Number(layer.feature.properties.AREA))
-                            const currentYear = new Date().getFullYear()
-                            const codeListUrl = `/lpis/get/cropList/{init.token}/land_cover/${landCoverCode}/year/${currentYear}/basic/false/otsc/false`
-                            layer.feature.id = 0
-                            getCropList(layer, codeListUrl)
-                            setState({ data: formData, layer: layer })
-                        } else {
-                            // assign metadata
-                            layer.feature.id = 0
-                            layer.feature.properties = { parent_id: farmerId }
-                            setState({ data: layer.feature.properties, layer: layer })
-
-                            const url = '/lpis/get/cropList/{gsaa.token}/{gsaa.farmerId}'
-                            http.call('get_code_list', {
-                                method: 'post', url,
-                                data: JSON.stringify({
-                                    ...data,
-                                    GEOM: factory.GeoJSON.fromLayer(layer)
-                                }),
-                            }).then(response => {
-                                if (strcmp(response.data?.type, 'error')) {
-                                    const title = response.data.title || 'Настана грешка'
-                                    const msg = response.data.message || ''
-                                    alertUser(true, 'error', title, msg, disable)
-                                } else {
-                                    setState({ isGuided: false, showForm: true, enumIdx: response.data.enum || [], enumNames: response.data.enumNames || [] })
-                                }
-                            }).catch(err => {
-                                console.log(err);
-                                disable();
-                            })
-                        }
+                        const landCoverCode = layer.feature.properties.LAND_COVER_CODE
+                        const formData = layer.feature.properties
+                        formData.AREA = Math.round(Number(layer.feature.properties.AREA))
+                        const currentYear = new Date().getFullYear()
+                        const codeListUrl = `/lpis/get/cropList/{init.token}/land_cover/${landCoverCode}/year/${currentYear}/basic/false/otsc/false`
+                        layer.feature.id = 0
+                        getCropList(layer, codeListUrl)
+                        setState({ data: formData, layer: layer })
                     })
                 } else {
-                    alertUser(true, 'info', 'Не се пронајдени податоци')
+                    alertUser(true, 'info', getLabel('no_data_found'))
                     disable()
                 }
             }).catch(err => {
@@ -113,7 +86,7 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
                     const parsedResponse = JSON.parse(stringifiedResponse)
                     msg = parsedResponse?.Label_Code || ''
                 }
-                alertUser(true, 'error', 'Настана грешка', msg)
+                alertUser(true, 'error', getLabel('something_went_wrong'), msg)
                 disable()
             });
 
@@ -129,11 +102,7 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
         // We remove the working geometry, save process will add the result.
         layer.removeFrom && layer.removeFrom(Map);
         // add refresh assets
-        if (mapId === 'farm-registry-map') {
-            getFarmPPlanAssets();
-        } else {
-            loadFarmerAssets();
-        }
+        getFarmPPlanAssets();
     }
 
     const onChange = ({ formData }) =>
@@ -149,13 +118,15 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
         }), disable);
 
     const renderGuideForm = () => {
-        return <Guidance id={_id} disable={disable} msg={createCPMsg} title='Додади производна парцела' />
+        return <Guidance id={_id} disable={disable} msg={createCPMsg} title={getLabel('create_crop_parcel')} />
     }
 
     const renderForm = () => {
-        return <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
-            <DrawActions cancel={disable} />
-        </Form>
+        return (
+            <Form onSubmit={onSubmit} onChange={onChange} formData={data} enumIdx={enumIdx} enumNames={enumNames} >
+                <DrawActions cancel={disable} />
+            </Form>
+        )
     }
 
     const renderComponent = () => {
@@ -170,17 +141,17 @@ const _Create = ({ processID, mapId, farmerId, farmObjId }) => {
         return componentToRender
     }
 
-    return <ProcessButton id={_id} onClick={enable} >
-        <Icon name={_id} size='30px' />
-        <span style={{ display: 'block', marginTop: '2px' }}>Додади производна парцела</span>
-        {processID === _id && renderComponent()}
-    </ProcessButton>;
+    return (
+        <ProcessButton id={_id} onClick={enable} >
+            <Icon name={_id} size='30px' />
+            <span style={{ display: 'block', marginTop: '2px' }}>{getLabel('create_crop_parcel')}</span>
+            {processID === _id && renderComponent()}
+        </ProcessButton>
+    );
 };
 
 _Create.propTypes = {
     processID: PropTypes.string,
-    mapId: PropTypes.string,
-    farmerId: PropTypes.number,
     farmObjId: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number
@@ -188,5 +159,5 @@ _Create.propTypes = {
 }
 
 export const Create = core.connect(state => ({
-    mapId: state.map.id, farmObjId: state.farmRegistry?.farmObjId
+    farmObjId: state.farmRegistry?.farmObjId
 }))(_Create)

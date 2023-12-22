@@ -2,7 +2,7 @@ import { React, elements } from 'perun-core'
 import format from 'date-fns/format'
 import mk from 'date-fns/locale/mk'
 import { core, ui, config as cfg } from '../../Spatial'
-import { getMeasurementUnit, translateBooleanValue, translateLandCoverCode } from '../Util'
+import { getLabel, getMeasurementUnit, translateBooleanValue, translateLandCoverCode } from '../Util'
 import { removeParcelHistoryLayers, truncate } from './Util'
 
 const { MAP_CONFIG } = cfg
@@ -76,15 +76,15 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory, historyEditEnable
                 <td>{properties.OLD_ID}</td>
                 <td>{`${Math.round(Number(properties.ALLOWED_AREA || properties.AREA))} ${getMeasurementUnit(true)}`}</td>
                 <td>{translatedLandCoverCode}</td>
-                <td>{properties.HOME_NAME || 'Не е наведено'}</td>
+                <td>{properties.HOME_NAME || 'N/A'}</td>
                 <td>{translateBooleanValue(properties.COMMON_USE)}</td>
                 <td>{translateBooleanValue(properties.CERTIFICATE_OF_USE)}</td>
                 <td>{Math.round(properties.AREA)} {getMeasurementUnit(true)}</td>
                 <td>
-                  <Button disabled={historyEditEnabled} onClick={() => showGeometry(historyEl)}>Прикажи геометрија</Button>
+                  <Button disabled={historyEditEnabled} onClick={() => showGeometry(historyEl)}>{getLabel('show_geom')}</Button>
                 </td>
                 <td>
-                  <Button disabled={historyEditEnabled} onClick={() => showGeometry(historyEl, true)}>Уреди геометрија</Button>
+                  <Button disabled={historyEditEnabled} onClick={() => showGeometry(historyEl, true)}>{getLabel('edit_geom')}</Button>
                 </td>
               </tr>
             )
@@ -107,7 +107,7 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory, historyEditEnable
 
     return <Modal {...modalProps}>
       <Modal.Title>
-        <Button disabled className='as-label ap-modal-title' >Историја на парцела</Button>
+        <Button disabled className='as-label ap-modal-title' >{getLabel('parcel_history')}</Button>
         <DrawActions cancel={disable} />
       </Modal.Title>
       <Modal.Body className='parcel-history-info-modal-body'>
