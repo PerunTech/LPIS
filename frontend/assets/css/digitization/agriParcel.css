@@ -10,7 +10,7 @@
 #measure-dialog .next {
   color: #3399ff;
   border: 1px solid #3399ff;
-  margin-left: auto;
+  float: right;
 }
 
 #measure-dialog .next:hover:not(.disabled) {
@@ -262,6 +262,10 @@
   padding-left: 18px;
   padding-right: 6px;
   margin-bottom: 8px;
+}
+
+.ap-checks-modal .next {
+  margin-left: auto !important;
 }
 
 .secondary-marker-icon {
