@@ -26,7 +26,7 @@ const _Delete = ({ processID }) => {
       })
     }).then(() => {
       layer.removeFrom(Map);
-      alertUser(true, 'success', `${getLabel('delete_success')}`, `${getLabel('parcel_delete_success')}`);
+      alertUser(true, 'success', `${getLabel('delete_success')}`);
       disable()
     }).catch(() => {
       alertUser(true, 'error', `${getLabel('delete_error')}`, `${getLabel('parcel_delete_error')}`);
