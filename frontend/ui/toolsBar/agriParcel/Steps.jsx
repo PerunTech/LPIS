@@ -1,12 +1,14 @@
 import { React, PropTypes } from 'perun-core';
-import { ui } from '../../../Spatial';
+import { core, ui } from '../../../Spatial';
 import { getLabel, strcmp } from '../../Util'
 
-const { useState } = React;
 const { Form, Button } = ui;
+const { store } = core;
+const { useState } = React;
 
 /* Main Metadata */
 export function Main({ formData, onChange, next, digitizationIsActive }) {
+    const landCoverCodes = store.getState()?.landCoverCodes
     const metadataMain = {
         type: 'agri_parcel',
         namePath: 'options.metadata.schema.properties.parent_id',
@@ -18,25 +20,8 @@ export function Main({ formData, onChange, next, digitizationIsActive }) {
                     default: 0
                 },
                 LAND_COVER_CODE: {
-                    enum: ['200', '210', '300', '310', '320', '400', '410', '420', '421', '422', '423', '430', '490', '500', '600', '900'],
-                    enumNames: [
-                        `${getLabel('land.cover.200')}`,
-                        `${getLabel('land.cover.210')}`,
-                        `${getLabel('land.cover.300')}`,
-                        `${getLabel('land.cover.310')}`,
-                        `${getLabel('land.cover.320')}`,
-                        `${getLabel('land.cover.400')}`,
-                        `${getLabel('land.cover.410')}`,
-                        `${getLabel('land.cover.420')}`,
-                        `${getLabel('land.cover.421')}`,
-                        `${getLabel('land.cover.422')}`,
-                        `${getLabel('land.cover.423')}`,
-                        `${getLabel('land.cover.430')}`,
-                        `${getLabel('land.cover.490')}`,
-                        `${getLabel('land.cover.500')}`,
-                        `${getLabel('land.cover.600')}`,
-                        `${getLabel('land.cover.900')}`,
-                    ],
+                    enum: Object.keys(landCoverCodes),
+                    enumNames: Object.values(landCoverCodes),
                     maxLength: 50,
                     title: `${getLabel('land_use')}`,
                     type: 'string',

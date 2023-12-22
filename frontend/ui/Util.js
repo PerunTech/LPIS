@@ -544,6 +544,27 @@ export const getLayers = () => {
 }
 
 /**
+ * Get all land cover codes
+ */
+export const getLandCoverCodes = () => {
+    const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
+    http.call('get-land-cover-codes', {
+        url: `${window.server}/ReactElements/getTableWithFilter/${token}/SVAROG_CODES/PARENT_CODE_VALUE/LAND_COVER/0`
+    }).then(res => {
+        const landCoverCodes = {}
+        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+            res.data.forEach(code => {
+                Reflect.set(landCoverCodes, code['SVAROG_CODES.CODE_VALUE'], code['SVAROG_CODES.LABEL_CODE'])
+            })
+        }
+        store.addState('landCoverCodes', landCoverCodes)
+    }).catch(err => {
+        console.error(err)
+        store.addState('landCoverCodes', {})
+    })
+}
+
+/**
  * Get information about a WMS feature
  * @param  {object} params An object containing all of the parameters needed to get info about a feature
  */
