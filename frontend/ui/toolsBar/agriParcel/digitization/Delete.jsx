@@ -1,6 +1,5 @@
 import { React, elements } from 'perun-core';
 import { core, ui } from '../../../../Spatial';
-import { deleteAPMsg } from '../Config';
 import { getFarmMapAssets, getLabel, getMeasurementUnit } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
