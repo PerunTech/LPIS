@@ -51,3 +51,7 @@
 #lpis-map .leaflet-control-layers-group {
   margin-top: 0.5rem !important;
 }
+
+.leaflet-control-layers-toggle {
+  visibility: hidden;
+}
