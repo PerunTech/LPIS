@@ -438,7 +438,7 @@ const _Rows = ({ rows, pplanRows, selectedParcelId, actionType, cadIntersectionR
       <div className='container' key={id} id={id}>
         <ButtonGroup className={rowClassNames.join('')} style={{ marginLeft: '0.15rem' }} key={`${id}_${i + 1}`} onClick={() => onRowClick(id)}>
           <Button className={indexColumnClassNames.join('')} title={indexColumnTitle} />
-          <Button className='fr-data-grid-column'>{rowData.OLD_ID}</Button>
+          <Button className='fr-data-grid-column'>{rowData.OLD_ID || '/'}</Button>
           <Button className='fr-data-grid-column'>{rowData.LAND_COVER_CODE}</Button>
           <Button className='fr-data-grid-column'>{Math.round(Number(rowData.ALLOWED_AREA || rowData.AREA)) + ` ${unit}`}</Button>
           <Button className='fr-data-grid-column' title={homeName}>{homeName}</Button>
