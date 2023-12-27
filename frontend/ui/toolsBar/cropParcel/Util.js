@@ -4,28 +4,38 @@ import { config as apConfig } from '../agriParcel/Config';
 import { setLoadedPhysicalBlockLabel } from '../physicalBlock/Config';
 import { config as cpConfig } from './Config';
 import { crop_codes_desc, crop_codes_idx } from './Crop_Codes';
+import { strcmp } from '../../Util';
 
 const { http, factory, store, Map } = core;
 const { geobuf, protobuf } = data;
 const { MIN_DIGI_SCALE } = spatialConfig;
 
-export function loadFarmerAssets (token, id, zoom = false, msg = false) {
+export const cleanupWorkingCropParcelLayers = () => {
+    Map.eachLayer(function (layer) {
+        if (!!layer.toGeoJSON) {
+            if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'WORKING_CROP_PARCEL_LAYER')) {
+                Map.removeLayer(layer);
+            }
+        }
+    });
+}
+
+export function loadFarmerAssets(token, id, zoom = false, msg = false) {
     // remove all layers
     const layers = store.getState().data.layers;
     Object.values(layers).forEach(layer => layer.removeFrom(Map));
 
-    store.dispatch({pauseGrid: true})
+    store.dispatch({ pauseGrid: true })
 
     http.call('getFarmerAssets', {
-        url: '/lpis/get/farmerAssets/' 
-            + (token ? String(token) : '{gsaa.token}') + '/' 
-            + (id ? Number(id) : '{gsaa.farmerId}') 
+        url: '/lpis/get/farmerAssets/'
+            + (token ? String(token) : '{gsaa.token}') + '/'
+            + (id ? Number(id) : '{gsaa.farmerId}')
             + '/AGRI_PARCEL',
         method: 'get',
         baseURL: window.server,
         responseType: 'arraybuffer'
-    })
-    .then(response => {
+    }).then(response => {
         const data = geobuf.decode(protobuf(response));
         const geojson = factory.geoJSON(data, apConfig.pathOptions);
         const layers = geojson.getLayers();
@@ -33,7 +43,7 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
         layers.forEach(layer => layer.addTo(Map));
 
         // If init calls us and agri data is found, zoom to the first parcel.
-        zoom && layers.length > 0 &&  Map.fitBounds(layers[0].getBounds());
+        zoom && layers.length > 0 && Map.fitBounds(layers[0].getBounds());
 
         layers.forEach(layer => {
             setAPLabel(layer)
@@ -41,19 +51,17 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
                 // console.log(e) add popup with cad parcels
             })
         });
-    })
-    .catch(err => console.log(err))
+    }).catch(err => console.log(err))
 
     http.call('getFarmerAssets', {
-        url: '/lpis/get/farmerAssets/' 
-            + (token ? String(token) : '{gsaa.token}') + '/' 
-            + (id ? Number(id) : '{gsaa.farmerId}') 
+        url: '/lpis/get/farmerAssets/'
+            + (token ? String(token) : '{gsaa.token}') + '/'
+            + (id ? Number(id) : '{gsaa.farmerId}')
             + '/LAND_USE_PLAN',
         method: 'get',
         baseURL: window.server,
         responseType: 'arraybuffer'
-    })
-    .then(response => {
+    }).then(response => {
         const data = geobuf.decode(protobuf(response));
         const geojson = factory.geoJSON(data, cpConfig.pathOptions);
         const layers = geojson.getLayers();
@@ -65,11 +73,10 @@ export function loadFarmerAssets (token, id, zoom = false, msg = false) {
         });
 
         msg && elements.alertUser(true, 'success', 'Парцелите се успешно освежени.')
-        store.dispatch({pauseGrid: false});
-    })
-    .catch(err => {
+        store.dispatch({ pauseGrid: false });
+    }).catch(err => {
         console.log(err);
-        store.dispatch({pauseGrid: false});
+        store.dispatch({ pauseGrid: false });
     })
 }
 
@@ -80,27 +87,28 @@ export const getCropLabel = idx => {
             return idx < 0 ? false : idx + 1;
         },
         isLatin = str.match(/[a-z]/i),
-        startIdx = isLatin 
+        startIdx = isLatin
             ? getLastIdx('–') || getLastIdx('-') || 0
             : 0,
-        endIdx = isLatin 
+        endIdx = isLatin
             ? getLastIdx('(', startIdx + 1) || getLastIdx('-', startIdx + 1) || getLastIdx('–', startIdx + 1) || str.length
             : getLastIdx('(') || getLastIdx('-') || getLastIdx('–') || str.length;
-    
+
     return str.substring(startIdx, endIdx);
 }
 
 export const setCPLabel = cp => {
     const cnt = cp.feature.properties.CENTROID;
-    const latLng = cnt 
+    const latLng = cnt
         ? Map.untransform(cnt.substring(cnt.indexOf('(') + 1, cnt.indexOf(')')).split(' ').map(s => Number(s)))
         : null;
 
     // add tooltip
-    cp.bindTooltip( getCropLabel(cp.feature.properties.CROP_CODE), {
-        direction: 'bottom', 
+    cp.bindTooltip(getCropLabel(cp.feature.properties.CROP_CODE), {
+        direction: 'bottom',
         offset: [0, 10],
-        permanent: true })
+        permanent: true
+    })
     cp.openTooltip(latLng);
 
     return cp;
@@ -158,18 +166,18 @@ export const setCadParcelLabel = cadParcel => {
     const cadParcelId = cadParcel.feature.properties.GR_PARCEL || cadParcel.feature.properties.ID || '';
     const cnt = String(cadParcel.feature.properties.CENTROID);
     const latLng = Map.untransform(cnt.substring(cnt.indexOf('(') + 1, cnt.indexOf(')')).split(' ').map(s => Number(s)))
-    
+
     cadParcel.bindTooltip(String(cadParcelId), { direction: 'center', permanent: true });
     cadParcel.openTooltip(latLng);
-  
+
     return cadParcel;
 }
 
 /* Map event listener for label render */
 let lastZoom = MIN_DIGI_SCALE;
-Map.on('zoomend', ({target}) => {
+Map.on('zoomend', ({ target }) => {
     // Moved inside in zoom range, show label
-    (target.getZoom() >= MIN_DIGI_SCALE && lastZoom < MIN_DIGI_SCALE) 
+    (target.getZoom() >= MIN_DIGI_SCALE && lastZoom < MIN_DIGI_SCALE)
         && target.eachLayer(layer => {
             if (layer.feature && layer.feature.properties) {
                 // Check if the layer has a tooltip bound to it already & unbind the tooltip if it does
@@ -188,10 +196,10 @@ Map.on('zoomend', ({target}) => {
         });
 
     // Moved outside of zoom range, hide label
-    (target.getZoom() < MIN_DIGI_SCALE && lastZoom >= MIN_DIGI_SCALE) 
+    (target.getZoom() < MIN_DIGI_SCALE && lastZoom >= MIN_DIGI_SCALE)
         && target.eachLayer(layer => layer.unbindTooltip());
 
     lastZoom = target.getZoom();
-}) 
+})
 
-store.addState('gsaa', { pauseGrid: false})
+store.addState('gsaa', { pauseGrid: false })

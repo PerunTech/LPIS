@@ -6,6 +6,7 @@ import { Guidance } from './Guidance';
 import { saveCP } from './Save';
 import { ProcessButton } from '../..';
 import { bufferToString, getFarmPPlanAssets, getLabel, isJSON, strcmp } from '../../Util';
+import { cleanupWorkingCropParcelLayers } from './Util';
 
 const { alertUser } = elements;
 const { MIN_DIGI_SCALE, MAP_CONFIG } = cfg;
@@ -68,6 +69,7 @@ const _Create = ({ processID, farmObjId }) => {
                         const landCoverCode = layer.feature.properties.LAND_COVER_CODE
                         const formData = layer.feature.properties
                         formData.AREA = Math.round(Number(layer.feature.properties.AREA))
+                        formData.DESCRIPTOR = 'WORKING_CROP_PARCEL_LAYER'
                         const currentYear = new Date().getFullYear()
                         const codeListUrl = `/lpis/get/cropList/{init.token}/land_cover/${landCoverCode}/year/${currentYear}/basic/false/otsc/false`
                         layer.feature.id = 0
@@ -99,8 +101,8 @@ const _Create = ({ processID, farmObjId }) => {
         // Reset state, internal and application-wide.
         setState({ layer: {}, data: {}, X: 0, Y: 0, enumIdx: [], enumNames: [], isGuided: false, showForm: false });
         store.dispatch({ processID: '', minZoom: MAP_CONFIG.minZoom });
-        // We remove the working geometry, save process will add the result.
-        layer.removeFrom && layer.removeFrom(Map);
+        // Clean-up the working geometry
+        cleanupWorkingCropParcelLayers()
         // add refresh assets
         getFarmPPlanAssets();
     }
