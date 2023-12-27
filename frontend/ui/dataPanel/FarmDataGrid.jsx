@@ -343,11 +343,11 @@ const _ExpandedRow = ({ id, rowData, unit, actionType, pplanRows, cadIntersectio
             {getLabel('slope_avg')}: <span className='font-weight-bold'>{rowData.SLOPE_AVG}</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
-            {getLabel('z_avg')}: <span className='font-weight-bold'>{Math.round(rowData.Z_AVG)} m</span>
+            {getLabel('z_avg')}: <span className='font-weight-bold'>{Math.round(rowData.Z_AVG || 0)} m</span>
           </ListGroupItem>
           <ListGroupItem className='p-1'>
             {getLabel('eligibility_coef')}:
-            <ProgressBar now={rowData.ELIGIBILITY_COEF} label={`${rowData.ELIGIBILITY_COEF}%`} />
+            <ProgressBar now={rowData.ELIGIBILITY_COEF || 0} label={`${rowData.ELIGIBILITY_COEF || 0}%`} />
           </ListGroupItem>
           <ListGroupItem className='p-1'>
             {getLabel('organic')}: <span className='font-weight-bold'>{translateBooleanValue(rowData.ORGANIC)}</span>
