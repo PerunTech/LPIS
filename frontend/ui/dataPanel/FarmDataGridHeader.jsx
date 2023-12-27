@@ -12,7 +12,7 @@ export const FarmDataGridHeader = ({ gridType }) => {
       `${getLabel('class')}`,
       `${getLabel('area')}`,
       `${getLabel('locality')}`,
-      `${getLabel('locality')}`,
+      `${getLabel('common_use')}`,
       `${getLabel('right_of_use')}`,
       ''
     ]
