@@ -106,7 +106,7 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
                             </Button>
                             <Button
                                 onClick={handleBack}
-                                className='toolbar-left-button'
+                                className='toolbar-left-button toolbar-left-back-button'
                                 title={getLabel('back')}>
                                 <Icon name='back' size='18px' style={{ fill: '#3a3a3a' }} />
                             </Button>
