@@ -2,7 +2,7 @@ import { React, PropTypes, elements } from 'perun-core';
 import { core, data, ui } from '../../Spatial';
 import { ParcelHistory } from './ParcelHistory';
 import { getCropLabel } from '../toolsBar/cropParcel/Util';
-import { getLabel, getMeasurementUnit, strcmp, translateBooleanValue } from '../Util';
+import { bufferToString, getLabel, getMeasurementUnit, isJSON, strcmp, translateBooleanValue } from '../Util';
 import { parcelHistoryConfig } from '../toolsBar/agriParcel/Config';
 import { removeParcelHistoryLayers } from './Util';
 
@@ -35,8 +35,14 @@ const getParcelHistory = (e, parcelId, callback) => {
     }
   }).catch(err => {
     console.error(err)
-    const title = err.response?.data?.title || err
-    const message = err.response?.data?.message || ''
+    let title = err
+    let message = ''
+    const stringfiedResponse = bufferToString(err.response.data)
+    if (isJSON(stringfiedResponse)) {
+      const response = JSON.parse(stringfiedResponse)
+      title = response?.title || err
+      message = response?.message || ''
+    }
     alertUser(true, 'error', title, message)
   })
 }
