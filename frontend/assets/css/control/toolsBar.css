@@ -116,3 +116,11 @@
 .toolsbar-directly-accessed .tab-content .tab-pane.active .btn-group {
   margin-left: 0.5rem !important;
 }
+
+.toolbar-left-home-button {
+  display: none;
+}
+
+.toolbar-left-back-button {
+  width: 100% !important;
+}
