@@ -434,7 +434,6 @@ public class ApplicationServices {
 
 	private static final Logger log = LogManager.getLogger(ApplicationServices.class.getName());
 
-
 	@Path("/save/physicalBlock/{token}/{objectId}")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -1519,6 +1518,7 @@ public class ApplicationServices {
 				if (dbo != null)
 					landCover = Integer.parseInt((String) dbo.getVal("LAND_COVER_CODE"));
 			}
+			String cropListExecutor = SvParameter.getSysParam("CROP_LIST_EXECUTOR_NAME", "LAND_USE.GET_LAND_USE_CODES");
 
 			Map<String, Object> params = new HashMap<>();
 			params.put("year", year);
@@ -1526,10 +1526,10 @@ public class ApplicationServices {
 			params.put("includeOnlyBasic", includeOnlyBasic);
 			params.put("includeOtscCrops", includeOtscCrops);
 
-			json = (JsonObject) svx.execute("LAND_USE.GET_LAND_USE_CODES", params, null);
+			json = (JsonObject) svx.execute(cropListExecutor, params, null);
 
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, "Системска Грешка");
+			return PerunUtil.handleException(e, "Системска Грешка");
 
 		}
 
