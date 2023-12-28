@@ -35,7 +35,9 @@ const getParcelHistory = (e, parcelId, callback) => {
     }
   }).catch(err => {
     console.error(err)
-    alertUser(true, 'info', getLabel('no_parcel_history_data_found'))
+    const title = err.response?.data?.title || err
+    const message = err.response?.data?.message || ''
+    alertUser(true, 'error', title, message)
   })
 }
 
