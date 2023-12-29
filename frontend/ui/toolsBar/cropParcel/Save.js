@@ -39,5 +39,11 @@ export const saveCP = (data, callback) => {
             elements.alertUser(true, 'success', getLabel('successfully_saved'))
         }
         callback();
-    }).catch(err => (callback(), console.log(err)))
+    }).catch(err => {
+        console.error(err)
+        const title = err.response?.data?.title || err
+        const message = err.response?.data?.message || ''
+        elements.alertUser(true, 'error', title, message)
+        callback()
+    })
 };
