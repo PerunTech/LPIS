@@ -17,7 +17,7 @@ export function Form({ formData, onSubmit, onChange, children, enumIdx, enumName
                     enumNames: Object.values(cropCodes),
                     title: `${getLabel('crop')}`,
                     type: 'number',
-                    default: -1
+                    default: enumIdx[0],
                 },
                 AREA: {
                     title: `${getLabel('area')}`,
