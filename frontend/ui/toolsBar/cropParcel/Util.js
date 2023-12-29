@@ -3,7 +3,6 @@ import { core, data, config as spatialConfig } from '../../../Spatial';
 import { config as apConfig } from '../agriParcel/Config';
 import { setLoadedPhysicalBlockLabel } from '../physicalBlock/Config';
 import { config as cpConfig } from './Config';
-import { crop_codes_desc, crop_codes_idx } from './Crop_Codes';
 import { strcmp } from '../../Util';
 
 const { http, factory, store, Map } = core;
@@ -81,8 +80,11 @@ export function loadFarmerAssets(token, id, zoom = false, msg = false) {
 }
 
 export const getCropLabel = idx => {
+    const cropCodes = store.getState()?.cropCodes
+    const cropCodesDesc = Object.values(cropCodes)
+    const cropCodesIdx = Object.keys(cropCodes).map(k => Number(k))
     let cropLabel = ''
-    const str = String(crop_codes_desc[crop_codes_idx.findIndex(val => val === idx)]),
+    const str = String(cropCodesDesc[cropCodesIdx.findIndex(val => val === idx)]),
         getLastIdx = (char, pos) => {
             const idx = str.indexOf(char, pos)
             return idx < 0 ? false : idx + 1;

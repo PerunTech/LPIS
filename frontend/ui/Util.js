@@ -565,6 +565,27 @@ export const getLandCoverCodes = () => {
 }
 
 /**
+ * Get all crop codes
+ */
+export const getCropCodes = () => {
+    const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
+    http.call('get-crop-codes', {
+        url: `${window.server}/ReactElements/getTableWithFilter/${token}/SVAROG_CODES/PARENT_CODE_VALUE/CROP_CODE/0`
+    }).then(res => {
+        const cropCodes = {}
+        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+            res.data.forEach(code => {
+                Reflect.set(cropCodes, code['SVAROG_CODES.CODE_VALUE'], code['SVAROG_CODES.LABEL_CODE'])
+            })
+        }
+        store.addState('cropCodes', cropCodes)
+    }).catch(err => {
+        console.error(err)
+        store.addState('cropCodes', {})
+    })
+}
+
+/**
  * Get information about a WMS feature
  * @param  {object} params An object containing all of the parameters needed to get info about a feature
  */

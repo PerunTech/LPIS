@@ -1,19 +1,20 @@
 import { React, PropTypes } from 'perun-core';
-import { ui } from '../../../Spatial';
+import { ui, core } from '../../../Spatial';
 import { getLabel } from '../../Util';
-import { crop_codes_idx, crop_codes_desc } from './Crop_Codes';
 
 const { Button, Modal } = ui;
+const { store } = core;
 
 export function Form({ formData, onSubmit, onChange, children, enumIdx, enumNames }) {
+    const cropCodes = store.getState()?.cropCodes
     const metadata = {
         type: 'land_use_plan',
         namePath: 'feature.properties.parent_id',
         schema: {
             properties: {
                 CROP_CODE: {
-                    enum: crop_codes_idx,
-                    enumNames: crop_codes_desc,
+                    enum: Object.keys(cropCodes),
+                    enumNames: Object.values(cropCodes),
                     title: `${getLabel('crop')}`,
                     type: 'number',
                     default: -1
