@@ -5,75 +5,76 @@ import { crop_codes_idx, crop_codes_desc } from './Crop_Codes';
 
 const { Button, Modal } = ui;
 
-const metadata = {
-    type: 'land_use_plan',
-    namePath: 'feature.properties.parent_id',
-    schema: {
-        properties: {
-            CROP_CODE: {
-                enum: crop_codes_idx,
-                enumNames: crop_codes_desc,
-                title: `${getLabel('crop')}`,
-                type: 'number',
-                default: -1
-            },
-            AREA: {
-                title: `${getLabel('area')}`,
-                type: 'number',
-                default: 0
-            },
-            NUMBER_PLANTS: {
-                title: `${getLabel('number_of_plants')}`,
-                type: 'number',
-            },
-            IS_ORGANIC: {
-                title: `${getLabel('organic')}`,
-                type: 'boolean',
-                default: false
-            },
-        },
-        /*required: ['CROP_CODE'],*/
-        'type': 'object',
-    },
-    uiSchema: {
-        AREA: { 'ui:disabled': true },
-    }
-}
-
 export function Form({ formData, onSubmit, onChange, children, enumIdx, enumNames }) {
+    const metadata = {
+        type: 'land_use_plan',
+        namePath: 'feature.properties.parent_id',
+        schema: {
+            properties: {
+                CROP_CODE: {
+                    enum: crop_codes_idx,
+                    enumNames: crop_codes_desc,
+                    title: `${getLabel('crop')}`,
+                    type: 'number',
+                    default: -1
+                },
+                AREA: {
+                    title: `${getLabel('area')}`,
+                    type: 'number',
+                    default: 0
+                },
+                NUMBER_PLANTS: {
+                    title: `${getLabel('number_of_plants')}`,
+                    type: 'number',
+                },
+                IS_ORGANIC: {
+                    title: `${getLabel('organic')}`,
+                    type: 'boolean',
+                    default: false
+                },
+            },
+            /*required: ['CROP_CODE'],*/
+            'type': 'object',
+        },
+        uiSchema: {
+            AREA: { 'ui:disabled': true },
+        }
+    }
+
     const getSchema = () => {
         const cfg = metadata.schema
         const cropCode = { ...cfg.properties.CROP_CODE }
-        cropCode.enum = [-1, ...enumIdx];
-        cropCode.enumNames = [getLabel('choose'), ...enumNames];
-        cropCode.default = -1// enumIdx[0] || 0
+        cropCode.enum = ['', ...enumIdx];
+        cropCode.enumNames = ['', ...enumNames];
         cfg.properties.CROP_CODE = cropCode
 
         return { ...cfg }
     }
 
-    return <Modal id='measure-dialog'
-        show
-        backdrop={false}
-        enforceFocus={false}
-        container={document.getElementsByClassName('control-map')[0]} >
-        <Modal.Title>
-            <Button disabled className='as-label ap-modal-title' >{getLabel('crop_parcel')}</Button>
-            {children}
-        </Modal.Title>
-        <Modal.Body className='ap-modal-body cp-modal-body' >
-            <ui.Form
-                schema={getSchema()}
-                uiSchema={metadata.uiSchema}
-                formData={formData}
-                onSubmit={onSubmit}
-                onChange={onChange} >
-                <Button type='submit' size='' className='save-pb' >
-                    {getLabel('save')}
-                </Button>
-            </ui.Form>
-        </Modal.Body>
-    </Modal>;
+    return (
+        <Modal id='measure-dialog'
+            show
+            backdrop={false}
+            enforceFocus={false}
+            container={document.getElementsByClassName('control-map')[0]} >
+            <Modal.Title>
+                <Button disabled className='as-label ap-modal-title' >{getLabel('crop_parcel')}</Button>
+                {children}
+            </Modal.Title>
+            <Modal.Body className='ap-modal-body cp-modal-body' >
+                <ui.Form
+                    schema={getSchema()}
+                    uiSchema={metadata.uiSchema}
+                    formData={formData}
+                    onSubmit={onSubmit}
+                    onChange={onChange} >
+                    <Button type='submit' size='' className='save-pb' >
+                        {getLabel('save')}
+                    </Button>
+                </ui.Form>
+            </Modal.Body>
+        </Modal>
+    );
 }
 
 Form.propTypes = {
