@@ -202,7 +202,7 @@ const _PplanDataGrid = ({ el, rowData }) => {
   return <ButtonGroup className='data-grid-row' key={id + measurement} >
     <Button disabled className='data-grid-index' />
     <Button disabled className='data-grid-column' >{id}</Button>
-    <Button disabled className='data-grid-column' >{code}</Button>
+    <Button disabled className='data-grid-column' title={code}>{code}</Button>
     <Button disabled className='data-grid-column' >{measurement + ' ' + unit}</Button>
     <Button disabled className='data-grid-column' >{nPlants}</Button>
     <Button className='data-grid-util' onClick={() => Map.fitBounds(el.getBounds())} title={getLabel('zoom_crop_parcel')}>
@@ -211,7 +211,7 @@ const _PplanDataGrid = ({ el, rowData }) => {
     <Button className='data-grid-util' onClick={() => {
       toggleAssetFromMap(el.getId(), descriptor)
       setOpen(!isOpen)
-    }} title='Прикажи/скриј производна парцела'>
+    }} title={getLabel('toggle_parcel_from_map')}>
       <Icon name={getParcelVisibleIcon(el.getId(), descriptor)} size='16px' />
     </Button>
   </ButtonGroup>
