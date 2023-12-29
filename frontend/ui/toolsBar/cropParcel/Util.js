@@ -81,6 +81,7 @@ export function loadFarmerAssets(token, id, zoom = false, msg = false) {
 }
 
 export const getCropLabel = idx => {
+    let cropLabel = ''
     const str = String(crop_codes_desc[crop_codes_idx.findIndex(val => val === idx)]),
         getLastIdx = (char, pos) => {
             const idx = str.indexOf(char, pos)
@@ -94,7 +95,11 @@ export const getCropLabel = idx => {
             ? getLastIdx('(', startIdx + 1) || getLastIdx('-', startIdx + 1) || getLastIdx('–', startIdx + 1) || str.length
             : getLastIdx('(') || getLastIdx('-') || getLastIdx('–') || str.length;
 
-    return str.substring(startIdx, endIdx);
+
+    if (!strcmp(str.substring(startIdx, endIdx), 'undefined')) {
+        cropLabel = str.substring(startIdx, endIdx)
+    }
+    return cropLabel;
 }
 
 export const setCPLabel = cp => {

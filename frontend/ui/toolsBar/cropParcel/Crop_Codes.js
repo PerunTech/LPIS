@@ -1,17 +1,25 @@
 export const crop_codes_idx = [
-    20005,
-    20004,
-    20003,
-    20002,
     20001,
-    20006
+    20006,
+    20002,
+    20004,
+    21001,
+    20003,
+    20005,
+    30001,
+    90001,
+    40001
 ]
 
 export const crop_codes_desc = [
-    'Other arable crops',
-    'Fresh vegetables',
-    'Industrial crops',
-    'Fodder crops',
     'Cereals crops',
-    'Fallow land '
+    'Fallow land ',
+    'Fodder crops',
+    'Fresh vegetables',
+    'Greenhouses',
+    'Industrial crops',
+    'Other arable crops',
+    'Pastures & Meadows',
+    'Unutilized',
+    'Vineyards'
 ]
