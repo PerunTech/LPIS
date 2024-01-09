@@ -70,6 +70,7 @@
 #measure-dialog .modal-body #deleteCP {
     text-align: left;
     padding: 0.5rem;
+    word-break: break-word;
 }
 
 #measure-dialog .modal-body #deleteCP div {
