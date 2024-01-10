@@ -362,7 +362,7 @@ const _GSAARows = ({ rows }) => {
             if (props.AGRI_PARCEL_ID === undefined) return null; // if crop parcel is not a db row, exit.
 
             const id = getAgriNum(props.AGRI_PARCEL_ID),
-                code = getCropLabel(props.CROP_CODE), // crop_codes_desc[crop_codes_idx.findIndex(val => val === props.CROP_CODE)],
+                code = getCropLabel(props.CROP_CODE),
                 measurement = Math.round(props.AREA),
                 unit = getMeasurementUnit(true),
                 nPlants = props.NUMBER_PLANTS;
