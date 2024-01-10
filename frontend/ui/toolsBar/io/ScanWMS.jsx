@@ -113,9 +113,7 @@ const _ScanWMS = ({ processID, farmObjId }) => {
         <Modal.Body className='ap-modal-body scan-wms-modal-body'>
           <div className='m-2'>
             {showInfoMsg && (
-              <p className='mb-2' style={{ fontSize: 'larger' }}>
-                Select a source layer from the list below and click on the map to get info about it, if it exists
-              </p>
+              <p className='mb-2' style={{ fontSize: 'larger' }}>{getLabel('scan_wms_guide')}</p>
             )}
             <form className='mt-3' onSubmit={onSubmit} onChange={onChange}>
               <div className='form-group'>
