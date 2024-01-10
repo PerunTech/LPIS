@@ -45,7 +45,6 @@ export const config = {
         opacity: 0.9,
         fillOpacity: 0.25,
         // showMeasurements: true,
-        metadata: metadata
     }
 };
 export const createCPMsg = [
