@@ -63,13 +63,13 @@ const _Line = ({ processID }) => {
     })
     http.call('save_lf', { data, url, method: 'post', responseType: 'arraybuffer' }).then(() => {
       disable();
-      alertUser(true, 'success', 'Успешно зачувување', 'Пејсажните обележја се запишани во базата на податоци.')
+      alertUser(true, 'success', getLabel('successfully_saved'), getLabel('successfully_saved_landscape_features'))
     }).catch((error) => {
       const { response } = error
       const errorMsg = decodeResponse(response, 'landscape_features')
       layer.removeFrom(Map);
       disable();
-      alertUser(true, 'error', 'Грешка при зачувување', errorMsg)
+      alertUser(true, 'error', getLabel('something_went_wrong'), errorMsg)
     })
   }
 
