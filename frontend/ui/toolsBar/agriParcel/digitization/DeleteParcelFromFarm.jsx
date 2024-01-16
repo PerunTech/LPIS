@@ -1,6 +1,5 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui } from '../../../../Spatial';
-import { deleteAPFromFarmMsg } from '../Config';
 import { getFarmMapAssets, getLabel, getMeasurementUnit } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
@@ -58,7 +57,7 @@ const _DeleteParcelFromFarm = ({ processID, farmObjId }) => {
   };
 
   const renderGuideForm = () => {
-    return <Guidance id={_processID} disable={disable} msg={deleteAPFromFarmMsg} title={getLabel('remove_parcel_from_farm')} />
+    return <Guidance id={_processID} disable={disable} msg={['', '']} title={getLabel('remove_parcel_from_farm')} />
   }
 
   const renderModal = () => {
