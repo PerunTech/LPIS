@@ -100,7 +100,7 @@ const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
             </div>
             <div className='m-2'>
               <form onSubmit={onSubmit}>
-                <label htmlFor='layerName'>Layer name</label>
+                <label htmlFor='layerName'>{getLabel('layer_name')}</label>
                 <select name='layerName' id='layerName' className='form-control' required value={layerName} onChange={(e) => setState({ layerName: e.target.value })}>
                   <option value='' />
                   {Object.keys(systemLayers).map((systemLayer, i) => (
