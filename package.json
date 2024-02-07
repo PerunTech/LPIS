@@ -24,9 +24,9 @@
         "file-saver": "^2.0.5",
         "jszip": "^3.10.1",
         "nanoid": "^5.0.2",
-        "perun-core": "git+https://git@gitlab.prtech.mk/perunv3/perun-core#dev",
+        "perun-core": "git+https://git@gitlab.prtech.mk/svarog4/perun-core#dev",
         "shpjs": "^4.0.4",
-        "spatial": "git+https://git@gitlab.prtech.mk/perunv3/spatial#dev"
+        "spatial": "git+https://git@gitlab.prtech.mk/svarog4/svarog-spatial#dev"
     },
     "devDependencies": {
         "@babel/core": "^7.23.9",
