@@ -1,4 +1,4 @@
-import { name, version, description } from '../package.json';
+import pkg from '../package.json';
 // Import all assets
 import './assets';
 // Import all publishable modules.
@@ -11,6 +11,9 @@ getGeoTypeLayers();
 getLayers();
 getDbCRS();
 
+const name = pkg.name
+const version = pkg.version
+const description = pkg.description
 export const lpis = {
     name,
     version,
