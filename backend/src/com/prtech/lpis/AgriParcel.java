@@ -866,6 +866,20 @@ public class AgriParcel {
 
 	}
 
+	DbDataArray getAssetsList(SvCore svc, Long objectId, String typeName, int year) throws SvException {
+		DbDataArray dbArr = new DbDataArray();
+		try (SvReader svr = new SvReader(svc)) {
+			// Filter for campaign year and geometry not null, when cp is requested.
+
+			svr.setIncludeGeometries(true);
+			dbArr = svr.getObjectsByParentId(objectId, SvCore.getTypeIdByName(typeName), null);
+
+		}
+		return dbArr;
+
+	}
+	
+	
 	DbDataObject getOverlapDbo(DbDataArray existingOverlaps, DbDataObject agriParcel, DbDataObject relatedParcel)
 			throws SvException {
 		DbDataObject overlapDbo = null;
