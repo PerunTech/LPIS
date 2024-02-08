@@ -850,7 +850,7 @@ public class DbInit implements IDbInit {
 
 	public static DbDataTable createCadIntersection() {
 		DbDataTable dbt = new DbDataTable();
-		dbt.setDbTableName("АP_CAD_INTERSECTIONS");
+		dbt.setDbTableName(CC.LP_CAD_INTERSECTIONS);
 		dbt.setDbRepoName(CONST_MASTER_REPO);
 		dbt.setDbSchema(CONST_DEFAULT_SCHEMA);
 		dbt.setIsSystemTable(false);

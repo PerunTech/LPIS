@@ -44,7 +44,7 @@ import org.json.simple.JSONObject;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.prtech.perun.PerunUtil;
-import com.prtech.perun_core.ws.Rc;
+import com.prtech.perun.services.ws.Rc;
 import com.prtech.spatial.SC;
 import com.prtech.spatial.SpatialUtil;
 import com.prtech.spatial.WFSReader;
@@ -244,7 +244,7 @@ public class ApplicationServices {
 			}
 
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
+			return com.prtech.perun.services.ws.Util.handleException(e, jrh, token);
 		}
 		jrh.create(MessageType.ERROR, "operation.in.progress", "operation.in.progress", ja);
 		return Response.ok().entity(jrh.getAll().toString()).build();
@@ -264,7 +264,7 @@ public class ApplicationServices {
 			DbDataArray dba = getTaskParcels(dt, svr);
 			result.setItems(dba.getItems());
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
+			return com.prtech.perun.services.ws.Util.handleException(e, jrh, token);
 		}
 
 		StreamingOutput pbfStream = new StreamingOutput() {
@@ -288,7 +288,7 @@ public class ApplicationServices {
 			DbDataArray dba = getSampleParcels(sampleId, svr);
 			result.setItems(dba.getItems());
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
+			return com.prtech.perun.services.ws.Util.handleException(e, jrh, token);
 		}
 
 		StreamingOutput pbfStream = new StreamingOutput() {
@@ -318,7 +318,7 @@ public class ApplicationServices {
 			}
 			result.setItems(results);
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, jrh, token);
+			return com.prtech.perun.services.ws.Util.handleException(e, jrh, token);
 		}
 
 		StreamingOutput pbfStream = new StreamingOutput() {
@@ -875,7 +875,7 @@ public class ApplicationServices {
 		try (SvReader svr = new SvReader(token)) {
 			result.setItems(new AgriParcel().searchParcelBySIZP(svr, sizpId).getItems());
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.search_parcel");
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.search_parcel");
 		}
 
 		if (!result.isEmpty()) {
@@ -918,7 +918,7 @@ public class ApplicationServices {
 			}
 			result.getItems().addAll(dbArray.getItems());
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.search_parcel");
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.search_parcel");
 		}
 
 		if (!result.isEmpty()) {
@@ -952,7 +952,7 @@ public class ApplicationServices {
 			Collection<Geometry> gg = getReferenceParcel(svg, id, "ext_lpis.rp", "geometry");
 			result.addAll(gg);
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(),
 					"error.lpis.copy_reference_parcel");
 		}
 
@@ -1014,7 +1014,7 @@ public class ApplicationServices {
 				result.add(pb);
 
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.copy");
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.copy");
 		}
 
 		if (!result.isEmpty()) {
@@ -1079,7 +1079,7 @@ public class ApplicationServices {
 				result.add(geomArr.iterator().next());
 			}
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.overlap");
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.overlap");
 		}
 
 		if (!result.isEmpty()) {
@@ -1118,7 +1118,7 @@ public class ApplicationServices {
 				}
 			}
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.copy");
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.copy");
 		}
 		if (dbo != null)
 			return Response.ok(dbo.toSimpleJson().toString(), MediaType.APPLICATION_JSON).build();
@@ -1232,7 +1232,7 @@ public class ApplicationServices {
 				}
 			}
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToGetObject");
 		}
 		// ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, );
@@ -1252,7 +1252,7 @@ public class ApplicationServices {
 			DbDataObject parcel = svr.getObjectById(parcelId, SvCore.getTypeIdByName(CC.AGRI_PARCEL), null);
 			overlaps = (new AgriParcel()).getOverlaps(svr, parcel);
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.getOverlaps");
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.getOverlaps");
 		}
 		// ResponseHandler rr = new ResponseHandler(MessageType.SUCCESS, );
 		return Response.status(200).entity(overlaps.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
@@ -1322,7 +1322,7 @@ public class ApplicationServices {
 			cu.saveCommonUseObject(commonUse, parentId, parcelId, formVals, metadata, svg, svw, svr);
 			svw.dbCommit();
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");
+			return com.prtech.perun.services.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");
 		}
 		jrh.create(MessageType.SUCCESS, I18n.getText("success.perun.successfullySavedObject"),
 				I18n.getText("success.perun.successfullySavedObject"));
@@ -1412,7 +1412,7 @@ public class ApplicationServices {
 			json = parcelChecks(token, json);
 
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.crosscheck");
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(), "error.lpis.crosscheck");
 		}
 		if (json != null)
 			return Response.ok(json.toString(), MediaType.APPLICATION_JSON).build();
@@ -1447,7 +1447,7 @@ public class ApplicationServices {
 			else
 				rhs.create(MessageType.SUCCESS, "ok");
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(),
 					"error.lpis.check.physicallBlock");
 		}
 
@@ -1479,7 +1479,7 @@ public class ApplicationServices {
 			}
 			result.add(greatest);
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(),
 					"error.lpis.cutoff.physicallBlock");
 		}
 
@@ -1699,7 +1699,7 @@ public class ApplicationServices {
 			result.setItems((new AgriParcel()).getAssetsList(svr, objectId, typeName).getItems());
 			topoVerify(result);
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToSaveObject");
 		}
 
@@ -1747,7 +1747,7 @@ public class ApplicationServices {
 		try {
 			DbDataObject result = (new PermanentCrop()).savePermanentCrop(token, objectId, parentId, metadata);
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");
+			return com.prtech.perun.services.ws.Util.handleException(e, jrh, "error.perun.failedToSaveObject");
 		}
 		jrh.create(MessageType.SUCCESS, I18n.getText("success.perun.successfullySavedObject"),
 				I18n.getText("success.perun.successfullySavedObject"));
@@ -1773,7 +1773,7 @@ public class ApplicationServices {
 				result = new PermanentCrop().getPermanentCrops(parcelId, svr);
 			}
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToGetObject");
 		}
 		return Response.status(200).entity(result.toSimpleJson().toString()).type(MediaType.APPLICATION_JSON).build();
@@ -1804,7 +1804,7 @@ public class ApplicationServices {
 						I18n.getText("error.perun.failedToDeleteObject"));
 			}
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToDeleteObject");
 		}
 		return Response.status(200).entity(jrh.getAll().toString()).type(MediaType.APPLICATION_JSON).build();
@@ -1835,7 +1835,7 @@ public class ApplicationServices {
 			com.prtech.svarog.printer.GeneratePrint2.executeReport(rb, reportName, fileType, bstr, svr.dbGetConn());
 			shouldGenerate = true;
 		} catch (Exception e) {
-			return com.prtech.perun_core.ws.Util.handleException(e, new ResponseHandler(),
+			return com.prtech.perun.services.ws.Util.handleException(e, new ResponseHandler(),
 					"error.perun.failedToGeneratePdf");
 		}
 		if (shouldGenerate) {
