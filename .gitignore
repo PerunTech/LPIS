@@ -6,3 +6,4 @@ target
 backend/www/*.js.map
 index.html
 package-lock.json
+backend/www/lpis.js.LICENSE.txt

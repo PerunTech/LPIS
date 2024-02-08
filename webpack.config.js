@@ -1,10 +1,10 @@
-let path = require('path');
+const path = require('path');
 
-module.exports = (mode, { env }) => {
+module.exports = (_, { mode }) => {
     return {
-        devtool: 'source-map',
+        ...mode !== 'production' && { devtool: 'source-map' },
         mode: mode,
-        entry: env === 'production' ? './frontend/index.js' : './frontend/client.js',
+        entry: mode === 'production' ? './frontend/index.js' : './frontend/client.js',
         output: {
             path: path.resolve('./backend/www'),
             filename: 'lpis.js',
@@ -13,9 +13,14 @@ module.exports = (mode, { env }) => {
             globalObject: 'this'
         },
         devServer: {
-            contentBase: './backend/www',
-            hot: true,
-            inline: true
+            client: {
+                overlay: false
+            },
+            static: {
+                directory: path.join(__dirname, './backend/www'),
+            },
+            compress: true,
+            port: 8080
         },
         module: {
             rules: [
@@ -73,6 +78,6 @@ module.exports = (mode, { env }) => {
         resolve: {
             extensions: ['.js', '.jsx']
         },
-        externals: env === 'production' ? { 'perun-core': 'perun-core', spatial: 'spatial' } : {}
+        externals: mode === 'production' ? { 'perun-core': 'perun-core', spatial: 'spatial' } : {}
     }
 };
