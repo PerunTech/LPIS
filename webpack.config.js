@@ -19,8 +19,7 @@ module.exports = (_, { mode }) => {
             static: {
                 directory: path.join(__dirname, './backend/www'),
             },
-            compress: true,
-            port: 8080
+            compress: true
         },
         module: {
             rules: [
