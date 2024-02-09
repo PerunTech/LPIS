@@ -168,6 +168,19 @@
   background-color: #e2e6ea;
 }
 
+.common-use-parcel-data-container {
+  color: #000000;
+}
+
+.common-use-parcel-data-info-title {
+  font-size: small;
+  font-weight: 700;
+}
+
+.common-use-parcel-data-container-secondary {
+  font-size: small;
+}
+
 .common-use-form .modal-body .cancel {
   margin-top: 0 !important;
   float: none !important;

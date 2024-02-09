@@ -21,14 +21,14 @@
 }
 
 #lpis-map .rjsf .field {
-    float: unset;
-    width: unset;
-    text-align: initial;
+    float: unset !important;
+    width: unset !important;
+    text-align: initial !important;
 }
 
 #lpis-map .rjsf .field .control-label {
-    font-style: italic;
-    font-size: 14px;
+    font-style: italic !important;
+    font-size: 14px !important;
 }
 
 #lpis-map .rjsf .field textarea {

@@ -37,7 +37,7 @@ const _Merge = ({ processID, farmObjId }) => {
       if (e && e.layer) {
         const title = `${getLabel('merging_agricultural_parcels')}`
         const msg = `${getLabel('merging_agricultural_parcels_confirmation')}`
-        alertUser(true, 'warning', title, msg, mergeParcel.bind(null, e.layer), cleanup.bind(null, e.layer), true, 'Да', 'Не')
+        alertUser(true, 'warning', title, msg, mergeParcel.bind(null, e.layer), cleanup.bind(null, e.layer), true, getLabel('yes'), getLabel('no'))
       } else {
         cleanup();
       }

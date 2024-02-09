@@ -329,34 +329,6 @@ export const metadataAdmin = {
     }
 };
 
-export const commonUseSchema = {
-    type: 'agri_parcel',
-    namePath: 'options.metadata.schema.properties.parent_id',
-    schema: {
-        properties: {
-            commonUseType: {
-                type: 'string',
-                title: `${getLabel('common_use_type')}`,
-                enum: ['CLAIMED_AREA', 'CLAIMED_RATIO'],
-                enumNames: [`${getLabel('claimed_area')}`, `${getLabel('claimed_ratio')}`],
-                default: 'CLAIMED_AREA'
-            },
-            value: {
-                type: 'string',
-                title: `${getLabel('value')}`
-            }
-        },
-        type: 'object',
-        required: ['commonUseType', 'value']
-    },
-    uiSchema: {
-        commonUseType: {
-            'ui:widget': 'radio',
-            'ui:options': { inline: true }
-        }
-    }
-};
-
 export const permanentCropSchema = {
     namePath: 'options.metadata.schema.properties.parent_id',
     schema: {

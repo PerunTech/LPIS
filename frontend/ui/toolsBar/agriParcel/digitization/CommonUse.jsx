@@ -1,6 +1,5 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
-import { commonUseSchema } from '../Config';
 import { ProcessButton } from '../../ProcessButton';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';
@@ -19,6 +18,34 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
   const [{ data, loading, isGuided, showForm, showDeleteBtn, selectedParcel }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
     { data: {}, loading: false, isGuided: false, showForm: false, showDeleteBtn: false, selectedParcel: {} });
+
+  const commonUseSchema = {
+    type: 'agri_parcel',
+    namePath: 'options.metadata.schema.properties.parent_id',
+    schema: {
+      properties: {
+        commonUseType: {
+          type: 'string',
+          title: `${getLabel('common_use_type')}`,
+          enum: ['CLAIMED_AREA', 'CLAIMED_RATIO'],
+          enumNames: [`${getLabel('claimed_area')}`, `${getLabel('claimed_ratio')}`],
+          default: 'CLAIMED_AREA'
+        },
+        value: {
+          type: 'string',
+          title: `${getLabel('value')}`
+        }
+      },
+      type: 'object',
+      required: ['commonUseType', 'value']
+    },
+    uiSchema: {
+      commonUseType: {
+        'ui:widget': 'radio',
+        'ui:options': { inline: true }
+      }
+    }
+  }
 
   const setLayerEvents = (layer, agriParcels) => {
     layer.on('click', function () {
@@ -87,7 +114,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
               } else {
                 const title = getLabel('common_use_prompt')
                 const confirm = () => setState({ isGuided: false, showForm: true, showDeleteBtn: false, selectedParcel })
-                alertUser(true, 'info', title, '', confirm, disable, true, 'Да', 'Не')
+                alertUser(true, 'info', title, '', confirm, disable, true, getLabel('yes'), getLabel('no'))
               }
             }
           } else if (!strcmp(landUseCode, '200') && !strcmp(landUseCode, '310') && !strcmp(landUseCode, '320')) {
@@ -182,9 +209,9 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
   const renderForm = () => {
     const { area, landUseCode } = selectedParcel
     const parcelData = (
-      <div className='p-2'>
-        <p style={{ fontSize: 'small', fontWeight: '700' }}>{getLabel('chosen_parcel_info')}</p>
-        <div className='d-flex flex-row justify-content-center align-items-center mt-1 mb-n1' style={{ fontSize: 'small' }}>
+      <div className='p-2 common-use-parcel-data-container'>
+        <p className='common-use-parcel-data-info-title'>{getLabel('chosen_parcel_info')}</p>
+        <div className='d-flex flex-row justify-content-center align-items-center mt-1 mb-n1 common-use-parcel-data-container-secondary'>
           <p className='mr-1'>{getLabel('area')}: {area} {getMeasurementUnit(true)}</p>
           <p>{getLabel('class')}: {landUseCode}</p>
         </div>
