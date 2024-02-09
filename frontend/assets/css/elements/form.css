@@ -23,10 +23,15 @@
     box-shadow: unset;
 }
 
-#lpis-map .rjsf .field,
-#farm-registry-map .rjsf .field {
+#lpis-map .rjsf .field {
     float: unset !important;
     width: unset !important;
+    text-align: initial !important;
+}
+
+#farm-registry-map .rjsf .field {
+    float: unset !important;
+    width: 100% !important;
     text-align: initial !important;
 }
 
