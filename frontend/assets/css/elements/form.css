@@ -1,4 +1,5 @@
-#lpis-map .rjsf .form-control {
+#lpis-map .rjsf .form-control,
+#farm-registry-map .rjsf .form-control {
     font: inherit;
     padding: .25rem .25rem;
     border: 0 !important;
@@ -6,36 +7,42 @@
     border-radius: 0px;
 }
 
-#lpis-map .rjsf .form-control:focus {
+#lpis-map .rjsf .form-control:focus,
+#farm-registry-map .rjsf .form-control:focus {
     border: 1px solid #3399ff !important;
     transition: 0.4s;
     text-align: inherit;
     box-shadow: unset;
 }
 
-#lpis-map .rjsf .form-control:hover {
+#lpis-map .rjsf .form-control:hover,
+#farm-regisry-map .rjsf .form-control:hover {
     border-bottom: 1px solid #3399ff !important;
     outline: 0;
     transition: 0.4s;
     box-shadow: unset;
 }
 
-#lpis-map .rjsf .field {
+#lpis-map .rjsf .field,
+#farm-registry-map .rjsf .field {
     float: unset !important;
     width: unset !important;
     text-align: initial !important;
 }
 
-#lpis-map .rjsf .field .control-label {
+#lpis-map .rjsf .field .control-label,
+#farm-registry-map .rjsf .field .control-label {
     font-style: italic !important;
     font-size: 14px !important;
 }
 
-#lpis-map .rjsf .field textarea {
+#lpis-map .rjsf .field textarea,
+#farm-registry-map .rjsf .field textarea {
     min-width: 250px;
     border: 1px solid #00000025 !important;
 }
 
-#lpis-map .rjsf .field textarea:hover {
+#lpis-map .rjsf .field textarea:hover,
+#farm-registry-map .rjsf .field textarea:hover {
     border: 1px solid #3399ff !important;
 }
