@@ -53,9 +53,9 @@ const _PermanentCrops = ({ processID, farmObjId, agriParcels }) => {
       Map.fitBounds(layer.getBounds());
       setState({ layer })
     } else {
-      const title = 'Долгогодишни култури може да се додадат само за следниве употреби на земјиште:'
-      const msgOne = 'Долгогодишни култури (траен насад), Лозов насад, Овоштарник, Маслинов насад, Овошен насад'
-      const msgTwo = ', Јаткасто овошје, Растенија со брзо растечка маса, Мешани трајни насади'
+      const title = getLabel('permanent_crop_msg_one')
+      const msgOne = getLabel('permanent_crop_msg_two')
+      const msgTwo = getLabel('permanent_crop_msg_three')
       alertUser(true, 'warning', title, msgOne + msgTwo)
       disable()
     }

@@ -44,7 +44,9 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
       }
     }).catch(err => {
       console.error(err)
-      alertUser(true, 'error', `${getLabel('something_went_wrong')}`, '')
+      const title = err?.response?.data?.title || err
+      const message = err?.response?.data?.message || ''
+      alertUser(true, 'error', title, message)
       disable()
     })
   }
@@ -74,22 +76,22 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
           const selectedParcel = { parcelId, area, landUseCode }
           if (parentId && Number(parentId) !== 0) {
             if (Number(parentId) !== Number(farmObjId)) {
-              const title = 'Парцелата е веќе доделена на земјоделско стопанство и истата не може да се користи за Заедничка употреба'
+              const title = getLabel('common_use_parcel_already_assigned')
               alertUser(true, 'info', title)
               disable()
             } else {
               if (!strcmp(landUseCode, '200') && !strcmp(landUseCode, '310') && !strcmp(landUseCode, '320')) {
-                const title = 'Само парцели со код на употреба 200 (нива), 310 (ливада) и 320 (пасиште) може да се користат за заедничка употреба'
+                const title = getLabel('only_200_310_320_land_use_codes_can_be_used_for_common_use')
                 alertUser(true, 'warning', title)
                 disable()
               } else {
-                const title = 'Дали сакате парцелата да се промени во парцела со Заедничка употреба?'
+                const title = getLabel('common_use_prompt')
                 const confirm = () => setState({ isGuided: false, showForm: true, showDeleteBtn: false, selectedParcel })
                 alertUser(true, 'info', title, '', confirm, disable, true, 'Да', 'Не')
               }
             }
           } else if (!strcmp(landUseCode, '200') && !strcmp(landUseCode, '310') && !strcmp(landUseCode, '320')) {
-            const title = 'Само парцели со код на употреба 200 (нива), 310 (ливада) и 320 (пасиште) може да се користат за заедничка употреба'
+            const title = getLabel('only_200_310_320_land_use_codes_can_be_used_for_common_use')
             alertUser(true, 'warning', title)
             disable()
           } else if (hasCommonUse) {
@@ -98,7 +100,7 @@ const _CommonUse = ({ processID, farmObjId, agriParcels }) => {
             setState({ isGuided: false, showForm: true, showDeleteBtn: false, selectedParcel })
           }
         } else {
-          alertUser(true, 'info', 'Не е избрана парцела од мапата')
+          alertUser(true, 'info', getLabel('no_parcel_chosen_from_map'))
           disable()
         }
       }).catch(err => {

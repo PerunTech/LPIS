@@ -70,7 +70,9 @@ const _CadastreSearch = () => {
       }
     }).catch(err => {
       console.error(err)
-      alertUser(true, 'error', `${getLabel('something_went_wrong')}`)
+      const title = err?.response?.data?.title || err
+      const message = err?.response?.data?.message || ''
+      alertUser(true, 'error', title, message)
     })
   }
 
