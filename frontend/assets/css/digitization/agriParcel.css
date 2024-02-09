@@ -187,7 +187,7 @@
 }
 
 .common-use-form .modal-content {
-  right: 300px !important;
+  min-width: 235px;
 }
 
 #measure-dialog .modal-body #deleteAP {
