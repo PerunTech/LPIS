@@ -236,6 +236,7 @@ const getControlResults = (controls) => {
     })
 
     const agriParcels = store.getState()?.farmRegistry?.agriParcels
+    // eslint-disable-next-line
     const controlResults = [...store.getState()?.farmRegistry?.controlResults]
     const agriParcelsWithControlResultGeometries = []
     let agriParcelsWithControlResultGeometriesGeoJSON = []
