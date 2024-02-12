@@ -34,7 +34,7 @@ dependencies:
     version: 5.0.5
   perun-core:
     specifier: git+https://git@gitlab.prtech.mk/svarog4/perun-core#dev
-    version: gitlab.prtech.mk/svarog4/perun-core/5d1cd4ded70f9670a53d88ec66f9e3c8d7ec4997
+    version: gitlab.prtech.mk/svarog4/perun-core/123ea716b5c9df6fa6b3a0500cecb777dfdb5af5
   shpjs:
     specifier: ^4.0.4
     version: 4.0.4
@@ -1486,15 +1486,15 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@json2csv/formatters@7.0.5:
-    resolution: {integrity: sha512-ihONIB8S1ZG0ji5nDFpfCUPphVLnEKlLxDmDqRMjmPhzw8WCvyLX2trIrNHCf1t2IV8rx+1tNYaDb1dh87jHgA==}
+  /@json2csv/formatters@7.0.6:
+    resolution: {integrity: sha512-hjIk1H1TR4ydU5ntIENEPgoMGW+Q7mJ+537sDFDbsk+Y3EPl2i4NfFVjw0NJRgT+ihm8X30M67mA8AS6jPidSA==}
     dev: false
 
-  /@json2csv/plainjs@7.0.5:
-    resolution: {integrity: sha512-iJsYEzgRZUhRb8LltCeuBQyexQVUbovRZFF73Lo0iIvi5SUWsfXGTtbriIROsOKgfZPtYxmkZV+FYlsnBu9ybQ==}
+  /@json2csv/plainjs@7.0.6:
+    resolution: {integrity: sha512-4Md7RPDCSYpmW1HWIpWBOqCd4vWfIqm53S3e/uzQ62iGi7L3r34fK/8nhOMEe+/eVfCx8+gdSCt1d74SlacQHw==}
     dependencies:
-      '@json2csv/formatters': 7.0.5
-      '@streamparser/json': 0.0.19
+      '@json2csv/formatters': 7.0.6
+      '@streamparser/json': 0.0.20
     dev: false
 
   /@leichtgewicht/ip-codec@2.0.4:
@@ -1555,8 +1555,8 @@ packages:
       react: 16.14.0
     dev: false
 
-  /@restart/hooks@0.4.15(react@16.14.0):
-    resolution: {integrity: sha512-cZFXYTxbpzYcieq/mBwSyXgqnGMHoBVh3J7MU0CCoIB4NRZxV9/TuwTBAaLMqpNhC3zTPMCgkQ5Ey07L02Xmcw==}
+  /@restart/hooks@0.4.16(react@16.14.0):
+    resolution: {integrity: sha512-f7aCv7c+nU/3mF7NWLtVVr0Ra80RqsO89hO72r+Y/nvQr5+q0UFGkocElTH6MJApvReVh6JHUFYn2cw1WdHF3w==}
     peerDependencies:
       react: '>=16.8.0'
     dependencies:
@@ -1607,8 +1607,8 @@ packages:
       lodash-es: 4.17.21
     dev: false
 
-  /@streamparser/json@0.0.19:
-    resolution: {integrity: sha512-VTxtZGME6ZSWNCSjZ0Zd2LNNodx62XvmARb/liHIwGlInuuvoDzioLuRP8ajV8iLBknsTrsqpRDGlvzKSzpNEw==}
+  /@streamparser/json@0.0.20:
+    resolution: {integrity: sha512-VqAAkydywPpkw63WQhPVKCD3SdwXuihCUVZbbiY3SfSTGQyHmwRoq27y4dmJdZuJwd5JIlQoMPyGvMbUPY0RKQ==}
     dev: false
 
   /@turf/bbox@6.5.0:
@@ -2377,8 +2377,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001585
-      electron-to-chromium: 1.4.664
+      caniuse-lite: 1.0.30001587
+      electron-to-chromium: 1.4.665
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.22.3)
     dev: true
@@ -2431,8 +2431,8 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /caniuse-lite@1.0.30001585:
-    resolution: {integrity: sha512-yr2BWR1yLXQ8fMpdS/4ZZXpseBgE7o4g41x3a6AJOqZuOi+iE/WdJYAuZ6Y95i4Ohd2Y+9MzIWRR+uGABH4s3Q==}
+  /caniuse-lite@1.0.30001587:
+    resolution: {integrity: sha512-HMFNotUmLXn71BQxg8cijvqxnIAofforZOwGsxyXJ0qugTdspUF4sPSJ2vhgprHCB996tIDzEq1ubumPDV8ULA==}
     dev: true
 
   /cfb@1.2.2:
@@ -2875,8 +2875,8 @@ packages:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
     dev: true
 
-  /electron-to-chromium@1.4.664:
-    resolution: {integrity: sha512-k9VKKSkOSNPvSckZgDDl/IQx45E1quMjX8QfLzUsAs/zve8AyFDK+ByRynSP/OfEfryiKHpQeMf00z0leLCc3A==}
+  /electron-to-chromium@1.4.665:
+    resolution: {integrity: sha512-UpyCWObBoD+nSZgOC2ToaIdZB0r9GhqT2WahPKiSki6ckkSuKhQNso8V2PrFcHBMleI/eqbKgVQgVC4Wni4ilw==}
     dev: true
 
   /emoji-regex@8.0.0:
@@ -2929,7 +2929,7 @@ packages:
       has-property-descriptors: 1.0.1
       has-proto: 1.0.1
       has-symbols: 1.0.3
-      hasown: 2.0.0
+      hasown: 2.0.1
       internal-slot: 1.0.7
       is-array-buffer: 3.0.4
       is-callable: 1.2.7
@@ -2942,7 +2942,7 @@ packages:
       object-inspect: 1.13.1
       object-keys: 1.1.1
       object.assign: 4.1.5
-      regexp.prototype.flags: 1.5.1
+      regexp.prototype.flags: 1.5.2
       safe-array-concat: 1.1.0
       safe-regex-test: 1.0.3
       string.prototype.trim: 1.2.8
@@ -2961,13 +2961,15 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
-  /es-iterator-helpers@1.0.15:
-    resolution: {integrity: sha512-GhoY8uYqd6iwUl2kgjTm4CZAf6oo5mHK7BPqx3rKgx893YSsy0LGHV6gfqqQvZt/8xM8xeOnfXBCfqclMKkJ5g==}
+  /es-iterator-helpers@1.0.16:
+    resolution: {integrity: sha512-CREG2A9Vq7bpDRnldhFcMKuKArvkZtsH6Y0DHOHVg49qhf+LD8uEdUM3OkOAICv0EziGtDEnQtqY2/mfBILpFw==}
+    engines: {node: '>= 0.4'}
     dependencies:
       asynciterator.prototype: 1.0.0
       call-bind: 1.0.6
       define-properties: 1.2.1
       es-abstract: 1.22.3
+      es-errors: 1.3.0
       es-set-tostringtag: 2.0.2
       function-bind: 1.1.2
       get-intrinsic: 1.2.4
@@ -2990,13 +2992,13 @@ packages:
     dependencies:
       get-intrinsic: 1.2.4
       has-tostringtag: 1.0.2
-      hasown: 2.0.0
+      hasown: 2.0.1
     dev: true
 
   /es-shim-unscopables@1.0.2:
     resolution: {integrity: sha512-J3yBRXCzDu4ULnQwxyToo/OjdMx6akgVC7K6few0a7F/0wLtmKKN7I73AH5T2836UuXRqN7Qg+IIUw/+YJksRw==}
     dependencies:
-      hasown: 2.0.0
+      hasown: 2.0.1
     dev: true
 
   /es-to-primitive@1.2.1:
@@ -3050,7 +3052,7 @@ packages:
       array.prototype.flatmap: 1.3.2
       array.prototype.tosorted: 1.1.3
       doctrine: 2.1.0
-      es-iterator-helpers: 1.0.15
+      es-iterator-helpers: 1.0.16
       eslint: 8.56.0
       estraverse: 5.3.0
       jsx-ast-utils: 3.3.5
@@ -3516,7 +3518,7 @@ packages:
       function-bind: 1.1.2
       has-proto: 1.0.1
       has-symbols: 1.0.3
-      hasown: 2.0.0
+      hasown: 2.0.1
     dev: true
 
   /get-stream@6.0.1:
@@ -3648,8 +3650,8 @@ packages:
       has-symbols: 1.0.3
     dev: true
 
-  /hasown@2.0.0:
-    resolution: {integrity: sha512-vUptKVTpIJhcczKBbgnS+RtcuYMB8+oNzPK2/Hp3hanz8JmpATdmmgLgSaadVREkDm+e2giHwY3ZRkyjSIDDFA==}
+  /hasown@2.0.1:
+    resolution: {integrity: sha512-1/th4MHjnwncwXsIW6QMzlvYL9kG5e/CpVvLRZe4XPa8TOUNbCELqmvhDmnkNsAjwaG4+I8gJJL0JBvTTLO9qA==}
     engines: {node: '>= 0.4'}
     dependencies:
       function-bind: 1.1.2
@@ -3837,7 +3839,7 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       es-errors: 1.3.0
-      hasown: 2.0.0
+      hasown: 2.0.1
       side-channel: 1.0.5
     dev: true
 
@@ -3938,7 +3940,7 @@ packages:
   /is-core-module@2.13.1:
     resolution: {integrity: sha512-hHrIjvZsftOsvKSn2TRYl63zvxsgE0K+0mYMoH6gD4omR5IWB2KynivBQczo3+wF1cCkjzvptnI9Q0sPU66ilw==}
     dependencies:
-      hasown: 2.0.0
+      hasown: 2.0.1
     dev: true
 
   /is-date-object@1.0.5:
@@ -5102,7 +5104,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.9
       '@restart/context': 2.1.4(react@16.14.0)
-      '@restart/hooks': 0.4.15(react@16.14.0)
+      '@restart/hooks': 0.4.16(react@16.14.0)
       '@types/invariant': 2.2.37
       '@types/prop-types': 15.7.11
       '@types/react': 18.2.55
@@ -5287,7 +5289,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.9
       '@popperjs/core': 2.11.8
-      '@restart/hooks': 0.4.15(react@16.14.0)
+      '@restart/hooks': 0.4.16(react@16.14.0)
       '@types/warning': 3.0.3
       dom-helpers: 5.2.1
       prop-types: 15.8.1
@@ -5568,12 +5570,13 @@ packages:
       '@babel/runtime': 7.23.9
     dev: true
 
-  /regexp.prototype.flags@1.5.1:
-    resolution: {integrity: sha512-sy6TXMN+hnP/wMy+ISxg3krXx7BAtWVO4UouuCN/ziM9UEne0euamVNafDfvC83bRNr95y0V5iijeDQFUNpvrg==}
+  /regexp.prototype.flags@1.5.2:
+    resolution: {integrity: sha512-NcDiDkTLuPR+++OCKB0nWafEmhg/Da8aUPLPMQbK+bxKKCm1/S5he+AqYa4PlMCVBalb4/yxIRub6qkEx5yJbw==}
     engines: {node: '>= 0.4'}
     dependencies:
       call-bind: 1.0.6
       define-properties: 1.2.1
+      es-errors: 1.3.0
       set-function-name: 2.0.1
     dev: true
 
@@ -6025,7 +6028,7 @@ packages:
       get-intrinsic: 1.2.4
       has-symbols: 1.0.3
       internal-slot: 1.0.7
-      regexp.prototype.flags: 1.5.1
+      regexp.prototype.flags: 1.5.2
       set-function-name: 2.0.1
       side-channel: 1.0.5
     dev: true
@@ -6826,12 +6829,12 @@ packages:
     engines: {node: '>=12.20'}
     dev: true
 
-  gitlab.prtech.mk/svarog4/perun-core/5d1cd4ded70f9670a53d88ec66f9e3c8d7ec4997:
-    resolution: {commit: 5d1cd4ded70f9670a53d88ec66f9e3c8d7ec4997, repo: https://git@gitlab.prtech.mk/svarog4/perun-core, type: git}
+  gitlab.prtech.mk/svarog4/perun-core/123ea716b5c9df6fa6b3a0500cecb777dfdb5af5:
+    resolution: {commit: 123ea716b5c9df6fa6b3a0500cecb777dfdb5af5, repo: https://git@gitlab.prtech.mk/svarog4/perun-core, type: git}
     name: perun-core
     version: 0.2.0
     dependencies:
-      '@json2csv/plainjs': 7.0.5
+      '@json2csv/plainjs': 7.0.6
       '@rjsf/core': 5.17.0(@rjsf/utils@5.17.0)(react@16.14.0)
       '@rjsf/utils': 5.17.0(react@16.14.0)
       '@rjsf/validator-ajv8': 5.17.0(@rjsf/utils@5.17.0)
@@ -6883,7 +6886,7 @@ packages:
     dependencies:
       leaflet: 1.5.1
       leaflet-polylinedecorator: 1.6.0
-      perun-core: gitlab.prtech.mk/svarog4/perun-core/5d1cd4ded70f9670a53d88ec66f9e3c8d7ec4997
+      perun-core: gitlab.prtech.mk/svarog4/perun-core/123ea716b5c9df6fa6b3a0500cecb777dfdb5af5
       proj4: 2.10.0
     transitivePeerDependencies:
       - '@types/react'
