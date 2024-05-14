@@ -25,7 +25,7 @@ export function Form({ formData, onSubmit, onChange, children, enumIdx, enumName
                     default: 0
                 },
                 NUMBER_PLANTS: {
-                    title: `${getLabel('number_of_plants')}`,
+                    title: `${getLabel('number_of_crops')}`,
                     type: 'number',
                 },
                 IS_ORGANIC: {
