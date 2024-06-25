@@ -92,7 +92,7 @@ export const Edit = ({ processID }) => {
             OBJECT_ID: Number(layer.feature.id),
             object_id: Number(layer.feature.id),
             GEOM: factory.GeoJSON.fromLayer(layer),
-            multypolyarray: factory.GeoJSON.fromLayer(layer)
+            multypolygeometryarray: factory.GeoJSON.fromLayer(layer)
         }), disable);
     }
 
