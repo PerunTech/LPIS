@@ -101,7 +101,7 @@ const _Draw = ({ processID, farmObjId }) => {
             ...formData,
             parent_id: farmObjId,
             GEOM: factory.GeoJSON.fromLayer(layer),
-            multypolygeometryarray: factory.GeoJSON.fromLayer(layer),
+            multypolygeometry: factory.GeoJSON.fromLayer(layer),
         }), disable);
     }
 

@@ -115,7 +115,7 @@ const _Create = ({ processID, farmObjId }) => {
             ...data,
             ...formData,
             GEOM: factory.GeoJSON.fromLayer(layer),
-            multypolygeometryarray: factory.GeoJSON.fromLayer(layer),
+            multypolygeometry: factory.GeoJSON.fromLayer(layer),
             X: X,
             Y: Y
         }), disable);
