@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = (_, { mode }) => {
     return {
-        ...mode !== 'production' && { devtool: 'source-map' },
+        devtool: 'source-map',
         mode: mode,
         entry: mode === 'production' ? './frontend/index.js' : './frontend/client.js',
         output: {
