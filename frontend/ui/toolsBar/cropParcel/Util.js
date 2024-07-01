@@ -83,24 +83,28 @@ export const getCropLabel = idx => {
     const cropCodes = store.getState()?.cropCodes
     const cropCodesDesc = Object.values(cropCodes)
     const cropCodesIdx = Object.keys(cropCodes).map(k => Number(k))
+    const cropCodeLabel = cropCodesDesc[cropCodesIdx.findIndex(val => val === idx)]
     let cropLabel = ''
-    const str = String(cropCodesDesc[cropCodesIdx.findIndex(val => val === idx)]),
-        getLastIdx = (char, pos) => {
-            const idx = str.indexOf(char, pos)
-            return idx < 0 ? false : idx + 1;
-        },
-        isLatin = str.match(/[a-z]/i),
-        startIdx = isLatin
-            ? getLastIdx('–') || getLastIdx('-') || 0
-            : 0,
-        endIdx = isLatin
-            ? getLastIdx('(', startIdx + 1) || getLastIdx('-', startIdx + 1) || getLastIdx('–', startIdx + 1) || str.length
-            : getLastIdx('(') || getLastIdx('-') || getLastIdx('–') || str.length;
-
-
-    if (!strcmp(str.substring(startIdx, endIdx), 'undefined')) {
-        cropLabel = str.substring(startIdx, endIdx)
+    if (cropCodeLabel) {
+        cropLabel = cropCodeLabel
     }
+    // const str = String(cropCodesDesc[cropCodesIdx.findIndex(val => val === idx)]),
+    //     getLastIdx = (char, pos) => {
+    //         const idx = str.indexOf(char, pos)
+    //         return idx < 0 ? false : idx + 1;
+    //     },
+    //     isLatin = str.match(/[a-z]/i),
+    //     startIdx = isLatin
+    //         ? getLastIdx('–') || getLastIdx('-') || 0
+    //         : 0,
+    //     endIdx = isLatin
+    //         ? getLastIdx('(', startIdx + 1) || getLastIdx('-', startIdx + 1) || getLastIdx('–', startIdx + 1) || str.length
+    //         : getLastIdx('(') || getLastIdx('-') || getLastIdx('–') || str.length;
+
+
+    // if (!strcmp(str.substring(startIdx, endIdx), 'undefined')) {
+    //     cropLabel = str.substring(startIdx, endIdx)
+    // }
     return cropLabel;
 }
 
