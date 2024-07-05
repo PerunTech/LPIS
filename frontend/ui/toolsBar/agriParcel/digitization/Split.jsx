@@ -59,6 +59,7 @@ const _Split = ({ processID, agriParcels, farmObjId }) => {
       const marker = factory.marker(latLng, markerConfig)
       marker.addTo(Map)
       _enableLine(point);
+      Map.off('click');
     });
   }
 
