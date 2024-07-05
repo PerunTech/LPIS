@@ -54,7 +54,7 @@ const _Split = ({ processID, agriParcels, farmObjId }) => {
       const latLng = e.latlng
       // Get the correct coordinates for the current CRS
       const point = Map.transform(latLng);
-      agriParcels.forEach(ap => ap.off('click'))
+      agriParcels.forEach(ap => ap.off('mouseover mouseout click'))
       // Create a marker & add it to the map
       const markerConfig = { icon: factory.divIcon({ className: 'marker-icon' }) }
       const marker = factory.marker(latLng, markerConfig)
