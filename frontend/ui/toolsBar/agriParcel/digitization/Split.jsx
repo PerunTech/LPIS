@@ -1,6 +1,6 @@
 import { React, Loading, elements } from 'perun-core';
 import { core, ui, data, tools } from '../../../../Spatial';
-import { config, splitAPMsg } from '../Config';
+import { config } from '../Config';
 import { decodeResponse, getFarmMapAssets, getLabel } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { ProcessButton } from '../../ProcessButton';
@@ -118,7 +118,7 @@ const _Split = ({ processID, agriParcels, farmObjId }) => {
   }
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} msg={splitAPMsg} title={getLabel('split_parcel')}
+    return <Guidance id={_id} msg={['', '']} title={getLabel('split_parcel')}
       finish={() => line._finishShape()}
       undo={() => line._removeLastVertex()}
       disable={disable}
