@@ -15,8 +15,6 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
     }
 
     const handleBack = () => {
-        const tableName = strcmp(actionType, 'sizp') ? 'AGRI_PARCEL' : 'PPLAN'
-        perunStore.dispatch({ type: 'BACK_FROM_LPIS', payload: { backFromLpis: true, tableName } })
         if (actionType === 'preview') {
             const ostcPathName = perunStore.getState()?.['otscm_iacs.ipardFarmerInfo']?.controlPath
             if (ostcPathName) {
@@ -25,6 +23,10 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
                 history.goBack()
             }
         } else {
+            if (actionType) {
+                const tableName = strcmp(actionType, 'sizp') ? 'AGRI_PARCEL' : 'PPLAN'
+                perunStore.dispatch({ type: 'BACK_FROM_LPIS', payload: { backFromLpis: true, tableName } })
+            }
             history.goBack()
         }
     }
