@@ -120,7 +120,7 @@ const _Split = ({ processID, agriParcels, farmObjId }) => {
   }
 
   const renderGuideForm = () => {
-    return <Guidance id={_id} msg={['', '']} title={getLabel('split_parcel')}
+    return <Guidance id={_id} msg={[`${getLabel('split_agricultural_parcel_msg')}`, '']} title={getLabel('split_parcel')}
       finish={() => line._finishShape()}
       undo={() => line._removeLastVertex()}
       disable={disable}
