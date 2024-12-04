@@ -649,6 +649,7 @@ export const getGeoTypeLayers = () => {
             res.data.forEach(geoTypeLayer => {
                 const layerType = geoTypeLayer?.[`${tableName}.LAYER_TYPE`]
                 const layerProtocol = geoTypeLayer?.[`${tableName}.PROTOCOL`]
+                const version = geoTypeLayer?.[`${tableName}.VERSION`] || '1.1.1'
                 const layerUrl = geoTypeLayer?.[`${tableName}.URL`]
                 const layerGroup = geoTypeLayer?.[`${tableName}.LAYER_GROUP`] || 'Other'
                 const title = geoTypeLayer?.[`${tableName}.TITLE`]
@@ -659,12 +660,11 @@ export const getGeoTypeLayers = () => {
                         layers: title,
                         format: 'image/png',
                         transparent: true,
+                        version,
                         // If the layer is an overlay, set the tiled property for it
                         ...strcmp(layerType, '2') && { tiled: true },
                         // If the layer is an overlay, mark it as so
                         ...strcmp(layerType, '2') && { isOverlay: true },
-                        // If the layer is a base one, set the WMS version as 1.1.1
-                        ...strcmp(layerType, '1') && { version: '1.1.1' },
                         // If the layer is an overlay, set the function for getting info about WMS features as a callback
                         ...strcmp(layerType, '2') && { callback: (params) => getFeatureInfo(params) }
                     }
