@@ -594,14 +594,18 @@ export const getFeatureInfo = (params) => {
     // Only call the service if the current active process is the one for importing WMS layers/features
     const processID = store.getState().app.processID
     if (processID && strcmp(processID, 'import-wms')) {
-        const { layers, bbox, height, width, infoFormat, x, y } = params
+        const { layers, bbox, height, width, infoFormat, x, y, i, j } = params
         const token = perunStore.getState().security.svSession
         const encodedLayers = encodeURIComponent(layers)
         const encodedInfoFormat = encodeURIComponent(infoFormat)
         const roundHeight = Math.round(height)
         const roundWidth = Math.round(width)
-        const roundX = Math.round(x)
-        const roundY = Math.round(y)
+        let roundX = Math.round(x)
+        let roundY = Math.round(y)
+        if (i && j) {
+            roundX = Math.round(i)
+            roundY = Math.round(j)
+        }
         http.call('get-feature-info', {
             url: `${window.server}/spatial/getFeatureInfo/${token}/${encodedLayers}/${bbox}/${roundHeight}/${roundWidth}/${encodedInfoFormat}/${roundX}/${roundY}`
         }).then(res => {
@@ -643,7 +647,7 @@ export const getGeoTypeLayers = () => {
     const overlays = {}
     const externalLayers = []
     http.call('get-layers', {
-        url: `${window.server}/ReactElements/getTableData/${token}/${tableName}/100`
+        url: `${window.server}/ReactElements/getTableData/${token}/${tableName}/0`
     }).then(res => {
         if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
             res.data.forEach(geoTypeLayer => {
