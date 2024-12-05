@@ -654,6 +654,7 @@ export const getGeoTypeLayers = () => {
                 const layerType = geoTypeLayer?.[`${tableName}.LAYER_TYPE`]
                 const layerProtocol = geoTypeLayer?.[`${tableName}.PROTOCOL`]
                 const version = geoTypeLayer?.[`${tableName}.VERSION`] || '1.1.1'
+                const format = geoTypeLayer?.[`${tableName}.FORMAT`] || 'image/png'
                 const layerUrl = geoTypeLayer?.[`${tableName}.URL`]
                 const layerGroup = geoTypeLayer?.[`${tableName}.LAYER_GROUP`] || 'Other'
                 const title = geoTypeLayer?.[`${tableName}.TITLE`]
@@ -662,7 +663,7 @@ export const getGeoTypeLayers = () => {
                 if (strcmp(layerProtocol, 'wms')) {
                     const tileLayerOptions = {
                         layers: title,
-                        format: 'image/png',
+                        format,
                         transparent: true,
                         version,
                         // If the layer is an overlay, set the tiled property for it
