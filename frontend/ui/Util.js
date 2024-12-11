@@ -479,13 +479,13 @@ export const getFarmPPlanAssets = (showAlert = false) => {
  */
 export const getRandomPointInPolygon = (polygon) => {
     const bounds = polygon.getBounds();
-    const x_min = bounds.getEast();
-    const x_max = bounds.getWest();
-    const y_min = bounds.getSouth();
-    const y_max = bounds.getNorth();
+    const xMin = bounds.getEast();
+    const xMax = bounds.getWest();
+    const yMin = bounds.getSouth();
+    const yMax = bounds.getNorth();
 
-    const lat = y_min + (Math.random() * (y_max - y_min));
-    const lng = x_min + (Math.random() * (x_max - x_min));
+    const lat = yMin + (Math.random() * (yMax - yMin));
+    const lng = xMin + (Math.random() * (xMax - xMin));
 
     const randomPoint = point([lng, lat]);
     const poly = polygon.toGeoJSON();
