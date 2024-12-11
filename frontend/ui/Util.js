@@ -665,6 +665,7 @@ export const getGeoTypeLayers = () => {
                         layers: title,
                         format,
                         transparent: true,
+                        uppercase: true,
                         version,
                         // If the layer is an overlay, set the tiled property for it
                         ...strcmp(layerType, '2') && { tiled: true },
