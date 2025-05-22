@@ -1,38 +1,39 @@
 {
-    "env": {
-        "browser": true,
-        "es6": true,
-        "node": true
-    },
-    "extends": ["eslint:recommended", "plugin:react/recommended"],
-    "settings": {
-      "react": {
-          "version": "detect"
-      }
-    },
-    "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
-    },
-    "parser": "@babel/eslint-parser",
-    "parserOptions": {
-        "babelOptions": {
-          "presets": ["@babel/preset-react"]
-        },
-        "ecmaFeatures": {
-            "modules": true,
-            "jsx": true
-        },
-        "ecmaVersion": 2018,
-        "sourceType": "module",
-        "requireConfigFile": false
-    },
-    "plugins": [
-        "react-hooks"
-    ],
-    "rules": {
-        "react-hooks/rules-of-hooks": "warn",
-        "react-hooks/exhaustive-deps": "warn",
-        "react/no-children-prop": 0
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
     }
+  },
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": [
+    "react",
+    "react-hooks"
+  ],
+  "rules": {
+    "react/prop-types": 0,
+    "react-hooks/rules-of-hooks": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ]
+  }
 }
