@@ -504,7 +504,7 @@ export const getRandomPointInPolygon = (polygon) => {
 export const getDbCRS = () => {
     const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
     const url = `${window.server}/WsConf/params/get/conf/${token}/sys.gis.default_srid`
-    http.call('getDbCRS', { url }).then(res => {
+    return http.call('getDbCRS', { url }).then(res => {
         if (res?.data?.VALUE) {
             const dbCRS = res?.data?.VALUE
             store.addState('dbCRSCode', { dbCRS })
@@ -529,7 +529,7 @@ export const getDbCRS = () => {
  */
 export const getLayers = () => {
     const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
-    http.call('get-all-layers', {
+    return http.call('get-all-layers', {
         url: `${window.server}/spatial/getLayers/${token}`
     }).then(res => {
         const systemLayers = {}
@@ -549,7 +549,7 @@ export const getLayers = () => {
  */
 export const getLandCoverCodes = () => {
     const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
-    http.call('get-land-cover-codes', {
+    return http.call('get-land-cover-codes', {
         url: `${window.server}/ReactElements/getTableWithFilter/${token}/SVAROG_CODES/PARENT_CODE_VALUE/LAND_COVER/0`
     }).then(res => {
         const landCoverCodes = {}
@@ -570,7 +570,7 @@ export const getLandCoverCodes = () => {
  */
 export const getCropCodes = () => {
     const token = JSON.parse(localStorage.getItem('reduxPersist:security'))?.svSession
-    http.call('get-crop-codes', {
+    return http.call('get-crop-codes', {
         url: `${window.server}/ReactElements/getTableWithFilter/${token}/SVAROG_CODES/PARENT_CODE_VALUE/CROP_CODE/0`
     }).then(res => {
         const cropCodes = {}
@@ -646,7 +646,7 @@ export const getGeoTypeLayers = () => {
     const basemap = {}
     const overlays = {}
     const externalLayers = []
-    http.call('get-layers', {
+    return http.call('get-layers', {
         url: `${window.server}/ReactElements/getTableData/${token}/${tableName}/0`
     }).then(res => {
         if (res?.data && Array.isArray(res.data) && res.data.length > 0) {

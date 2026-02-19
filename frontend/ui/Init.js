@@ -1,7 +1,7 @@
-import { redux } from 'perun-core';
+import { React, redux, Loading } from 'perun-core';
 import { ui, core, config } from '../Spatial';
 import { ToolsBar, MiniBar, DataPanel, LayerPanel, StatusBar, readCookie, loadFarmerAssets } from '.';
-import { getFarmMapAssets } from './Util';
+import { getFarmMapAssets, getCropCodes, getDbCRS, getGeoTypeLayers, getLandCoverCodes, getLayers } from './Util';
 
 const { SYS_CENTER } = config;
 const { Map, store } = core;
@@ -41,38 +41,59 @@ export const gsaa = () => {
     return _gsaa(_token);
 }
 
+class LpisMap extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = { loading: true, mapElement: null }
+    }
+
+    componentDidMount() {
+        store.addState('lpis', {
+            'physicalBlocksHaveBeenLoaded': false, 'loadedPhysicalBlocks': {},
+            'systemLayers': {}, 'systemLayersFull': {},
+            'farmSearchFormData': {}, 'farmSearchData': undefined
+        })
+
+        const layersToRemove = [];
+        Map.eachLayer(function (layer) {
+            layersToRemove.push(layer);
+        });
+        layersToRemove.forEach(layer => Map.removeLayer(layer));
+
+        Promise.all([
+            getLandCoverCodes(),
+            getCropCodes(),
+            getGeoTypeLayers(),
+            getLayers(),
+            getDbCRS()
+        ]).then(() => {
+            const layers = store.getState().listOfLayers
+
+            Map.setView(SYS_CENTER, 3);
+
+            const map = ui.init(this.props.token)
+                .addControl(ToolsBar, {}, { position: 'top' })
+                .addControl(DataPanel, {}, { position: 'left' })
+                .addControl(LayerPanel, {}, { position: 'right' })
+                .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
+                .withNavigationControl()
+                .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
+                .withWindRose()
+                .render('lpis-map');
+
+            this.setState({ loading: false, mapElement: map })
+        })
+    }
+
+    render() {
+        if (this.state.loading) return <Loading />
+        return this.state.mapElement
+    }
+}
+
 export const lpis = () => {
-    store.addState('lpis', {
-        'physicalBlocksHaveBeenLoaded': false, 'loadedPhysicalBlocks': {},
-        'systemLayers': {}, 'systemLayersFull': {},
-        'farmSearchFormData': {}, 'farmSearchData': undefined
-    })
     const _token = redux.store.getState().security.svSession;
-
-    Map.eachLayer(function (layer) {
-        if (!!layer.toGeoJSON) {
-            Map.removeLayer(layer);
-        } else {
-            // This will remove any overlays that have been previously used
-            if (layer?.options?.isOverlay) {
-                Map.removeLayer(layer);
-            }
-        }
-    });
-
-    const layers = store.getState().listOfLayers
-
-    Map.setView(SYS_CENTER, 3);
-
-    return ui.init(_token)
-        .addControl(ToolsBar, {}, { position: 'top' })
-        .addControl(DataPanel, {}, { position: 'left' })
-        .addControl(LayerPanel, {}, { position: 'right' })
-        .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
-        .withNavigationControl()
-        .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
-        .withWindRose()
-        .render('lpis-map');
+    return <LpisMap token={_token} />
 }
 
 export const farmRegLpis = (props) => {
