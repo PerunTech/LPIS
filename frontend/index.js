@@ -3,14 +3,6 @@ import pkg from '../package.json';
 import './assets';
 // Import all publishable modules.
 import * as ui from './ui';
-// Get all available layers
-import { getCropCodes, getDbCRS, getGeoTypeLayers, getLandCoverCodes, getLayers } from './ui/Util';
-getLandCoverCodes();
-getCropCodes();
-getGeoTypeLayers();
-getLayers();
-getDbCRS();
-
 const name = pkg.name
 const version = pkg.version
 const description = pkg.description
