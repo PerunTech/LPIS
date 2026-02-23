@@ -228,9 +228,10 @@ export const getFarmDigitizationState = objectId => {
  * @param  {Array} controls A list of controls for which we need the results
  */
 const getControlResults = (controls) => {
+    const token = perunStore.getState().security.svSession
     const promises = controls.map(async control => {
         const { objectId, year } = control
-        const url = `/lpis/get/control/results/{init.token}/${objectId}`
+        const url = `/lpis/get/control/results/${token}/${objectId}`
         const reqConfig = { url, method: 'get', responseType: 'arraybuffer' }
         return await http.call('getControlResults', reqConfig).then(response => ({ response, objectId, year })).catch(err => console.error(err))
     })
@@ -279,7 +280,8 @@ const getControlResults = (controls) => {
  * @param  {String} fic The FIC of the farm we need to get the controls for
  */
 const getControls = (fic) => {
-    const url = `/ReactElements/getTableWithFilter/{init.token}/CONTROL/BID/${fic}/100`
+    const token = perunStore.getState().security.svSession
+    const url = `/ReactElements/getTableWithFilter/${token}/CONTROL/BID/${fic}/100`
     http.call('getControls', { url, method: 'get' }).then(res => {
         if (res.data && Array.isArray(res.data) && res.data.length > 0) {
             const controls = []
@@ -331,7 +333,7 @@ const getFarmData = (objectId, actionType) => {
  */
 export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     store.dispatch({ hiddenAssets: [] })
-    Map.eachLayer(function (layer) {
+    Map.eachLayer(function(layer) {
         if (!!layer.toGeoJSON) {
             // Remove everything when we first call this function
             if (fitBounds) {
@@ -412,7 +414,7 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
                 layers.forEach(layer => {
                     layer.addTo(Map)
                     setAPLabel(layer)
-                    layer.on('click', function () {
+                    layer.on('click', function() {
                         handleAgriParcelClick(this)
                     })
                 });
@@ -437,7 +439,7 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
  * @param  {Boolean} showAlert Indicator for whether to show an alert after the WS is called
  */
 export const getFarmPPlanAssets = (showAlert = false) => {
-    Map.eachLayer(function (layer) {
+    Map.eachLayer(function(layer) {
         if (!!layer.toGeoJSON) {
             if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'land_use_plan')) {
                 Map.removeLayer(layer);
@@ -457,7 +459,7 @@ export const getFarmPPlanAssets = (showAlert = false) => {
             layer.addTo(Map);
             layer.bringToFront();
             setCPLabel(layer);
-            layer.on('click', function () {
+            layer.on('click', function() {
                 handleCropParcelClick(this)
             })
         });
