@@ -231,7 +231,7 @@ const getControlResults = (controls) => {
     const token = perunStore.getState().security.svSession
     const promises = controls.map(async control => {
         const { objectId, year } = control
-        const url = `/lpis/get/control/results/${token}/${objectId}`
+        const url = `${window.server}/lpis/get/control/results/${token}/${objectId}`
         const reqConfig = { url, method: 'get', responseType: 'arraybuffer' }
         return await http.call('getControlResults', reqConfig).then(response => ({ response, objectId, year })).catch(err => console.error(err))
     })
@@ -281,7 +281,7 @@ const getControlResults = (controls) => {
  */
 const getControls = (fic) => {
     const token = perunStore.getState().security.svSession
-    const url = `/ReactElements/getTableWithFilter/${token}/CONTROL/BID/${fic}/100`
+    const url = `${window.server}/ReactElements/getTableWithFilter/${token}/CONTROL/BID/${fic}/100`
     http.call('getControls', { url, method: 'get' }).then(res => {
         if (res.data && Array.isArray(res.data) && res.data.length > 0) {
             const controls = []
