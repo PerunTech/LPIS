@@ -96,31 +96,58 @@ export const lpis = () => {
     return <LpisMap token={_token} />
 }
 
+class FarmRegLpisMap extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = { loading: true, mapElement: null }
+    }
+
+    componentDidMount() {
+        store.addState('farmRegistry', {
+            'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'farmObjId': '', 'farmObjTypeId': '', 'actionType': '',
+            'fic': '', 'fullName': '', 'tableName': '', 'selectedParcelId': '', 'selectedCropParcelId': '', 'saveIsPending': false,
+            'showCadParcels': false, 'hiddenAssets': [], 'parcelHistory': [], 'theSearchedParcelWasRemoved': false, 'parcelsHaveBeenLoaded': false,
+            'showParcelInfoContainer': false, 'farmInfo': undefined, 'parcelInfo': undefined, 'historyEditEnabled': false, 'historyParcelToEdit': {},
+            'editFormWasClosed': false, 'parcelHistoryModalWasClosed': false, 'digitizationIsActive': false, 'canRenderTheDigitizationButton': false,
+            'activateInfoProcess': false, 'controlResults': [], 'showControlResultsContainer': false, 'hiddenControlResultAssets': [],
+            'controlResultEditEnabled': false, 'copiedControlResultGeometry': {}, 'agriParcelsWithControlResultGeometries': [], 'activeTab': '',
+            'weAreRenderingDirectly': this.props.showHeaderAndFooter ? true : false
+        })
+
+        getFarmMapAssets(true)
+
+        Promise.all([
+            getLandCoverCodes(),
+            getCropCodes(),
+            getGeoTypeLayers(),
+            getLayers(),
+            getDbCRS()
+        ]).then(() => {
+            const layers = store.getState().listOfLayers
+
+            const mapId = this.props.showHeaderAndFooter ? 'farm-registry-map-inline' : 'farm-registry-map'
+
+            const map = ui.init(this.props.token)
+                .addControl(ToolsBar, {}, { position: 'top' })
+                .addControl(DataPanel, {}, { position: 'left' })
+                .addControl(LayerPanel, {}, { position: 'right' })
+                .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
+                .withNavigationControl()
+                .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
+                .withWindRose()
+                .render(mapId, this.props.showHeaderAndFooter || false);
+
+            this.setState({ loading: false, mapElement: map })
+        })
+    }
+
+    render() {
+        if (this.state.loading) return <Loading />
+        return this.state.mapElement
+    }
+}
+
 export const farmRegLpis = (props) => {
-    store.addState('farmRegistry', {
-        'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'farmObjId': '', 'farmObjTypeId': '', 'actionType': '',
-        'fic': '', 'fullName': '', 'tableName': '', 'selectedParcelId': '', 'selectedCropParcelId': '', 'saveIsPending': false,
-        'showCadParcels': false, 'hiddenAssets': [], 'parcelHistory': [], 'theSearchedParcelWasRemoved': false, 'parcelsHaveBeenLoaded': false,
-        'showParcelInfoContainer': false, 'farmInfo': undefined, 'parcelInfo': undefined, 'historyEditEnabled': false, 'historyParcelToEdit': {},
-        'editFormWasClosed': false, 'parcelHistoryModalWasClosed': false, 'digitizationIsActive': false, 'canRenderTheDigitizationButton': false,
-        'activateInfoProcess': false, 'controlResults': [], 'showControlResultsContainer': false, 'hiddenControlResultAssets': [],
-        'controlResultEditEnabled': false, 'copiedControlResultGeometry': {}, 'agriParcelsWithControlResultGeometries': [], 'activeTab': '',
-        'weAreRenderingDirectly': props?.showHeaderAndFooter ? true : false
-    })
     const _token = redux.store.getState().security.svSession;
-    getFarmMapAssets(true)
-
-    const layers = store.getState().listOfLayers
-
-    const mapId = props?.showHeaderAndFooter ? 'farm-registry-map-inline' : 'farm-registry-map'
-
-    return ui.init(_token)
-        .addControl(ToolsBar, {}, { position: 'top' })
-        .addControl(DataPanel, {}, { position: 'left' })
-        .addControl(LayerPanel, {}, { position: 'right' })
-        .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
-        .withNavigationControl()
-        .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
-        .withWindRose()
-        .render(mapId, props?.showHeaderAndFooter || false);
+    return <FarmRegLpisMap token={_token} showHeaderAndFooter={props?.showHeaderAndFooter} />
 }
