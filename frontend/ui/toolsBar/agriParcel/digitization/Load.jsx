@@ -80,7 +80,7 @@ const _Load = ({ processID, parcelsHaveBeenLoaded: parcelsHaveBeenLoadedStore })
       alertUser(true, 'info', `${getLabel('no_loaded_parcels_found')}`)
     } else {
       Map.eachLayer(function (layer) {
-        if (!!layer.toGeoJSON) {
+        if (layer.toGeoJSON) {
           if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'LOADED_AGRI_PARCEL')) {
             Map.removeLayer(layer);
           } else if (layer?.options?.name && strcmp(layer.options.name, 'marker-point')) {

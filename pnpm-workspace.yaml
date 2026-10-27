@@ -1,0 +1,6 @@
+# pnpm 9 refuses this file without a packages list; there are no sub-packages.
+packages: []
+
+# spatial declares perun-core as a git dependency of its own, and pnpm 11 blocks
+# git-resolved packages in transitive position unless this is off.
+blockExoticSubdeps: false

@@ -1,4 +1,4 @@
-import { React, PropTypes, elements, redux } from 'perun-core';
+import { React, PropTypes, elements } from 'perun-core';
 import { core,  data, tools, ui, config as cfg } from '../../../Spatial';
 import { config, createAPMsg, drawAPMsg, cutAPMsg, cutConfig, restAP, deleteAPMsg, fillConfig } from './Config';
 import { Form } from './Form';

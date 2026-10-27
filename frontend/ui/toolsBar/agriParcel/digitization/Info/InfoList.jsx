@@ -95,8 +95,8 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
   const overlapsContainer = () => {
     return <ListGroup className='text-center '>
       Парцелата се преклопува со следните соседни парцели
-      {overlaps.map(overlap => {
-        return <ListGroupItem className='p-2'>
+      {overlaps.map((overlap, i) => {
+        return <ListGroupItem key={i} className='p-2'>
           Број на парцела: <span className='font-weight-bold mr-1'>{overlap.PARCEL_ID1}</span>
           Површина: <span className='font-weight-bold'>{Math.round(overlap.AREA)} {getMeasurementUnit(true)}</span>
         </ListGroupItem>
@@ -127,9 +127,9 @@ const _InfoList = ({ farmInfo, parcelInfo }) => {
     const schema = permanentCropSchema.schema
     return <ListGroup className='text-center '>
       На парцелата се декларирани следниве долгогодишни култури
-      {permanentCrops.map(permanentCrop => {
+      {permanentCrops.map((permanentCrop, i) => {
         const numberOfTreesLabel = Number(permanentCrop.NUMBER_OF_TREES) === 1 ? 'садница' : 'садници'
-        return <ListGroupItem className='p-2'>
+        return <ListGroupItem key={i} className='p-2'>
           <span className='mr-1'>{schema.properties.PERM_CROP_TYPE_ID.enumNames[Number(permanentCrop.PERM_CROP_TYPE_ID) - 1]}</span>
           <span>(<strong>{permanentCrop.NUMBER_OF_TREES}</strong> {numberOfTreesLabel}</span>
           <span className='mr-1'> на <strong>{Math.round(permanentCrop.PLANT_AREA)}</strong> {getMeasurementUnit(true)})</span>

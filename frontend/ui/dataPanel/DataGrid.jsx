@@ -111,7 +111,7 @@ export const DataGrid = core.connect(state => ({
 /* --------------------- */
 const columnEnum = {
     physical_block: [`${getLabel('lpis_number')}`, `${getLabel('class')}`, `${getLabel('area')}`, '', '', ''],
-    agri_parcel: [`${getLabel('lpis_number')}`, `${getLabel('area')}`, `${getLabel('land_use_code')}`, `${getLabel('locality')}`, , `${getLabel('common_use')}`, `${getLabel('right_of_use')}`],
+    agri_parcel: [`${getLabel('lpis_number')}`, `${getLabel('area')}`, `${getLabel('land_use_code')}`, `${getLabel('locality')}`, `${getLabel('common_use')}`, `${getLabel('right_of_use')}`],
     land_use_plan: [`${getLabel('lpis_number')}`, `${getLabel('cultivation')}`, `${getLabel('area')}`, `${getLabel('num_of_crops')}`],
     cad_parcel: ['Ид. Број', 'Број на КО', `${getLabel('area')}`],
     measurements: ['Ид. Број', 'Тип', 'Мерење'],

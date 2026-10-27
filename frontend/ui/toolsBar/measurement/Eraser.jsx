@@ -14,7 +14,7 @@ const _id = 'erase';
 export const eraser = {
   clearMeasurementLayers: () => {
     Map.eachLayer(function (layer) {
-      if (!!layer.toGeoJSON) {
+      if (layer.toGeoJSON) {
         if (layer?.options?.showMeasurements && layer?._measurementOptions) {
           Map.removeLayer(layer);
         }

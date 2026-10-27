@@ -14,7 +14,7 @@ const FarmSearchTable = ({ farmData }) => {
     http.call('getFarmMapAssets', { url, method: 'get', responseType: 'arraybuffer' }).then(response => {
       // Clean-up all layers from the map
       Map.eachLayer(function (layer) {
-        if (!!layer.toGeoJSON) {
+        if (layer.toGeoJSON) {
           Map.removeLayer(layer);
         }
       });

@@ -50,7 +50,7 @@ const _ParcelHistory = ({ parcelHistory, setShowParcelHistory, historyEditEnable
     return (
       <Table striped bordered>
         <thead>
-          {headingsArr.map(heading => <th>{heading}</th>)}
+          {headingsArr.map(heading => <th key={heading}>{heading}</th>)}
         </thead>
         <tbody>
           {parcelHistory.map((historyEl, i) => {

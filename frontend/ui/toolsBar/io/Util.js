@@ -72,7 +72,7 @@ export const shpConfig = {
 
 export const eraseIoLayers = () => {
   Map.eachLayer(function (layer) {
-    if (!!layer.toGeoJSON) {
+    if (layer.toGeoJSON) {
       if (strcmp(layer.DESCRIPTOR, 'IO_LAYER')) {
         layer.removeFrom(Map)
         // Additional check for points (markers)

@@ -11,7 +11,7 @@ const { MIN_DIGI_SCALE } = spatialConfig;
 
 export const cleanupWorkingCropParcelLayers = () => {
     Map.eachLayer(function (layer) {
-        if (!!layer.toGeoJSON) {
+        if (layer.toGeoJSON) {
             if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'WORKING_CROP_PARCEL_LAYER')) {
                 Map.removeLayer(layer);
             }

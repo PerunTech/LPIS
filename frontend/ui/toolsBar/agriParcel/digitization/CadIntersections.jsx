@@ -14,7 +14,7 @@ const _iconId = 'selection-polygon';
 
 const removeCadIntersections = (resetState = false) => {
   Map.eachLayer(function (layer) {
-    if (!!layer.toGeoJSON) {
+    if (layer.toGeoJSON) {
       if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'lp_cad_intersections')) {
         Map.removeLayer(layer);
       }

@@ -334,7 +334,7 @@ const getFarmData = (objectId, actionType) => {
 export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
     store.dispatch({ hiddenAssets: [] })
     Map.eachLayer(function(layer) {
-        if (!!layer.toGeoJSON) {
+        if (layer.toGeoJSON) {
             // Remove everything when we first call this function
             if (fitBounds) {
                 Map.removeLayer(layer);
@@ -440,7 +440,7 @@ export const getFarmMapAssets = (fitBounds = false, showAlert = false) => {
  */
 export const getFarmPPlanAssets = (showAlert = false) => {
     Map.eachLayer(function(layer) {
-        if (!!layer.toGeoJSON) {
+        if (layer.toGeoJSON) {
             if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'land_use_plan')) {
                 Map.removeLayer(layer);
             }
