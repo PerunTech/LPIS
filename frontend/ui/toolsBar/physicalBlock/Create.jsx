@@ -92,8 +92,8 @@ const _CreateBlock = ({ processID }) => {
     return (
       <Form onSubmit={onSubmit} onChange={onChange} data={data}>
         <DrawActions
-          finish={() => draw.polygon._finishShape()}
-          undo={() => draw.polygon._removeLastVertex()}
+          finish={() => polygon._finishShape()}
+          undo={() => polygon._removeLastVertex()}
           cancel={disable} />
       </Form>
     )

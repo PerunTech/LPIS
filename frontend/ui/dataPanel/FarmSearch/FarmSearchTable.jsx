@@ -40,7 +40,7 @@ const FarmSearchTable = ({ farmData }) => {
         title = decodedJSON.title || ''
         message = decodedJSON.message || ''
       }
-      alertUser(true, 'error', err, message)
+      alertUser(true, 'error', title, message)
     })
   }
 

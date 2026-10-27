@@ -15,9 +15,9 @@ const { useReducer } = React
 const _id = 'landscapeFeaturesPoint'
 
 const _Point = ({ processID }) => {
-  const [{ data, X, Y, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
+  const [{ data, X, Y, layer, loading, isGuided, showForm }, setState] = useReducer((currState, update) =>
     ({ ...currState, ...update }),
-    { data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false });
+    { data: {}, X: 0, Y: 0, layer: {}, loading: false, isGuided: false, showForm: false });
 
   const enable = () => {
     store.dispatch({ processID: _id })
@@ -26,18 +26,18 @@ const _Point = ({ processID }) => {
       const latLng = e.latlng
       // Get the correct coordinates for the current CRS
       const point = Map.transform(latLng)
-      setState({ X: point.x, Y: point.y, isGuided: false, showForm: true })
       // Create a marker & add it to the map
       const markerConfig = { icon: factory.divIcon({ className: 'marker-icon' }) }
       const marker = factory.marker(latLng, markerConfig)
       marker.addTo(Map)
+      setState({ X: point.x, Y: point.y, layer: marker, isGuided: false, showForm: true })
     })
   }
 
   const disable = () => {
     Map.off('click')
     store.dispatch({ processID: '' })
-    setState({ data: {}, X: 0, Y: 0, loading: false, isGuided: false, showForm: false })
+    setState({ data: {}, X: 0, Y: 0, layer: {}, loading: false, isGuided: false, showForm: false })
     // This will remove the point when disabling the action
     Map.eachLayer(layer => {
       if (layer?.options?.icon) {
