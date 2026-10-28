@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, ui } from '../../../Spatial';
 import { Info } from './Info/Info';
 import { AdvanceDigitization } from './Advance';
@@ -27,10 +27,6 @@ const _PhysicalBlock = ({ actionType }) =>
             </React.Fragment>
         )}
     </ButtonGroup>;
-
-_PhysicalBlock.propTypes = {
-    actionType: PropTypes.string,
-}
 
 export const PhysicalBlock = connect(state =>
     ({ actionType: state.farmRegistry?.actionType }))(_PhysicalBlock);

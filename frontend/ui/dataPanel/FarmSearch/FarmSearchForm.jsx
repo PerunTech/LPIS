@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core'
+import { React } from 'perun-core'
 import { ui } from '../../../Spatial';
 import { getLabel } from '../../Util';
 
@@ -38,13 +38,6 @@ const FarmSearchForm = ({ onChange, onSubmit, formData, loading }) => {
       </div>
     </Form>
   )
-}
-
-FarmSearchForm.propTypes = {
-  onChange: PropTypes.func,
-  onSubmit: PropTypes.func,
-  formData: PropTypes.object,
-  loading: PropTypes.bool,
 }
 
 export default FarmSearchForm

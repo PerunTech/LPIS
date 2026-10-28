@@ -1,4 +1,4 @@
-import { React, PropTypes, elements } from 'perun-core';
+import { React, elements } from 'perun-core';
 import { core, data, ui, config as cfg } from '../../../Spatial';
 import { config, createCPMsg } from './Config';
 import { Form } from './Form';
@@ -157,14 +157,6 @@ const _Create = ({ processID, farmObjId }) => {
         </ProcessButton>
     );
 };
-
-_Create.propTypes = {
-    processID: PropTypes.string,
-    farmObjId: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number
-    ])
-}
 
 export const Create = core.connect(state => ({
     farmObjId: state.farmRegistry?.farmObjId

@@ -1,4 +1,4 @@
-import { React, PropTypes, elements } from 'perun-core';
+import { React, elements } from 'perun-core';
 import { core, data } from '../../../Spatial';
 import { config as apConfig } from '../../toolsBar/agriParcel/Config'
 import { getLabel, bufferToString, isJSON } from '../../Util';
@@ -83,10 +83,6 @@ const FarmSearchTable = ({ farmData }) => {
       )}
     </div>
   )
-}
-
-FarmSearchTable.propTypes = {
-  farmData: PropTypes.array,
 }
 
 export default FarmSearchTable

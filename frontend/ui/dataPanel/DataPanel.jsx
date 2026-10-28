@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { DataList } from '..';
 import { FarmDataGridInfoHeader } from './FarmDataGridInfoHeader';
@@ -136,12 +136,6 @@ const _DataPanel = ({
       )}
     </div>
   );
-}
-
-_DataPanel.propTypes = {
-  categories: PropTypes.array,
-  processID: PropTypes.string,
-  actionType: PropTypes.string
 }
 
 export const DataPanel = connect(state => ({

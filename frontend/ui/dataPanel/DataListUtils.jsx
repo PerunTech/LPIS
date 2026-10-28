@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, ui } from '../../Spatial';
 
 const { ButtonGroup, Button, Icon, Divider, Input } = ui;
@@ -39,8 +39,4 @@ export const DataListUtils = ({setData}) => {
         </ButtonGroup>}      
             <Input placeholder='Пребарај' id='search'/>
     </>
-}
-DataListUtils.propTypes = {
-    data: PropTypes.array,
-    setData: PropTypes.func
 }

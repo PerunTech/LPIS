@@ -1,4 +1,4 @@
-import { React, PropTypes, elements } from 'perun-core';
+import { React, elements } from 'perun-core';
 import { core,  data, tools, ui, config as cfg } from '../../../Spatial';
 import { config, createAPMsg, drawAPMsg, cutAPMsg, cutConfig, restAP, deleteAPMsg, fillConfig } from './Config';
 import { Form } from './Form';
@@ -483,15 +483,6 @@ const _AgriParcel = ({processID, mapId, farmObjId}) => {
                     </Modal>)}
         </Button>
     </ButtonGroup>;
-}
-
-_AgriParcel.propTypes = {
-    processID: PropTypes.string,
-    mapId: PropTypes.string,
-    farmObjId: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number
-    ])
 }
 
 export const AgriParcel = core.connect(state => 

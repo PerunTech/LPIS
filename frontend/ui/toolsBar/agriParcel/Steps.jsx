@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, ui } from '../../../Spatial';
 import { getLabel, strcmp } from '../../Util'
 
@@ -99,13 +99,6 @@ export function Main({ formData, onChange, next, digitizationIsActive }) {
     </Form>;
 }
 
-Main.propTypes = {
-    formData: PropTypes.any,
-    onChange: PropTypes.func,
-    next: PropTypes.func,
-    digitizationIsActive: PropTypes.bool,
-};
-
 /* Aux Metadata */
 export function Aux({ formData, onChange, prev, next, digitizationIsActive }) {
     const metadataAux = {
@@ -177,14 +170,6 @@ export function Aux({ formData, onChange, prev, next, digitizationIsActive }) {
     </Form>;
 }
 
-Aux.propTypes = {
-    formData: PropTypes.any,
-    onChange: PropTypes.func,
-    prev: PropTypes.func,
-    next: PropTypes.func,
-    digitizationIsActive: PropTypes.bool,
-};
-
 /* Admin Metadata */
 export function Admin({ formData, onChange, prev, onSubmit, digitizationIsActive }) {
     const metadataAdmin = {
@@ -252,11 +237,3 @@ export function Admin({ formData, onChange, prev, onSubmit, digitizationIsActive
         </div>
     </Form>;
 }
-
-Admin.propTypes = {
-    formData: PropTypes.any,
-    onChange: PropTypes.func,
-    prev: PropTypes.func,
-    onSubmit: PropTypes.func,
-    digitizationIsActive: PropTypes.bool,
-};

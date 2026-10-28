@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { getCropLabel } from '..'
 import { getLabel, getMeasurementUnit, strcmp, translateBooleanValue } from '../Util';
@@ -94,14 +94,6 @@ const _DataGrid = ({ type, rows, selectedParcelId, selectedCropParcelId }) => {
         </div>
 }
 
-_DataGrid.propTypes = {
-    type: PropTypes.object,
-    rows: PropTypes.oneOfType([
-        PropTypes.object,
-        PropTypes.array
-    ]),
-}
-
 export const DataGrid = core.connect(state => ({
     selectedParcelId: state.farmRegistry?.selectedParcelId, selectedCropParcelId: state.farmRegistry?.selectedCropParcelId
 }))(_DataGrid)
@@ -144,10 +136,6 @@ const _GridHeader = ({ typeId }) => {
         {columnElements}
         <Button disabled style={{ width: '60px' }} />
     </ButtonGroup>
-}
-
-_GridHeader.propTypes = {
-    typeId: PropTypes.string
 }
 
 /* ------------------------------ */
@@ -326,10 +314,6 @@ const _GSAAHeader = ({ typeId }) => {
             <Button disabled className='data-grid-column' >{columns[3]}</Button>
             <Button disabled style={{ width: '20px' }} />
         </ButtonGroup>
-}
-
-_GSAAHeader.propTypes = {
-    typeId: PropTypes.string
 }
 /* -------------- */
 /*      ROWS      */

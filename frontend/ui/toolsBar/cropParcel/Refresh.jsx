@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { ui } from '../../../Spatial';
 import { getFarmPPlanAssets, getLabel } from '../../Util';
 
@@ -21,7 +21,3 @@ export const Refresh = ({ processID }) => {
         </Button>
     );
 };
-
-Refresh.propTypes = {
-    processID: PropTypes.string,
-}

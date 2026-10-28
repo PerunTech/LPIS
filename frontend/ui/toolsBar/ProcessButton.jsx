@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { strcmp } from '../Util';
 
@@ -47,12 +47,6 @@ function _ProcessButton({ id, ...props }) {
         disabled={isDisabled} >
         {props.children}
     </ui.Button>
-}
-
-_ProcessButton.propTypes = {
-    id: PropTypes.string.isRequired,
-    children: PropTypes.node,
-    processID: PropTypes.string,
 }
 
 export const ProcessButton = core.connect((state) => {

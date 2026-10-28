@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { MEASURE_LENGTH } from './Config';
@@ -76,11 +76,6 @@ function _Length({ processID, currentMeasure, ..._props }) {
       )}
     </ProcessButton>
   )
-}
-
-_Length.propTypes = {
-  currentMeasure: PropTypes.number,
-  processID: PropTypes.string,
 }
 
 export const Length = connect(({ app, measurement }) => {

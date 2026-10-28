@@ -1,4 +1,4 @@
-import { React, PropTypes, redux, createHashHistory } from 'perun-core';
+import { React, redux, createHashHistory } from 'perun-core';
 import { ui, core } from '../../Spatial';
 import { PhysicalBlock, LandscapeFeatures, AgriParcel, CropParcel, Measurement, IO } from '..';
 import { Digitization } from './agriParcel/digitization/Digitization';
@@ -164,11 +164,6 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
             <SaveAPPrompt />
         </div>
     );
-}
-
-_ToolsBar.propTypes = {
-    actionType: PropTypes.string,
-    activeTab: PropTypes.string
 }
 
 export const ToolsBar = core.connect(state => ({

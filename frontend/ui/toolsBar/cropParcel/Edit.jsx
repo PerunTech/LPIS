@@ -1,4 +1,4 @@
-import { React, PropTypes, elements } from 'perun-core';
+import { React, elements } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
 import { config, editCPMsg } from './Config';
 import { Form } from './Form';
@@ -132,7 +132,3 @@ export const Edit = ({ processID }) => {
         {processID === _id && renderComponent()}
     </ProcessButton>;
 };
-
-Edit.propTypes = {
-    processID: PropTypes.string,
-}

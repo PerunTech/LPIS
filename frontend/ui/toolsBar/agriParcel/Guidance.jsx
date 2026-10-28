@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { ui } from '../../../Spatial';
 
 const { Button, Modal, DrawActions } = ui;
@@ -20,14 +20,4 @@ export function Guidance ({ id, title, msg, disable, finish, undo, children }) {
             {children}
         </Modal.Body>
     </Modal>;
-}
-
-Guidance.propTypes = {
-    id: PropTypes.string,
-    title: PropTypes.string,
-    msg: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-    disable: PropTypes.func,
-    finish: PropTypes.func,
-    undo: PropTypes.func,
-    children: PropTypes.node
 }

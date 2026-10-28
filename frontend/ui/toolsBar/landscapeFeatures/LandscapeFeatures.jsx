@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, ui } from '../../../Spatial';
 import { Polygon } from './Polygon';
 import { EditPolygon } from './EditPolygon';
@@ -24,11 +24,6 @@ const _LandscapeFeatures = () =>
     <Divider />
     <Load />
   </ButtonGroup>;
-
-_LandscapeFeatures.propTypes = {
-  processID: PropTypes.string,
-  actionType: PropTypes.string,
-}
 
 export const LandscapeFeatures = connect(state =>
   ({ processID: state.app.processID, actionType: state.farmRegistry?.actionType }))(_LandscapeFeatures);
