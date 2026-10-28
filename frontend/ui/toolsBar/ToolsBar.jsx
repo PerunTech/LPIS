@@ -8,6 +8,7 @@ import { getLabel, strcmp } from '../Util';
 const { Tab, Tabs, Button, Icon, Selection } = ui;
 const { store } = core;
 const { store: perunStore, logoutUser } = redux;
+const { useLayoutEffect } = React;
 const history = createHashHistory();
 
 const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
@@ -52,9 +53,14 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
                 defaultActiveKey = 'physical-block'
                 break
         }
-        store.dispatch({ activeTab: defaultActiveKey })
         return defaultActiveKey
     }
+
+    const defaultActiveKey = getDefaultActiveKey()
+
+    useLayoutEffect(() => {
+        store.dispatch({ activeTab: defaultActiveKey })
+    }, [defaultActiveKey])
 
     const disableTab = tabType => {
         let shouldDisable = false
@@ -117,7 +123,7 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
                     )}
                 </div>
             )}
-            <Tabs defaultActiveKey={getDefaultActiveKey} activeKey={activeTab} onSelect={(key) => handleTabSelection(key)}>
+            <Tabs defaultActiveKey={defaultActiveKey} activeKey={activeTab} onSelect={(key) => handleTabSelection(key)}>
                 <Tab eventKey='physical-block' title={getLabel('physical_blocks')} disabled={disableTab('physical-block')} >
                     <PhysicalBlock />
                 </Tab>

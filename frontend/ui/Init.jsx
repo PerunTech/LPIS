@@ -5,12 +5,24 @@ import { getFarmMapAssets, getCropCodes, getDbCRS, getGeoTypeLayers, getLandCove
 
 const { SYS_CENTER } = config;
 const { Map, store } = core;
+const { useState, useEffect } = React;
 
-let _isLoaded = false;
-const _gsaa = (_token) => {
-    // Prevent multiple initializations.
-    return !_isLoaded
-        ? (_isLoaded = true, ui.init(_token)
+const GsaaMap = () => {
+    const [mapElement, setMapElement] = useState(null);
+
+    useEffect(() => {
+        const _token = readCookie('token');
+        const _farmerId = Number(readCookie('farmerObj'));
+        // const _token = redux.store.getState().security.svSession;
+        // const _farmerId = 457156934 // 34956 242466 457156934
+
+        // add check for token, farmerId existance and validate.
+        // exit properly for the user on fail.
+
+        core.store.addState('gsaa', { farmerId: _farmerId, token: _token });
+        loadFarmerAssets(_token, _farmerId, true);
+
+        setMapElement(ui.init(_token)
             .addControl(MiniBar, {}, { position: 'topleft' })
             .addControl(DataPanel, {
                 categories: [
@@ -22,32 +34,21 @@ const _gsaa = (_token) => {
             .addControl(StatusBar, {}, { position: 'bottom', className: 'status-bar' })
             .withNavigationControl()
             .withWindRose()
-            .render('gsaa-map'))
-        : null
+            .render('gsaa-map'));
+    }, []);
+
+    return mapElement;
 }
 
-export const gsaa = () => {
-    const _token = readCookie('token');
-    const _farmerId = Number(readCookie('farmerObj'));
-    // const _token = redux.store.getState().security.svSession;
-    // const _farmerId = 457156934 // 34956 242466 457156934
+export const gsaa = () => <GsaaMap />;
 
-    // add check for token, farmerId existance and validate.
-    // exit properly for the user on fail.
+const LpisMap = () => {
+    const [mapElement, setMapElement] = useState(null);
 
-    core.store.addState('gsaa', { farmerId: _farmerId, token: _token });
-    loadFarmerAssets(_token, _farmerId, true);
+    useEffect(() => {
+        let cancelled = false;
+        const token = redux.store.getState().security.svSession;
 
-    return _gsaa(_token);
-}
-
-class LpisMap extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = { loading: true, mapElement: null }
-    }
-
-    componentDidMount() {
         store.addState('lpis', {
             'physicalBlocksHaveBeenLoaded': false, 'loadedPhysicalBlocks': {},
             'systemLayers': {}, 'systemLayersFull': {},
@@ -67,11 +68,12 @@ class LpisMap extends React.Component {
             getLayers(),
             getDbCRS()
         ]).then(() => {
+            if (cancelled) return;
             const layers = store.getState().listOfLayers
 
             Map.setView(SYS_CENTER, 3);
 
-            const map = ui.init(this.props.token)
+            setMapElement(ui.init(token)
                 .addControl(ToolsBar, {}, { position: 'top' })
                 .addControl(DataPanel, {}, { position: 'left' })
                 .addControl(LayerPanel, {}, { position: 'right' })
@@ -79,30 +81,24 @@ class LpisMap extends React.Component {
                 .withNavigationControl()
                 .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
                 .withWindRose()
-                .render('lpis-map');
-
-            this.setState({ loading: false, mapElement: map })
+                .render('lpis-map'));
         })
-    }
 
-    render() {
-        if (this.state.loading) return <Loading />
-        return this.state.mapElement
-    }
+        return () => { cancelled = true; };
+    }, []);
+
+    return mapElement || <Loading />;
 }
 
-export const lpis = () => {
-    const _token = redux.store.getState().security.svSession;
-    return <LpisMap token={_token} />
-}
+export const lpis = () => <LpisMap />;
 
-class FarmRegLpisMap extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = { loading: true, mapElement: null }
-    }
+const FarmRegLpisMap = ({ showHeaderAndFooter }) => {
+    const [mapElement, setMapElement] = useState(null);
 
-    componentDidMount() {
+    useEffect(() => {
+        let cancelled = false;
+        const token = redux.store.getState().security.svSession;
+
         store.addState('farmRegistry', {
             'agriParcels': {}, 'cadIntersections': {}, 'farmPPlanData': {}, 'farmObjId': '', 'farmObjTypeId': '', 'actionType': '',
             'fic': '', 'fullName': '', 'tableName': '', 'selectedParcelId': '', 'selectedCropParcelId': '', 'saveIsPending': false,
@@ -111,7 +107,7 @@ class FarmRegLpisMap extends React.Component {
             'editFormWasClosed': false, 'parcelHistoryModalWasClosed': false, 'digitizationIsActive': false, 'canRenderTheDigitizationButton': false,
             'activateInfoProcess': false, 'controlResults': [], 'showControlResultsContainer': false, 'hiddenControlResultAssets': [],
             'controlResultEditEnabled': false, 'copiedControlResultGeometry': {}, 'agriParcelsWithControlResultGeometries': [], 'activeTab': '',
-            'weAreRenderingDirectly': this.props.showHeaderAndFooter ? true : false
+            'weAreRenderingDirectly': showHeaderAndFooter ? true : false
         })
 
         getFarmMapAssets(true)
@@ -123,11 +119,12 @@ class FarmRegLpisMap extends React.Component {
             getLayers(),
             getDbCRS()
         ]).then(() => {
+            if (cancelled) return;
             const layers = store.getState().listOfLayers
 
-            const mapId = this.props.showHeaderAndFooter ? 'farm-registry-map-inline' : 'farm-registry-map'
+            const mapId = showHeaderAndFooter ? 'farm-registry-map-inline' : 'farm-registry-map'
 
-            const map = ui.init(this.props.token)
+            setMapElement(ui.init(token)
                 .addControl(ToolsBar, {}, { position: 'top' })
                 .addControl(DataPanel, {}, { position: 'left' })
                 .addControl(LayerPanel, {}, { position: 'right' })
@@ -135,19 +132,13 @@ class FarmRegLpisMap extends React.Component {
                 .withNavigationControl()
                 .addRasterLayers(layers?.[0] || {}, layers?.[1] || {}, { collapsed: false, position: 'right' })
                 .withWindRose()
-                .render(mapId, this.props.showHeaderAndFooter || false);
-
-            this.setState({ loading: false, mapElement: map })
+                .render(mapId, showHeaderAndFooter || false));
         })
-    }
 
-    render() {
-        if (this.state.loading) return <Loading />
-        return this.state.mapElement
-    }
+        return () => { cancelled = true; };
+    }, [showHeaderAndFooter]);
+
+    return mapElement || <Loading />;
 }
 
-export const farmRegLpis = (props) => {
-    const _token = redux.store.getState().security.svSession;
-    return <FarmRegLpisMap token={_token} showHeaderAndFooter={props?.showHeaderAndFooter} />
-}
+export const farmRegLpis = (props) => <FarmRegLpisMap showHeaderAndFooter={props?.showHeaderAndFooter} />;
