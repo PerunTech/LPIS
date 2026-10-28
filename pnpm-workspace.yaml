@@ -4,3 +4,7 @@ packages: []
 # spatial declares perun-core as a git dependency of its own, and pnpm 11 blocks
 # git-resolved packages in transitive position unless this is off.
 blockExoticSubdeps: false
+
+# monaco-editor 0.57.0, the latest, pins dompurify 3.4.15 exactly; drop this once a release lifts it.
+overrides:
+  monaco-editor>dompurify: ^3.4.17
