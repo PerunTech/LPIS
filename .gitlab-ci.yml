@@ -21,9 +21,20 @@ pnpm_test:
   script:
     - pwd
     - git reset --hard HEAD
+    # Below the engines floor pnpm silently skips vite's and oxlint's optional native
+    # bindings, and the build then fails with a trace that never names node.
+    - |
+      floor=$(node -p "require('./package.json').engines.node.replace(/[^0-9.]/g,'')")
+      have=$(node -p "process.versions.node")
+      if [ "$(printf '%s\n%s\n' "$floor" "$have" | sort -V | head -1)" != "$floor" ]; then
+        echo "This runner has node $have; this package needs $floor or newer."
+        echo "Upgrade node on the runner rather than changing anything here."
+        exit 1
+      fi
+      echo "ok - node $have meets the floor of $floor"
     - rm -rf node_modules
     - pnpm install
-    - pnpm run test
+    - pnpm run lint
     - pnpm run build
 
 mvn_test:

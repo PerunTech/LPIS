@@ -13,8 +13,8 @@ const { useEffect, useRef, useReducer } = React;
 const _id = 'shapefile';
 
 const _ImportSHP = ({ processID, farmObjId }) => {
-  const [{ showForm, loading, shapefileContent, layerName, layers, systemLayers }, setState] = useReducer((currState, update) =>
-    ({ ...currState, ...update }), { showForm: false, loading: false, shapefileContent: undefined, layerName: '', layers: [], systemLayers: {} });
+  const [{ showForm, loading, layerName, layers, systemLayers }, setState] = useReducer((currState, update) =>
+    ({ ...currState, ...update }), { showForm: false, loading: false, layerName: '', layers: [], systemLayers: {} });
 
   const inputFile = useRef(null);
 
@@ -32,7 +32,7 @@ const _ImportSHP = ({ processID, farmObjId }) => {
 
   const disable = () => {
     store.dispatch({ processID: '' });
-    setState({ showForm: false, loading: false, shapefileContent: undefined, layerName: '', layers: [] })
+    setState({ showForm: false, loading: false, layerName: '', layers: [] })
     eraseIoLayers()
   }
 
@@ -51,7 +51,6 @@ const _ImportSHP = ({ processID, farmObjId }) => {
       // Check for zip archives
       if (strcmp(extension, '.zip')) {
         shp.parseZip(result).then(content => {
-          setState({ shapefileContent: content })
           if (Array.isArray(content) && content.length > 0) {
             content.forEach(element => {
               const geojson = factory.geoJSON(element, shpConfig);
@@ -102,13 +101,10 @@ const _ImportSHP = ({ processID, farmObjId }) => {
       } else if (strcmp(extension, '.shp')) {
         const shpResult = shp.parseShp(result)
         if (Array.isArray(shpResult) && shpResult.length > 0) {
-          const shapefileContentObj = { type: 'FeatureCollection', features: [] }
           setState({ layers: shpResult, showForm: true })
           shpResult.forEach(element => {
             const geojson = factory.geoJSON(element, shpConfig);
             geojson.getLayers().forEach(l => {
-              shapefileContentObj.features.push(l.feature)
-              setState({ shapefileContent: shapefileContentObj })
               l.DESCRIPTOR = 'IO_LAYER'
               l.addTo(Map)
             });
@@ -131,7 +127,7 @@ const _ImportSHP = ({ processID, farmObjId }) => {
     const parentId = farmObjId || 0
     const shapefileContentObj = { type: 'FeatureCollection', features: [] }
     Map.eachLayer(function (layer) {
-      if (!!layer.toGeoJSON) {
+      if (layer.toGeoJSON) {
         if (layer.DESCRIPTOR && strcmp(layer.DESCRIPTOR, 'IO_LAYER')) {
           const dbCRS = store.getState().dbCRS
           shapefileContentObj.features.push(factory.GeoJSON.fromLayer(layer, dbCRS))
@@ -173,7 +169,7 @@ const _ImportSHP = ({ processID, farmObjId }) => {
           <h5>{getLabel('number_of_layers_in_shapefile')}: {numberOfLayers}</h5>
           <p className='import-layer-list-of-layers'>{getLabel('list_of_layers_in_shapefile')}</p>
           <div className='import-layer-main-container'>
-            {layers.map(layer => {
+            {layers.map((layer, i) => {
               return (
                 layer?.properties ? <div key={nanoid(4)} className='border import-layer-container'>
                   {Object.entries(layer.properties).map(([key, value], i, properties) => {
@@ -187,7 +183,7 @@ const _ImportSHP = ({ processID, farmObjId }) => {
                       </div>
                     )
                   })}
-                </div> : <p>{getLabel('layer_has_no_properties')}</p>
+                </div> : <p key={i}>{getLabel('layer_has_no_properties')}</p>
               )
             })}
           </div>

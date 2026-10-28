@@ -33,12 +33,6 @@ export const ExportSHP = () => {
         exportFile(fc, options, layers);
       });
 
-      let generateOptions = { compression: 'STORE' };
-
-      if (!process.browser) {
-        generateOptions.type = 'nodebuffer';
-      }
-
       zip.generateAsync({ type: 'blob' }).then(blob => {
         saveAs(blob, zipArchiveName + '.zip');
       })

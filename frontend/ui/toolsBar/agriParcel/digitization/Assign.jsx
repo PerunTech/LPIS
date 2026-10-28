@@ -1,6 +1,6 @@
 import { React, Loading, redux, elements, createHashHistory } from 'perun-core';
 import { core, ui, data } from '../../../../Spatial';
-import { assignAPMsg, config } from '../Config';
+import { config } from '../Config';
 import { bufferToString, getFarmMapAssets, getLabel, isJSON, strcmp } from '../../../Util';
 import { Guidance } from '../Guidance';
 import { Form } from '../Form';

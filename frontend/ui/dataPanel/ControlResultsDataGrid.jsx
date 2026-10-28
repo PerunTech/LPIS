@@ -70,7 +70,7 @@ const toggleAssetFromMap = (id) => {
 export const ControlResultsDataGrid = ({ type, rows, controlResultEditEnabled }) => {
   useEffect(() => {
     Map.eachLayer(function (layer) {
-      if (!!layer.toGeoJSON) {
+      if (layer.toGeoJSON) {
         if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'spatial_control')) {
           Map.removeLayer(layer);
         }

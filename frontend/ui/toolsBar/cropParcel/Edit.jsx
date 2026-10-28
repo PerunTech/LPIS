@@ -5,7 +5,7 @@ import { Form } from './Form';
 import { Guidance } from './Guidance';
 import { saveCP } from './Save';
 import { ProcessButton } from '../..';
-import { getFarmPPlanAssets, getLabel } from '../../Util';
+import { getFarmPPlanAssets, getLabel, strcmp } from '../../Util';
 
 const { Map, store, factory } = core;
 const { edit } = tools;

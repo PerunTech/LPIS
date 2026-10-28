@@ -60,7 +60,7 @@ const _Split = ({ processID, loadedPhysicalBlocks }) => {
       lineLayer.removeFrom(Map);
     }
     Map.eachLayer(function (layer) {
-      if (!!layer.toGeoJSON) {
+      if (layer.toGeoJSON) {
         if (layer?.options?.name && strcmp(layer.options.name, 'marker-point')) {
           Map.removeLayer(layer);
         }

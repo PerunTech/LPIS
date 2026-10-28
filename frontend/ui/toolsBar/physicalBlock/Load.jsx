@@ -1,5 +1,5 @@
 import { React, Loading, elements } from 'perun-core';
-import { core, ui, data, tools } from '../../../Spatial';
+import { core, ui, data } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { Guidance } from '../agriParcel/Guidance';
 import { config, setLoadedPhysicalBlockLabel } from './Config';
@@ -85,7 +85,7 @@ const _Load = ({ processID, physicalBlocksHaveBeenLoaded: physicalBlocksHaveBeen
       alertUser(true, 'info', getLabel('no_loaded_physical_blocks'))
     } else {
       Map.eachLayer(function (layer) {
-        if (!!layer.toGeoJSON) {
+        if (layer.toGeoJSON) {
           if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'PHYSICAL_BLOCK')) {
             Map.removeLayer(layer);
           } else if (layer?.options?.name && strcmp(layer.options.name, 'marker-point')) {

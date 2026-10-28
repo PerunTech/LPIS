@@ -17,7 +17,7 @@ export function truncate (string, n, useWordBoundary) {
 
 export const removeCadParcels = () => {
   Map.eachLayer(function (layer) {
-    if (!!layer.toGeoJSON) {
+    if (layer.toGeoJSON) {
       if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'CAD_PARCEL')) {
         Map.removeLayer(layer);
       }
@@ -27,7 +27,7 @@ export const removeCadParcels = () => {
 
 export const removeSearchedParcels = () => {
   Map.eachLayer(function (layer) {
-    if (!!layer.toGeoJSON) {
+    if (layer.toGeoJSON) {
       if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'SEARCHED_LPIS_PARCEL')) {
         Map.removeLayer(layer);
       }
@@ -37,7 +37,7 @@ export const removeSearchedParcels = () => {
 
 export const removeParcelHistoryLayers = () => {
   Map.eachLayer(function (layer) {
-    if (!!layer.toGeoJSON) {
+    if (layer.toGeoJSON) {
       if (layer?.feature?.properties?.DESCRIPTOR && strcmp(layer?.feature?.properties?.DESCRIPTOR, 'PARCEL_HISTORY')) {
         Map.removeLayer(layer);
       }

@@ -80,7 +80,7 @@ const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
             <h5>{getLabel('number_of_layers')}: {numberOfLayers}</h5>
             <p className='import-layer-list-of-layers'>{getLabel('list_of_layers')}</p>
             <div className='import-layer-main-container'>
-              {selectedWmsFeature?.features?.map(layer => {
+              {selectedWmsFeature?.features?.map((layer, i) => {
                 return (
                   layer?.properties ? <div key={nanoid(4)} className='border import-layer-container'>
                     {Object.entries(layer.properties).map(([key, value], i, properties) => {
@@ -94,7 +94,7 @@ const _ImportWMS = ({ processID, selectedWmsFeature, farmObjId }) => {
                         </div>
                       )
                     })}
-                  </div> : <p>{getLabel('layer_has_no_properties')}</p>
+                  </div> : <p key={i}>{getLabel('layer_has_no_properties')}</p>
                 )
               })}
             </div>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+</head>
+
+<body id="body">
+  <div id="app"></div>
+  <script src="config.js"></script>
+  <script>
+    const assetsUrl = `${window.server}/WsConf/params/get/sys/FRONTEND_ASSETS_LOCATION`
+    fetch(assetsUrl).then(response => response.json()).then(res => {
+      if (res.VALUE) {
+        const assetsLocation = res.VALUE
+        // Assign the assets location to a window variable
+        window.assets = assetsLocation;
+        // Get the current server
+        const server = window.server.substring(0, window.server.lastIndexOf('/'));
+        // Fetch the script for getting the default locale
+        const localeScript = Object.assign(document.createElement('script'), {
+          type: 'text/javascript', src: `${server}${assetsLocation}/js/locale.js`
+        });
+        document.body.appendChild(localeScript);
+        /**
+         * Dynamically loads a list of CSS files (stylesheets)
+         * @param  {Array} stylesheets A list of CSS file names that need to be loaded as stylesheets
+         */
+        const setStylesheets = (stylesheets) => {
+          stylesheets.forEach(stylesheet => {
+            const link = document.createElement('link');
+            link.type = 'text/css';
+            link.rel = 'stylesheet';
+            link.href = `${server}${assetsLocation}/styles/${stylesheet}.css`;
+            document.head.appendChild(link);
+          });
+        }
+
+        // Custom stylesheets
+        const stylesheets = [
+          'datagrid',
+          'forms',
+          'style',
+          'logon',
+          'footer',
+          'homepage',
+          'loading',
+          'topnavmenu',
+          'buttonactions',
+          'adminconsole',
+          'modal',
+          'userguide',
+          'modulemenu',
+          'not-found-page',
+          'svarog-notifications',
+          'persons-registry',
+          'aims-sidemenu',
+          'farm-registry',
+          'aims-ar',
+          'aims-modal',
+          'systemcolors',
+          'vmp',
+          'inspections',
+          'epi-management',
+          'lims-sar',
+          'lims',
+          'phc',
+          'ps',
+          'applications',
+          'batch',
+          'reportengine',
+          'task-management',
+          'control-programs',
+          'wms',
+          'atlas-panel',
+        ];
+        setStylesheets(stylesheets);
+
+        /**
+         * Dynamically loads a list of Font Awesome CSS files (stylesheets)
+         * @param  {Array} stylesheets A list of Font Awesome CSS file names that need to be loaded as stylesheets
+         */
+        const setFontAwesomeStylesheets = (stylesheets) => {
+          stylesheets.forEach(stylesheet => {
+            const link = document.createElement('link');
+            link.type = 'text/css';
+            link.rel = 'stylesheet';
+            link.href = `${server}${assetsLocation}${stylesheet}`;
+            document.head.appendChild(link);
+          });
+        }
+
+        // Font Awesome stylesheets
+        const fontAwesomeStylesheets = [
+          '/fonts/font-awesome.min.css',
+          '/fonts/fontawesome_v.5/css/all.min.css',
+          '/fonts/fontawesome_v.5/css/fontawesome.min.css'
+        ];
+        setFontAwesomeStylesheets(fontAwesomeStylesheets);
+
+        // Fetch the script for changing the document title
+        const titleScript = Object.assign(document.createElement('script'), {
+          type: 'text/javascript', src: `${server}${assetsLocation}/js/title.js`
+        });
+        document.body.appendChild(titleScript);
+      }
+    }).catch(err => {
+      console.log(err)
+    })
+  </script>
+  <script src="lpis.js"></script>
+</body>
+
+</html>

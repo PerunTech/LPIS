@@ -80,7 +80,7 @@ const _Fill = ({ processID, loadedPhysicalBlocks }) => {
     layer.removeFrom && layer.removeFrom(Map);
     polygon.disable('force');
     Map.eachLayer(function (layer) {
-      if (!!layer.toGeoJSON) {
+      if (layer.toGeoJSON) {
         if (layer?.options?.name && strcmp(layer.options.name, 'marker-point')) {
           Map.removeLayer(layer);
         }
