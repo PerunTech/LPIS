@@ -1,4 +1,4 @@
-import { React, PropTypes, elements } from 'perun-core';
+import { React, elements } from 'perun-core';
 import { core, data, ui } from '../../Spatial';
 import { ParcelHistory } from './ParcelHistory';
 import { getCropLabel } from '../toolsBar/cropParcel/Util';
@@ -143,23 +143,6 @@ const _FarmDataGrid = ({ type, rows, selectedParcelId, actionType, pplanRows, ca
       showCadParcels={showCadParcels}
     /> : <_NoData />}
   </div>
-};
-
-_FarmDataGrid.propTypes = {
-  type: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.string
-  ]),
-  rows: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.array
-  ]),
-  pplanRows: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.array
-  ]),
-  selectedParcelId: PropTypes.string,
-  actionType: PropTypes.string,
 };
 
 export const FarmDataGrid = core.connect(state => ({

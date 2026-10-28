@@ -1,12 +1,14 @@
-import { React, PropTypes, redux, createHashHistory } from 'perun-core';
+import { React, redux, createHashHistory } from 'perun-core';
 import { ui, core } from '../../Spatial';
 import { PhysicalBlock, LandscapeFeatures, AgriParcel, CropParcel, Measurement, IO } from '..';
 import { Digitization } from './agriParcel/digitization/Digitization';
+import { SaveAPPrompt } from './agriParcel/SaveAP';
 import { getLabel, strcmp } from '../Util';
 
 const { Tab, Tabs, Button, Icon, Selection } = ui;
 const { store } = core;
 const { store: perunStore, logoutUser } = redux;
+const { useLayoutEffect } = React;
 const history = createHashHistory();
 
 const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
@@ -51,9 +53,14 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
                 defaultActiveKey = 'physical-block'
                 break
         }
-        store.dispatch({ activeTab: defaultActiveKey })
         return defaultActiveKey
     }
+
+    const defaultActiveKey = getDefaultActiveKey()
+
+    useLayoutEffect(() => {
+        store.dispatch({ activeTab: defaultActiveKey })
+    }, [defaultActiveKey])
 
     const disableTab = tabType => {
         let shouldDisable = false
@@ -116,7 +123,7 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
                     )}
                 </div>
             )}
-            <Tabs defaultActiveKey={getDefaultActiveKey} activeKey={activeTab} onSelect={(key) => handleTabSelection(key)}>
+            <Tabs defaultActiveKey={defaultActiveKey} activeKey={activeTab} onSelect={(key) => handleTabSelection(key)}>
                 <Tab eventKey='physical-block' title={getLabel('physical_blocks')} disabled={disableTab('physical-block')} >
                     <PhysicalBlock />
                 </Tab>
@@ -160,13 +167,9 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
                     </Button>
                 </React.Fragment>
             )}
+            <SaveAPPrompt />
         </div>
     );
-}
-
-_ToolsBar.propTypes = {
-    actionType: PropTypes.string,
-    activeTab: PropTypes.string
 }
 
 export const ToolsBar = core.connect(state => ({

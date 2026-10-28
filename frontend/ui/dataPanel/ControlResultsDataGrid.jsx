@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { getLabel, getMeasurementUnit, strcmp } from '../Util';
 import { getCropLabel } from '../toolsBar/cropParcel/Util'
@@ -90,11 +90,6 @@ export const ControlResultsDataGrid = ({ type, rows, controlResultEditEnabled })
       {rows.length > 0 ? <_Rows rows={rows} controlResultEditEnabled={controlResultEditEnabled} /> : <_NoData />}
     </div>
   )
-};
-
-ControlResultsDataGrid.propTypes = {
-  type: PropTypes.string,
-  rows: PropTypes.array
 };
 
 /* ----------------------------- */

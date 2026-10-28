@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, ui } from '../../../Spatial';
 import { restCP } from './Config';
 import { Create } from './Create';
@@ -20,11 +20,6 @@ const _CropParcel = ({processID, farmerId, ...props}) =>
         <Divider />
         <Delete {...props} processID={processID} farmerId={farmerId} />
     </ButtonGroup>;
-
-_CropParcel.propTypes = {
-    processID: PropTypes.string,
-    farmerId: PropTypes.number
-}
 
 export const CropParcel = connect(state => 
     ({ processID: state.app.processID, farmerId: state.gsaa.farmerId }))(_CropParcel);

@@ -1,4 +1,4 @@
-import { React, PropTypes, elements } from 'perun-core';
+import { React, elements } from 'perun-core';
 import { core } from '../../../Spatial';
 import FarmSearchForm from './FarmSearchForm';
 import FarmSearchTable from './FarmSearchTable';
@@ -50,11 +50,6 @@ const FarmSearch = ({ farmSearchFormData, farmSearchData }) => {
       )}
     </div>
   )
-}
-
-FarmSearch.propTypes = {
-  farmSearchFormData: PropTypes.object,
-  farmSearchData: PropTypes.array,
 }
 
 export default connect(state => ({

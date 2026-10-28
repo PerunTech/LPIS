@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { ui } from '../../../Spatial';
 import { metadata } from './Config';
 import { getLabel } from '../../Util';
@@ -28,11 +28,4 @@ export function Form({ onSubmit, onChange, data = {}, children }) {
             </ui.Form>
         </Modal.Body>
     </Modal>;
-}
-
-Form.propTypes = {
-    onSubmit: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
-    data: PropTypes.object,
-    children: PropTypes.Node
 }

@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
 import { ProcessButton } from '../ProcessButton';
 import { MEASURE_AREA } from './Config';
@@ -75,11 +75,6 @@ function _Area({ processID, currentMeasure, ..._props }) {
       )}
     </ProcessButton>
   )
-}
-
-_Area.propTypes = {
-  currentMeasure: PropTypes.number,
-  processID: PropTypes.string,
 }
 
 export const Area = connect(({ app, measurement }) => {

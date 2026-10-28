@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, ui } from '../../Spatial';
 import { DataGrid } from '..';
 import { FarmDataGrid } from './FarmDataGrid';
@@ -50,28 +50,6 @@ export const _DataList = ({
         )}
     </div>
 }
-
-_DataList.propTypes = {
-    data: PropTypes.array,
-    setData: PropTypes.func,
-    pplanData: PropTypes.array,
-    setPplanData: PropTypes.func,
-    layers: PropTypes.oneOfType([
-        PropTypes.object,
-        PropTypes.array
-    ]),
-    pauseGrid: PropTypes.bool,
-    actionType: PropTypes.string,
-    showParcelInfoContainer: PropTypes.bool,
-    farmData: PropTypes.oneOfType([
-        PropTypes.object,
-        PropTypes.array
-    ]),
-    farmPPlanData: PropTypes.oneOfType([
-        PropTypes.object,
-        PropTypes.array
-    ]),
-};
 
 export const DataList = core.connect(state =>
 ({

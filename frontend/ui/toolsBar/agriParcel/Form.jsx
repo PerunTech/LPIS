@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { ui, core } from '../../../Spatial';
 import { Main, Aux, Admin } from './Steps';
 import { getLabel } from '../../Util';
@@ -64,20 +64,4 @@ export function Form({
             </Modal.Body>
         </Modal>;
     }
-}
-
-Form.propTypes = {
-    formData: PropTypes.object,
-    onSubmit: PropTypes.func.isRequired,
-    onChange: PropTypes.func,
-    isSimple: PropTypes.bool,
-    disableSubmitBtn: PropTypes.bool,
-    showDeleteBtn: PropTypes.bool,
-    onDeleteFn: PropTypes.func,
-    deleteBtnLabel: PropTypes.string,
-    deleteBtnClassName: PropTypes.string,
-    className: PropTypes.string,
-    formTitle: PropTypes.string,
-    buttonLabel: PropTypes.string,
-    children: PropTypes.node
 }

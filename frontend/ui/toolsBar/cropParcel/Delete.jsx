@@ -1,4 +1,4 @@
-import { React, PropTypes, elements } from 'perun-core';
+import { React, elements } from 'perun-core';
 import { ui, core } from '../../../Spatial';
 import { Guidance } from './Guidance';
 import { deleteCPMsg } from './Config';
@@ -107,14 +107,6 @@ const _Delete = ({ processID }) => {
         </ProcessButton>
     );
 };
-
-_Delete.propTypes = {
-    processID: PropTypes.string,
-    farmObjId: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number
-    ])
-}
 
 export const Delete = core.connect(state => ({
     farmObjId: state.farmRegistry?.farmObjId

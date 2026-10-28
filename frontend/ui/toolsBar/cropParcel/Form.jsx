@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { ui, core } from '../../../Spatial';
 import { getLabel } from '../../Util';
 
@@ -76,13 +76,4 @@ export function Form({ formData, onSubmit, onChange, children, enumIdx, enumName
             </Modal.Body>
         </Modal>
     );
-}
-
-Form.propTypes = {
-    formData: PropTypes.object.isRequired,
-    onSubmit: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
-    children: PropTypes.node,
-    enumIdx: PropTypes.array,
-    enumNames: PropTypes.array,
 }

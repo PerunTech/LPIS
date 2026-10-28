@@ -1,4 +1,4 @@
-import { React, ReactDOM, PropTypes, elements } from 'perun-core';
+import { React, ReactDOM, elements } from 'perun-core';
 import { core, data, ui } from '../../../Spatial';
 import { Form } from './Form'
 import { config, saveAPFormSchema } from './Config';
@@ -7,10 +7,33 @@ import { bufferToString, getLabel, isJSON, strcmp } from '../../Util'
 const { http, store, factory, Map } = core;
 const { protobuf, geobuf } = data;
 const { Button, Modal, Icon, DrawActions } = ui
+const { useSyncExternalStore, useEffect } = React;
+
+let prompt = null;
+const listeners = new Set();
+
+const setPrompt = next => {
+    prompt = next;
+    listeners.forEach(listener => listener());
+};
+
+const subscribe = listener => {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+};
+
+// Rendered by the toolsbar, so an open prompt unmounts with the map.
+export const SaveAPPrompt = () => {
+    const current = useSyncExternalStore(subscribe, () => prompt);
+    useEffect(() => () => setPrompt(null), []);
+    return current && ReactDOM.createPortal(current.element, current.container);
+}
 
 export const saveAP = (layer, callback, skipChecks) => {
     // Container for our workflow.
     const container = document.getElementsByClassName('control-topleft')[0];
+    const showPrompt = element => setPrompt({ element, container });
+    const hidePrompt = () => setPrompt(null);
 
     // Exit operations on failed workflow.
     const _fail = (msg, desc) => {
@@ -48,7 +71,7 @@ export const saveAP = (layer, callback, skipChecks) => {
                 if (!pbCheck && !apCheck && !neighbourCheck) {
                     _saveAgriParcel()
                 } else {
-                    ReactDOM.render(<APChecksModal data={response.data} />, container)
+                    showPrompt(<APChecksModal data={response.data} />)
                 }
             } else {
                 const title = response?.data?.title || ''
@@ -72,7 +95,7 @@ export const saveAP = (layer, callback, skipChecks) => {
                 _checkAP(0)
             } else if (strcmp(resType, 'warning')) {
                 // The parcel is partially contained with a physical block
-                ReactDOM.render(<PBModal />, container)
+                showPrompt(<PBModal />)
             } else {
                 // The parcel is not contained within a physical block
                 const title = 'Парцелата не се наоѓа во границите на ниту еден физички блок'
@@ -98,7 +121,7 @@ export const saveAP = (layer, callback, skipChecks) => {
             })
         }).catch(() => {
             // Unmount user prompt from check 1 manually
-            ReactDOM.unmountComponentAtNode(container);
+            hidePrompt();
             _fail()
         })
     }
@@ -107,7 +130,7 @@ export const saveAP = (layer, callback, skipChecks) => {
     // Recalculates geometry based on check 1.
     const _checkAP = (action, cutoffLayer) => {
         // Unmount user prompt from check 1 manually
-        ReactDOM.unmountComponentAtNode(container);
+        hidePrompt();
         const finalData = JSON.parse(layer)
         // If the layer was cutoff in the previous check, use that one, else, use the initial drawn (or edited) one
         if (cutoffLayer) {
@@ -119,7 +142,7 @@ export const saveAP = (layer, callback, skipChecks) => {
             url: '/lpis/check/APIntersectsAP/{init.token}/' + (action === 0),
         }).then(response => {
             if (response.data?.check) {
-                ReactDOM.render(<APModal layer={finalData} />, container)
+                showPrompt(<APModal layer={finalData} />)
             } else {
                 _saveAP(finalData, 'IGNORE')
             }
@@ -131,7 +154,7 @@ export const saveAP = (layer, callback, skipChecks) => {
     const _saveAP = (layer, action) => {
         store.dispatch({ saveIsPending: true })
         // Unmount user prompt from check 2 manually
-        ReactDOM.unmountComponentAtNode(container);
+        hidePrompt();
         const parentId = layer.PARENT_ID || layer.parent_id || 0
         // Make the call for the final save, with results from prompt 2.
         http.call('save_ap', {
@@ -158,7 +181,7 @@ export const saveAP = (layer, callback, skipChecks) => {
     const _saveAgriParcel = data => {
         store.dispatch({ saveIsPending: true })
         // Unmount user prompt for the parcel checks manually
-        ReactDOM.unmountComponentAtNode(container);
+        hidePrompt();
         const parsedLayer = JSON.parse(layer)
         const parentId = parsedLayer.PARENT_ID || parsedLayer.parent_id || 0
         let cutPB = '2'
@@ -210,7 +233,7 @@ export const saveAP = (layer, callback, skipChecks) => {
 
         const disable = () => {
             callback()
-            ReactDOM.unmountComponentAtNode(container)
+            hidePrompt()
         }
 
         return (
@@ -264,9 +287,6 @@ export const saveAP = (layer, callback, skipChecks) => {
                 </Button> */}
             </Modal.Body>
         </Modal>;
-    APModal.propTypes = {
-        layer: PropTypes.object
-    };
 
     // Begin workflow
     // intentional dispatch, disables form on screen, workflow is atomic (will either fail or succeed)

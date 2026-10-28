@@ -1,4 +1,4 @@
-import { React, PropTypes } from 'perun-core';
+import { React } from 'perun-core';
 import { core, tools, ui } from '../../../Spatial';
 import { MEASURE_CONFIG } from './Config';
 import { getLabel } from '../../Util';
@@ -43,12 +43,6 @@ function _Angle({ options, ...props }) {
       <span style={{ display: 'block', marginTop: '5px' }}>{getLabel('measure_angle')}</span>
     </Button>
   )
-}
-
-_Angle.propTypes = {
-  options: PropTypes.object,
-  processID: PropTypes.string,
-  dispatch: PropTypes.func
 }
 
 export const Angle = connect(({ app }) => {

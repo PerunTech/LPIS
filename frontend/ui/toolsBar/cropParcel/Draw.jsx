@@ -1,4 +1,4 @@
-import { React, PropTypes, elements } from 'perun-core';
+import { React, elements } from 'perun-core';
 import { core, data, tools, ui } from '../../../Spatial';
 import { config } from './Config';
 import { Form } from './Form';
@@ -141,14 +141,6 @@ const _Draw = ({ processID, farmObjId }) => {
         </ProcessButton>
     );
 };
-
-_Draw.propTypes = {
-    processID: PropTypes.string,
-    farmObjId: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number
-    ])
-}
 
 export const Draw = core.connect(state => ({
     farmObjId: state.farmRegistry?.farmObjId
