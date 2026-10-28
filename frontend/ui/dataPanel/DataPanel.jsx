@@ -29,7 +29,7 @@ const dataCategories = (function () {
  * @param {*} props 
  */
 const _DataPanel = ({
-  categories, farmData, actionType, showParcelInfoContainer, showControlResultsContainer, canRenderTheDigitizationButton, controlResults
+  categories = dataCategories, farmData, actionType, showParcelInfoContainer, showControlResultsContainer, canRenderTheDigitizationButton, controlResults
 }) => {
   const [data, setData] = useState(categories);
   const [isOpen, setOpen] = useState(true);
@@ -136,10 +136,6 @@ const _DataPanel = ({
       )}
     </div>
   );
-}
-
-_DataPanel.defaultProps = {
-  categories: dataCategories,
 }
 
 _DataPanel.propTypes = {

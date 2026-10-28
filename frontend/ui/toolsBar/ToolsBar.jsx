@@ -2,6 +2,7 @@ import { React, PropTypes, redux, createHashHistory } from 'perun-core';
 import { ui, core } from '../../Spatial';
 import { PhysicalBlock, LandscapeFeatures, AgriParcel, CropParcel, Measurement, IO } from '..';
 import { Digitization } from './agriParcel/digitization/Digitization';
+import { SaveAPPrompt } from './agriParcel/SaveAP';
 import { getLabel, strcmp } from '../Util';
 
 const { Tab, Tabs, Button, Icon, Selection } = ui;
@@ -160,6 +161,7 @@ const _ToolsBar = ({ actionType, activeTab, weAreRenderingDirectly }) => {
                     </Button>
                 </React.Fragment>
             )}
+            <SaveAPPrompt />
         </div>
     );
 }
