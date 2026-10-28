@@ -43,7 +43,7 @@ importers:
         version: 6.1.0
       spatial:
         specifier: git+https://git@gitlab.prtech.mk/svarog4/svarog-spatial#semver:^4.2.2-rc.1
-        version: git+https://git@gitlab.prtech.mk/svarog4/svarog-spatial#00c5f27b0135bb7fd87ccbc6e2237ccae09762b3(@types/react@18.2.55)(debug@4.3.4(supports-color@8.1.1))(monaco-editor@0.57.0)(supports-color@8.1.1)
+        version: git+https://git@gitlab.prtech.mk/svarog4/svarog-spatial#7cdfe9c0d712de6d84c2bfbc17c6eea3b758e698(@types/react@18.2.55)(debug@4.3.4(supports-color@8.1.1))(monaco-editor@0.57.0)(supports-color@8.1.1)
     devDependencies:
       oxlint:
         specifier: ^1.86.0
@@ -1224,9 +1224,9 @@ packages:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
 
-  spatial@git+https://git@gitlab.prtech.mk/svarog4/svarog-spatial#00c5f27b0135bb7fd87ccbc6e2237ccae09762b3:
-    resolution: {commit: 00c5f27b0135bb7fd87ccbc6e2237ccae09762b3, repo: https://git@gitlab.prtech.mk/svarog4/svarog-spatial, type: git}
-    version: 4.2.2-rc.1
+  spatial@git+https://git@gitlab.prtech.mk/svarog4/svarog-spatial#7cdfe9c0d712de6d84c2bfbc17c6eea3b758e698:
+    resolution: {commit: 7cdfe9c0d712de6d84c2bfbc17c6eea3b758e698, repo: https://git@gitlab.prtech.mk/svarog4/svarog-spatial, type: git}
+    version: 4.2.2-rc.2
     engines: {node: '>=22.12.0'}
 
   ssf@0.11.2:
@@ -2550,7 +2550,7 @@ snapshots:
   source-map@0.6.1:
     optional: true
 
-  spatial@git+https://git@gitlab.prtech.mk/svarog4/svarog-spatial#00c5f27b0135bb7fd87ccbc6e2237ccae09762b3(@types/react@18.2.55)(debug@4.3.4(supports-color@8.1.1))(monaco-editor@0.57.0)(supports-color@8.1.1):
+  spatial@git+https://git@gitlab.prtech.mk/svarog4/svarog-spatial#7cdfe9c0d712de6d84c2bfbc17c6eea3b758e698(@types/react@18.2.55)(debug@4.3.4(supports-color@8.1.1))(monaco-editor@0.57.0)(supports-color@8.1.1):
     dependencies:
       leaflet: 1.5.1
       leaflet-polylinedecorator: 1.6.0
